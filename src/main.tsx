@@ -1,14 +1,30 @@
-import { StrictMode } from 'react';
+import { StrictMode, Suspense } from 'react';
 
+import { ConfigProvider, Spin } from 'antd';
 import { createRoot } from 'react-dom/client';
+import { Provider } from 'react-redux';
 
-import './i18n';
 import App from './App.tsx';
+import './i18n';
+import { THEME } from 'configs';
+import { setupStore } from 'store';
 
 import 'styles/index.scss';
 
+const store = setupStore();
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <Provider store={store}>
+      <Suspense
+        fallback={
+          <ConfigProvider theme={THEME}>
+            <Spin style={{ margin: 'auto' }} size="large" />
+          </ConfigProvider>
+        }
+      >
+        <App />
+      </Suspense>
+    </Provider>
   </StrictMode>
 );

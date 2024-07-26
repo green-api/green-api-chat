@@ -1,0 +1,24 @@
+@use 'sass:math';
+
+@function rem($px) {
+  $result : math.div($px, 16);
+  @return math.div(round($result * 100), 100) + rem;
+}
+
+@function em($px, $del) {
+  $result : math.div($px, $del);
+  @return math.div(round($result * 100), 100) + em;
+}
+
+@function lh($lh, $fz) {
+  $result : math.div($lh, $fz);
+  @return math.div(round($result * 100), 100);
+}
+
+@function vh($qty) {
+  @return calc(var(--vh, 1vh) * $qty);
+}
+
+@function vw($px, $resolution) {
+  @return math.div($px, math.div($resolution, 100)) + vw;
+}

@@ -5,7 +5,7 @@ import { Outlet } from 'react-router-dom';
 
 const BaseLayout: FC = () => {
   return (
-    <Layout>
+    <Layout className="app">
       <Outlet />
     </Layout>
   );

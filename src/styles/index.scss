@@ -1,5 +1,59 @@
-@import "themes/default";
+@import "themes/default.scss";
 @import "rest/reset";
 @import "rest/vars";
 @import "rest/functions";
 @import "rest/mixins";
+
+.app {
+  min-height: 100vh;
+}
+
+.main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chat {
+  max-width: 625px;
+  width: 100%;
+
+  .ant-card-body {
+    padding: 0;
+  }
+}
+
+.avatar-image {
+  min-width: 40px;
+  min-height: 40px;
+  max-width: 40px;
+  max-height: 40px;
+  border-radius: 50%;
+}
+
+.contact-list {
+  &__item {
+    cursor: pointer;
+
+    &:hover {
+      background-color: rgba(#009805, .5);
+    }
+
+    padding: 20px;
+    transition: all .2s ease-in-out;
+    transform: scale(1);
+
+    &-wrapper {
+      width: 100%;
+      justify-content: space-between;
+    }
+
+    &-body h6 {
+      font-size: 14px;
+    }
+  }
+}
+
+.message-date {
+  margin-left: auto;
+}

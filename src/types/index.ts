@@ -30,3 +30,5 @@ export interface GreenApiRouteInterface extends GreenApiUrlsInterface {
   // string - для одного значения, string[] - для диапазона значений
   instancesCodes: (number | [number, number])[];
 }
+
+export type LanguageLiteral = 'en' | 'ru' | 'he';

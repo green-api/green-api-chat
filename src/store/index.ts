@@ -13,7 +13,7 @@ export const setupStore = (preloadedState?: RootState) =>
   configureStore({
     reducer: rootReducer,
     middleware: (getDefaultMiddleware) =>
-      getDefaultMiddleware(listenerMiddleware.middleware, greenAPI.middleware),
+      getDefaultMiddleware().concat(listenerMiddleware.middleware, greenAPI.middleware),
     preloadedState,
   });
 

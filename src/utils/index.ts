@@ -1,5 +1,5 @@
 import { GREEN_API_INSTANCES_ROUTER } from 'configs';
-import { GreenApiUrlsInterface, InstanceInterface } from 'types';
+import { GreenApiUrlsInterface, InstanceInterface, LanguageLiteral } from 'types';
 
 export function getGreenApiUrls(
   idInstance: InstanceInterface['idInstance']
@@ -38,4 +38,38 @@ export function getGreenApiUrls(
         qrHost: GREEN_API_INSTANCES_ROUTER[0].qrHost,
         qrHttpHost: GREEN_API_INSTANCES_ROUTER[0].qrHttpHost,
       };
+}
+
+export function formatDate(
+  timeCreated: number | string | Date,
+  language: LanguageLiteral | undefined
+) {
+  switch (language) {
+    case 'ru': {
+      return new Date(timeCreated).toLocaleDateString(language, {
+        weekday: 'short',
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+      });
+    }
+
+    case 'he': {
+      return new Date(timeCreated).toLocaleDateString(language, {
+        weekday: 'short',
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+      });
+    }
+
+    default: {
+      return new Date(timeCreated).toLocaleDateString(language, {
+        weekday: 'short',
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+      });
+    }
+  }
 }

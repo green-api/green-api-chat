@@ -4,7 +4,7 @@ import { ConfigProvider, Spin } from 'antd';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 
-import App from './App.tsx';
+import App from './App';
 import './i18n';
 import { THEME } from 'configs';
 import { setupStore } from 'store';

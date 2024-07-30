@@ -11,8 +11,8 @@ const getInitialStateFromStorage = (): UserState | null => {
 
 const initialState: UserState = getInitialStateFromStorage() || {
   credentials: {
-    idInstance: '',
-    apiTokenInstance: '',
+    idInstance: '9906924050',
+    apiTokenInstance: 'd7082be406f94068afe1e89d294be63d91df1e0ec5a74aba9a',
   },
   isAuth: false,
 };

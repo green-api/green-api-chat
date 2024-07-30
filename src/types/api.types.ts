@@ -40,7 +40,8 @@ export type TypeMessage =
   | 'audioMessage'
   | 'locationMessage'
   | 'contactMessage'
-  | 'extendedTextMessage';
+  | 'extendedTextMessage'
+  | 'reactionMessage';
 
 export type Contact = {
   displayName: string;
@@ -58,6 +59,7 @@ export interface MessageInterface
   typeMessage: TypeMessage;
   senderId?: string;
   senderName?: string;
+  senderContactName?: string;
   textMessage?: string;
   caption?: string;
   contact?: Contact;
@@ -85,7 +87,7 @@ export type ExtendedTextMessage = {
 export interface GetChatHistoryParametersInterface
   extends InstanceInterface,
     Pick<SendingBaseParametersInterface, 'chatId'> {
-  count: number;
+  count?: number;
 }
 
 export type GetChatInformationParameters = Pick<SendingBaseParametersInterface, 'chatId'> &
@@ -93,5 +95,26 @@ export type GetChatInformationParameters = Pick<SendingBaseParametersInterface, 
   InstanceInterface;
 
 export interface LastMessagesParametersInterface extends InstanceInterface {
-  minutes: number;
+  minutes?: number;
+}
+
+export interface GroupBaseParametersInterface extends InstanceInterface {
+  groupId: string;
+}
+
+export interface GetGroupDataResponseInterface
+  extends Pick<GroupBaseParametersInterface, 'groupId'> {
+  owner: string;
+  subject: string;
+  creation: string;
+  participants: GroupParticipantInterface[];
+  subjectTime: number;
+  subjectOwner: string;
+  groupInviteLink: string;
+}
+
+export interface GroupParticipantInterface {
+  id: string;
+  isAdmin: boolean;
+  isSuperAdmin: boolean;
 }

@@ -1,5 +1,12 @@
 import { GREEN_API_INSTANCES_ROUTER } from 'configs';
-import { GreenApiUrlsInterface, InstanceInterface, LanguageLiteral } from 'types';
+import { useLazyGetGroupDataQuery } from 'services/green-api/endpoints';
+import {
+  GetChatHistoryResponse,
+  GreenApiUrlsInterface,
+  InstanceInterface,
+  LanguageLiteral,
+  MessageInterface,
+} from 'types';
 
 export function getGreenApiUrls(
   idInstance: InstanceInterface['idInstance']
@@ -72,4 +79,50 @@ export function formatDate(
       });
     }
   }
+}
+
+export function getLastFiveChats(
+  lastIncomingMessages: GetChatHistoryResponse,
+  lastOutgoingMessages: GetChatHistoryResponse
+): GetChatHistoryResponse {
+  if (!lastIncomingMessages.length && !lastOutgoingMessages.length) {
+    return [];
+  }
+
+  const allMessagesFilteredAndSorted = [...lastIncomingMessages, ...lastOutgoingMessages]
+    .filter((message) => message.typeMessage !== 'reactionMessage')
+    .sort((a, b) => b.timestamp - a.timestamp);
+
+  const resultMap = new Map<string, MessageInterface>();
+
+  for (const message of allMessagesFilteredAndSorted) {
+    if (resultMap.size === 5) {
+      break;
+    }
+
+    if (!resultMap.has(message.chatId)) {
+      resultMap.set(message.chatId, message);
+    }
+  }
+
+  return Array.from(resultMap.values());
+}
+
+export function getMessageDate(
+  timestamp: number,
+  language: LanguageLiteral
+): { date: string; styleWidth?: number } {
+  const messageDate = formatDate(timestamp * 1000, language);
+  const nowDate = formatDate(Date.now(), language);
+
+  if (messageDate === nowDate) {
+    return {
+      date: new Date(timestamp * 1000).toLocaleTimeString().slice(0, 5),
+    };
+  }
+
+  return {
+    date: messageDate,
+    styleWidth: 120,
+  };
 }

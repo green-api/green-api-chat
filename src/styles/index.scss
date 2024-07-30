@@ -34,14 +34,13 @@
 .contact-list {
   &__item {
     cursor: pointer;
-
-    &:hover {
-      background-color: rgba(#009805, .5);
-    }
-
     padding: 20px;
     transition: all .2s ease-in-out;
     transform: scale(1);
+
+    &:hover {
+      background-color: rgb(220 233 220 / 50%);
+    }
 
     &-wrapper {
       width: 100%;
@@ -56,4 +55,28 @@
 
 .message-date {
   margin-left: auto;
+}
+
+.spin-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 50px;
+}
+
+.chat-form-wrapper {
+  display: flex;
+  flex-direction: column;
+  row-gap: 15px;
+
+  & .ant-card-body {
+    display: flex;
+    flex-direction: column;
+    row-gap: 15px;
+  }
+}
+
+.card {
+  height: 300px;
+  overflow-y: auto;
 }

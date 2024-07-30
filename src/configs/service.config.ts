@@ -1,3 +1,7 @@
+import en_US from 'antd/es/locale/en_US';
+import he_IL from 'antd/es/locale/he_IL';
+import ru_RU from 'antd/es/locale/ru_RU';
+
 import { GreenApiRouteInterface } from 'types';
 
 export const GREEN_API_INSTANCES_ROUTER: GreenApiRouteInterface[] = [
@@ -72,3 +76,9 @@ export const GREEN_API_INSTANCES_ROUTER: GreenApiRouteInterface[] = [
     instancesCodes: [[7000, 7999]],
   },
 ];
+
+export const localisation = {
+  ru: ru_RU,
+  en: en_US,
+  he: he_IL,
+};

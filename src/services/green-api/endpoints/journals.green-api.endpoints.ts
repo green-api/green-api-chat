@@ -18,6 +18,7 @@ export const journalsGreenApiEndpoints = greenAPI.injectEndpoints({
         method: 'POST',
         body,
       }),
+      transformResponse: (res: GetChatHistoryResponse) => res.reverse(),
     }),
     getMessage: builder.mutation<MessageInterface, GetChatInformationParameters>({
       query: ({ idInstance, apiTokenInstance, ...body }) => ({
@@ -28,7 +29,7 @@ export const journalsGreenApiEndpoints = greenAPI.injectEndpoints({
         body,
       }),
     }),
-    lastIncomingMessages: builder.query<MessageInterface, LastMessagesParametersInterface>({
+    lastIncomingMessages: builder.query<GetChatHistoryResponse, LastMessagesParametersInterface>({
       query: ({ idInstance, apiTokenInstance, minutes }) => ({
         url: `${
           getGreenApiUrls(idInstance).api
@@ -39,7 +40,7 @@ export const journalsGreenApiEndpoints = greenAPI.injectEndpoints({
         },
       }),
     }),
-    lastOutgoingMessages: builder.query<MessageInterface, LastMessagesParametersInterface>({
+    lastOutgoingMessages: builder.query<GetChatHistoryResponse, LastMessagesParametersInterface>({
       query: ({ idInstance, apiTokenInstance, minutes }) => ({
         url: `${
           getGreenApiUrls(idInstance).api

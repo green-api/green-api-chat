@@ -1,3 +1,5 @@
+import { MessageInterface } from './api.types';
+
 export * from './api.types';
 
 export interface UserState {
@@ -7,6 +9,11 @@ export interface UserState {
 export interface UserCredentials {
   idInstance: string;
   apiTokenInstance: string;
+}
+
+export interface ChatState {
+  showContactList: boolean;
+  activeChat: MessageInterface;
 }
 
 export interface InstanceInterface {

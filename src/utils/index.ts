@@ -1,5 +1,4 @@
 import { GREEN_API_INSTANCES_ROUTER } from 'configs';
-import { useLazyGetGroupDataQuery } from 'services/green-api/endpoints';
 import {
   GetChatHistoryResponse,
   GreenApiUrlsInterface,
@@ -112,12 +111,12 @@ export function getMessageDate(
   timestamp: number,
   language: LanguageLiteral
 ): { date: string; styleWidth?: number } {
-  const messageDate = formatDate(timestamp * 1000, language);
+  const messageDate = formatDate(timestamp, language);
   const nowDate = formatDate(Date.now(), language);
 
   if (messageDate === nowDate) {
     return {
-      date: new Date(timestamp * 1000).toLocaleTimeString().slice(0, 5),
+      date: new Date(timestamp).toLocaleTimeString().slice(0, 5),
     };
   }
 

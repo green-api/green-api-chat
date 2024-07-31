@@ -1,6 +1,7 @@
 import { FC } from 'react';
 
 import { Button, Card, Form, Input } from 'antd';
+import { useTranslation } from 'react-i18next';
 
 import Message from './message.component';
 import { useAppSelector } from 'hooks';
@@ -16,13 +17,15 @@ const ContactChat: FC = () => {
   const userCredentials = useAppSelector(selectCredentials);
   const activeChat = useAppSelector(selectActiveChat);
 
+  const { t } = useTranslation();
+
   const [form] = Form.useForm<FormValues>();
 
   const { data: messages } = useGetChatHistoryQuery({
     idInstance: userCredentials.idInstance,
     apiTokenInstance: userCredentials.apiTokenInstance,
     chatId: activeChat.chatId,
-    count: 100,
+    count: 30,
   });
 
   const [sendMessage, { isLoading }] = useSendMessageMutation();
@@ -42,8 +45,8 @@ const ContactChat: FC = () => {
 
   return (
     <div className="chat-form-wrapper">
-      <Card className="card">
-        {messages?.map((message) => {
+      <Card className="chat-view" bordered={false} style={{ boxShadow: 'unset' }}>
+        {messages?.map((message, idx) => {
           return (
             <Message
               key={message.idMessage}
@@ -52,17 +55,19 @@ const ContactChat: FC = () => {
                 message.extendedTextMessage?.text || message.textMessage || message.typeMessage
               }
               senderName={message.type === 'outgoing' ? 'Вы' : activeChat.senderName!}
+              isLastMessage={idx === messages?.length - 1}
+              timestamp={message.timestamp}
             />
           );
         })}
       </Card>
-      <Form name="chat-form" onFinish={onSendMessage} form={form}>
+      <Form name="chat-form" className="chat-form" onFinish={onSendMessage} form={form}>
         <Form.Item
           name="message"
-          rules={[{ required: true, message: 'Сообщение не может быть пустым!' }]}
+          rules={[{ required: true, message: t('EMPTY_FIELD_ERROR') }]}
           hasFeedback
         >
-          <Input.TextArea maxLength={300} showCount={true} placeholder="Введите сообщение.." />
+          <Input.TextArea placeholder={t('MESSAGE_PLACEHOLDER')} />
         </Form.Item>
         <Form.Item>
           <Button

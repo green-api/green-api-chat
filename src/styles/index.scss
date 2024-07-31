@@ -8,18 +8,38 @@
   min-height: 100vh;
 }
 
-.main {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 .chat {
   max-width: 625px;
   width: 100%;
 
   .ant-card-body {
     padding: 0;
+  }
+
+  &-view {
+    font-size: 15px;
+    height: 500px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-color) var(--main-background);
+  }
+
+  &-form {
+    padding: 10px
+  }
+
+  &-form-wrapper {
+    display: flex;
+    flex-direction: column;
+    row-gap: 15px;
+    padding-top: 1px;
+
+    & .ant-card-body {
+      display: flex;
+      flex-direction: column;
+      row-gap: 15px;
+      padding: 5px 10px;
+    }
   }
 }
 
@@ -57,26 +77,30 @@
   margin-left: auto;
 }
 
-.spin-wrapper {
+.flex-center {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.spin-wrapper {
   min-height: 50px;
 }
 
-.chat-form-wrapper {
-  display: flex;
-  flex-direction: column;
-  row-gap: 15px;
-
-  & .ant-card-body {
+.message {
+  &-text {
     display: flex;
     flex-direction: column;
-    row-gap: 15px;
-  }
-}
+    padding: 20px;
+    border-radius: 10px;
 
-.card {
-  height: 300px;
-  overflow-y: auto;
+    &.outgoing {
+      background-color: var(--second-background);
+    }
+
+    &.incoming {
+      background-color: var(--light-primary-color);
+      color: var(--main-background)
+    }
+  }
 }

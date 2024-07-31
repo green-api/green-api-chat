@@ -1,11 +1,12 @@
-import { FC, useEffect, useState } from 'react';
+import { FC } from 'react';
 
-import { Flex } from 'antd';
+import { LoadingOutlined } from '@ant-design/icons';
+import { Flex, Spin } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import emptyAvatar from 'assets/emptyAvatar.png';
 import { useActions, useAppSelector } from 'hooks';
-import { useLazyGetGroupDataQuery } from 'services/green-api/endpoints';
+import { useGetContactInfoQuery, useGetGroupDataQuery } from 'services/green-api/endpoints';
 import { selectCredentials } from 'store/slices/user.slice';
 import { LanguageLiteral, MessageInterface } from 'types';
 import { getMessageDate } from 'utils';
@@ -22,38 +23,38 @@ const ContactListItem: FC<ContactListItemProps> = ({ lastMessage }) => {
   const userCredentials = useAppSelector(selectCredentials);
   const { setActiveChat } = useActions();
 
-  const [chatName, setChatName] = useState(
-    lastMessage.chatId.slice(0, lastMessage.chatId.indexOf('@'))
+  const messageDate = getMessageDate(
+    lastMessage.timestamp * 1000,
+    resolvedLanguage as LanguageLiteral
   );
-  const messageDate = getMessageDate(lastMessage.timestamp, resolvedLanguage as LanguageLiteral);
 
-  const [getGroupData] = useLazyGetGroupDataQuery();
+  const { data: groupData, isLoading: isGroupDataLoading } = useGetGroupDataQuery(
+    {
+      idInstance: userCredentials.idInstance,
+      apiTokenInstance: userCredentials.apiTokenInstance,
+      groupId: lastMessage.chatId,
+    },
+    { skip: !lastMessage.chatId.includes('g.us') }
+  );
 
-  useEffect(() => {
-    async function getContactChatName(message: MessageInterface) {
-      if (message.chatId.includes('g.us')) {
-        const { data } = await getGroupData({
-          idInstance: userCredentials.idInstance,
-          apiTokenInstance: userCredentials.apiTokenInstance,
-          groupId: message.chatId,
-        });
+  const { data: contactInfo, isLoading: isContactInfoLoading } = useGetContactInfoQuery(
+    {
+      idInstance: userCredentials.idInstance,
+      apiTokenInstance: userCredentials.apiTokenInstance,
+      chatId: lastMessage.chatId,
+    },
+    { skip: !!lastMessage.senderName || lastMessage.chatId.includes('g.us') }
+  );
 
-        if (data) {
-          setChatName(data.subject);
-        }
+  const isLoading = isGroupDataLoading || isContactInfoLoading;
 
-        return;
-      }
-
-      setChatName(
-        lastMessage.senderContactName ||
-          lastMessage.senderName ||
-          lastMessage.chatId.slice(0, lastMessage.chatId.indexOf('@'))
-      );
-    }
-
-    getContactChatName(lastMessage);
-  }, [getGroupData, userCredentials, lastMessage]);
+  const chatName =
+    groupData?.subject ||
+    contactInfo?.contactName ||
+    contactInfo?.name ||
+    lastMessage.senderContactName ||
+    lastMessage.senderName ||
+    lastMessage.chatId.slice(0, lastMessage.chatId.indexOf('@'));
 
   return (
     <Flex
@@ -65,7 +66,11 @@ const ContactListItem: FC<ContactListItemProps> = ({ lastMessage }) => {
       <img className="avatar-image" src={emptyAvatar} alt="avatar" />
       <Flex className="contact-list__item-wrapper">
         <Flex vertical gap="small" className="contact-list__item-body">
-          <h6>{chatName}</h6>
+          {isLoading ? (
+            <Spin indicator={<LoadingOutlined />} size="small" style={{ alignSelf: 'start' }} />
+          ) : (
+            <h6>{chatName}</h6>
+          )}
           <span
             style={{
               display: '-webkit-box',
@@ -79,7 +84,12 @@ const ContactListItem: FC<ContactListItemProps> = ({ lastMessage }) => {
               lastMessage.typeMessage}
           </span>
         </Flex>
-        <span style={{ minWidth: messageDate.styleWidth ? messageDate.styleWidth : undefined }}>
+        <span
+          style={{
+            minWidth: messageDate.styleWidth ? messageDate.styleWidth : undefined,
+            textAlign: 'end',
+          }}
+        >
           {messageDate.date}
         </span>
       </Flex>

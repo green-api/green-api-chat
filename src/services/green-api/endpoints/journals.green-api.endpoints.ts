@@ -18,7 +18,8 @@ export const journalsGreenApiEndpoints = greenAPI.injectEndpoints({
         method: 'POST',
         body,
       }),
-      transformResponse: (res: GetChatHistoryResponse) => res.reverse(),
+      transformResponse: (res: GetChatHistoryResponse) =>
+        res.filter((msg) => msg.typeMessage !== 'reactionMessage').reverse(),
     }),
     getMessage: builder.mutation<MessageInterface, GetChatInformationParameters>({
       query: ({ idInstance, apiTokenInstance, ...body }) => ({
@@ -39,6 +40,7 @@ export const journalsGreenApiEndpoints = greenAPI.injectEndpoints({
           minutes,
         },
       }),
+      keepUnusedDataFor: 1000,
     }),
     lastOutgoingMessages: builder.query<GetChatHistoryResponse, LastMessagesParametersInterface>({
       query: ({ idInstance, apiTokenInstance, minutes }) => ({
@@ -50,6 +52,7 @@ export const journalsGreenApiEndpoints = greenAPI.injectEndpoints({
           minutes,
         },
       }),
+      keepUnusedDataFor: 1000,
     }),
   }),
 });

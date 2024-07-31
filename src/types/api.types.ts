@@ -118,3 +118,48 @@ export interface GroupParticipantInterface {
   isAdmin: boolean;
   isSuperAdmin: boolean;
 }
+
+export interface CheckWhatsappParametersInterface extends InstanceInterface {
+  phoneNumber: string;
+}
+
+export interface CheckWhatsappResponseInterface {
+  existsWhatsapp: boolean;
+}
+
+export type RequestWithChatIdParameters = InstanceInterface &
+  Pick<SendingBaseParametersInterface, 'chatId'>;
+
+export interface GetAvatarResponseInterface {
+  existsWhatsapp: boolean;
+  urlAvatar: string;
+  reason: 'bad request data' | 'get avatar timeout limit exceeded';
+}
+
+export interface GetContactInfoResponseInterface
+  extends Pick<SendingBaseParametersInterface, 'chatId'> {
+  avatar: string;
+  name: string;
+  contactName?: string;
+  email: string;
+  category: string;
+  description: string;
+  products: ProductInterface[];
+  lastSeen: string;
+  isArchive: boolean;
+  isDisappearing: boolean;
+  isMute: boolean;
+  messageExpiration: number;
+  muteExpiration: number;
+}
+
+interface ProductInterface {
+  id: number;
+  imageUrls: Record<string, unknown>;
+  availability: string;
+  reviewStatus: Record<string, unknown>;
+  name: string;
+  description: string;
+  price: string;
+  isHidden: boolean;
+}

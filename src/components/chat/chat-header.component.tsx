@@ -1,6 +1,7 @@
 import { FC } from 'react';
 
-import { Button, Space } from 'antd';
+import { ArrowLeftOutlined } from '@ant-design/icons';
+import { Space } from 'antd';
 
 import { useActions, useAppSelector } from 'hooks';
 import { selectActiveChat, selectShowContactList } from 'store/slices/chat.slice';
@@ -14,7 +15,9 @@ const ChatHeader: FC = () => {
   if (!showContactList) {
     return (
       <Space>
-        <Button onClick={() => setShowContactList()}>Back</Button>
+        <a>
+          <ArrowLeftOutlined onClick={() => setShowContactList()} />
+        </a>
         <h3>{activeChat.senderName}</h3>
       </Space>
     );

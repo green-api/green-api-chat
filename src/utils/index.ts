@@ -1,5 +1,6 @@
 import { GREEN_API_INSTANCES_ROUTER } from 'configs';
 import {
+  ApiErrorResponse,
   GetChatHistoryResponse,
   GreenApiUrlsInterface,
   InstanceInterface,
@@ -124,4 +125,58 @@ export function getMessageDate(
     date: messageDate,
     styleWidth: 120,
   };
+}
+
+export function isApiError(error: unknown): error is ApiErrorResponse {
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    ('data' in error || 'error' in error) &&
+    'status' in error
+  );
+}
+
+export function getErrorMessage(error: unknown): string | null {
+  let errorMessage = '';
+  if (!error || !isApiError(error)) {
+    return null;
+  }
+
+  switch (error.status) {
+    case 466:
+      errorMessage = 'Исчерпано кол-во использований метода.';
+      break;
+
+    case 429:
+      errorMessage = 'Слишком много запросов';
+      break;
+
+    case 'FETCH_ERROR':
+      errorMessage = 'Проверьте правильность введенных данных';
+      break;
+
+    default:
+      errorMessage = 'Что-то пошло не так, попробуйте еще раз.';
+  }
+
+  return errorMessage;
+}
+
+export function getJSONMessage(message: MessageInterface): string {
+  const copyMessage = structuredClone(message);
+
+  if (copyMessage.jpegThumbnail) {
+    copyMessage.jpegThumbnail = copyMessage.jpegThumbnail.slice(0, 100) + '...';
+  }
+
+  if (copyMessage.extendedTextMessage && copyMessage.extendedTextMessage.text.length > 250) {
+    copyMessage.extendedTextMessage.text =
+      copyMessage.extendedTextMessage.text.slice(0, 250) + '...';
+  }
+
+  if (copyMessage.textMessage && copyMessage.textMessage.length > 250) {
+    copyMessage.textMessage = copyMessage.textMessage.slice(0, 250) + '...';
+  }
+
+  return JSON.stringify(copyMessage);
 }

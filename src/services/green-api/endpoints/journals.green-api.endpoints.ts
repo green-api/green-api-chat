@@ -40,7 +40,6 @@ export const journalsGreenApiEndpoints = greenAPI.injectEndpoints({
           minutes,
         },
       }),
-      keepUnusedDataFor: 1000,
     }),
     lastOutgoingMessages: builder.query<GetChatHistoryResponse, LastMessagesParametersInterface>({
       query: ({ idInstance, apiTokenInstance, minutes }) => ({
@@ -52,7 +51,6 @@ export const journalsGreenApiEndpoints = greenAPI.injectEndpoints({
           minutes,
         },
       }),
-      keepUnusedDataFor: 1000,
     }),
   }),
 });

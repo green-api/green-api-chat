@@ -1,0 +1,136 @@
+import { FC } from 'react';
+
+import { Card, Spin } from 'antd';
+
+import Message from './message.component';
+import { useAppSelector } from 'hooks';
+import { useGetChatHistoryQuery } from 'services/green-api/endpoints';
+import { selectActiveChat } from 'store/slices/chat.slice';
+import { selectCredentials } from 'store/slices/user.slice';
+import { getJSONMessage } from 'utils';
+
+const ChatView: FC = () => {
+  const userCredentials = useAppSelector(selectCredentials);
+  const activeChat = useAppSelector(selectActiveChat);
+
+  const { data: messages, isLoading } = useGetChatHistoryQuery(
+    {
+      idInstance: userCredentials.idInstance,
+      apiTokenInstance: userCredentials.apiTokenInstance,
+      chatId: activeChat.chatId,
+      count: 30,
+    },
+    { skipPollingIfUnfocused: true, pollingInterval: 10000 }
+  );
+
+  // TODO: method with receive/delete notification
+  // const { data: notification } = useReceiveNotificationQuery(
+  //   {
+  //     idInstance: userCredentials.idInstance,
+  //     apiTokenInstance: userCredentials.apiTokenInstance,
+  //   },
+  //   { pollingInterval: 5000 }
+  // );
+  //
+  // const [deleteNotification] = useDeleteNotificationMutation();
+  //
+  // useEffect(() => {
+  //   async function handleNotification() {
+  //     if (notification && notification.body.senderData.chatId === activeChat.chatId) {
+  //       console.log('notification', notification);
+  //       const notificationBody = notification.body;
+  //
+  //       const existingMessage = messages?.find(
+  //         (msg) => msg.idMessage === notificationBody.idMessage
+  //       );
+  //       if (existingMessage) {
+  //         console.log('message already in chat history');
+  //
+  //         await deleteNotification({
+  //           idInstance: userCredentials.idInstance,
+  //           apiTokenInstance: userCredentials.apiTokenInstance,
+  //           receiptId: notification.receiptId,
+  //         });
+  //
+  //         return;
+  //       }
+  //
+  //       const updateChatHistoryThunk = journalsGreenApiEndpoints.util?.updateQueryData(
+  //         'getChatHistory',
+  //         {
+  //           idInstance: userCredentials.idInstance,
+  //           apiTokenInstance: userCredentials.apiTokenInstance,
+  //           chatId: activeChat.chatId,
+  //           count: 30,
+  //         },
+  //         (draftChatHistory) => {
+  //           const type = notificationBody.typeWebhook.includes('outgoing')
+  //             ? 'outgoing'
+  //             : 'incoming';
+  //           const typeMessage = notificationBody.messageData.typeMessage;
+  //
+  //           draftChatHistory.push({
+  //             type: type,
+  //             typeMessage: notificationBody.messageData.typeMessage,
+  //             textMessage: !typeMessage.toLowerCase().includes('text')
+  //               ? typeMessage
+  //               : notificationBody.messageData.extendedTextMessage?.text ||
+  //                 notificationBody.messageData.textMessageData?.textMessage ||
+  //                 notificationBody.messageData.typeMessage,
+  //             timestamp: notificationBody.timestamp,
+  //             senderId: notificationBody.senderData.sender,
+  //             senderName: notificationBody.senderData.senderName,
+  //             senderContactName: notificationBody.senderData.senderContactName,
+  //             idMessage: notificationBody.idMessage,
+  //             chatId: notificationBody.senderData.chatId,
+  //           });
+  //
+  //           return draftChatHistory;
+  //         }
+  //       );
+  //
+  //       dispatch(updateChatHistoryThunk);
+  //
+  //       await deleteNotification({
+  //         idInstance: userCredentials.idInstance,
+  //         apiTokenInstance: userCredentials.apiTokenInstance,
+  //         receiptId: notification.receiptId,
+  //       });
+  //     }
+  //   }
+  //
+  //   handleNotification();
+  // }, [notification]);
+
+  return (
+    <Card className="chat-view" bordered={false} style={{ boxShadow: 'unset' }}>
+      {isLoading ? (
+        <div className="flex-center spin-wrapper">
+          <Spin size="large" />
+        </div>
+      ) : (
+        messages?.map((message, idx) => {
+          const typeMessage = message.typeMessage;
+
+          return (
+            <Message
+              key={message.idMessage}
+              type={message.type}
+              textMessage={
+                !typeMessage.toLowerCase().includes('text')
+                  ? typeMessage
+                  : message.extendedTextMessage?.text || message.textMessage || message.typeMessage
+              }
+              senderName={message.type === 'outgoing' ? 'Вы' : activeChat.senderName!}
+              isLastMessage={idx === messages?.length - 1}
+              timestamp={message.timestamp}
+              jsonMessage={getJSONMessage(message)}
+            />
+          );
+        })
+      )}
+    </Card>
+  );
+};
+
+export default ChatView;

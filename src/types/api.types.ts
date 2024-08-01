@@ -20,7 +20,7 @@ export interface SendMessageParametersInterface
 // Todo interface for body
 export interface ReceiveNotificationResponseInterface {
   receiptId: number;
-  body: Record<string, unknown>;
+  body: Record<string, any>;
 }
 
 export type DeleteNotificationParameters = InstanceInterface &
@@ -51,11 +51,11 @@ export type Contact = {
 // Todo rewrite interface
 export interface MessageInterface
   extends SendingResponseInterface,
-    LocationInterface,
+    Partial<LocationInterface>,
     Pick<SendingBaseParametersInterface, 'chatId'> {
   type: TypeConnectionMessage;
   timestamp: number;
-  statusMessage: StatusMessage;
+  statusMessage?: StatusMessage;
   typeMessage: TypeMessage;
   senderId?: string;
   senderName?: string;

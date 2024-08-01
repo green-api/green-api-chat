@@ -12,6 +12,7 @@ export const groupGreenApiEndpoints = greenAPI.injectEndpoints({
         method: 'POST',
         body,
       }),
+      keepUnusedDataFor: 1000,
     }),
   }),
 });

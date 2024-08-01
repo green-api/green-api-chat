@@ -1,6 +1,6 @@
 import { FC } from 'react';
 
-import { Flex, Spin } from 'antd';
+import { Empty, Flex, Spin } from 'antd';
 
 import ContactListItem from './contact-list-item.component';
 import { useAppSelector } from 'hooks';
@@ -9,7 +9,7 @@ import {
   useLastOutgoingMessagesQuery,
 } from 'services/green-api/endpoints';
 import { selectCredentials } from 'store/slices/user.slice';
-import { getLastFiveChats } from 'utils';
+import { getErrorMessage, getLastFiveChats } from 'utils';
 
 const ContactList: FC = () => {
   const userCredentials = useAppSelector(selectCredentials);
@@ -18,21 +18,27 @@ const ContactList: FC = () => {
     data: lastIncomingMessages = [],
     isLoading: isLastIncomingLoading,
     error: lastIncomingError,
-  } = useLastIncomingMessagesQuery({
-    idInstance: userCredentials.idInstance,
-    apiTokenInstance: userCredentials.apiTokenInstance,
-    minutes: 4320,
-  });
+  } = useLastIncomingMessagesQuery(
+    {
+      idInstance: userCredentials.idInstance,
+      apiTokenInstance: userCredentials.apiTokenInstance,
+      minutes: 3000,
+    },
+    { skipPollingIfUnfocused: true, pollingInterval: 10000 }
+  );
 
   const {
     data: lastOutgoingMessages = [],
     isLoading: isLastOutgoingLoading,
     error: lastOutgoingError,
-  } = useLastOutgoingMessagesQuery({
-    idInstance: userCredentials.idInstance,
-    apiTokenInstance: userCredentials.apiTokenInstance,
-    minutes: 4320,
-  });
+  } = useLastOutgoingMessagesQuery(
+    {
+      idInstance: userCredentials.idInstance,
+      apiTokenInstance: userCredentials.apiTokenInstance,
+      minutes: 3000,
+    },
+    { skipPollingIfUnfocused: true, pollingInterval: 10000 }
+  );
 
   if (isLastIncomingLoading || isLastOutgoingLoading) {
     return (
@@ -42,7 +48,15 @@ const ContactList: FC = () => {
     );
   }
 
+  if (lastIncomingError || lastOutgoingError) {
+    return <span>{getErrorMessage(lastIncomingError || lastOutgoingError)}</span>;
+  }
+
   const lastFiveChats = getLastFiveChats(lastIncomingMessages, lastOutgoingMessages);
+
+  if (!lastFiveChats.length) {
+    return <Empty description="За последнее время у вас нет чатов." />;
+  }
 
   return (
     <Flex vertical className="contact-list">

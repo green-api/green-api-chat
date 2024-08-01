@@ -1,9 +1,11 @@
 import { FC, useEffect, useRef } from 'react';
 
+import { InfoCircleOutlined } from '@ant-design/icons';
+import { Space, Tooltip } from 'antd';
 import { useTranslation } from 'react-i18next';
 
-import { getMessageDate } from '../../utils';
 import { LanguageLiteral, TypeConnectionMessage } from 'types';
+import { getMessageDate } from 'utils';
 
 interface MessageProps {
   type: TypeConnectionMessage;
@@ -11,9 +13,17 @@ interface MessageProps {
   senderName: string;
   isLastMessage: boolean;
   timestamp: number;
+  jsonMessage: string;
 }
 
-const Message: FC<MessageProps> = ({ textMessage, type, senderName, isLastMessage, timestamp }) => {
+const Message: FC<MessageProps> = ({
+  textMessage,
+  type,
+  senderName,
+  isLastMessage,
+  timestamp,
+  jsonMessage,
+}) => {
   const {
     i18n: { resolvedLanguage },
   } = useTranslation();
@@ -22,7 +32,7 @@ const Message: FC<MessageProps> = ({ textMessage, type, senderName, isLastMessag
 
   useEffect(() => {
     if (isLastMessage && messageRef.current) {
-      messageRef.current.scrollIntoView({ behavior: 'smooth' });
+      messageRef.current.scrollIntoView({ behavior: 'instant' });
     }
   }, [isLastMessage]);
 
@@ -41,7 +51,12 @@ const Message: FC<MessageProps> = ({ textMessage, type, senderName, isLastMessag
       <h4 style={{ alignSelf: type === 'incoming' ? 'flex-start' : 'flex-end' }}>{senderName}</h4>
       <div className={`message-text ${type === 'outgoing' ? 'outgoing' : 'incoming'}`}>
         <p>{textMessage}</p>
-        <span style={{ alignSelf: 'end', fontSize: 14 }}>{messageDate.date}</span>
+        <Space style={{ alignSelf: 'end' }}>
+          <Tooltip title={jsonMessage}>
+            <InfoCircleOutlined />
+          </Tooltip>
+          <span style={{ alignSelf: 'end', fontSize: 14 }}>{messageDate.date}</span>
+        </Space>
       </div>
     </div>
   );

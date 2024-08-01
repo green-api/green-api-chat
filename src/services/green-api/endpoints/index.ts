@@ -6,7 +6,7 @@ import { serviceMethodsGreenApiEndpoints } from './service-methods.green-api.end
 
 export const {
   useSendMessageMutation,
-  useReceiveNotificationMutation,
+  useReceiveNotificationQuery,
   useDeleteNotificationMutation,
   useGetChatHistoryQuery,
   useLastIncomingMessagesQuery,

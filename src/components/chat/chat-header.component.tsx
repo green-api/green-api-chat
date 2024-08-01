@@ -23,7 +23,7 @@ const ChatHeader: FC = () => {
     );
   }
 
-  return <h3>Chat</h3>;
+  return <h3>Последние чаты</h3>;
 };
 
 export default ChatHeader;

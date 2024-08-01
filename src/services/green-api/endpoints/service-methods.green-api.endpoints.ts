@@ -39,6 +39,7 @@ export const serviceMethodsGreenApiEndpoints = greenAPI.injectEndpoints({
         method: 'POST',
         body,
       }),
+      keepUnusedDataFor: 1000,
     }),
   }),
 });

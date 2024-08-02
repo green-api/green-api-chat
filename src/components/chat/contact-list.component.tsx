@@ -1,6 +1,6 @@
 import { FC } from 'react';
 
-import { Empty, Flex, Spin } from 'antd';
+import { Empty, Flex, Row, Spin } from 'antd';
 
 import ContactListItem from './contact-list-item.component';
 import { useAppSelector } from 'hooks';
@@ -24,7 +24,7 @@ const ContactList: FC = () => {
       apiTokenInstance: userCredentials.apiTokenInstance,
       minutes: 3000,
     },
-    { skipPollingIfUnfocused: true, pollingInterval: 10000 }
+    { skipPollingIfUnfocused: true, pollingInterval: 15000 }
   );
 
   const {
@@ -37,25 +37,25 @@ const ContactList: FC = () => {
       apiTokenInstance: userCredentials.apiTokenInstance,
       minutes: 3000,
     },
-    { skipPollingIfUnfocused: true, pollingInterval: 10000 }
+    { skipPollingIfUnfocused: true, pollingInterval: 15000 }
   );
 
   if (isLastIncomingLoading || isLastOutgoingLoading) {
     return (
-      <div className="flex-center spin-wrapper">
+      <Row justify="center" align="middle">
         <Spin size="large" />
-      </div>
+      </Row>
     );
   }
 
   if (lastIncomingError || lastOutgoingError) {
-    return <span>{getErrorMessage(lastIncomingError || lastOutgoingError)}</span>;
+    return <Empty description={getErrorMessage(lastIncomingError || lastOutgoingError)} />;
   }
 
   const lastFiveChats = getLastFiveChats(lastIncomingMessages, lastOutgoingMessages);
 
   if (!lastFiveChats.length) {
-    return <Empty description="За последнее время у вас нет чатов." />;
+    return <Empty description="За последнее время у вас нет чатов" />;
   }
 
   return (

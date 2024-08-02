@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { RootState } from 'store';
-import { UserState } from 'types';
+import { UserCredentials, UserState } from 'types';
 
 const getInitialStateFromStorage = (): UserState | null => {
   const initialState = localStorage.getItem('userState');
@@ -11,8 +11,8 @@ const getInitialStateFromStorage = (): UserState | null => {
 
 const initialState: UserState = getInitialStateFromStorage() || {
   credentials: {
-    idInstance: '9906924050',
-    apiTokenInstance: 'd7082be406f94068afe1e89d294be63d91df1e0ec5a74aba9a',
+    idInstance: '',
+    apiTokenInstance: '',
   },
   isAuth: false,
 };
@@ -21,8 +21,8 @@ const userSlice = createSlice({
   name: 'userSlice',
   initialState,
   reducers: {
-    setCredentials: (state, action: PayloadAction<Omit<UserState, 'isAuth'>>) => {
-      state.credentials = action.payload.credentials;
+    setCredentials: (state, action: PayloadAction<UserCredentials>) => {
+      state.credentials = action.payload;
       state.isAuth = true;
     },
     logout: (state) => {

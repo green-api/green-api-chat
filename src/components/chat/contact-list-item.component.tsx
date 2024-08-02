@@ -5,6 +5,7 @@ import { Flex, Spin } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import emptyAvatar from 'assets/emptyAvatar.png';
+import emptyAvatarGroup from 'assets/emptyAvatarGroup.png';
 import { useActions, useAppSelector } from 'hooks';
 import { useGetContactInfoQuery, useGetGroupDataQuery } from 'services/green-api/endpoints';
 import { selectCredentials } from 'store/slices/user.slice';
@@ -63,7 +64,11 @@ const ContactListItem: FC<ContactListItemProps> = ({ lastMessage }) => {
       gap="small"
       onClick={() => setActiveChat({ ...lastMessage, senderName: chatName })}
     >
-      <img className="avatar-image" src={emptyAvatar} alt="avatar" />
+      <img
+        className="avatar-image"
+        src={lastMessage.chatId.includes('g.us') ? emptyAvatarGroup : emptyAvatar}
+        alt="avatar"
+      />
       <Flex className="contact-list__item-wrapper">
         <Flex vertical gap="small" className="contact-list__item-body">
           {isLoading ? (

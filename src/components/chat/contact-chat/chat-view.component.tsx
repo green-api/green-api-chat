@@ -1,19 +1,23 @@
 import { FC } from 'react';
 
-import { Card, Spin } from 'antd';
+import { Card, Empty, Spin } from 'antd';
 
 import Message from './message.component';
 import { useAppSelector } from 'hooks';
 import { useGetChatHistoryQuery } from 'services/green-api/endpoints';
 import { selectActiveChat } from 'store/slices/chat.slice';
 import { selectCredentials } from 'store/slices/user.slice';
-import { getJSONMessage } from 'utils';
+import { getErrorMessage, getJSONMessage } from 'utils';
 
 const ChatView: FC = () => {
   const userCredentials = useAppSelector(selectCredentials);
   const activeChat = useAppSelector(selectActiveChat);
 
-  const { data: messages, isLoading } = useGetChatHistoryQuery(
+  const {
+    data: messages,
+    isLoading,
+    error,
+  } = useGetChatHistoryQuery(
     {
       idInstance: userCredentials.idInstance,
       apiTokenInstance: userCredentials.apiTokenInstance,
@@ -52,7 +56,7 @@ const ChatView: FC = () => {
   //           receiptId: notification.receiptId,
   //         });
   //
-  //         return;
+  //         return draftChatHistory;
   //       }
   //
   //       const updateChatHistoryThunk = journalsGreenApiEndpoints.util?.updateQueryData(
@@ -102,33 +106,43 @@ const ChatView: FC = () => {
   //   handleNotification();
   // }, [notification]);
 
+  if (isLoading) {
+    return (
+      <Card className="chat-view flex-center" bordered={false} style={{ boxShadow: 'unset' }}>
+        <Spin size="large" />
+      </Card>
+    );
+  }
+
+  if (error) {
+    return (
+      <Card className="chat-view flex-center" bordered={false} style={{ boxShadow: 'unset' }}>
+        <Empty description={getErrorMessage(error)} />
+      </Card>
+    );
+  }
+
   return (
     <Card className="chat-view" bordered={false} style={{ boxShadow: 'unset' }}>
-      {isLoading ? (
-        <div className="flex-center spin-wrapper">
-          <Spin size="large" />
-        </div>
-      ) : (
-        messages?.map((message, idx) => {
-          const typeMessage = message.typeMessage;
+      {messages?.map((message, idx) => {
+        const typeMessage = message.typeMessage;
 
-          return (
-            <Message
-              key={message.idMessage}
-              type={message.type}
-              textMessage={
-                !typeMessage.toLowerCase().includes('text')
-                  ? typeMessage
-                  : message.extendedTextMessage?.text || message.textMessage || message.typeMessage
-              }
-              senderName={message.type === 'outgoing' ? 'Вы' : activeChat.senderName!}
-              isLastMessage={idx === messages?.length - 1}
-              timestamp={message.timestamp}
-              jsonMessage={getJSONMessage(message)}
-            />
-          );
-        })
-      )}
+        return (
+          <Message
+            key={message.idMessage}
+            type={message.type}
+            textMessage={
+              !typeMessage.toLowerCase().includes('text')
+                ? typeMessage
+                : message.extendedTextMessage?.text || message.textMessage || message.typeMessage
+            }
+            senderName={message.type === 'outgoing' ? 'Вы' : activeChat.senderName!}
+            isLastMessage={idx === messages?.length - 1}
+            timestamp={message.timestamp}
+            jsonMessage={getJSONMessage(message)}
+          />
+        );
+      })}
     </Card>
   );
 };

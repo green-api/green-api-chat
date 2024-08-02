@@ -39,3 +39,14 @@ export interface GreenApiRouteInterface extends GreenApiUrlsInterface {
 }
 
 export type LanguageLiteral = 'en' | 'ru' | 'he';
+
+export interface ChatFormValues {
+  message: string;
+}
+
+export interface NewChatFormValues extends ChatFormValues {
+  chatId: {
+    0: string;
+    1: string;
+  };
+}

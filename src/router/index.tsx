@@ -1,4 +1,4 @@
-import { createBrowserRouter, RouteObject } from 'react-router-dom';
+import { createBrowserRouter, Navigate, RouteObject } from 'react-router-dom';
 
 import BaseLayout from 'components/layouts/base-layout.component';
 import { Routes } from 'configs';
@@ -9,6 +9,10 @@ export const routerConfig: RouteObject[] = [
     path: Routes.main,
     element: <BaseLayout />,
     children: [{ index: true, element: <Main /> }],
+  },
+  {
+    path: '*',
+    element: <Navigate to={Routes.main} />,
   },
 ];
 

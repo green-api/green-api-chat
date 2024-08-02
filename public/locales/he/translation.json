@@ -1,4 +1,6 @@
 {
   "EMPTY_FIELD_ERROR": "השדה לא יכול להיות ריק",
-  "MESSAGE_PLACEHOLDER": "טקסט ההודעה"
+  "MESSAGE_PLACEHOLDER": "טקסט ההודעה",
+  "CHAT_ID_INVALID_VALUE_MESSAGE": "משמעות שגויה",
+  "CHAT_ID_PLACEHOLDER": "מספר טלפון או צ ' אט (ללא שלטים)"
 }

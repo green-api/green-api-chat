@@ -144,7 +144,8 @@ export function getErrorMessage(error: unknown): string | null {
 
   switch (error.status) {
     case 466:
-      errorMessage = 'Исчерпано кол-во использований метода.';
+      errorMessage =
+        'Исчерпано кол-во использований метода. Перейдите на тариф Business или воспользуйтесь другим инстансом';
       break;
 
     case 429:
@@ -156,7 +157,7 @@ export function getErrorMessage(error: unknown): string | null {
       break;
 
     default:
-      errorMessage = 'Что-то пошло не так, попробуйте еще раз.';
+      errorMessage = 'Что-то пошло не так, попробуйте еще раз';
   }
 
   return errorMessage;
@@ -167,6 +168,11 @@ export function getJSONMessage(message: MessageInterface): string {
 
   if (copyMessage.jpegThumbnail) {
     copyMessage.jpegThumbnail = copyMessage.jpegThumbnail.slice(0, 100) + '...';
+  }
+
+  if (copyMessage.extendedTextMessage && copyMessage.extendedTextMessage.jpegThumbnail) {
+    copyMessage.extendedTextMessage.jpegThumbnail =
+      copyMessage.extendedTextMessage.jpegThumbnail.slice(0, 100) + '...';
   }
 
   if (copyMessage.extendedTextMessage && copyMessage.extendedTextMessage.text.length > 250) {

@@ -1,4 +1,6 @@
 {
   "EMPTY_FIELD_ERROR": "The field cannot be empty",
-  "MESSAGE_PLACEHOLDER": "Message text"
+  "MESSAGE_PLACEHOLDER": "Message text",
+  "CHAT_ID_INVALID_VALUE_MESSAGE": "Invalid value",
+  "CHAT_ID_PLACEHOLDER": "Phone or chat number (without signs)"
 }

@@ -1,4 +1,6 @@
 {
   "EMPTY_FIELD_ERROR": "Поле не может быть пустым",
-  "MESSAGE_PLACEHOLDER": "Текст сообщения"
+  "MESSAGE_PLACEHOLDER": "Текст сообщения",
+  "CHAT_ID_INVALID_VALUE_MESSAGE": "Некорректное значение",
+  "CHAT_ID_PLACEHOLDER": "Номер телефона или чата (без знаков)"
 }

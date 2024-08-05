@@ -1,6 +1,7 @@
 import { FC } from 'react';
 
 import { Card, Empty, Spin } from 'antd';
+import { useTranslation } from 'react-i18next';
 
 import Message from './message.component';
 import { useAppSelector } from 'hooks';
@@ -12,6 +13,8 @@ import { getErrorMessage, getJSONMessage } from 'utils';
 const ChatView: FC = () => {
   const userCredentials = useAppSelector(selectCredentials);
   const activeChat = useAppSelector(selectActiveChat);
+
+  const { t } = useTranslation();
 
   const {
     data: messages,
@@ -117,7 +120,7 @@ const ChatView: FC = () => {
   if (error) {
     return (
       <Card className="chat-view flex-center" bordered={false} style={{ boxShadow: 'unset' }}>
-        <Empty description={getErrorMessage(error)} />
+        <Empty description={getErrorMessage(error, t)} />
       </Card>
     );
   }
@@ -136,7 +139,7 @@ const ChatView: FC = () => {
                 ? typeMessage
                 : message.extendedTextMessage?.text || message.textMessage || message.typeMessage
             }
-            senderName={message.type === 'outgoing' ? 'Вы' : activeChat.senderName!}
+            senderName={message.type === 'outgoing' ? t('YOU_SENDER_NAME') : activeChat.senderName!}
             isLastMessage={idx === messages?.length - 1}
             timestamp={message.timestamp}
             jsonMessage={getJSONMessage(message)}

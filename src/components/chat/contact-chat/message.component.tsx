@@ -36,7 +36,10 @@ const Message: FC<MessageProps> = ({ textMessage, type, senderName, timestamp, j
       <div className={`message-text ${type === 'outgoing' ? 'outgoing' : 'incoming'}`}>
         <p>{textMessage}</p>
         <Space style={{ alignSelf: 'end' }}>
-          <Tooltip title={<pre>{jsonMessage}</pre>}>
+          <Tooltip
+            title={<pre style={{ textWrap: 'wrap' }}>{jsonMessage}</pre>}
+            overlayStyle={{ maxWidth: 450, lineHeight: 'initial' }}
+          >
             <InfoCircleOutlined />
           </Tooltip>
           <span style={{ alignSelf: 'end', fontSize: 14 }}>{messageDate.date}</span>

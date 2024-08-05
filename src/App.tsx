@@ -21,12 +21,22 @@ function App() {
 
   useEffect(() => {
     function handleMessage(event: MessageEvent<MessageData>) {
+      console.log(event);
+
       if (!isConsoleMessageData(event.data)) {
         console.log('unknown event');
         return;
       }
 
       switch (event.data.type) {
+        case MessageEventTypeEnum.INIT:
+          setCredentials({
+            idInstance: event.data.payload.idInstance,
+            apiTokenInstance: event.data.payload.apiTokenInstance,
+          });
+
+          return i18n.changeLanguage(event.data.payload.locale);
+
         case MessageEventTypeEnum.SET_CREDENTIALS:
           return setCredentials(event.data.payload);
 

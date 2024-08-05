@@ -64,6 +64,7 @@ export interface MessageInterface
   caption?: string;
   contact?: Contact;
   extendedTextMessage?: ExtendedTextMessage;
+  quotedMessage?: MessageInterface;
 }
 
 export type GetChatHistoryResponse = MessageInterface[];

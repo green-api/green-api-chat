@@ -1,6 +1,7 @@
 import { FC } from 'react';
 
 import { Empty, Flex, Row, Spin } from 'antd';
+import { useTranslation } from 'react-i18next';
 
 import ContactListItem from './contact-list-item.component';
 import { useAppSelector } from 'hooks';
@@ -13,6 +14,8 @@ import { getErrorMessage, getLastFiveChats } from 'utils';
 
 const ContactList: FC = () => {
   const userCredentials = useAppSelector(selectCredentials);
+
+  const { t } = useTranslation();
 
   const {
     data: lastIncomingMessages = [],
@@ -52,7 +55,7 @@ const ContactList: FC = () => {
     return (
       <Empty
         className="empty p-10 min-height-460"
-        description={getErrorMessage(lastIncomingError || lastOutgoingError)}
+        description={getErrorMessage(lastIncomingError || lastOutgoingError, t)}
       />
     );
   }
@@ -60,12 +63,7 @@ const ContactList: FC = () => {
   const lastFiveChats = getLastFiveChats(lastIncomingMessages, lastOutgoingMessages);
 
   if (!lastFiveChats.length) {
-    return (
-      <Empty
-        className="empty p-10 min-height-460"
-        description="За последнее время у вас нет чатов"
-      />
-    );
+    return <Empty className="empty p-10 min-height-460" description={t('EMPTY_CHAT_LIST')} />;
   }
 
   return (

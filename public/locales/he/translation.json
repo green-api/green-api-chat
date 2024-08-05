@@ -1,6 +1,14 @@
 {
+  "CHAT_HEADER": "הצ'אטים האחרונים",
   "EMPTY_FIELD_ERROR": "השדה לא יכול להיות ריק",
   "MESSAGE_PLACEHOLDER": "טקסט ההודעה",
   "CHAT_ID_INVALID_VALUE_MESSAGE": "משמעות שגויה",
-  "CHAT_ID_PLACEHOLDER": "מספר טלפון או צ ' אט (ללא שלטים)"
+  "CHAT_ID_PLACEHOLDER": "מספר טלפון או צ ' אט (ללא שלטים)",
+  "SEND_MESSAGE": "לִשְׁלוֹחַ",
+  "EMPTY_CHAT_LIST": "לא היו לך צ'אטים לאחרונה",
+  "METHOD_QUOTA_EXCEEDED": "חרג ממספר השימושים בשיטה. שדרג לתוכנית עסקית או השתמש במופע אחר",
+  "TOO_MANY_REQUESTS_ERROR": "יותר מדי בקשות",
+  "FETCH_ERROR": "בדוק שהנתונים שהוזנו נכונים",
+  "UNKNOWN_ERROR": "משהו השתבש. אנא נסה שוב",
+  "YOU_SENDER_NAME": "אתה"
 }

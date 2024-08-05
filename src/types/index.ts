@@ -51,11 +51,17 @@ export interface NewChatFormValues extends ChatFormValues {
   };
 }
 
-export type MessageData = MessageDataSetCredentials | MessageDataLocaleChange;
+export type MessageData = MessageDataInit | MessageDataSetCredentials | MessageDataLocaleChange;
 
 export enum MessageEventTypeEnum {
+  INIT = 'init',
   LOCALE_CHANGE = 'localeChange',
   SET_CREDENTIALS = 'setCredentials',
+}
+
+export interface MessageDataInit {
+  type: MessageEventTypeEnum.INIT;
+  payload: UserCredentials & LocaleChangeMessage;
 }
 
 export interface MessageDataLocaleChange {

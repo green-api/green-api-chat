@@ -1,3 +1,5 @@
+import { i18n } from 'i18next';
+
 import { GREEN_API_INSTANCES_ROUTER } from 'configs';
 import {
   ApiErrorResponse,
@@ -141,7 +143,7 @@ export function isConsoleMessageData(data: unknown): data is MessageData {
   return typeof data === 'object' && data !== null && 'type' in data && 'payload' in data;
 }
 
-export function getErrorMessage(error: unknown): string | null {
+export function getErrorMessage(error: unknown, t: i18n['t']): string | null {
   let errorMessage = '';
   if (!error || !isApiError(error)) {
     return null;
@@ -149,20 +151,19 @@ export function getErrorMessage(error: unknown): string | null {
 
   switch (error.status) {
     case 466:
-      errorMessage =
-        'Исчерпано кол-во использований метода. Перейдите на тариф Business или воспользуйтесь другим инстансом';
+      errorMessage = t('METHOD_QUOTA_EXCEEDED_ERROR');
       break;
 
     case 429:
-      errorMessage = 'Слишком много запросов';
+      errorMessage = t('TOO_MANY_REQUESTS_ERROR');
       break;
 
     case 'FETCH_ERROR':
-      errorMessage = 'Проверьте правильность введенных данных';
+      errorMessage = t('FETCH_ERROR');
       break;
 
     default:
-      errorMessage = 'Что-то пошло не так, попробуйте еще раз';
+      errorMessage = t('UNKNOWN_ERROR');
   }
 
   return errorMessage;
@@ -191,6 +192,10 @@ export function getJSONMessage(message: MessageInterface): string {
 
   if (copyMessage.caption && copyMessage.caption.length > 150) {
     copyMessage.caption = copyMessage.caption.slice(0, 150) + '...';
+  }
+
+  if (copyMessage.quotedMessage) {
+    copyMessage.quotedMessage = JSON.parse(getJSONMessage(copyMessage.quotedMessage));
   }
 
   return JSON.stringify(copyMessage, null, 2);

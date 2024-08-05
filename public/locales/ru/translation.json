@@ -1,6 +1,14 @@
 {
+  "CHAT_HEADER": "Последние чаты",
   "EMPTY_FIELD_ERROR": "Поле не может быть пустым",
   "MESSAGE_PLACEHOLDER": "Текст сообщения",
   "CHAT_ID_INVALID_VALUE_MESSAGE": "Некорректное значение",
-  "CHAT_ID_PLACEHOLDER": "Номер телефона или чата (без знаков)"
+  "CHAT_ID_PLACEHOLDER": "Номер телефона или чата (без знаков)",
+  "SEND_MESSAGE": "Отправить",
+  "EMPTY_CHAT_LIST": "За последнее время у вас нет чатов",
+  "METHOD_QUOTA_EXCEEDED_ERROR": "Исчерпано кол-во использований метода. Перейдите на тариф Business или воспользуйтесь другим инстансом",
+  "TOO_MANY_REQUESTS_ERROR": "Слишком много запросов",
+  "FETCH_ERROR": "Проверьте правильность введенных данных",
+  "UNKNOWN_ERROR": "Что-то пошло не так, попробуйте еще раз",
+  "YOU_SENDER_NAME": "Вы"
 }

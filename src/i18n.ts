@@ -8,7 +8,7 @@ i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
-    fallbackLng: 'ru',
+    fallbackLng: 'en',
     backend: {
       loadPath: '/chat/locales/{{lng}}/translation.json',
       expirationTime: 24 * 60 * 60 * 1000,
@@ -19,8 +19,8 @@ i18n
       lookupCookie: 'i18next',
       lookupLocalStorage: 'i18nextLng',
       lookupFromPathIndex: 0,
-      lookupFromSubdomainIndex: 0,
       caches: ['localStorage', 'cookie'],
+      lookupFromSubdomainIndex: 0,
       excludeCacheFor: ['cimode'],
       cookieMinutes: 10,
       cookieDomain: 'myDomain',

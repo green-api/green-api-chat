@@ -5,6 +5,7 @@ import {
   GreenApiUrlsInterface,
   InstanceInterface,
   LanguageLiteral,
+  MessageData,
   MessageInterface,
 } from 'types';
 
@@ -136,6 +137,10 @@ export function isApiError(error: unknown): error is ApiErrorResponse {
   );
 }
 
+export function isConsoleMessageData(data: unknown): data is MessageData {
+  return typeof data === 'object' && data !== null && 'type' in data && 'payload' in data;
+}
+
 export function getErrorMessage(error: unknown): string | null {
   let errorMessage = '';
   if (!error || !isApiError(error)) {
@@ -167,12 +172,12 @@ export function getJSONMessage(message: MessageInterface): string {
   const copyMessage = structuredClone(message);
 
   if (copyMessage.jpegThumbnail) {
-    copyMessage.jpegThumbnail = copyMessage.jpegThumbnail.slice(0, 100) + '...';
+    copyMessage.jpegThumbnail = copyMessage.jpegThumbnail.slice(0, 50) + '...';
   }
 
   if (copyMessage.extendedTextMessage && copyMessage.extendedTextMessage.jpegThumbnail) {
     copyMessage.extendedTextMessage.jpegThumbnail =
-      copyMessage.extendedTextMessage.jpegThumbnail.slice(0, 100) + '...';
+      copyMessage.extendedTextMessage.jpegThumbnail.slice(0, 50) + '...';
   }
 
   if (copyMessage.extendedTextMessage && copyMessage.extendedTextMessage.text.length > 250) {
@@ -184,5 +189,9 @@ export function getJSONMessage(message: MessageInterface): string {
     copyMessage.textMessage = copyMessage.textMessage.slice(0, 250) + '...';
   }
 
-  return JSON.stringify(copyMessage);
+  if (copyMessage.caption && copyMessage.caption.length > 150) {
+    copyMessage.caption = copyMessage.caption.slice(0, 150) + '...';
+  }
+
+  return JSON.stringify(copyMessage, null, 2);
 }

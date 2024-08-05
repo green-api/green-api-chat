@@ -17,6 +17,8 @@
   }
 
   &-view {
+    display: flex;
+    flex-direction: column-reverse;
     font-size: 15px;
     height: 500px;
     overflow-y: auto;
@@ -77,10 +79,6 @@
   }
 }
 
-.message-date {
-  margin-left: auto;
-}
-
 .flex-center {
   display: flex;
   justify-content: center;
@@ -107,4 +105,16 @@
       color: var(--main-background)
     }
   }
+
+  &-date {
+    margin-left: auto;
+  }
+}
+
+.min-height-460 {
+  min-height: 460px;
+}
+
+.p-10 {
+  padding: 10px
 }

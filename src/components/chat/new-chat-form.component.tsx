@@ -94,13 +94,17 @@ const NewChatForm: FC = () => {
                 { min: 9, message: t('CHAT_ID_INVALID_VALUE_MESSAGE') },
                 () => ({
                   validator: async (_, value) => {
+                    if (defaultTypeChatValue === '@g.us' || !value) {
+                      return;
+                    }
+
                     const { data } = await checkWhatsapp({
                       idInstance: userCredentials.idInstance,
                       apiTokenInstance: userCredentials.apiTokenInstance,
                       phoneNumber: value,
                     });
 
-                    if (!value || (data && data.existsWhatsapp)) {
+                    if (data && data.existsWhatsapp) {
                       return Promise.resolve();
                     }
 

@@ -42,24 +42,34 @@ const ContactList: FC = () => {
 
   if (isLastIncomingLoading || isLastOutgoingLoading) {
     return (
-      <Row justify="center" align="middle">
+      <Row justify="center" align="middle" className="min-height-460">
         <Spin size="large" />
       </Row>
     );
   }
 
   if (lastIncomingError || lastOutgoingError) {
-    return <Empty description={getErrorMessage(lastIncomingError || lastOutgoingError)} />;
+    return (
+      <Empty
+        className="empty p-10 min-height-460"
+        description={getErrorMessage(lastIncomingError || lastOutgoingError)}
+      />
+    );
   }
 
   const lastFiveChats = getLastFiveChats(lastIncomingMessages, lastOutgoingMessages);
 
   if (!lastFiveChats.length) {
-    return <Empty description="За последнее время у вас нет чатов" />;
+    return (
+      <Empty
+        className="empty p-10 min-height-460"
+        description="За последнее время у вас нет чатов"
+      />
+    );
   }
 
   return (
-    <Flex vertical className="contact-list">
+    <Flex vertical className="contact-list min-height-460">
       {lastFiveChats.map((message) => (
         <ContactListItem key={message.chatId} lastMessage={message} />
       ))}

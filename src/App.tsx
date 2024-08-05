@@ -5,14 +5,42 @@ import en_US from 'antd/es/locale/en_US';
 import { useTranslation } from 'react-i18next';
 import { RouterProvider } from 'react-router-dom';
 
+import { isConsoleMessageData } from './utils';
 import { localisation, THEME } from 'configs';
+import { useActions } from 'hooks';
 import router from 'router';
+import { MessageData, MessageEventTypeEnum } from 'types';
 
 function App() {
   const { i18n } = useTranslation();
+  const { setCredentials } = useActions();
 
   useEffect(() => {
     document.documentElement.classList.add('default-theme');
+  }, []);
+
+  useEffect(() => {
+    function handleMessage(event: MessageEvent<MessageData>) {
+      if (!isConsoleMessageData(event.data)) {
+        console.log('unknown event');
+        return;
+      }
+
+      switch (event.data.type) {
+        case MessageEventTypeEnum.SET_CREDENTIALS:
+          return setCredentials(event.data.payload);
+
+        case MessageEventTypeEnum.LOCALE_CHANGE:
+          return i18n.changeLanguage(event.data.payload.locale);
+
+        default:
+          return;
+      }
+    }
+
+    window.addEventListener('message', handleMessage);
+
+    return () => window.removeEventListener('message', handleMessage);
   }, []);
 
   return (

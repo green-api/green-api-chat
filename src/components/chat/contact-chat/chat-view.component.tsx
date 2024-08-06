@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useEffect, useRef } from 'react';
 
 import { Card, Empty, Spin } from 'antd';
 import { useTranslation } from 'react-i18next';
@@ -15,6 +15,8 @@ const ChatView: FC = () => {
   const activeChat = useAppSelector(selectActiveChat);
 
   const { t } = useTranslation();
+
+  const chatViewRef = useRef<HTMLDivElement>(null);
 
   const {
     data: messages,
@@ -109,6 +111,13 @@ const ChatView: FC = () => {
   //   handleNotification();
   // }, [notification]);
 
+  useEffect(() => {
+    const element = chatViewRef.current;
+    if (element) {
+      element.scrollTop = element.scrollHeight;
+    }
+  }, [messages]);
+
   if (isLoading) {
     return (
       <Card className="chat-view flex-center" bordered={false} style={{ boxShadow: 'unset' }}>
@@ -126,7 +135,7 @@ const ChatView: FC = () => {
   }
 
   return (
-    <Card className="chat-view" bordered={false} style={{ boxShadow: 'unset' }}>
+    <Card className="chat-view" bordered={false} style={{ boxShadow: 'unset' }} ref={chatViewRef}>
       {messages?.map((message, idx) => {
         const typeMessage = message.typeMessage;
 

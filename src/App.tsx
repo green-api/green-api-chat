@@ -21,8 +21,6 @@ function App() {
 
   useEffect(() => {
     function handleMessage(event: MessageEvent<MessageData>) {
-      console.log(event);
-
       if (!isConsoleMessageData(event.data)) {
         console.log('unknown event');
         return;

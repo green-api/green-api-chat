@@ -10,5 +10,6 @@
   "TOO_MANY_REQUESTS_ERROR": "יותר מדי בקשות",
   "FETCH_ERROR": "בדוק שהנתונים שהוזנו נכונים",
   "UNKNOWN_ERROR": "משהו השתבש. אנא נסה שוב",
-  "YOU_SENDER_NAME": "אתה"
+  "YOU_SENDER_NAME": "אתה",
+  "TEXT_WAS_COPIED": "מועתק"
 }

@@ -10,5 +10,6 @@
   "TOO_MANY_REQUESTS_ERROR": "Too many requests",
   "FETCH_ERROR": "Check that the entered data is correct",
   "UNKNOWN_ERROR": "Something went wrong, please try again",
-  "YOU_SENDER_NAME": "You"
+  "YOU_SENDER_NAME": "You",
+  "TEXT_WAS_COPIED": "Copied to clipboard"
 }

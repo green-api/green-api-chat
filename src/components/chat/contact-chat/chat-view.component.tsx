@@ -142,7 +142,9 @@ const ChatView: FC = () => {
         return (
           <Message
             key={message.idMessage}
+            idMessage={message.idMessage}
             type={message.type}
+            typeMessage={typeMessage}
             textMessage={
               !typeMessage.toLowerCase().includes('text')
                 ? typeMessage
@@ -152,6 +154,7 @@ const ChatView: FC = () => {
             isLastMessage={idx === messages?.length - 1}
             timestamp={message.timestamp}
             jsonMessage={getJSONMessage(message)}
+            downloadUrl={message.downloadUrl}
           />
         );
       })}

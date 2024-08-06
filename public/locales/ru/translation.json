@@ -10,5 +10,6 @@
   "TOO_MANY_REQUESTS_ERROR": "Слишком много запросов",
   "FETCH_ERROR": "Проверьте правильность введенных данных",
   "UNKNOWN_ERROR": "Что-то пошло не так, попробуйте еще раз",
-  "YOU_SENDER_NAME": "Вы"
+  "YOU_SENDER_NAME": "Вы",
+  "TEXT_WAS_COPIED": "Скопировано в буфер"
 }

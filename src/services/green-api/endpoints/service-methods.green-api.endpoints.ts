@@ -30,6 +30,7 @@ export const serviceMethodsGreenApiEndpoints = greenAPI.injectEndpoints({
         method: 'POST',
         body,
       }),
+      keepUnusedDataFor: 1000,
     }),
     getContactInfo: builder.query<GetContactInfoResponseInterface, RequestWithChatIdParameters>({
       query: ({ idInstance, apiTokenInstance, ...body }) => ({

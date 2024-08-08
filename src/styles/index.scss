@@ -45,6 +45,10 @@
   &-footer {
     border-top: 1px solid var(--border-color);
   }
+
+  .ant-card-head {
+    background-color: var(--second-background);
+  }
 }
 
 .avatar-image {
@@ -88,25 +92,27 @@
 }
 
 .message {
+  display: flex;
+  flex-direction: column;
+
   &-text {
     display: flex;
     flex-direction: column;
-    padding: 20px;
     border-radius: 10px;
-
-    &.outgoing {
-      background-color: var(--second-background);
-    }
-
-    &.incoming {
-      background-color: var(--light-primary-color);
-      color: var(--main-background)
-    }
   }
 
   &-date {
     margin-left: auto;
   }
+}
+
+.outgoing {
+  background-color: var(--second-background);
+}
+
+.incoming {
+  background-color: var(--light-primary-color);
+  color: var(--main-background)
 }
 
 .min-height-460 {
@@ -115,4 +121,8 @@
 
 .p-10 {
   padding: 10px
+}
+
+.bg-color-second {
+  background-color: var(--second-background);
 }

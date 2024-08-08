@@ -27,7 +27,7 @@ const ChatView: FC = () => {
       idInstance: userCredentials.idInstance,
       apiTokenInstance: userCredentials.apiTokenInstance,
       chatId: activeChat.chatId,
-      count: 30,
+      count: 10,
     },
     { skipPollingIfUnfocused: true, pollingInterval: 10000 }
   );
@@ -155,6 +155,7 @@ const ChatView: FC = () => {
             timestamp={message.timestamp}
             jsonMessage={getJSONMessage(message)}
             downloadUrl={message.downloadUrl}
+            statusMessage={message.statusMessage}
           />
         );
       })}

@@ -1,7 +1,7 @@
 {
   "CHAT_HEADER": "Последние чаты",
   "EMPTY_FIELD_ERROR": "Поле не может быть пустым",
-  "MESSAGE_PLACEHOLDER": "Текст сообщения",
+  "MESSAGE_PLACEHOLDER": "Введите сообщение",
   "CHAT_ID_INVALID_VALUE_MESSAGE": "Некорректное значение",
   "CHAT_ID_PLACEHOLDER": "Номер телефона или чата (без знаков)",
   "SEND_MESSAGE": "Отправить",
@@ -11,5 +11,6 @@
   "FETCH_ERROR": "Проверьте правильность введенных данных",
   "UNKNOWN_ERROR": "Что-то пошло не так, попробуйте еще раз",
   "YOU_SENDER_NAME": "Вы",
-  "TEXT_WAS_COPIED": "Скопировано в буфер"
+  "TEXT_WAS_COPIED": "Скопировано в буфер",
+  "SHOW_ALL_TEXT": "Показать всё"
 }

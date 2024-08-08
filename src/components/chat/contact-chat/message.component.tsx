@@ -3,14 +3,16 @@ import { FC } from 'react';
 import {
   AudioOutlined,
   FileImageOutlined,
-  InfoCircleOutlined,
   VideoCameraOutlined,
 } from '@ant-design/icons';
-import { Space, Tooltip } from 'antd';
+import { Space, Tooltip, Typography } from 'antd';
 import useMessage from 'antd/es/message/useMessage';
 import { useTranslation } from 'react-i18next';
 
-import { LanguageLiteral, TypeConnectionMessage, TypeMessage } from 'types';
+import DoubleTickIcon from 'assets/double-tick.svg?react';
+import InfoIcon from 'assets/info.svg?react';
+import TickIcon from 'assets/tick.svg?react';
+import { LanguageLiteral, StatusMessage, TypeConnectionMessage, TypeMessage } from 'types';
 import { getMessageDate } from 'utils';
 
 interface MessageProps {
@@ -22,6 +24,7 @@ interface MessageProps {
   timestamp: number;
   jsonMessage: string;
   idMessage: string;
+  statusMessage?: StatusMessage;
   downloadUrl?: string;
 }
 
@@ -34,6 +37,7 @@ const Message: FC<MessageProps> = ({
   idMessage,
   typeMessage,
   downloadUrl,
+  statusMessage,
 }) => {
   const {
     t,
@@ -44,7 +48,7 @@ const Message: FC<MessageProps> = ({
 
   const [message, contextMessageHolder] = useMessage();
 
-  const getMessageTypeIcon = (typeMessage: TypeMessage, downloadUrl?: string) => {
+  const getMessageTypeIcon = () => {
     if (!downloadUrl) {
       return null;
     }
@@ -79,28 +83,52 @@ const Message: FC<MessageProps> = ({
     );
   };
 
+  const getOutgoingStatusMessageIcon = () => {
+    if (!statusMessage) {
+      return null;
+    }
+
+    switch (statusMessage) {
+      case 'sent':
+        return <TickIcon style={{ color: '#8696a0' }} />;
+
+      case 'delivered':
+        return <DoubleTickIcon style={{ color: '#8696a0' }} />;
+
+      case 'read':
+        return <DoubleTickIcon style={{ color: '#30c0ff' }} />;
+
+      default:
+        return null;
+    }
+  };
+
   return (
     <div
       style={{
         alignSelf: type === 'incoming' ? 'flex-start' : 'flex-end',
-        display: 'flex',
-        flexDirection: 'column',
       }}
       className="message"
     >
       <h4 style={{ alignSelf: type === 'incoming' ? 'flex-start' : 'flex-end' }}>{senderName}</h4>
-      <div className={`message-text ${type === 'outgoing' ? 'outgoing' : 'incoming'}`}>
+      <div className={`message-text ${type === 'outgoing' ? 'outgoing' : 'incoming'} p-10`}>
         <Space>
-          {getMessageTypeIcon(typeMessage, downloadUrl)}
-          <p>{textMessage}</p>
+          {getMessageTypeIcon()}
+          <Typography.Paragraph
+            className={`${type === 'outgoing' ? 'outgoing' : 'incoming'}`}
+            style={{ fontSize: 16 }}
+            ellipsis={{ rows: 5, expandable: true, symbol: t('SHOW_ALL_TEXT') }}
+          >
+            {textMessage}
+          </Typography.Paragraph>
         </Space>
 
         <Space style={{ alignSelf: 'end' }}>
           <Tooltip
             title={<pre style={{ textWrap: 'wrap' }}>{jsonMessage}</pre>}
-            overlayStyle={{ maxWidth: 450, lineHeight: 'initial' }}
+            overlayStyle={{ maxWidth: 450, lineHeight: 'initial', fontSize: 13 }}
           >
-            <InfoCircleOutlined
+            <InfoIcon
               onClick={(event) => {
                 event.stopPropagation();
 
@@ -111,10 +139,12 @@ const Message: FC<MessageProps> = ({
                   });
                 });
               }}
+              style={{ marginTop: 6 }}
             />
             {contextMessageHolder}
           </Tooltip>
           <span style={{ alignSelf: 'end', fontSize: 14 }}>{messageDate.date}</span>
+          {statusMessage && getOutgoingStatusMessageIcon()}
         </Space>
       </div>
     </div>

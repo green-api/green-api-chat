@@ -15,6 +15,7 @@ export const {
   useGetGroupDataQuery,
   useGetContactInfoQuery,
   useCheckWhatsappMutation,
+  useGetAvatarQuery,
 } = {
   ...sendingGreenApiEndpoints,
   ...receivingGreenApiEndpoints,

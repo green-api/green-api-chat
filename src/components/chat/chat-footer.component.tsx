@@ -4,7 +4,7 @@ import NewChatForm from './new-chat-form.component';
 
 const ChatFooter: FC = () => {
   return (
-    <div className="chat-footer">
+    <div className="chat-footer bg-color-second">
       <NewChatForm />
     </div>
   );

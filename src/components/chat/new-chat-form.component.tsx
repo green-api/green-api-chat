@@ -63,6 +63,7 @@ const NewChatForm: FC = () => {
             senderContactName: '',
             idMessage: data.idMessage,
             chatId: fullChatId,
+            statusMessage: 'sent',
           });
 
           return draftChatHistory;
@@ -136,12 +137,12 @@ const NewChatForm: FC = () => {
           </Col>
         </Row>
       </Form.Item>
-      <Form.Item
-        name="message"
-        rules={[{ required: true, message: t('EMPTY_FIELD_ERROR') }]}
-        hasFeedback
-      >
-        <Input.TextArea placeholder={t('MESSAGE_PLACEHOLDER')} />
+      <Form.Item name="message" rules={[{ required: true, message: t('EMPTY_FIELD_ERROR') }]}>
+        <Input.TextArea
+          autoSize={{ minRows: 5, maxRows: 5 }}
+          maxLength={500}
+          placeholder={t('MESSAGE_PLACEHOLDER')}
+        />
       </Form.Item>
       <Form.Item>
         <Button type="primary" htmlType="submit" className="login-form-button" loading={isLoading}>

@@ -31,7 +31,7 @@ export interface ResultResponseInterface {
 }
 
 export type TypeConnectionMessage = 'outgoing' | 'incoming';
-export type StatusMessage = 'outgoing' | 'pending' | 'sent' | 'delivered' | 'read';
+export type StatusMessage = 'pending' | 'sent' | 'delivered' | 'read';
 export type TypeMessage =
   | 'textMessage'
   | 'imageMessage'

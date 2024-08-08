@@ -1,7 +1,7 @@
 {
   "CHAT_HEADER": "הצ'אטים האחרונים",
   "EMPTY_FIELD_ERROR": "השדה לא יכול להיות ריק",
-  "MESSAGE_PLACEHOLDER": "טקסט ההודעה",
+  "MESSAGE_PLACEHOLDER": "הכנס את ההודעה שלך",
   "CHAT_ID_INVALID_VALUE_MESSAGE": "משמעות שגויה",
   "CHAT_ID_PLACEHOLDER": "מספר טלפון או צ ' אט (ללא שלטים)",
   "SEND_MESSAGE": "לִשְׁלוֹחַ",
@@ -11,5 +11,6 @@
   "FETCH_ERROR": "בדוק שהנתונים שהוזנו נכונים",
   "UNKNOWN_ERROR": "משהו השתבש. אנא נסה שוב",
   "YOU_SENDER_NAME": "אתה",
-  "TEXT_WAS_COPIED": "מועתק"
+  "TEXT_WAS_COPIED": "מועתק",
+  "SHOW_ALL_TEXT": "קרא עוד"
 }

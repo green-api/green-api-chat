@@ -1,6 +1,6 @@
 import { FC } from 'react';
 
-import { ArrowLeftOutlined } from '@ant-design/icons';
+import { LeftOutlined } from '@ant-design/icons';
 import { Space } from 'antd';
 import { useTranslation } from 'react-i18next';
 
@@ -19,7 +19,7 @@ const ChatHeader: FC = () => {
     return (
       <Space>
         <a>
-          <ArrowLeftOutlined onClick={() => setShowContactList()} />
+          <LeftOutlined onClick={() => setShowContactList()} />
         </a>
         <h3>{activeChat.senderName}</h3>
       </Space>

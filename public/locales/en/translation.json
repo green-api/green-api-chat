@@ -1,7 +1,7 @@
 {
   "CHAT_HEADER": "Latest chats",
   "EMPTY_FIELD_ERROR": "The field cannot be empty",
-  "MESSAGE_PLACEHOLDER": "Message text",
+  "MESSAGE_PLACEHOLDER": "Enter your message",
   "CHAT_ID_INVALID_VALUE_MESSAGE": "Invalid value",
   "CHAT_ID_PLACEHOLDER": "Phone or chat number (without signs)",
   "SEND_MESSAGE": "Send",
@@ -11,5 +11,6 @@
   "FETCH_ERROR": "Check that the entered data is correct",
   "UNKNOWN_ERROR": "Something went wrong, please try again",
   "YOU_SENDER_NAME": "You",
-  "TEXT_WAS_COPIED": "Copied to clipboard"
+  "TEXT_WAS_COPIED": "Copied to clipboard",
+  "SHOW_ALL_TEXT": "Read more"
 }

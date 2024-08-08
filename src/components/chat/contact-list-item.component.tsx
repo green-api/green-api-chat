@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
 
 import { LoadingOutlined } from '@ant-design/icons';
 import { Flex, Spin } from 'antd';
@@ -7,7 +7,11 @@ import { useTranslation } from 'react-i18next';
 import emptyAvatar from 'assets/emptyAvatar.png';
 import emptyAvatarGroup from 'assets/emptyAvatarGroup.png';
 import { useActions, useAppSelector } from 'hooks';
-import { useGetContactInfoQuery, useGetGroupDataQuery } from 'services/green-api/endpoints';
+import {
+  useGetAvatarQuery,
+  useGetContactInfoQuery,
+  useGetGroupDataQuery,
+} from 'services/green-api/endpoints';
 import { selectCredentials } from 'store/slices/user.slice';
 import { LanguageLiteral, MessageInterface } from 'types';
 import { getMessageDate } from 'utils';
@@ -47,6 +51,12 @@ const ContactListItem: FC<ContactListItemProps> = ({ lastMessage }) => {
     { skip: !!lastMessage.senderName || lastMessage.chatId.includes('g.us') }
   );
 
+  const { data: avatarData } = useGetAvatarQuery({
+    idInstance: userCredentials.idInstance,
+    apiTokenInstance: userCredentials.apiTokenInstance,
+    chatId: lastMessage.chatId,
+  });
+
   const isLoading = isGroupDataLoading || isContactInfoLoading;
 
   const chatName =
@@ -57,6 +67,17 @@ const ContactListItem: FC<ContactListItemProps> = ({ lastMessage }) => {
     lastMessage.senderName ||
     lastMessage.chatId.slice(0, lastMessage.chatId.indexOf('@'));
 
+  const avatar = useMemo<string>(() => {
+    if (avatarData && avatarData.urlAvatar) {
+      return avatarData.urlAvatar;
+    }
+
+    return lastMessage.chatId.includes('g.us') ? emptyAvatarGroup : emptyAvatar;
+  }, [avatarData, lastMessage]);
+
+  const textMessage =
+    lastMessage.textMessage || lastMessage.extendedTextMessage?.text || lastMessage.typeMessage;
+
   return (
     <Flex
       className="contact-list__item"
@@ -64,11 +85,7 @@ const ContactListItem: FC<ContactListItemProps> = ({ lastMessage }) => {
       gap="small"
       onClick={() => setActiveChat({ ...lastMessage, senderName: chatName })}
     >
-      <img
-        className="avatar-image"
-        src={lastMessage.chatId.includes('g.us') ? emptyAvatarGroup : emptyAvatar}
-        alt="avatar"
-      />
+      <img className="avatar-image" src={avatar} alt="avatar" />
       <Flex className="contact-list__item-wrapper">
         <Flex vertical gap="small" className="contact-list__item-body">
           {isLoading ? (
@@ -84,9 +101,7 @@ const ContactListItem: FC<ContactListItemProps> = ({ lastMessage }) => {
               WebkitLineClamp: 1,
             }}
           >
-            {lastMessage.textMessage ||
-              lastMessage.extendedTextMessage?.text ||
-              lastMessage.typeMessage}
+            {textMessage}
           </span>
         </Flex>
         <span

@@ -44,7 +44,7 @@ const ChatForm: FC = () => {
           idInstance: userCredentials.idInstance,
           apiTokenInstance: userCredentials.apiTokenInstance,
           chatId: activeChat.chatId,
-          count: 30,
+          count: 10,
         },
         (draftChatHistory) => {
           const existingMessage = draftChatHistory.find((msg) => msg.idMessage === data.idMessage);
@@ -63,6 +63,7 @@ const ChatForm: FC = () => {
             senderContactName: '',
             idMessage: data.idMessage,
             chatId: activeChat.chatId,
+            statusMessage: 'sent',
           });
 
           return draftChatHistory;
@@ -74,13 +75,18 @@ const ChatForm: FC = () => {
   };
 
   return (
-    <Form name="chat-form" className="chat-form" onFinish={onSendMessage} form={form}>
-      <Form.Item
-        name="message"
-        rules={[{ required: true, message: t('EMPTY_FIELD_ERROR') }]}
-        hasFeedback
-      >
-        <Input.TextArea placeholder={t('MESSAGE_PLACEHOLDER')} />
+    <Form
+      name="chat-form"
+      className="chat-form bg-color-second"
+      onFinish={onSendMessage}
+      form={form}
+    >
+      <Form.Item name="message" rules={[{ required: true, message: t('EMPTY_FIELD_ERROR') }]}>
+        <Input.TextArea
+          autoSize={{ minRows: 5, maxRows: 5 }}
+          maxLength={500}
+          placeholder={t('MESSAGE_PLACEHOLDER')}
+        />
       </Form.Item>
       <Form.Item>
         <Button type="primary" htmlType="submit" className="login-form-button" loading={isLoading}>

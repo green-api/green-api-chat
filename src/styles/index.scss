@@ -4,6 +4,10 @@
 @import "rest/functions";
 @import "rest/mixins";
 
+html {
+  overflow: hidden;
+}
+
 .app {
   min-height: 100vh;
 }

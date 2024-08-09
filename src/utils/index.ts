@@ -123,7 +123,7 @@ export function updateLastChats(
   for (const message of lastFiveChats) {
     const existingChatIndex = copyCurrentChats.findIndex((chat) => chat.chatId === message.chatId);
 
-    if (existingChatIndex === -1) {
+    if (existingChatIndex === -1 && copyCurrentChats.length === 5) {
       copyCurrentChats.pop();
     } else {
       copyCurrentChats.splice(existingChatIndex, 1);

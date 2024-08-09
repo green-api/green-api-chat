@@ -48,7 +48,7 @@ const NewChatForm: FC = () => {
         (draftChatHistory) => {
           const existingChatIdx = draftChatHistory.findIndex((msg) => msg.chatId === fullChatId);
 
-          if (existingChatIdx === -1) {
+          if (existingChatIdx === -1 && draftChatHistory.length === 5) {
             draftChatHistory.pop();
           } else {
             draftChatHistory.splice(existingChatIdx, 1);

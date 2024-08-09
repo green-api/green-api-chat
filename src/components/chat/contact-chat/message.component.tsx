@@ -117,7 +117,7 @@ const Message: FC<MessageProps> = ({
           {getMessageTypeIcon()}
           <Typography.Paragraph
             className={`${type === 'outgoing' ? 'outgoing' : 'incoming'}`}
-            style={{ fontSize: 16 }}
+            style={{ fontSize: 16, margin: 0 }}
             ellipsis={{ rows: 5, expandable: true, symbol: t('SHOW_ALL_TEXT') }}
           >
             {textMessage}

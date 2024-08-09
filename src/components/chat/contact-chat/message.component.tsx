@@ -1,10 +1,6 @@
 import { FC } from 'react';
 
-import {
-  AudioOutlined,
-  FileImageOutlined,
-  VideoCameraOutlined,
-} from '@ant-design/icons';
+import { AudioOutlined, FileImageOutlined, VideoCameraOutlined } from '@ant-design/icons';
 import { Space, Tooltip, Typography } from 'antd';
 import useMessage from 'antd/es/message/useMessage';
 import { useTranslation } from 'react-i18next';
@@ -96,7 +92,7 @@ const Message: FC<MessageProps> = ({
         return <DoubleTickIcon style={{ color: '#8696a0' }} />;
 
       case 'read':
-        return <DoubleTickIcon style={{ color: '#30c0ff' }} />;
+        return <DoubleTickIcon style={{ color: '#42ff00' }} />;
 
       default:
         return null;
@@ -110,7 +106,12 @@ const Message: FC<MessageProps> = ({
       }}
       className="message"
     >
-      <h4 style={{ alignSelf: type === 'incoming' ? 'flex-start' : 'flex-end' }}>{senderName}</h4>
+      <h4
+        style={{ alignSelf: type === 'incoming' ? 'flex-start' : 'flex-end' }}
+        className="text-overflow"
+      >
+        {senderName}
+      </h4>
       <div className={`message-text ${type === 'outgoing' ? 'outgoing' : 'incoming'} p-10`}>
         <Space>
           {getMessageTypeIcon()}

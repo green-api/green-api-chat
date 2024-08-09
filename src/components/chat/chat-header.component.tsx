@@ -21,12 +21,12 @@ const ChatHeader: FC = () => {
         <a>
           <LeftOutlined onClick={() => setShowContactList()} />
         </a>
-        <h3>{activeChat.senderName}</h3>
+        <h3 className="text-overflow">{activeChat.senderName}</h3>
       </Space>
     );
   }
 
-  return <h3>{t('CHAT_HEADER')}</h3>;
+  return <h3 className="text-overflow">{t('CHAT_HEADER')}</h3>;
 };
 
 export default ChatHeader;

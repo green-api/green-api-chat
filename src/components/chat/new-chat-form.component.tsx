@@ -40,21 +40,21 @@ const NewChatForm: FC = () => {
 
     if (data) {
       const updateChatHistoryThunk = journalsGreenApiEndpoints.util?.updateQueryData(
-        'lastOutgoingMessages',
+        'lastMessages',
         {
           idInstance: userCredentials.idInstance,
           apiTokenInstance: userCredentials.apiTokenInstance,
-          minutes: 3000,
         },
         (draftChatHistory) => {
-          const existingMessage = draftChatHistory.find((msg) => msg.idMessage === data.idMessage);
-          if (existingMessage) {
-            console.log('message already in chat history');
+          const existingChatIdx = draftChatHistory.findIndex((msg) => msg.chatId === fullChatId);
 
-            return draftChatHistory;
+          if (existingChatIdx === -1) {
+            draftChatHistory.pop();
+          } else {
+            draftChatHistory.splice(existingChatIdx, 1);
           }
 
-          draftChatHistory.push({
+          draftChatHistory.unshift({
             type: 'outgoing',
             typeMessage: 'textMessage',
             textMessage: message,

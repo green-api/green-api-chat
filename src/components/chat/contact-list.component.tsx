@@ -5,45 +5,24 @@ import { useTranslation } from 'react-i18next';
 
 import ContactListItem from './contact-list-item.component';
 import { useAppSelector } from 'hooks';
-import {
-  useLastIncomingMessagesQuery,
-  useLastOutgoingMessagesQuery,
-} from 'services/green-api/endpoints';
+import { useLastMessagesQuery } from 'services/green-api/endpoints';
 import { selectCredentials } from 'store/slices/user.slice';
-import { getErrorMessage, getLastFiveChats } from 'utils';
+import { getErrorMessage } from 'utils';
 
 const ContactList: FC = () => {
   const userCredentials = useAppSelector(selectCredentials);
 
   const { t } = useTranslation();
 
-  const {
-    data: lastIncomingMessages = [],
-    isLoading: isLastIncomingLoading,
-    error: lastIncomingError,
-  } = useLastIncomingMessagesQuery(
+  const { data, isLoading, error } = useLastMessagesQuery(
     {
       idInstance: userCredentials.idInstance,
       apiTokenInstance: userCredentials.apiTokenInstance,
-      minutes: 3000,
     },
     { skipPollingIfUnfocused: true, pollingInterval: 15000 }
   );
 
-  const {
-    data: lastOutgoingMessages = [],
-    isLoading: isLastOutgoingLoading,
-    error: lastOutgoingError,
-  } = useLastOutgoingMessagesQuery(
-    {
-      idInstance: userCredentials.idInstance,
-      apiTokenInstance: userCredentials.apiTokenInstance,
-      minutes: 3000,
-    },
-    { skipPollingIfUnfocused: true, pollingInterval: 15000 }
-  );
-
-  if (isLastIncomingLoading || isLastOutgoingLoading) {
+  if (isLoading) {
     return (
       <Row justify="center" align="middle" className="min-height-460">
         <Spin size="large" />
@@ -51,26 +30,17 @@ const ContactList: FC = () => {
     );
   }
 
-  if (lastIncomingError || lastOutgoingError) {
-    return (
-      <Empty
-        className="empty p-10 min-height-460"
-        description={getErrorMessage(lastIncomingError || lastOutgoingError, t)}
-      />
-    );
+  if (error) {
+    return <Empty className="empty p-10 min-height-460" description={getErrorMessage(error, t)} />;
   }
 
-  const lastFiveChats = getLastFiveChats(lastIncomingMessages, lastOutgoingMessages);
-
-  if (!lastFiveChats.length) {
+  if (!data?.length) {
     return <Empty className="empty p-10 min-height-460" description={t('EMPTY_CHAT_LIST')} />;
   }
 
   return (
     <Flex vertical className="contact-list min-height-460">
-      {lastFiveChats.map((message) => (
-        <ContactListItem key={message.chatId} lastMessage={message} />
-      ))}
+      {data?.map((message) => <ContactListItem key={message.chatId} lastMessage={message} />)}
     </Flex>
   );
 };

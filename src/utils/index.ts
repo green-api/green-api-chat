@@ -111,6 +111,30 @@ export function getLastFiveChats(
   return Array.from(resultMap.values());
 }
 
+export function updateLastChats(
+  currentChats: MessageInterface[],
+  lastIncomingMessages: GetChatHistoryResponse,
+  lastOutgoingMessages: GetChatHistoryResponse
+): GetChatHistoryResponse {
+  const copyCurrentChats = structuredClone(currentChats);
+
+  const lastFiveChats = getLastFiveChats(lastIncomingMessages, lastOutgoingMessages);
+
+  for (const message of lastFiveChats) {
+    const existingChatIndex = copyCurrentChats.findIndex((chat) => chat.chatId === message.chatId);
+
+    if (existingChatIndex === -1) {
+      copyCurrentChats.pop();
+    } else {
+      copyCurrentChats.splice(existingChatIndex, 1);
+    }
+
+    copyCurrentChats.unshift(message);
+  }
+
+  return copyCurrentChats.sort((a, b) => b.timestamp - a.timestamp);
+}
+
 export function getMessageDate(
   timestamp: number,
   language: LanguageLiteral

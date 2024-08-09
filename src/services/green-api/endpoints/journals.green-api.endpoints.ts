@@ -52,5 +52,14 @@ export const journalsGreenApiEndpoints = greenAPI.injectEndpoints({
         },
       }),
     }),
+    lastMessages: builder.query<GetChatHistoryResponse, LastMessagesParametersInterface>({
+      query: ({ idInstance, apiTokenInstance }) => ({
+        url: '',
+        params: {
+          idInstance,
+          apiTokenInstance,
+        },
+      }),
+    }),
   }),
 });

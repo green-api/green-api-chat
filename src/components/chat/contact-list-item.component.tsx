@@ -91,18 +91,9 @@ const ContactListItem: FC<ContactListItemProps> = ({ lastMessage }) => {
           {isLoading ? (
             <Spin indicator={<LoadingOutlined />} size="small" style={{ alignSelf: 'start' }} />
           ) : (
-            <h6>{chatName}</h6>
+            <h6 className="text-overflow">{chatName}</h6>
           )}
-          <span
-            style={{
-              display: '-webkit-box',
-              overflow: 'hidden',
-              WebkitBoxOrient: 'vertical',
-              WebkitLineClamp: 1,
-            }}
-          >
-            {textMessage}
-          </span>
+          <span className="text-overflow">{textMessage}</span>
         </Flex>
         <span
           style={{

@@ -130,3 +130,16 @@ html {
 .bg-color-second {
   background-color: var(--second-background);
 }
+
+.text-overflow {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+}
+
+.ant-card-head-wrapper {
+  .ant-card-head-title {
+    white-space: initial;
+  }
+}

@@ -29,7 +29,7 @@ const ChatView: FC = () => {
       chatId: activeChat.chatId,
       count: 10,
     },
-    { skipPollingIfUnfocused: true, pollingInterval: 10000 }
+    { skipPollingIfUnfocused: true, pollingInterval: 15000 }
   );
 
   // TODO: method with receive/delete notification

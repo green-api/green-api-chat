@@ -24,9 +24,10 @@ const customQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError>
   }
 
   const state = api.getState() as RootState;
-  const key = Object.keys(state.greenAPI.queries).find((key) =>
-    key.includes('lastMessages')
-  ) as keyof typeof state.greenAPI.queries;
+  const { idInstance, apiTokenInstance } = (args as FetchArgs).params as InstanceInterface;
+
+  const key =
+    `lastMessages(${JSON.stringify({ apiTokenInstance, idInstance })})` as keyof typeof state.greenAPI.queries;
   const currentChats = state.greenAPI.queries[key]?.data;
 
   let minutes = 3;
@@ -34,8 +35,6 @@ const customQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError>
   if (!currentChats) {
     minutes = 1440;
   }
-
-  const { idInstance, apiTokenInstance } = (args as FetchArgs).params as InstanceInterface;
 
   const [lastIncomingMessages, lastOutgoingMessages] = await Promise.all([
     baseQuery(

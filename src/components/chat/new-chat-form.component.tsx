@@ -3,11 +3,12 @@ import { FC, useState } from 'react';
 import { Button, Col, Form, Input, Row, Select } from 'antd';
 import { useTranslation } from 'react-i18next';
 
+import { getLastFiveChats } from '../../utils';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import { useCheckWhatsappMutation, useSendMessageMutation } from 'services/green-api/endpoints';
 import { journalsGreenApiEndpoints } from 'services/green-api/endpoints/journals.green-api.endpoints';
 import { selectCredentials } from 'store/slices/user.slice';
-import { NewChatFormValues } from 'types';
+import { MessageInterface, NewChatFormValues } from 'types';
 
 const NewChatForm: FC = () => {
   const userCredentials = useAppSelector(selectCredentials);
@@ -46,15 +47,7 @@ const NewChatForm: FC = () => {
           apiTokenInstance: userCredentials.apiTokenInstance,
         },
         (draftChatHistory) => {
-          const existingChatIdx = draftChatHistory.findIndex((msg) => msg.chatId === fullChatId);
-
-          if (existingChatIdx === -1 && draftChatHistory.length === 5) {
-            draftChatHistory.pop();
-          } else {
-            draftChatHistory.splice(existingChatIdx, 1);
-          }
-
-          draftChatHistory.unshift({
+          const newMessage: MessageInterface = {
             type: 'outgoing',
             typeMessage: 'textMessage',
             textMessage: message,
@@ -64,9 +57,9 @@ const NewChatForm: FC = () => {
             idMessage: data.idMessage,
             chatId: fullChatId,
             statusMessage: 'sent',
-          });
+          };
 
-          return draftChatHistory;
+          return getLastFiveChats(draftChatHistory, [newMessage]);
         }
       );
 

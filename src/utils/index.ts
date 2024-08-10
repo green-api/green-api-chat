@@ -116,23 +116,9 @@ export function updateLastChats(
   lastIncomingMessages: GetChatHistoryResponse,
   lastOutgoingMessages: GetChatHistoryResponse
 ): GetChatHistoryResponse {
-  const copyCurrentChats = structuredClone(currentChats);
+  const updates = [...lastIncomingMessages, ...lastOutgoingMessages];
 
-  const lastFiveChats = getLastFiveChats(lastIncomingMessages, lastOutgoingMessages);
-
-  for (const message of lastFiveChats) {
-    const existingChatIndex = copyCurrentChats.findIndex((chat) => chat.chatId === message.chatId);
-
-    if (existingChatIndex === -1 && copyCurrentChats.length === 5) {
-      copyCurrentChats.pop();
-    } else {
-      copyCurrentChats.splice(existingChatIndex, 1);
-    }
-
-    copyCurrentChats.unshift(message);
-  }
-
-  return copyCurrentChats.sort((a, b) => b.timestamp - a.timestamp);
+  return getLastFiveChats(currentChats, updates);
 }
 
 export function getMessageDate(

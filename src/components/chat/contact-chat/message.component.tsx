@@ -92,7 +92,7 @@ const Message: FC<MessageProps> = ({
         return <DoubleTickIcon style={{ color: '#8696a0' }} />;
 
       case 'read':
-        return <DoubleTickIcon style={{ color: '#42ff00' }} />;
+        return <DoubleTickIcon style={{ color: 'var(--light-primary-color)' }} />;
 
       default:
         return null;

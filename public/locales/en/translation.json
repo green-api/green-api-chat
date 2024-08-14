@@ -12,5 +12,7 @@
   "UNKNOWN_ERROR": "Something went wrong, please try again",
   "YOU_SENDER_NAME": "You",
   "TEXT_WAS_COPIED": "Copied to clipboard",
-  "SHOW_ALL_TEXT": "Read more"
+  "SHOW_ALL_TEXT": "Read more",
+  "QUOTE_EXCEEDED": "The tariff quota has been exceeded. The message has not been sent",
+  "SUCCESS_SENDING_MESSAGE": "The message has been sent"
 }

@@ -18,7 +18,7 @@ const ChatHeader: FC = () => {
   if (!showContactList) {
     return (
       <Space>
-        <a className="backButton">
+        <a className="back-button">
           <LeftOutlined onClick={() => setShowContactList()} />
         </a>
         <h3 className="text-overflow">{activeChat.senderName}</h3>

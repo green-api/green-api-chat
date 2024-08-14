@@ -12,5 +12,7 @@
   "UNKNOWN_ERROR": "משהו השתבש. אנא נסה שוב",
   "YOU_SENDER_NAME": "אתה",
   "TEXT_WAS_COPIED": "מועתק",
-  "SHOW_ALL_TEXT": "קרא עוד"
+  "SHOW_ALL_TEXT": "קרא עוד",
+  "QUOTE_EXCEEDED": "חריגה ממכסת התעריף. ההודעה לא נשלחה",
+  "SUCCESS_SENDING_MESSAGE": "ההודעה נשלחה"
 }

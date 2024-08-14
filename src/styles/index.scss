@@ -154,7 +154,13 @@ html {
   }
 }
 
-.backButton {
+.back-button {
   display: block;
   min-width: 16px;
+}
+
+.response-form-item {
+  .ant-form-item-explain-warning {
+    color: var(--primary-color) !important;
+  }
 }

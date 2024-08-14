@@ -36,7 +36,16 @@ const NewChatForm: FC = () => {
       message,
     };
 
-    const { data } = await sendMessage(body);
+    form.setFields([{ name: 'button', errors: [], warnings: [] }]);
+
+    const { data, error } = await sendMessage(body);
+
+    if (error && 'status' in error && error.status === 466) {
+      form.setFields([{ name: 'button', errors: [t('QUOTE_EXCEEDED')] }]);
+
+      return;
+    }
+
     form.setFieldValue('message', '');
 
     if (data) {
@@ -64,6 +73,8 @@ const NewChatForm: FC = () => {
       );
 
       dispatch(updateChatHistoryThunk);
+
+      form.setFields([{ name: 'button', warnings: [t('SUCCESS_SENDING_MESSAGE')] }]);
     }
   };
 
@@ -137,7 +148,7 @@ const NewChatForm: FC = () => {
           placeholder={t('MESSAGE_PLACEHOLDER')}
         />
       </Form.Item>
-      <Form.Item>
+      <Form.Item name="button" className="response-form-item">
         <Button type="primary" htmlType="submit" className="login-form-button" loading={isLoading}>
           {t('SEND_MESSAGE')}
         </Button>

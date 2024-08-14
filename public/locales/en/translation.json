@@ -14,5 +14,7 @@
   "TEXT_WAS_COPIED": "Copied to clipboard",
   "SHOW_ALL_TEXT": "Read more",
   "QUOTE_EXCEEDED": "The tariff quota has been exceeded. The message has not been sent",
-  "SUCCESS_SENDING_MESSAGE": "The message has been sent"
+  "SUCCESS_SENDING_MESSAGE": "The message has been sent",
+  "PHONE_DOES_NOT_HAVE_WHATSAPP": "This number does not have WhatsApp",
+  "QUOTE_REACHED": "Tariff quota has been exhausted"
 }

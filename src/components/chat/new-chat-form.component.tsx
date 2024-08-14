@@ -103,7 +103,7 @@ const NewChatForm: FC = () => {
                       return;
                     }
 
-                    const { data } = await checkWhatsapp({
+                    const { data, error } = await checkWhatsapp({
                       idInstance: userCredentials.idInstance,
                       apiTokenInstance: userCredentials.apiTokenInstance,
                       phoneNumber: value,
@@ -113,7 +113,11 @@ const NewChatForm: FC = () => {
                       return Promise.resolve();
                     }
 
-                    return Promise.reject(new Error('У данного номера отсутствует Whatsapp'));
+                    if (error && 'status' in error && error.status === 466) {
+                      return Promise.reject(new Error(t('QUOTE_REACHED')));
+                    }
+
+                    return Promise.reject(new Error(t('PHONE_DOES_NOT_HAVE_WHATSAPP')));
                   },
                 }),
               ]}

@@ -65,8 +65,11 @@ html {
 
 .contact-list {
   max-height: 460px;
-  overflow: auto;
   @include scrollBar();
+
+  & {
+    overflow-x: hidden;
+  }
 
   &__item {
     cursor: pointer;
@@ -84,7 +87,7 @@ html {
     }
 
     &-body {
-      max-width: 85%;
+      max-width: 75%;
 
       h6 {
         font-size: 14px;

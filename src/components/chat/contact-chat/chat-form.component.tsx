@@ -99,7 +99,7 @@ const ChatForm: FC = () => {
           placeholder={t('MESSAGE_PLACEHOLDER')}
         />
       </Form.Item>
-      <Form.Item name="button">
+      <Form.Item name="button" className="response-form-item">
         <Button type="primary" htmlType="submit" className="login-form-button" loading={isLoading}>
           {t('SEND_MESSAGE')}
         </Button>

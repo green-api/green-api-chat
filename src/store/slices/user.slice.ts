@@ -11,10 +11,10 @@ const getInitialStateFromStorage = (): UserState | null => {
 
 const initialState: UserState = getInitialStateFromStorage() || {
   credentials: {
-    idInstance: '',
-    apiTokenInstance: '',
+    idInstance: '1101840021',
+    apiTokenInstance: 'ed27c1ac352f486cb7cc7d1d42f014005f5f0c16cbbb42769a',
   },
-  isAuth: false,
+  isAuth: true,
 };
 
 const userSlice = createSlice({

@@ -64,6 +64,10 @@ html {
 }
 
 .contact-list {
+  max-height: 460px;
+  overflow: auto;
+  @include scrollBar();
+
   &__item {
     cursor: pointer;
     padding: 20px;
@@ -80,7 +84,7 @@ html {
     }
 
     &-body {
-      max-width: 80%;
+      max-width: 85%;
 
       h6 {
         font-size: 14px;
@@ -89,6 +93,7 @@ html {
       span {
         text-overflow: ellipsis;
         display: block;
+        white-space: nowrap;
       }
     }
 

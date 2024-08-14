@@ -75,13 +75,23 @@ html {
     }
 
     &-wrapper {
-      width: 100%;
       justify-content: space-between;
+      width: calc(100% - 50px);
     }
 
-    &-body h6 {
-      font-size: 14px;
+    &-body {
+      max-width: 80%;
+
+      h6 {
+        font-size: 14px;
+      }
+
+      span {
+        text-overflow: ellipsis;
+        display: block;
+      }
     }
+
   }
 }
 

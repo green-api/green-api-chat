@@ -1,6 +1,5 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 
-import { listenerMiddleware } from './auth-middleware';
 import { greenAPI } from 'services/green-api/green-api.service';
 import chatReducer from 'store/slices/chat.slice';
 import userReducer from 'store/slices/user.slice';
@@ -14,8 +13,7 @@ const rootReducer = combineReducers({
 export const setupStore = (preloadedState?: RootState) =>
   configureStore({
     reducer: rootReducer,
-    middleware: (getDefaultMiddleware) =>
-      getDefaultMiddleware().concat(listenerMiddleware.middleware, greenAPI.middleware),
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(greenAPI.middleware),
     preloadedState,
   });
 

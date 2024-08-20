@@ -1,6 +1,7 @@
 import { FC } from 'react';
 
-import { Button, Form, Input } from 'antd';
+import { SendOutlined } from '@ant-design/icons';
+import { Button, Col, Form, Input, Row } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import { useAppDispatch, useAppSelector } from 'hooks';
@@ -34,12 +35,12 @@ const ChatForm: FC = () => {
       message,
     };
 
-    form.setFields([{ name: 'button', errors: [], warnings: [] }]);
+    form.setFields([{ name: 'response', errors: [], warnings: [] }]);
 
     const { data, error } = await sendMessage(body);
 
     if (error && 'status' in error && error.status === 466) {
-      form.setFields([{ name: 'button', errors: [t('QUOTE_EXCEEDED')] }]);
+      form.setFields([{ name: 'response', errors: [t('QUOTE_EXCEEDED')] }]);
 
       return;
     }
@@ -81,7 +82,7 @@ const ChatForm: FC = () => {
 
       dispatch(updateChatHistoryThunk);
 
-      form.setFields([{ name: 'button', warnings: [t('SUCCESS_SENDING_MESSAGE')] }]);
+      form.setFields([{ name: 'response', warnings: [t('SUCCESS_SENDING_MESSAGE')] }]);
     }
   };
 
@@ -92,17 +93,35 @@ const ChatForm: FC = () => {
       onFinish={onSendMessage}
       form={form}
     >
-      <Form.Item name="message" rules={[{ required: true, message: t('EMPTY_FIELD_ERROR') }]}>
-        <Input.TextArea
-          autoSize={{ minRows: 5, maxRows: 5 }}
-          maxLength={500}
-          placeholder={t('MESSAGE_PLACEHOLDER')}
-        />
-      </Form.Item>
-      <Form.Item name="button" className="response-form-item">
-        <Button type="primary" htmlType="submit" className="login-form-button" loading={isLoading}>
-          {t('SEND_MESSAGE')}
-        </Button>
+      <Form.Item style={{ marginBottom: 0 }} name="response" className="response-form-item">
+        <Row gutter={[15, 15]} align="bottom">
+          <Col flex="auto">
+            <Form.Item
+              style={{ marginBottom: 0 }}
+              name="message"
+              rules={[{ required: true, message: t('EMPTY_FIELD_ERROR') }]}
+            >
+              <Input.TextArea
+                autoSize={{ minRows: 5, maxRows: 5 }}
+                maxLength={500}
+                placeholder={t('MESSAGE_PLACEHOLDER')}
+              />
+            </Form.Item>
+          </Col>
+          <Col>
+            <Form.Item style={{ marginBottom: 0 }}>
+              <Button
+                type="link"
+                htmlType="submit"
+                size="large"
+                className="login-form-button"
+                loading={isLoading}
+              >
+                <SendOutlined />
+              </Button>
+            </Form.Item>
+          </Col>
+        </Row>
       </Form.Item>
     </Form>
   );

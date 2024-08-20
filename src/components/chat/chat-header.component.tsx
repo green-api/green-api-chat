@@ -1,7 +1,7 @@
 import { FC } from 'react';
 
 import { LeftOutlined } from '@ant-design/icons';
-import { Space } from 'antd';
+import { Flex, Space } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import { useActions, useAppSelector } from 'hooks';
@@ -17,12 +17,15 @@ const ChatHeader: FC = () => {
 
   if (!showContactList) {
     return (
-      <Space>
-        <a className="back-button">
-          <LeftOutlined onClick={() => setShowContactList()} />
-        </a>
-        <h3 className="text-overflow">{activeChat.senderName}</h3>
-      </Space>
+      <Flex align="center" gap={10}>
+        <Space style={{ marginRight: 'auto' }}>
+          <a className="back-button">
+            <LeftOutlined onClick={() => setShowContactList()} />
+          </a>
+          <h3 className="text-overflow">{activeChat.senderName}</h3>
+        </Space>
+        {activeChat.chatId.includes('@c') && <div>{activeChat.chatId.replace(/\@.*$/, '')}</div>}
+      </Flex>
     );
   }
 

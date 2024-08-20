@@ -76,6 +76,17 @@ html {
     padding: 20px;
     transition: all .2s ease-in-out;
     transform: scale(1);
+    position: relative;
+
+    &:not(:last-child):after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      background: var(--border-list);
+      width: calc(100% - 68px);
+      height: 1px;
+    }
 
     &:hover {
       background-color: rgb(220 233 220 / 50%);
@@ -170,5 +181,22 @@ html {
 .response-form-item {
   .ant-form-item-explain-warning {
     color: var(--primary-color) !important;
+  }
+}
+
+.login-form-button {
+  font-size: 24px;
+  padding: 0;
+  color: var(--primary-color);
+}
+
+.copy-massage-code-button {
+  margin-left: auto;
+  font-size: 20px;
+  cursor: pointer;
+  transition: .3s all;
+
+  &:hover {
+    color: var(--primary-color);
   }
 }

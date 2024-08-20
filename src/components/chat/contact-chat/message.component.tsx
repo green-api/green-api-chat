@@ -1,12 +1,17 @@
 import { FC } from 'react';
 
-import { AudioOutlined, FileImageOutlined, VideoCameraOutlined } from '@ant-design/icons';
-import { Space, Tooltip, Typography } from 'antd';
+import {
+  AudioOutlined,
+  CopyOutlined,
+  DownOutlined,
+  FileImageOutlined,
+  VideoCameraOutlined,
+} from '@ant-design/icons';
+import { Flex, Space, Tooltip, Typography } from 'antd';
 import useMessage from 'antd/es/message/useMessage';
 import { useTranslation } from 'react-i18next';
 
 import DoubleTickIcon from 'assets/double-tick.svg?react';
-import InfoIcon from 'assets/info.svg?react';
 import TickIcon from 'assets/tick.svg?react';
 import { LanguageLiteral, StatusMessage, TypeConnectionMessage, TypeMessage } from 'types';
 import { getMessageDate } from 'utils';
@@ -19,21 +24,23 @@ interface MessageProps {
   isLastMessage: boolean;
   timestamp: number;
   jsonMessage: string;
-  idMessage: string;
   statusMessage?: StatusMessage;
   downloadUrl?: string;
+  showSenderName: boolean;
+  phone?: string;
 }
 
 const Message: FC<MessageProps> = ({
   textMessage,
   type,
   senderName,
+  showSenderName,
   timestamp,
   jsonMessage,
-  idMessage,
   typeMessage,
   downloadUrl,
   statusMessage,
+  phone,
 }) => {
   const {
     t,
@@ -106,13 +113,18 @@ const Message: FC<MessageProps> = ({
       }}
       className="message"
     >
-      <h4
-        style={{ alignSelf: type === 'incoming' ? 'flex-start' : 'flex-end' }}
-        className="text-overflow"
-      >
-        {senderName}
-      </h4>
       <div className={`message-text ${type === 'outgoing' ? 'outgoing' : 'incoming'} p-10`}>
+        {showSenderName && (
+          <Flex>
+            <h4
+              style={{ alignSelf: type === 'incoming' ? 'flex-start' : 'flex-end' }}
+              className="text-overflow"
+            >
+              {senderName}
+            </h4>
+            {phone && <div>{phone}</div>}
+          </Flex>
+        )}
         <Space>
           {getMessageTypeIcon()}
           <Typography.Paragraph
@@ -126,19 +138,30 @@ const Message: FC<MessageProps> = ({
 
         <Space style={{ alignSelf: 'end' }}>
           <Tooltip
-            title={<pre style={{ textWrap: 'wrap' }}>{jsonMessage}</pre>}
+            overlayInnerStyle={{ background: 'var(--main-background)', color: '#000' }}
+            title={
+              <Flex vertical={true}>
+                <pre style={{ textWrap: 'wrap' }}>{jsonMessage}</pre>
+                <div
+                  className="copy-massage-code-button"
+                  onClick={() =>
+                    navigator.clipboard.writeText(jsonMessage).then(() => {
+                      message.open({
+                        type: 'success',
+                        content: t('TEXT_WAS_COPIED'),
+                      });
+                    })
+                  }
+                >
+                  <CopyOutlined />
+                </div>
+              </Flex>
+            }
             overlayStyle={{ maxWidth: 450, lineHeight: 'initial', fontSize: 13 }}
           >
-            <InfoIcon
+            <DownOutlined
               onClick={(event) => {
                 event.stopPropagation();
-
-                navigator.clipboard.writeText(idMessage).then(() => {
-                  message.open({
-                    type: 'success',
-                    content: t('TEXT_WAS_COPIED'),
-                  });
-                });
               }}
               style={{ marginTop: 6 }}
             />

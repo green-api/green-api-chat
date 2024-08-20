@@ -1,5 +1,5 @@
 {
-  "CHAT_HEADER": "Последние чаты",
+  "CHAT_HEADER": "Чаты",
   "EMPTY_FIELD_ERROR": "Поле не может быть пустым",
   "MESSAGE_PLACEHOLDER": "Введите сообщение",
   "CHAT_ID_INVALID_VALUE_MESSAGE": "Некорректное значение",

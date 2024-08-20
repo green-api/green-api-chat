@@ -45,10 +45,7 @@ export interface ChatFormValues {
 }
 
 export interface NewChatFormValues extends ChatFormValues {
-  chatId: {
-    0: string;
-    1: string;
-  };
+  chatId: string;
 }
 
 export type MessageData = MessageDataInit | MessageDataSetCredentials | MessageDataLocaleChange;

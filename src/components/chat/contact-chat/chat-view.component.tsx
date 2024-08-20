@@ -14,6 +14,9 @@ const ChatView: FC = () => {
   const userCredentials = useAppSelector(selectCredentials);
   const activeChat = useAppSelector(selectActiveChat);
 
+  let previousMessageAreOutgoing = false;
+  let previousSenderName = '';
+
   const { t } = useTranslation();
 
   const chatViewRef = useRef<HTMLDivElement>(null);
@@ -59,11 +62,19 @@ const ChatView: FC = () => {
     <Card className="chat-view" bordered={false} style={{ boxShadow: 'unset' }} ref={chatViewRef}>
       {messages?.map((message, idx) => {
         const typeMessage = message.typeMessage;
+        const showSenderName =
+          (previousSenderName !== message.senderName &&
+            previousSenderName !== message.senderId &&
+            message.type !== 'outgoing') ||
+          (message.type === 'outgoing' && !previousMessageAreOutgoing);
+
+        previousMessageAreOutgoing = message.type === 'outgoing';
+        previousSenderName = message.senderName || message.senderId || '';
 
         return (
           <Message
             key={message.idMessage}
-            idMessage={message.idMessage}
+            showSenderName={showSenderName}
             type={message.type}
             typeMessage={typeMessage}
             textMessage={
@@ -71,7 +82,8 @@ const ChatView: FC = () => {
                 ? typeMessage
                 : message.extendedTextMessage?.text || message.textMessage || message.typeMessage
             }
-            senderName={message.type === 'outgoing' ? t('YOU_SENDER_NAME') : activeChat.senderName!}
+            senderName={message.type === 'outgoing' ? t('YOU_SENDER_NAME') : message.senderName!}
+            phone={message.senderId?.replace(/\@.*$/, '')}
             isLastMessage={idx === messages?.length - 1}
             timestamp={message.timestamp}
             jsonMessage={getJSONMessage(message)}

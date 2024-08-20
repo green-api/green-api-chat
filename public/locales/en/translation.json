@@ -1,5 +1,5 @@
 {
-  "CHAT_HEADER": "Latest chats",
+  "CHAT_HEADER": "Chats",
   "EMPTY_FIELD_ERROR": "The field cannot be empty",
   "MESSAGE_PLACEHOLDER": "Enter your message",
   "CHAT_ID_INVALID_VALUE_MESSAGE": "Invalid value",

@@ -16,5 +16,6 @@
   "QUOTE_EXCEEDED": "The tariff quota has been exceeded. The message has not been sent",
   "SUCCESS_SENDING_MESSAGE": "The message has been sent",
   "PHONE_DOES_NOT_HAVE_WHATSAPP": "This number does not have WhatsApp",
-  "QUOTE_REACHED": "Tariff quota has been exhausted"
+  "QUOTE_REACHED": "Tariff quota has been exhausted",
+  "CHECK_WHATSAPP_QUOTE_REACHED": "The quota for the CheckWhatsApp method has been exhausted"
 }

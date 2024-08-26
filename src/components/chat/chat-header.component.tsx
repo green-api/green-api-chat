@@ -18,7 +18,7 @@ const ChatHeader: FC = () => {
   if (!showContactList) {
     return (
       <Flex align="center" gap={10}>
-        <Space style={{ marginRight: 'auto' }}>
+        <Space className="chatHeader-space">
           <a className="back-button">
             <LeftOutlined onClick={() => setShowContactList()} />
           </a>

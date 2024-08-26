@@ -129,8 +129,10 @@ export function getMessageDate(
   const nowDate = formatDate(Date.now(), language);
 
   if (messageDate === nowDate) {
+    const date = new Date(timestamp);
+
     return {
-      date: new Date(timestamp).toLocaleTimeString().slice(0, 5),
+      date: `0${date.getHours()}`.slice(-2) + ':' + `0${date.getMinutes()}`.slice(-2),
     };
   }
 

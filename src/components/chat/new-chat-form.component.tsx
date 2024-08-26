@@ -46,7 +46,7 @@ const NewChatForm: FC = () => {
       });
 
       if (error && 'status' in error && error.status === 466) {
-        return form.setFields([{ name: 'chatId', errors: [t('QUOTE_REACHED')] }]);
+        return form.setFields([{ name: 'chatId', errors: [t('CHECK_WHATSAPP_QUOTE_REACHED')] }]);
       }
 
       if (data && !data.existsWhatsapp) {

@@ -122,7 +122,7 @@ const Message: FC<MessageProps> = ({
             >
               {senderName}
             </h4>
-            {phone && <div>{phone}</div>}
+            {phone && <div style={{ marginLeft: senderName ? 5 : undefined }}>{phone}</div>}
           </Flex>
         )}
         <Space>
@@ -136,7 +136,7 @@ const Message: FC<MessageProps> = ({
           </Typography.Paragraph>
         </Space>
 
-        <Space style={{ alignSelf: 'end' }}>
+        <Space style={{ alignSelf: type === 'incoming' ? 'start' : 'end' }}>
           <Tooltip
             overlayInnerStyle={{ background: 'var(--main-background)', color: '#000' }}
             title={
@@ -163,11 +163,12 @@ const Message: FC<MessageProps> = ({
               onClick={(event) => {
                 event.stopPropagation();
               }}
+              className="message-arrow"
               style={{ marginTop: 6 }}
             />
             {contextMessageHolder}
           </Tooltip>
-          <span style={{ alignSelf: 'end', fontSize: 14 }}>{messageDate.date}</span>
+          <span style={{ fontSize: 14 }}>{messageDate.date}</span>
           {statusMessage && getOutgoingStatusMessageIcon()}
         </Space>
       </div>

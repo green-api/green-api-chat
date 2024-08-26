@@ -134,8 +134,24 @@ html {
     border-radius: 10px;
   }
 
+  &-arrow {
+    transition: .5s all;
+    width: 0;
+    overflow: hidden;
+    
+    @media screen and (hover: none) {
+      width: 15px;
+    }
+  }
+
   &-date {
     margin-left: auto;
+  }
+
+  &:hover {
+    .message-arrow {
+      width: 15px;
+    }
   }
 }
 
@@ -199,4 +215,9 @@ html {
   &:hover {
     color: var(--primary-color);
   }
+}
+
+.chatHeader-space {
+  flex: 0 1 100%;
+  overflow: hidden;
 }

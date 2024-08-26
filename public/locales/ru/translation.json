@@ -16,5 +16,6 @@
   "QUOTE_EXCEEDED": "Превышена квота тарифа. Сообщение не отправлено",
   "SUCCESS_SENDING_MESSAGE": "Сообщение отправлено",
   "PHONE_DOES_NOT_HAVE_WHATSAPP": "У данного номера отсутствует Whatsapp",
-  "QUOTE_REACHED": "Исчерпана квота тарифа"
+  "QUOTE_REACHED": "Исчерпана квота тарифа",
+  "CHECK_WHATSAPP_QUOTE_REACHED": "Исчерпана квота для метода CheckWhatsApp"
 }

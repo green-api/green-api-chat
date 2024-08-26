@@ -16,5 +16,6 @@
   "QUOTE_EXCEEDED": "חריגה ממכסת התעריף. ההודעה לא נשלחה",
   "SUCCESS_SENDING_MESSAGE": "ההודעה נשלחה",
   "PHONE_DOES_NOT_HAVE_WHATSAPP": "למספר הזה אין WhatsApp",
-  "QUOTE_REACHED": "מכסת המכס מוצתה"
+  "QUOTE_REACHED": "מכסת המכס מוצתה",
+  "CHECK_WHATSAPP_QUOTE_REACHED": "מכסה מותשת לשיטת CheckWhatsApp"
 }

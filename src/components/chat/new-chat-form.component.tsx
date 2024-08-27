@@ -102,10 +102,18 @@ const NewChatForm: FC = () => {
   };
 
   return (
-    <Form name="new-chat-form" className="chat-form" onFinish={onSendMessage} form={form}>
+    <Form
+      name="new-chat-form"
+      className="chat-form"
+      onFinish={onSendMessage}
+      form={form}
+      onSubmitCapture={() => form.setFields([{ name: 'response', errors: [], warnings: [] }])}
+    >
       <Form.Item
         name="chatId"
         normalize={(value: string) => {
+          form.setFields([{ name: 'response', warnings: [] }]);
+
           return value.replaceAll(/[^\d-]/g, '');
         }}
         rules={[
@@ -129,6 +137,11 @@ const NewChatForm: FC = () => {
               style={{ marginBottom: 0 }}
               name="message"
               rules={[{ required: true, message: t('EMPTY_FIELD_ERROR') }]}
+              normalize={(value) => {
+                form.setFields([{ name: 'response', warnings: [] }]);
+
+                return value;
+              }}
             >
               <Input.TextArea
                 autoSize={{ minRows: 5, maxRows: 5 }}

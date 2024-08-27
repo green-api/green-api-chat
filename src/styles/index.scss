@@ -127,6 +127,7 @@ html {
 .message {
   display: flex;
   flex-direction: column;
+  max-width: 100%;
 
   &-text {
     display: flex;
@@ -220,4 +221,11 @@ html {
 .chatHeader-space {
   flex: 0 1 100%;
   overflow: hidden;
+}
+
+.message-signerData {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
+  white-space: nowrap;
 }

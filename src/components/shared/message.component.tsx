@@ -168,7 +168,7 @@ const Message: FC<MessageProps> = ({
               overflow: 'hidden',
               maxWidth: '100vw',
             }}
-            trigger={window.innerWidth < 768 || 'cordova' in window ? 'focus' : 'hover'}
+            trigger={window.outerWidth < 769 || 'cordova' in window ? 'focus' : 'hover'}
             title={
               <Flex vertical={true}>
                 <pre style={{ textWrap: 'nowrap' }}>{jsonMessage}</pre>

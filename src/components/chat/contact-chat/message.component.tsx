@@ -145,21 +145,26 @@ const Message: FC<MessageProps> = ({
 
         <Space style={{ alignSelf: type === 'incoming' ? 'start' : 'end' }}>
           <Tooltip
-            overlayInnerStyle={{ background: 'var(--main-background)', color: '#000' }}
+            overlayInnerStyle={{
+              background: 'var(--main-background)',
+              color: '#000',
+              overflow: 'hidden',
+              maxWidth: '100vw',
+            }}
             trigger={window.innerWidth < 768 || 'cordova' in window ? 'focus' : 'hover'}
             title={
               <Flex vertical={true}>
-                <pre style={{ textWrap: 'wrap' }}>{jsonMessage}</pre>
+                <pre style={{ textWrap: 'nowrap' }}>{jsonMessage}</pre>
                 <div
                   className="copy-massage-code-button"
-                  onClick={() =>
+                  onPointerDown={() => {
                     navigator.clipboard.writeText(jsonMessage).then(() => {
                       message.open({
                         type: 'success',
                         content: t('TEXT_WAS_COPIED'),
                       });
-                    })
-                  }
+                    });
+                  }}
                 >
                   <CopyOutlined />
                 </div>

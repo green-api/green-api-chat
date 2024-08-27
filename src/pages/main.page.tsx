@@ -6,7 +6,7 @@ import Chat from 'components/chat/chat.component';
 
 const Main: FC = () => {
   return (
-    <Layout.Content className="main flex-center">
+    <Layout.Content className="main">
       <Chat />
     </Layout.Content>
   );

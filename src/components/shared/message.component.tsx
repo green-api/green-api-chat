@@ -135,11 +135,18 @@ const Message: FC<MessageProps> = ({
           <Flex>
             <h4
               style={{ alignSelf: type === 'incoming' ? 'flex-start' : 'flex-end' }}
-              className="text-overflow"
+              className="text-overflow message-signerData"
             >
               {senderName}
             </h4>
-            {phone && <div style={{ marginLeft: senderName ? 5 : undefined }}>{phone}</div>}
+            {phone && (
+              <div
+                className="message-signerData"
+                style={{ marginLeft: senderName ? 5 : undefined }}
+              >
+                {phone}
+              </div>
+            )}
           </Flex>
         )}
         <Space>
@@ -156,6 +163,7 @@ const Message: FC<MessageProps> = ({
         <Space style={{ alignSelf: type === 'incoming' ? 'start' : 'end' }}>
           <Tooltip
             overlayInnerStyle={{ background: 'var(--main-background)', color: '#000' }}
+            trigger={window.innerWidth < 768 || 'cordova' in window ? 'focus' : 'hover'}
             title={
               <Flex vertical={true}>
                 <pre style={{ textWrap: 'wrap' }}>{jsonMessage}</pre>

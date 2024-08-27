@@ -90,6 +90,7 @@ const ChatForm: FC = () => {
       name="chat-form"
       className="chat-form bg-color-second"
       onFinish={onSendMessage}
+      onSubmitCapture={() => form.setFields([{ name: 'response', errors: [], warnings: [] }])}
       form={form}
     >
       <Form.Item style={{ marginBottom: 0 }} name="response" className="response-form-item">
@@ -100,6 +101,11 @@ const ChatForm: FC = () => {
               style={{ marginBottom: 0 }}
               name="message"
               rules={[{ required: true, message: t('EMPTY_FIELD_ERROR') }]}
+              normalize={(value) => {
+                form.setFields([{ name: 'response', warnings: [] }]);
+
+                return value;
+              }}
             >
               <Input.TextArea
                 autoSize={{ minRows: isMiniVersion ? 5 : 2, maxRows: 5 }}

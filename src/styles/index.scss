@@ -32,6 +32,47 @@ html {
   min-height: 50px;
 }
 
+.message {
+  display: flex;
+  flex-direction: column;
+  max-width: 100%;
+
+  &-text {
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+  }
+
+  &-arrow {
+    transition: .5s all;
+    width: 0;
+    overflow: hidden;
+    
+    @media screen and (hover: none) {
+      width: 15px;
+    }
+  }
+
+  &-date {
+    margin-left: auto;
+  }
+
+  &:hover {
+    .message-arrow {
+      width: 15px;
+    }
+  }
+}
+
+.outgoing {
+  background-color: var(--second-background);
+}
+
+.incoming {
+  background-color: var(--light-primary-color);
+  color: var(--main-background)
+}
+
 .min-height-460 {
   min-height: 460px;
 }
@@ -111,4 +152,11 @@ Button.ant-btn-primary {
 
 Button.ant-btn-primary:hover, Button.ant-btn-primary:focus {
   background: #009805 radial-gradient(circle, transparent 1%, var(--light-primary-color) 1%) center/15000%;
+}
+
+.message-signerData {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
+  white-space: nowrap;
 }

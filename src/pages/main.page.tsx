@@ -2,12 +2,17 @@ import { FC } from 'react';
 
 import { Layout } from 'antd';
 
-import Chat from 'components/chat/chat.component';
+import FullChat from 'components/full-chat/chat.component';
+import MiniChat from 'components/mini-chat/chat.component';
+import { useAppSelector } from 'hooks';
+import { selectMiniVersion } from 'store/slices/user.slice';
 
 const Main: FC = () => {
+  const isMiniVersion = useAppSelector(selectMiniVersion);
+
   return (
     <Layout.Content className="main flex-center">
-      <Chat />
+      {isMiniVersion ? <MiniChat /> : <FullChat />}
     </Layout.Content>
   );
 };

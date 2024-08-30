@@ -5,6 +5,7 @@ export * from './api.types';
 export interface UserState {
   credentials: UserCredentials;
   isAuth: boolean;
+  isMiniVersion: boolean;
 }
 export interface UserCredentials {
   idInstance: string;
@@ -58,7 +59,10 @@ export enum MessageEventTypeEnum {
 
 export interface MessageDataInit {
   type: MessageEventTypeEnum.INIT;
-  payload: UserCredentials & LocaleChangeMessage;
+  payload: UserCredentials &
+    LocaleChangeMessage & {
+      isMiniVersion: boolean;
+    };
 }
 
 export interface MessageDataLocaleChange {

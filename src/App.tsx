@@ -31,6 +31,7 @@ function App() {
           setCredentials({
             idInstance: event.data.payload.idInstance,
             apiTokenInstance: event.data.payload.apiTokenInstance,
+            isMiniVersion: event.data.payload.isMiniVersion,
           });
 
           return i18n.changeLanguage(event.data.payload.locale);

@@ -59,7 +59,7 @@ const ChatView: FC = () => {
   }
 
   return (
-    <Card className="chat-view" bordered={false} style={{ boxShadow: 'unset' }} ref={chatViewRef}>
+    <Card className="chat-view scroll-bar" bordered={false} style={{ boxShadow: 'unset' }} ref={chatViewRef}>
       {messages?.map((message, idx) => {
         const typeMessage = message.typeMessage;
         const showSenderName =

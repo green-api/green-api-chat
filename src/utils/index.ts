@@ -212,3 +212,7 @@ export function getJSONMessage(message: MessageInterface): string {
 
   return JSON.stringify(copyMessage, null, 2);
 }
+
+export function isPageInIframe() {
+  return window.location !== window.parent.location;
+}

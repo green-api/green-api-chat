@@ -12,6 +12,17 @@ html {
   min-height: 100vh;
 }
 
+.bg {
+  background: linear-gradient(180deg, var(--primary-color) 15%, var(--second-background) 15%);
+}
+
+.full-chat {
+  max-width: 1600px;
+  width: calc(100% - 38px);
+  height: calc(100% - 38px);
+  box-shadow: 0 6px 18px rgba(11, 20, 26, .05);
+}
+
 .chat {
   max-width: 625px;
   width: 100%;
@@ -23,9 +34,6 @@ html {
   &-view {
     font-size: 15px;
     height: 500px;
-    overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-color: var(--primary-color) var(--main-background);
   }
 
   &-form {
@@ -168,6 +176,10 @@ html {
   min-height: 460px;
 }
 
+.min-height-860 {
+  min-height: 860px;
+}
+
 .p-10 {
   padding: 10px
 }
@@ -220,4 +232,10 @@ html {
 .chatHeader-space {
   flex: 0 1 100%;
   overflow: hidden;
+}
+
+.scroll-bar {
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary-color) var(--main-background);
 }

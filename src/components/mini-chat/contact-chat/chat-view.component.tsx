@@ -4,6 +4,7 @@ import { Card, Empty, Spin } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import Message from './message.component';
+import { MessageInterface } from '../../../types';
 import { useAppSelector } from 'hooks';
 import { useGetChatHistoryQuery } from 'services/green-api/endpoints';
 import { selectActiveChat } from 'store/slices/chat.slice';
@@ -12,7 +13,7 @@ import { getErrorMessage, getJSONMessage } from 'utils';
 
 const ChatView: FC = () => {
   const userCredentials = useAppSelector(selectCredentials);
-  const activeChat = useAppSelector(selectActiveChat);
+  const activeChat = useAppSelector(selectActiveChat) as MessageInterface;
 
   let previousMessageAreOutgoing = false;
   let previousSenderName = '';
@@ -59,7 +60,7 @@ const ChatView: FC = () => {
   }
 
   return (
-    <Card className="chat-view scroll-bar" bordered={false} style={{ boxShadow: 'unset' }} ref={chatViewRef}>
+    <Card className="chat-view" bordered={false} style={{ boxShadow: 'unset' }} ref={chatViewRef}>
       {messages?.map((message, idx) => {
         const typeMessage = message.typeMessage;
         const showSenderName =

@@ -1,16 +1,30 @@
 import { FC } from 'react';
 
-import { Card, Flex } from 'antd';
+import { Flex } from 'antd';
 
-import ContactList from '../shared/contact-list.component';
+import Aside from './aside/aside.component';
+import HomeView from './home-view.component';
+import ContactChat from '../mini-chat/contact-chat/contact-chat.component';
+import { useAppSelector } from 'hooks';
+import { selectActiveChat } from 'store/slices/chat.slice';
 
 const Chat: FC = () => {
-  return (
-    <Card className="full-chat" bordered={false}>
-      <Flex vertical style={{ maxWidth: '30%' }}>
-        <ContactList />
+  const activeChat = useAppSelector(selectActiveChat);
+
+  if (activeChat) {
+    return (
+      <Flex className="full-chat">
+        <Aside />
+        <ContactChat />
       </Flex>
-    </Card>
+    );
+  }
+
+  return (
+    <Flex className="full-chat">
+      <Aside />
+      <HomeView />
+    </Flex>
   );
 };
 

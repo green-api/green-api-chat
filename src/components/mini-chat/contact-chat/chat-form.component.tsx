@@ -4,6 +4,7 @@ import { SendOutlined } from '@ant-design/icons';
 import { Button, Col, Form, Input, Row } from 'antd';
 import { useTranslation } from 'react-i18next';
 
+import { MessageInterface } from 'types';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import { useSendMessageMutation } from 'services/green-api/endpoints';
 import { journalsGreenApiEndpoints } from 'services/green-api/endpoints/journals.green-api.endpoints';
@@ -16,7 +17,7 @@ interface FormValues {
 
 const ChatForm: FC = () => {
   const userCredentials = useAppSelector(selectCredentials);
-  const activeChat = useAppSelector(selectActiveChat);
+  const activeChat = useAppSelector(selectActiveChat) as MessageInterface;
 
   const dispatch = useAppDispatch();
 

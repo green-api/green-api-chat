@@ -25,7 +25,11 @@ const ContactList: FC = () => {
 
   if (isLoading) {
     return (
-      <Row justify="center" align="middle" className={`${isMiniVersion ? 'min-height-460' : 'min-height-860'}`}>
+      <Row
+        justify="center"
+        align="middle"
+        className={`${isMiniVersion ? 'min-height-460' : 'min-height-820'}`}
+      >
         <Spin size="large" />
       </Row>
     );
@@ -33,16 +37,27 @@ const ContactList: FC = () => {
 
   if (error) {
     return (
-      <Empty className={`empty p-10 ${isMiniVersion ? 'min-height-460' : 'min-height-860'}`} description={getErrorMessage(error, t)} />
+      <Empty
+        className={`empty p-10 ${isMiniVersion ? 'min-height-460' : 'min-height-820'}`}
+        description={getErrorMessage(error, t)}
+      />
     );
   }
 
   if (!data?.length) {
-    return <Empty className={`empty p-10 ${isMiniVersion ? 'min-height-460' : 'min-height-860'}`} description={t('EMPTY_CHAT_LIST')} />;
+    return (
+      <Empty
+        className={`empty p-10 ${isMiniVersion ? 'min-height-460' : 'min-height-820'}`}
+        description={t('EMPTY_CHAT_LIST')}
+      />
+    );
   }
 
   return (
-    <Flex vertical className={`contact-list ${isMiniVersion ? 'min-height-460' : 'min-height-860'}`}>
+    <Flex
+      vertical
+      className={`contact-list ${isMiniVersion ? 'min-height-460' : 'min-height-820'}`}
+    >
       {data?.map((message) => <ContactListItem key={message.chatId} lastMessage={message} />)}
     </Flex>
   );

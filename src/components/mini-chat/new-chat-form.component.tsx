@@ -4,7 +4,7 @@ import { LoadingOutlined, SendOutlined } from '@ant-design/icons';
 import { Button, Col, Form, Input, Row } from 'antd';
 import { useTranslation } from 'react-i18next';
 
-import { getLastFiveChats } from '../../utils';
+import { getLastChats } from 'utils';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import { useCheckWhatsappMutation, useSendMessageMutation } from 'services/green-api/endpoints';
 import { journalsGreenApiEndpoints } from 'services/green-api/endpoints/journals.green-api.endpoints';
@@ -91,7 +91,7 @@ const NewChatForm: FC = () => {
             statusMessage: 'sent',
           };
 
-          return getLastFiveChats(draftChatHistory, [newMessage]);
+          return getLastChats(draftChatHistory, [newMessage], 5);
         }
       );
 

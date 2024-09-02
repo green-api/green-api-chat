@@ -13,14 +13,33 @@ html {
 }
 
 .bg {
-  background: linear-gradient(180deg, var(--primary-color) 15%, var(--second-background) 15%);
+  background: linear-gradient(180deg, var(--primary-color) 15%, #e0dddd 15%);
 }
 
 .full-chat {
   max-width: 1600px;
-  width: calc(100% - 38px);
-  height: calc(100% - 38px);
+  width: 97vw;
+  height: 97vh;
   box-shadow: 0 6px 18px rgba(11, 20, 26, .05);
+  border-radius: 0;
+  background-color: var(--main-background);
+  @include scrollBar();
+
+  @media screen and (max-width: 1440px) {
+    width: 100vw;
+    height: 100vh;
+  }
+}
+
+.aside {
+  flex: 0 0 30%;
+  max-width: 550px;
+}
+
+.home-view {
+  min-width: 420px;
+  width: 100%;
+  background-color: var(--second-background);
 }
 
 .chat {
@@ -34,6 +53,8 @@ html {
   &-view {
     font-size: 15px;
     height: 500px;
+
+    @include scrollBar();
   }
 
   &-form {
@@ -176,8 +197,8 @@ html {
   min-height: 460px;
 }
 
-.min-height-860 {
-  min-height: 860px;
+.min-height-820 {
+  min-height: 820px;
 }
 
 .p-10 {
@@ -232,10 +253,4 @@ html {
 .chatHeader-space {
   flex: 0 1 100%;
   overflow: hidden;
-}
-
-.scroll-bar {
-  overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: var(--primary-color) var(--main-background);
 }

@@ -84,9 +84,10 @@ export function formatDate(
   }
 }
 
-export function getLastFiveChats(
+export function getLastChats(
   lastIncomingMessages: GetChatHistoryResponse,
-  lastOutgoingMessages: GetChatHistoryResponse
+  lastOutgoingMessages: GetChatHistoryResponse,
+  count?: number
 ): GetChatHistoryResponse {
   if (!lastIncomingMessages.length && !lastOutgoingMessages.length) {
     return [];
@@ -99,7 +100,7 @@ export function getLastFiveChats(
   const resultMap = new Map<string, MessageInterface>();
 
   for (const message of allMessagesFilteredAndSorted) {
-    if (resultMap.size === 5) {
+    if (count && resultMap.size === count) {
       break;
     }
 
@@ -118,7 +119,7 @@ export function updateLastChats(
 ): GetChatHistoryResponse {
   const updates = [...lastIncomingMessages, ...lastOutgoingMessages];
 
-  return getLastFiveChats(currentChats, updates);
+  return getLastChats(currentChats, updates, isPageInIframe() ? 5 : undefined);
 }
 
 export function getMessageDate(

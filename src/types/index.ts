@@ -13,8 +13,7 @@ export interface UserCredentials {
 }
 
 export interface ChatState {
-  showContactList: boolean;
-  activeChat: MessageInterface;
+  activeChat: MessageInterface | null;
 }
 
 export interface InstanceInterface {

@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { RootState } from 'store';
-import { ChatState, MessageInterface } from 'types';
+import { ActiveChat, ChatState } from 'types';
 
 const initialState: ChatState = {
   activeChat: null,
@@ -11,7 +11,7 @@ const chatSlice = createSlice({
   name: 'chatSlice',
   initialState,
   reducers: {
-    setActiveChat: (state, action: PayloadAction<MessageInterface | null>) => {
+    setActiveChat: (state, action: PayloadAction<ActiveChat | null>) => {
       state.activeChat = action.payload;
     },
   },

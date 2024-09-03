@@ -4,6 +4,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { Flex, Spin } from 'antd';
 import { useTranslation } from 'react-i18next';
 
+import AvatarImage from './avatar-image.component';
 import emptyAvatar from 'assets/emptyAvatar.png';
 import emptyAvatarGroup from 'assets/emptyAvatarGroup.png';
 import { useActions, useAppSelector } from 'hooks';
@@ -83,9 +84,9 @@ const ContactListItem: FC<ContactListItemProps> = ({ lastMessage }) => {
       className="contact-list__item"
       align="center"
       gap="small"
-      onClick={() => setActiveChat({ ...lastMessage, senderName: chatName })}
+      onClick={() => setActiveChat({ ...lastMessage, senderName: chatName, avatar })}
     >
-      <img className="avatar-image" src={avatar} alt="avatar" />
+      <AvatarImage src={avatar} />
       <Flex className="contact-list__item-wrapper">
         <Flex vertical gap="small" className="contact-list__item-body">
           {isLoading ? (

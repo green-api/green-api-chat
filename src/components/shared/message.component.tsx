@@ -13,6 +13,8 @@ import { useTranslation } from 'react-i18next';
 
 import DoubleTickIcon from 'assets/double-tick.svg?react';
 import TickIcon from 'assets/tick.svg?react';
+import { useAppSelector } from 'hooks';
+import { selectMiniVersion } from 'store/slices/user.slice';
 import { LanguageLiteral, StatusMessage, TypeConnectionMessage, TypeMessage } from 'types';
 import { getMessageDate } from 'utils';
 
@@ -42,6 +44,8 @@ const Message: FC<MessageProps> = ({
   statusMessage,
   phone,
 }) => {
+  const isMiniVersion = useAppSelector(selectMiniVersion);
+
   const {
     t,
     i18n: { resolvedLanguage },
@@ -113,7 +117,9 @@ const Message: FC<MessageProps> = ({
       }}
       className="message"
     >
-      <div className={`message-text ${type === 'outgoing' ? 'outgoing' : 'incoming'} p-10`}>
+      <div
+        className={`message-text ${type === 'outgoing' ? `outgoing ${isMiniVersion ? '' : 'full'}` : 'incoming'} p-10`}
+      >
         {showSenderName && (
           <Flex>
             <h4
@@ -128,7 +134,7 @@ const Message: FC<MessageProps> = ({
         <Space>
           {getMessageTypeIcon()}
           <Typography.Paragraph
-            className={`${type === 'outgoing' ? 'outgoing' : 'incoming'}`}
+            className={`${type === 'outgoing' ? 'outgoing' : 'incoming'} ${isMiniVersion ? '' : 'full'}`}
             style={{ fontSize: 16, margin: 0 }}
             ellipsis={{ rows: 5, expandable: true, symbol: t('SHOW_ALL_TEXT') }}
           >

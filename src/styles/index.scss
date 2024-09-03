@@ -23,6 +23,7 @@ html {
   box-shadow: 0 6px 18px rgba(11, 20, 26, .05);
   border-radius: 0;
   background-color: var(--main-background);
+  overflow-y: hidden;
   @include scrollBar();
 
   @media screen and (max-width: 1440px) {
@@ -32,14 +33,28 @@ html {
 }
 
 .aside {
-  flex: 0 0 30%;
   max-width: 550px;
+  min-width: 380px;
+  width: 100%;
 }
 
-.home-view {
+.content-side {
   min-width: 420px;
   width: 100%;
   background-color: var(--second-background);
+}
+
+.contact-chat {
+  &-header {
+    display: flex;
+    align-items: center;
+    padding: 10px 16px;
+    background-color: var(--second-background);
+  }
+}
+
+.home-view {
+  height: 100%;
 }
 
 .chat {
@@ -53,8 +68,21 @@ html {
   &-view {
     font-size: 15px;
     height: 500px;
+    border-radius: 0;
 
     @include scrollBar();
+
+    & .ant-card-body {
+      display: flex;
+      flex-direction: column;
+      row-gap: 15px;
+      padding: 5px 10px;
+    }
+
+    &.full {
+      height: 700px;
+      background: #efeae2 url("../assets/chat_bg.png");
+    }
   }
 
   &-form {
@@ -66,13 +94,6 @@ html {
     flex-direction: column;
     row-gap: 15px;
     padding-top: 1px;
-
-    & .ant-card-body {
-      display: flex;
-      flex-direction: column;
-      row-gap: 15px;
-      padding: 5px 10px;
-    }
   }
 
   &-footer {
@@ -82,14 +103,6 @@ html {
   .ant-card-head {
     background-color: var(--second-background);
   }
-}
-
-.avatar-image {
-  min-width: 40px;
-  min-height: 40px;
-  max-width: 40px;
-  max-height: 40px;
-  border-radius: 50%;
 }
 
 .contact-list {
@@ -186,6 +199,10 @@ html {
 
 .outgoing {
   background-color: var(--second-background);
+
+  &.full {
+    background-color: var(--main-background);
+  }
 }
 
 .incoming {

@@ -12,7 +12,7 @@ const HomeView: FC = () => {
     <Flex className="home-view" align="center" justify="center">
       <Space direction="vertical" align="center">
         <img src={GreenApiLogo} alt={'Green-API logo'} width={350} />
-        <Typography.Text>{t('LOGO_TITLE')}</Typography.Text>
+        <Typography.Text style={{ fontSize: 20 }}>{t('LOGO_TITLE')}</Typography.Text>
       </Space>
     </Flex>
   );

@@ -5,11 +5,11 @@ import en_US from 'antd/es/locale/en_US';
 import { useTranslation } from 'react-i18next';
 import { RouterProvider } from 'react-router-dom';
 
-import { isConsoleMessageData } from './utils';
 import { localisation, THEME } from 'configs';
 import { useActions } from 'hooks';
 import router from 'router';
 import { MessageData, MessageEventTypeEnum } from 'types';
+import { isConsoleMessageData } from 'utils';
 
 function App() {
   const { i18n } = useTranslation();
@@ -31,7 +31,6 @@ function App() {
           setCredentials({
             idInstance: event.data.payload.idInstance,
             apiTokenInstance: event.data.payload.apiTokenInstance,
-            isMiniVersion: event.data.payload.isMiniVersion,
           });
 
           return i18n.changeLanguage(event.data.payload.locale);

@@ -13,7 +13,11 @@ export interface UserCredentials {
 }
 
 export interface ChatState {
-  activeChat: MessageInterface | null;
+  activeChat: ActiveChat | null;
+}
+
+export interface ActiveChat extends MessageInterface {
+  avatar: string;
 }
 
 export interface InstanceInterface {

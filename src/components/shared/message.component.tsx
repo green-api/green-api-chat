@@ -5,6 +5,8 @@ import {
   CopyOutlined,
   DownOutlined,
   FileImageOutlined,
+  FileOutlined,
+  UserOutlined,
   VideoCameraOutlined,
 } from '@ant-design/icons';
 import { Flex, Space, Tooltip, Typography } from 'antd';
@@ -14,7 +16,7 @@ import { useTranslation } from 'react-i18next';
 import DoubleTickIcon from 'assets/double-tick.svg?react';
 import TickIcon from 'assets/tick.svg?react';
 import { useAppSelector } from 'hooks';
-import { selectMiniVersion } from 'store/slices/user.slice';
+import { selectMiniVersion } from 'store/slices/chat.slice';
 import { LanguageLiteral, StatusMessage, TypeConnectionMessage, TypeMessage } from 'types';
 import { getMessageDate } from 'utils';
 
@@ -56,10 +58,6 @@ const Message: FC<MessageProps> = ({
   const [message, contextMessageHolder] = useMessage();
 
   const getMessageTypeIcon = () => {
-    if (!downloadUrl) {
-      return null;
-    }
-
     let messageTypeIcon: JSX.Element | null = null;
 
     switch (typeMessage) {
@@ -73,6 +71,18 @@ const Message: FC<MessageProps> = ({
 
       case 'videoMessage':
         messageTypeIcon = <VideoCameraOutlined />;
+        break;
+
+      case 'documentMessage':
+        messageTypeIcon = <FileOutlined />;
+        break;
+
+      case 'locationMessage':
+        messageTypeIcon = <FileOutlined />;
+        break;
+
+      case 'contactMessage':
+        messageTypeIcon = <UserOutlined />;
         break;
 
       default:
@@ -114,6 +124,7 @@ const Message: FC<MessageProps> = ({
     <div
       style={{
         alignSelf: type === 'incoming' ? 'flex-start' : 'flex-end',
+        maxWidth: isMiniVersion ? 'unset' : 500,
       }}
       className="message"
     >
@@ -135,7 +146,7 @@ const Message: FC<MessageProps> = ({
           {getMessageTypeIcon()}
           <Typography.Paragraph
             className={`${type === 'outgoing' ? 'outgoing' : 'incoming'} ${isMiniVersion ? '' : 'full'}`}
-            style={{ fontSize: 16, margin: 0 }}
+            style={{ fontSize: isMiniVersion ? 16 : 14, margin: 0 }}
             ellipsis={{ rows: 5, expandable: true, symbol: t('SHOW_ALL_TEXT') }}
           >
             {textMessage}

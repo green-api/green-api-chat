@@ -1,16 +1,16 @@
 import { FC } from 'react';
 
-import { SendOutlined } from '@ant-design/icons';
-import { Button, Col, Form, Input, Row } from 'antd';
+import { PlusOutlined, SendOutlined } from '@ant-design/icons';
+import { Button, Col, Form, Input, Row, Select } from 'antd';
 import { useTranslation } from 'react-i18next';
 
-import { isPageInIframe } from 'utils';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import { useSendMessageMutation } from 'services/green-api/endpoints';
 import { journalsGreenApiEndpoints } from 'services/green-api/endpoints/journals.green-api.endpoints';
 import { selectActiveChat } from 'store/slices/chat.slice';
 import { selectCredentials } from 'store/slices/user.slice';
 import { ActiveChat } from 'types';
+import { isPageInIframe } from 'utils';
 
 interface FormValues {
   message: string;
@@ -24,7 +24,7 @@ const ChatForm: FC = () => {
 
   const { t } = useTranslation();
 
-  const [sendMessage, { isLoading }] = useSendMessageMutation();
+  const [sendMessage, { isLoading: isSendMessageLoading }] = useSendMessageMutation();
 
   const [form] = Form.useForm<FormValues>();
 
@@ -96,7 +96,21 @@ const ChatForm: FC = () => {
       form={form}
     >
       <Form.Item style={{ marginBottom: 0 }} name="response" className="response-form-item">
-        <Row gutter={[15, 15]} align="bottom">
+        <Row gutter={[15, 15]} align="middle">
+          <Select
+            variant="borderless"
+            value=""
+            options={[
+              { value: 'test1', label: 'Файл' },
+              { value: 'test2', label: 'Контакт' },
+              { value: 'test3', label: 'Локация' },
+              { value: 'test4', label: 'Опрос' },
+            ]}
+            style={{ width: 50 }}
+            dropdownStyle={{ width: 120 }}
+            suffixIcon={<PlusOutlined style={{ fontSize: 23, pointerEvents: 'none' }} />}
+            onSelect={(value, option) => console.log(value, option)}
+          />
           <Col flex="auto">
             <Form.Item
               style={{ marginBottom: 0 }}
@@ -104,7 +118,7 @@ const ChatForm: FC = () => {
               rules={[{ required: true, message: t('EMPTY_FIELD_ERROR') }]}
             >
               <Input.TextArea
-                autoSize={{ minRows: 5, maxRows: 5 }}
+                autoSize={{ minRows: 2, maxRows: 5 }}
                 maxLength={500}
                 placeholder={t('MESSAGE_PLACEHOLDER')}
               />
@@ -117,7 +131,7 @@ const ChatForm: FC = () => {
                 htmlType="submit"
                 size="large"
                 className="login-form-button"
-                loading={isLoading}
+                loading={isSendMessageLoading}
               >
                 <SendOutlined />
               </Button>

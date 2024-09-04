@@ -2,7 +2,6 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { RootState } from 'store';
 import { UserCredentials, UserState } from 'types';
-import { isPageInIframe } from 'utils';
 
 const initialState: UserState = {
   credentials: {
@@ -10,7 +9,6 @@ const initialState: UserState = {
     apiTokenInstance: '9b2e3490817d46c09d646c25d08ad61c47bb86452aae49f090',
   },
   isAuth: true,
-  isMiniVersion: isPageInIframe(),
 };
 
 const userSlice = createSlice({
@@ -32,4 +30,3 @@ export default userSlice.reducer;
 
 export const selectCredentials = (state: RootState) => state.userReducer.credentials;
 export const selectAuth = (state: RootState) => state.userReducer.isAuth;
-export const selectMiniVersion = (state: RootState) => state.userReducer.isMiniVersion;

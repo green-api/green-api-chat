@@ -18,9 +18,8 @@ html {
 
 .full-chat {
   max-width: 1600px;
-  width: 97vw;
-  height: 97vh;
-  box-shadow: 0 6px 18px rgba(11, 20, 26, .05);
+  width: 100%;
+  box-shadow: 0 6px 18px var(--register-form-shadow-color);
   border-radius: 0;
   background-color: var(--main-background);
   overflow-y: hidden;
@@ -80,8 +79,12 @@ html {
     }
 
     &.full {
-      height: 700px;
+      min-height: 720px;
       background: #efeae2 url("../assets/chat_bg.png");
+
+      @media screen and (max-width: 1440px) {
+        min-height: 770px;
+      }
     }
   }
 
@@ -119,6 +122,10 @@ html {
     transition: all .2s ease-in-out;
     transform: scale(1);
     position: relative;
+
+    &.active {
+      background-color: rgb(220 233 220 / 50%);
+    }
 
     &:not(:last-child):after {
       content: '';

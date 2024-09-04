@@ -13,6 +13,7 @@ import {
   useGetContactInfoQuery,
   useGetGroupDataQuery,
 } from 'services/green-api/endpoints';
+import { selectActiveChat } from 'store/slices/chat.slice';
 import { selectCredentials } from 'store/slices/user.slice';
 import { LanguageLiteral, MessageInterface } from 'types';
 import { getMessageDate } from 'utils';
@@ -27,6 +28,8 @@ const ContactListItem: FC<ContactListItemProps> = ({ lastMessage }) => {
   } = useTranslation();
 
   const userCredentials = useAppSelector(selectCredentials);
+  const activeChat = useAppSelector(selectActiveChat);
+
   const { setActiveChat } = useActions();
 
   const messageDate = getMessageDate(
@@ -81,7 +84,7 @@ const ContactListItem: FC<ContactListItemProps> = ({ lastMessage }) => {
 
   return (
     <Flex
-      className="contact-list__item"
+      className={`contact-list__item ${activeChat && lastMessage.chatId === activeChat.chatId ? 'active' : ''}`}
       align="center"
       gap="small"
       onClick={() => setActiveChat({ ...lastMessage, senderName: chatName, avatar })}

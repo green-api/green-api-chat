@@ -207,6 +207,10 @@ export function getJSONMessage(message: MessageInterface): string {
     copyMessage.caption = copyMessage.caption.slice(0, 150) + '...';
   }
 
+  if (copyMessage.location) {
+    copyMessage.location.jpegThumbnail = copyMessage.location.jpegThumbnail.slice(0, 50) + '...';
+  }
+
   if (copyMessage.quotedMessage) {
     copyMessage.quotedMessage = JSON.parse(getJSONMessage(copyMessage.quotedMessage));
   }
@@ -216,4 +220,16 @@ export function getJSONMessage(message: MessageInterface): string {
 
 export function isPageInIframe() {
   return window.location !== window.parent.location;
+}
+
+export function getFormData<Object_ extends object>(data: Object_): FormData {
+  const formData = new FormData();
+
+  for (const [key, value] of Object.entries(data)) {
+    if (!value) continue;
+
+    formData.set(key, value);
+  }
+
+  return formData;
 }

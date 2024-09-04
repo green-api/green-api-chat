@@ -6,8 +6,8 @@ import { useTranslation } from 'react-i18next';
 import Message from './message.component';
 import { useAppSelector } from 'hooks';
 import { useGetChatHistoryQuery } from 'services/green-api/endpoints';
-import { selectActiveChat } from 'store/slices/chat.slice';
-import { selectCredentials, selectMiniVersion } from 'store/slices/user.slice';
+import { selectActiveChat, selectMiniVersion } from 'store/slices/chat.slice';
+import { selectCredentials } from 'store/slices/user.slice';
 import { ActiveChat } from 'types';
 import { getErrorMessage, getJSONMessage } from 'utils';
 

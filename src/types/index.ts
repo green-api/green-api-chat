@@ -5,7 +5,6 @@ export * from './api.types';
 export interface UserState {
   credentials: UserCredentials;
   isAuth: boolean;
-  isMiniVersion: boolean;
 }
 export interface UserCredentials {
   idInstance: string;
@@ -14,6 +13,7 @@ export interface UserCredentials {
 
 export interface ChatState {
   activeChat: ActiveChat | null;
+  isMiniVersion: boolean;
 }
 
 export interface ActiveChat extends MessageInterface {

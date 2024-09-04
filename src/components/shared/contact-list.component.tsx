@@ -6,7 +6,8 @@ import { useTranslation } from 'react-i18next';
 import ContactListItem from './contact-list-item.component';
 import { useAppSelector } from 'hooks';
 import { useLastMessagesQuery } from 'services/green-api/endpoints';
-import { selectCredentials, selectMiniVersion } from 'store/slices/user.slice';
+import { selectMiniVersion } from 'store/slices/chat.slice';
+import { selectCredentials } from 'store/slices/user.slice';
 import { getErrorMessage } from 'utils';
 
 const ContactList: FC = () => {

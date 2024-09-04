@@ -66,6 +66,7 @@ export interface MessageInterface
   extendedTextMessage?: ExtendedTextMessage;
   quotedMessage?: MessageInterface;
   downloadUrl?: string;
+  location?: LocationInterface;
 }
 
 export type GetChatHistoryResponse = MessageInterface[];
@@ -164,4 +165,20 @@ interface ProductInterface {
   description: string;
   price: string;
   isHidden: boolean;
+}
+
+export interface SendFileByUploadResponseInterface extends SendingResponseInterface {
+  urlFile: string;
+}
+
+export interface SendFileByUploadParametersInterface
+  extends InstanceInterface,
+    Pick<SendingBaseParametersInterface, 'chatId' | 'quotedMessageId'>,
+    SendingBaseFileParametersInterface {
+  file: File;
+}
+
+export interface SendingBaseFileParametersInterface {
+  fileName?: string;
+  caption?: string;
 }

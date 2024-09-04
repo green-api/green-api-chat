@@ -50,7 +50,7 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
       });
 
       if (error && 'status' in error && error.status === 466) {
-        return form.setFields([{ name: 'chatId', errors: [t('CHECK_WHATSAPP_QUOTE_REACHED')] }]);
+        form.setFields([{ name: 'chatId', errors: [t('CHECK_WHATSAPP_QUOTE_REACHED')] }]);
       }
 
       if (data && !data.existsWhatsapp) {

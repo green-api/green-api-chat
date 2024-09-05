@@ -67,6 +67,7 @@ export interface MessageInterface
   quotedMessage?: MessageInterface;
   downloadUrl?: string;
   location?: LocationInterface;
+  fileName?: string;
 }
 
 export type GetChatHistoryResponse = MessageInterface[];

@@ -1,24 +1,21 @@
 import { FC } from 'react';
 
-import { PlusOutlined, SendOutlined } from '@ant-design/icons';
+import { SendOutlined } from '@ant-design/icons';
 import { Button, Col, Form, Input, Row, Select } from 'antd';
 import { useTranslation } from 'react-i18next';
 
-import { useAppDispatch, useAppSelector } from 'hooks';
+import SendingModeModal from 'components/modals/sending-mode-modal.component';
+import { useAppDispatch, useAppSelector, useFormWithLanguageValidation } from 'hooks';
 import { useSendMessageMutation } from 'services/green-api/endpoints';
 import { journalsGreenApiEndpoints } from 'services/green-api/endpoints/journals.green-api.endpoints';
-import { selectActiveChat } from 'store/slices/chat.slice';
+import { selectActiveChat, selectMiniVersion } from 'store/slices/chat.slice';
 import { selectCredentials } from 'store/slices/user.slice';
-import { ActiveChat } from 'types';
-import { isPageInIframe } from 'utils';
-
-interface FormValues {
-  message: string;
-}
+import { ActiveChat, ChatFormValues } from 'types';
 
 const ChatForm: FC = () => {
   const userCredentials = useAppSelector(selectCredentials);
   const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
+  const isMiniVersion = useAppSelector(selectMiniVersion);
 
   const dispatch = useAppDispatch();
 
@@ -26,9 +23,9 @@ const ChatForm: FC = () => {
 
   const [sendMessage, { isLoading: isSendMessageLoading }] = useSendMessageMutation();
 
-  const [form] = Form.useForm<FormValues>();
+  const [form] = useFormWithLanguageValidation<ChatFormValues>();
 
-  const onSendMessage = async (values: FormValues) => {
+  const onSendMessage = async (values: ChatFormValues) => {
     const { message } = values;
     const body = {
       idInstance: userCredentials.idInstance,
@@ -56,7 +53,7 @@ const ChatForm: FC = () => {
           idInstance: userCredentials.idInstance,
           apiTokenInstance: userCredentials.apiTokenInstance,
           chatId: activeChat.chatId,
-          count: isPageInIframe() ? 10 : 80,
+          count: isMiniVersion ? 10 : 80,
         },
         (draftChatHistory) => {
           const existingMessage = draftChatHistory.find((msg) => msg.idMessage === data.idMessage);
@@ -96,21 +93,8 @@ const ChatForm: FC = () => {
       form={form}
     >
       <Form.Item style={{ marginBottom: 0 }} name="response" className="response-form-item">
+        <SendingModeModal />
         <Row gutter={[15, 15]} align="middle">
-          <Select
-            variant="borderless"
-            value=""
-            options={[
-              { value: 'test1', label: 'Файл' },
-              { value: 'test2', label: 'Контакт' },
-              { value: 'test3', label: 'Локация' },
-              { value: 'test4', label: 'Опрос' },
-            ]}
-            style={{ width: 50 }}
-            dropdownStyle={{ width: 120 }}
-            suffixIcon={<PlusOutlined style={{ fontSize: 23, pointerEvents: 'none' }} />}
-            onSelect={(value, option) => console.log(value, option)}
-          />
           <Col flex="auto">
             <Form.Item
               style={{ marginBottom: 0 }}
@@ -118,7 +102,7 @@ const ChatForm: FC = () => {
               rules={[{ required: true, message: t('EMPTY_FIELD_ERROR') }]}
             >
               <Input.TextArea
-                autoSize={{ minRows: 2, maxRows: 5 }}
+                autoSize={{ minRows: isMiniVersion ? 5 : 2, maxRows: 5 }}
                 maxLength={500}
                 placeholder={t('MESSAGE_PLACEHOLDER')}
               />

@@ -4,7 +4,7 @@ import { LoadingOutlined, SendOutlined } from '@ant-design/icons';
 import { Button, Col, Form, Input, Row } from 'antd';
 import { useTranslation } from 'react-i18next';
 
-import { useAppDispatch, useAppSelector } from 'hooks';
+import { useAppDispatch, useAppSelector, useFormWithLanguageValidation } from 'hooks';
 import { useCheckWhatsappMutation, useSendMessageMutation } from 'services/green-api/endpoints';
 import { journalsGreenApiEndpoints } from 'services/green-api/endpoints/journals.green-api.endpoints';
 import { selectAuth, selectCredentials } from 'store/slices/user.slice';
@@ -22,7 +22,7 @@ const NewChatForm: FC = () => {
   const [sendMessage, { isLoading }] = useSendMessageMutation();
   const [checkWhatsapp] = useCheckWhatsappMutation();
 
-  const [form] = Form.useForm<NewChatFormValues>();
+  const [form] = useFormWithLanguageValidation<NewChatFormValues>();
 
   const onSendMessage = async (values: NewChatFormValues) => {
     if (!isAuth) return;

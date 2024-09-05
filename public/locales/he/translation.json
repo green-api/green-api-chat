@@ -18,5 +18,12 @@
   "PHONE_DOES_NOT_HAVE_WHATSAPP": "למספר הזה אין WhatsApp",
   "QUOTE_REACHED": "מכסת המכס מוצתה",
   "CHECK_WHATSAPP_QUOTE_REACHED": "מכסה מותשת לשיטת CheckWhatsApp",
-  "LOGO_TITLE": "GREEN API: שלח וקבל הודעות ווטסאפ"
+  "LOGO_TITLE": "GREEN API: שלח וקבל הודעות ווטסאפ",
+
+  "SELECT_FILE": "בחר קובץ",
+  "FILE_LABEL": "קובץ",
+  "FILENAME_LABEL": "שם הקובץ",
+  "DESCRIPTION": "תיאור",
+
+  "QUOTED_MESSAGE_ID_LABEL": "מזהה ההודעה המצוטטת"
 }

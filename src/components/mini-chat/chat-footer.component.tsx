@@ -1,6 +1,6 @@
 import { FC } from 'react';
 
-import NewChatForm from './new-chat-form.component';
+import NewChatForm from 'components/forms/new-chat-form.component';
 
 const ChatFooter: FC = () => {
   return (

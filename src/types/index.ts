@@ -1,3 +1,5 @@
+import { Dispatch, ReactElement, SetStateAction } from 'react';
+
 import { MessageInterface } from './api.types';
 
 export * from './api.types';
@@ -14,6 +16,7 @@ export interface UserCredentials {
 export interface ChatState {
   activeChat: ActiveChat | null;
   isMiniVersion: boolean;
+  activeSendingMode: SendingMethodName | null;
 }
 
 export interface ActiveChat extends MessageInterface {
@@ -52,6 +55,13 @@ export interface NewChatFormValues extends ChatFormValues {
   chatId: string;
 }
 
+export interface SendFileFormValues {
+  file: File;
+  name?: string;
+  caption?: string;
+  quotedMessageId?: string;
+}
+
 export type MessageData = MessageDataInit | MessageDataSetCredentials | MessageDataLocaleChange;
 
 export enum MessageEventTypeEnum {
@@ -80,4 +90,16 @@ export interface MessageDataSetCredentials {
 
 interface LocaleChangeMessage {
   locale: LanguageLiteral;
+}
+
+export type SendingMethodName = 'sendFileByUpload' | 'sendContact' | 'sendLocation' | 'sendPoll';
+
+export interface SendingMethod {
+  name: SendingMethodName;
+  element: ReactElement;
+}
+
+export interface GlobalModalPropertiesInterface {
+  isVisible: boolean;
+  setIsVisible: Dispatch<SetStateAction<boolean>>;
 }

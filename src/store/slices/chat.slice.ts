@@ -1,12 +1,13 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { RootState } from 'store';
-import { ActiveChat, ChatState } from 'types';
+import { ActiveChat, ChatState, SendingMethodName } from 'types';
 import { isPageInIframe } from 'utils';
 
 const initialState: ChatState = {
   activeChat: null,
   isMiniVersion: isPageInIframe(),
+  activeSendingMode: null,
 };
 
 const chatSlice = createSlice({
@@ -16,6 +17,10 @@ const chatSlice = createSlice({
     setActiveChat: (state, action: PayloadAction<ActiveChat | null>) => {
       state.activeChat = action.payload;
     },
+
+    setActiveSendingMode: (state, action: PayloadAction<SendingMethodName | null>) => {
+      state.activeSendingMode = action.payload;
+    },
   },
 });
 
@@ -24,3 +29,4 @@ export default chatSlice.reducer;
 
 export const selectActiveChat = (state: RootState) => state.chatReducer.activeChat;
 export const selectMiniVersion = (state: RootState) => state.chatReducer.isMiniVersion;
+export const selectActiveSendingMode = (state: RootState) => state.chatReducer.activeSendingMode;

@@ -18,7 +18,7 @@ html {
 
 .full-chat {
   max-width: 1600px;
-  width: 100%;
+  width: 97%;
   box-shadow: 0 6px 18px var(--register-form-shadow-color);
   border-radius: 0;
   background-color: var(--main-background);
@@ -277,4 +277,23 @@ html {
 .chatHeader-space {
   flex: 0 1 100%;
   overflow: hidden;
+}
+
+.send-mode-select-btn {
+  font-size: 23px;
+  color: var(--primary-color);
+}
+
+Button.ant-btn-primary {
+  background-color: var(--light-primary-color);
+  border-color: var(--light-primary-color);
+  box-shadow: 0 0 4px #999;
+  outline: none;
+  background-position: center;
+  transition: background 0.8s;
+}
+
+
+Button.ant-btn-primary:hover, Button.ant-btn-primary:focus {
+  background: #009805 radial-gradient(circle, transparent 1%, var(--light-primary-color) 1%) center/15000%;
 }

@@ -1,7 +1,7 @@
 import { FC } from 'react';
 
-import ChatForm from './chat-form.component';
 import ChatView from 'components/shared/chat-view.component';
+import ChatForm from 'components/forms/chat-form.component';
 
 const ContactChat: FC = () => {
   return (

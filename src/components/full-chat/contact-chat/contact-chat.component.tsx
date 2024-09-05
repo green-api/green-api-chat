@@ -1,6 +1,6 @@
 import { FC } from 'react';
 
-import { Flex } from 'antd';
+import { Flex, Space } from 'antd';
 
 import ContactChatHeader from './contact-chat-header.component';
 import ChatForm from 'components/forms/chat-form.component';

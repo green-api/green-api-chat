@@ -25,5 +25,10 @@
   "FILENAME_LABEL": "שם הקובץ",
   "DESCRIPTION": "תיאור",
 
-  "QUOTED_MESSAGE_ID_LABEL": "מזהה ההודעה המצוטטת"
+  "CONTACT_PHONE_LABEL": "מספר קשר",
+  "CONTACT_PHONE_INVALID_MESSAGE": "משמעות שגויה",
+
+  "QUOTED_MESSAGE_ID_LABEL": "מזהה ההודעה המצוטטת",
+
+  "ADD_NEW_CHAT_HEADER": "צ'אט חדש"
 }

@@ -1,0 +1,42 @@
+.chat {
+  max-width: 625px;
+  width: 100%;
+
+  .ant-card-body {
+    padding: 0;
+  }
+
+  &-view {
+    font-size: 15px;
+    height: 500px;
+    border-radius: 0;
+
+    @include scrollBar();
+
+    & .ant-card-body {
+      display: flex;
+      flex-direction: column;
+      row-gap: 15px;
+      padding: 5px 10px;
+    }
+  }
+
+  &-form {
+    padding: 10px
+  }
+
+  &-form-wrapper {
+    display: flex;
+    flex-direction: column;
+    row-gap: 15px;
+    padding-top: 1px;
+  }
+
+  &-footer {
+    border-top: 1px solid var(--border-color);
+  }
+
+  .ant-card-head {
+    background-color: var(--second-background);
+  }
+}

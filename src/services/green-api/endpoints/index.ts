@@ -18,6 +18,7 @@ export const {
   useGetAvatarQuery,
   useLastMessagesQuery,
   useSendFileByUploadMutation,
+  useSendContactMutation,
 } = {
   ...sendingGreenApiEndpoints,
   ...receivingGreenApiEndpoints,

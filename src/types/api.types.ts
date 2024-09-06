@@ -183,3 +183,17 @@ export interface SendingBaseFileParametersInterface {
   fileName?: string;
   caption?: string;
 }
+
+export interface SendContactParametersInterface
+  extends InstanceInterface,
+    Pick<SendingBaseParametersInterface, 'chatId' | 'quotedMessageId'> {
+  contact: ContactInterface;
+}
+
+export interface ContactInterface {
+  phoneContact: string;
+  firstName?: string;
+  middleName?: string;
+  lastName?: string;
+  company?: string;
+}

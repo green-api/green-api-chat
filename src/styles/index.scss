@@ -4,6 +4,12 @@
 @import "rest/functions";
 @import "rest/mixins";
 
+@import "components/full-chat";
+@import "components/mini-chat";
+@import "components/aside";
+@import "components/shared/contact-list";
+@import "components/shared/message";
+
 html {
   overflow: hidden;
 }
@@ -16,153 +22,6 @@ html {
   background: linear-gradient(180deg, var(--primary-color) 15%, #e0dddd 15%);
 }
 
-.full-chat {
-  max-width: 1600px;
-  width: 97%;
-  box-shadow: 0 6px 18px var(--register-form-shadow-color);
-  border-radius: 0;
-  background-color: var(--main-background);
-  overflow-y: hidden;
-  @include scrollBar();
-
-  @media screen and (max-width: 1440px) {
-    width: 100vw;
-    height: 100vh;
-  }
-}
-
-.aside {
-  max-width: 550px;
-  min-width: 380px;
-  width: 100%;
-}
-
-.content-side {
-  min-width: 420px;
-  width: 100%;
-  background-color: var(--second-background);
-}
-
-.contact-chat {
-  &-header {
-    display: flex;
-    align-items: center;
-    padding: 10px 16px;
-    background-color: var(--second-background);
-  }
-}
-
-.home-view {
-  height: 100%;
-}
-
-.chat {
-  max-width: 625px;
-  width: 100%;
-
-  .ant-card-body {
-    padding: 0;
-  }
-
-  &-view {
-    font-size: 15px;
-    height: 500px;
-    border-radius: 0;
-
-    @include scrollBar();
-
-    & .ant-card-body {
-      display: flex;
-      flex-direction: column;
-      row-gap: 15px;
-      padding: 5px 10px;
-    }
-
-    &.full {
-      min-height: 720px;
-      background: #efeae2 url("../assets/chat_bg.png");
-
-      @media screen and (max-width: 1440px) {
-        min-height: 770px;
-      }
-    }
-  }
-
-  &-form {
-    padding: 10px
-  }
-
-  &-form-wrapper {
-    display: flex;
-    flex-direction: column;
-    row-gap: 15px;
-    padding-top: 1px;
-  }
-
-  &-footer {
-    border-top: 1px solid var(--border-color);
-  }
-
-  .ant-card-head {
-    background-color: var(--second-background);
-  }
-}
-
-.contact-list {
-  max-height: 460px;
-  @include scrollBar();
-
-  & {
-    overflow-x: hidden;
-  }
-
-  &__item {
-    cursor: pointer;
-    padding: 20px;
-    transition: all .2s ease-in-out;
-    transform: scale(1);
-    position: relative;
-
-    &.active {
-      background-color: rgb(220 233 220 / 50%);
-    }
-
-    &:not(:last-child):after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      right: 0;
-      background: var(--border-list);
-      width: calc(100% - 68px);
-      height: 1px;
-    }
-
-    &:hover {
-      background-color: rgb(220 233 220 / 50%);
-    }
-
-    &-wrapper {
-      justify-content: space-between;
-      width: calc(100% - 50px);
-    }
-
-    &-body {
-      max-width: 75%;
-
-      h6 {
-        font-size: 14px;
-      }
-
-      span {
-        text-overflow: ellipsis;
-        display: block;
-        white-space: nowrap;
-      }
-    }
-
-  }
-}
-
 .flex-center {
   display: flex;
   justify-content: center;
@@ -171,50 +30,6 @@ html {
 
 .spin-wrapper {
   min-height: 50px;
-}
-
-.message {
-  display: flex;
-  flex-direction: column;
-
-  &-text {
-    display: flex;
-    flex-direction: column;
-    border-radius: 10px;
-  }
-
-  &-arrow {
-    transition: .5s all;
-    width: 0;
-    overflow: hidden;
-    
-    @media screen and (hover: none) {
-      width: 15px;
-    }
-  }
-
-  &-date {
-    margin-left: auto;
-  }
-
-  &:hover {
-    .message-arrow {
-      width: 15px;
-    }
-  }
-}
-
-.outgoing {
-  background-color: var(--second-background);
-
-  &.full {
-    background-color: var(--main-background);
-  }
-}
-
-.incoming {
-  background-color: var(--light-primary-color);
-  color: var(--main-background)
 }
 
 .min-height-460 {

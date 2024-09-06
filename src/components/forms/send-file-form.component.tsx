@@ -12,7 +12,7 @@ import { journalsGreenApiEndpoints } from 'services/green-api/endpoints/journals
 import { selectActiveChat } from 'store/slices/chat.slice';
 import { selectCredentials } from 'store/slices/user.slice';
 import { ActiveChat, SendFileFormValues } from 'types';
-import { isApiError } from 'utils';
+import { getErrorMessage, isApiError } from 'utils';
 
 const SendFileForm: FC = () => {
   const userCredentials = useAppSelector(selectCredentials);
@@ -38,10 +38,16 @@ const SendFileForm: FC = () => {
 
     const { data, error } = await sendFileByUpload(body);
 
-    if (isApiError(error) && error.status === 466) {
-      form.setFields([{ name: 'response', errors: [t('QUOTE_EXCEEDED')] }]);
+    if (isApiError(error)) {
+      switch (error.status) {
+        case 466:
+          return form.setFields([{ name: 'response', errors: [t('QUOTE_EXCEEDED')] }]);
 
-      return;
+        default:
+          return form.setFields([
+            { name: 'response', errors: [getErrorMessage(error, t) || t('UNKNOWN_ERROR')] },
+          ]);
+      }
     }
 
     if (data) {
@@ -65,6 +71,7 @@ const SendFileForm: FC = () => {
             type: 'outgoing',
             typeMessage: 'documentMessage', // TODO: check on message type
             fileName: values.name || values.file.name,
+            caption: values.caption,
             downloadUrl: data.urlFile,
             timestamp: Math.floor(Date.now() / 1000),
             senderName: '',

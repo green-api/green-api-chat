@@ -1,0 +1,20 @@
+.aside {
+  position: relative;
+  max-width: 550px;
+  min-width: 380px;
+  width: 100%;
+}
+
+.add-new-chat-menu {
+  background: var(--main-background);
+  height: 100%;
+  width: 100%;
+  transition: .5s all;
+  transform: translateX(-100%);
+  z-index: 5;
+  @include useAbsolutePosition();
+
+  &.active {
+    transform: translateX(0);
+  }
+}

@@ -1,0 +1,54 @@
+.contact-list {
+  max-height: 460px;
+  @include scrollBar();
+
+  & {
+    overflow-x: hidden;
+  }
+
+  &__item {
+    cursor: pointer;
+    padding: 20px;
+    transition: all .2s ease-in-out;
+    transform: scale(1);
+    position: relative;
+
+    &.active {
+      background-color: rgb(220 233 220 / 50%);
+    }
+
+    &:not(:last-child):after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      background: var(--border-list);
+      width: calc(100% - 68px);
+      height: 1px;
+    }
+
+    &:hover {
+      background-color: rgb(220 233 220 / 50%);
+    }
+
+    &-wrapper {
+      justify-content: space-between;
+      width: calc(100% - 50px);
+    }
+
+    &-body {
+      max-width: 75%;
+
+      h6 {
+        font-size: 14px;
+      }
+
+      span {
+        text-overflow: ellipsis;
+        display: block;
+        white-space: nowrap;
+      }
+    }
+
+  }
+}

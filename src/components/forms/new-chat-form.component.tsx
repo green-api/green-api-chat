@@ -11,7 +11,11 @@ import { selectAuth, selectCredentials } from 'store/slices/user.slice';
 import { MessageInterface, NewChatFormValues } from 'types';
 import { getLastChats } from 'utils';
 
-const NewChatForm: FC = () => {
+interface NewChatFormProps {
+  onSubmitCallback?: () => void;
+}
+
+const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
   const userCredentials = useAppSelector(selectCredentials);
   const isAuth = useAppSelector(selectAuth);
 
@@ -98,6 +102,10 @@ const NewChatForm: FC = () => {
       dispatch(updateChatHistoryThunk);
 
       form.setFields([{ name: 'response', warnings: [t('SUCCESS_SENDING_MESSAGE')] }]);
+
+      if (onSubmitCallback) {
+        onSubmitCallback();
+      }
     }
   };
 

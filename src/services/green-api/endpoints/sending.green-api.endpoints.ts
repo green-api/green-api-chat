@@ -4,6 +4,7 @@ import {
   SendingResponseInterface,
   SendFileByUploadResponseInterface,
   SendFileByUploadParametersInterface,
+  SendContactParametersInterface,
 } from 'types';
 import { getFormData, getGreenApiUrls } from 'utils';
 
@@ -14,6 +15,15 @@ export const sendingGreenApiEndpoints = greenAPI.injectEndpoints({
         url: `${
           getGreenApiUrls(idInstance).api
         }/waInstance${idInstance}/sendMessage/${apiTokenInstance}`,
+        method: 'POST',
+        body,
+      }),
+    }),
+    sendContact: builder.mutation<SendingResponseInterface, SendContactParametersInterface>({
+      query: ({ idInstance, apiTokenInstance, ...body }) => ({
+        url: `${
+          getGreenApiUrls(idInstance).api
+        }/waInstance${idInstance}/sendContact/${apiTokenInstance}`,
         method: 'POST',
         body,
       }),

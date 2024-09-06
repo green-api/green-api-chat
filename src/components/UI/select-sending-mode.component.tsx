@@ -3,7 +3,7 @@ import { FC } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 import { Select } from 'antd';
 
-import SendingModeModal from 'components/modals/sending-mode-modal.component';
+import SendingModal from 'components/modals/sending-mode-modal.component';
 import { useActions } from 'hooks';
 import { SendingMethodName } from 'types';
 
@@ -28,7 +28,7 @@ const SelectSendingMode: FC = () => {
         }
         onSelect={(value) => setActiveSendingMode(value as SendingMethodName)}
       />
-      <SendingModeModal />
+      <SendingModal />
     </>
   );
 };

@@ -25,5 +25,10 @@
   "FILENAME_LABEL": "File name",
   "DESCRIPTION": "Description",
 
-  "QUOTED_MESSAGE_ID_LABEL": "Quoted message ID"
+  "CONTACT_PHONE_LABEL": "Contact phone number",
+  "CONTACT_PHONE_INVALID_MESSAGE": "Invalid value",
+
+  "QUOTED_MESSAGE_ID_LABEL": "Quoted message ID",
+
+  "ADD_NEW_CHAT_HEADER": "New chat"
 }

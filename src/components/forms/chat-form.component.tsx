@@ -1,10 +1,10 @@
 import { FC } from 'react';
 
 import { SendOutlined } from '@ant-design/icons';
-import { Button, Col, Form, Input, Row, Select } from 'antd';
+import { Button, Col, Form, Input, Row } from 'antd';
 import { useTranslation } from 'react-i18next';
 
-import SendingModeModal from 'components/modals/sending-mode-modal.component';
+import SendingModal from 'components/modals/sending-mode-modal.component';
 import { useAppDispatch, useAppSelector, useFormWithLanguageValidation } from 'hooks';
 import { useSendMessageMutation } from 'services/green-api/endpoints';
 import { journalsGreenApiEndpoints } from 'services/green-api/endpoints/journals.green-api.endpoints';
@@ -93,7 +93,7 @@ const ChatForm: FC = () => {
       form={form}
     >
       <Form.Item style={{ marginBottom: 0 }} name="response" className="response-form-item">
-        <SendingModeModal />
+        <SendingModal />
         <Row gutter={[15, 15]} align="middle">
           <Col flex="auto">
             <Form.Item

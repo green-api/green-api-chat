@@ -25,5 +25,10 @@
   "FILENAME_LABEL": "Название файла",
   "DESCRIPTION": "Описание",
 
-  "QUOTED_MESSAGE_ID_LABEL": "Идентификатор цитируемого сообщения"
+  "CONTACT_PHONE_LABEL": "Контактный номер",
+  "CONTACT_PHONE_INVALID_MESSAGE": "Некорректное значение",
+
+  "QUOTED_MESSAGE_ID_LABEL": "Идентификатор цитируемого сообщения",
+
+  "ADD_NEW_CHAT_HEADER": "Новый чат"
 }

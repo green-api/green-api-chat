@@ -6,7 +6,7 @@ import { SENDING_METHODS_CONFIG } from 'configs';
 import { useActions, useAppSelector } from 'hooks';
 import { selectActiveSendingMode } from 'store/slices/chat.slice';
 
-const SendingModeModal: FC = () => {
+const SendingModal: FC = () => {
   const activeSendingMode = useAppSelector(selectActiveSendingMode);
 
   const modalContent = SENDING_METHODS_CONFIG.find((config) => config.name === activeSendingMode);
@@ -30,4 +30,4 @@ const SendingModeModal: FC = () => {
   );
 };
 
-export default SendingModeModal;
+export default SendingModal;

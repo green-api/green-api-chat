@@ -60,6 +60,7 @@ export const journalsGreenApiEndpoints = greenAPI.injectEndpoints({
           apiTokenInstance,
         },
       }),
+      providesTags: ['lastMessages'],
     }),
   }),
 });

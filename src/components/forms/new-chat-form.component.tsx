@@ -39,8 +39,9 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
     ]);
 
     const isGroupChat = /\d{17}/.test(chatId);
-
     const fullChatId = isGroupChat ? `${chatId}@g.us` : `${chatId}@c.us`;
+
+    let addNewChatInList = true;
 
     if (!isGroupChat) {
       const { data, error } = await checkWhatsapp({
@@ -51,6 +52,8 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
 
       if (error && 'status' in error && error.status === 466) {
         form.setFields([{ name: 'chatId', errors: [t('CHECK_WHATSAPP_QUOTE_REACHED')] }]);
+
+        addNewChatInList = false;
       }
 
       if (data && !data.existsWhatsapp) {
@@ -62,6 +65,7 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
       idInstance: userCredentials.idInstance,
       apiTokenInstance: userCredentials.apiTokenInstance,
       chatId: fullChatId,
+      refetchLastMessages: !addNewChatInList,
       message,
     };
 
@@ -76,30 +80,32 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
     form.setFieldValue('message', '');
 
     if (data) {
-      const updateChatHistoryThunk = journalsGreenApiEndpoints.util?.updateQueryData(
-        'lastMessages',
-        {
-          idInstance: userCredentials.idInstance,
-          apiTokenInstance: userCredentials.apiTokenInstance,
-        },
-        (draftChatHistory) => {
-          const newMessage: MessageInterface = {
-            type: 'outgoing',
-            typeMessage: 'textMessage',
-            textMessage: message,
-            timestamp: Math.floor(Date.now() / 1000),
-            senderName: '',
-            senderContactName: '',
-            idMessage: data.idMessage,
-            chatId: fullChatId,
-            statusMessage: 'sent',
-          };
+      if (addNewChatInList) {
+        const updateChatHistoryThunk = journalsGreenApiEndpoints.util?.updateQueryData(
+          'lastMessages',
+          {
+            idInstance: userCredentials.idInstance,
+            apiTokenInstance: userCredentials.apiTokenInstance,
+          },
+          (draftChatHistory) => {
+            const newMessage: MessageInterface = {
+              type: 'outgoing',
+              typeMessage: 'textMessage',
+              textMessage: message,
+              timestamp: Math.floor(Date.now() / 1000),
+              senderName: '',
+              senderContactName: '',
+              idMessage: data.idMessage,
+              chatId: fullChatId,
+              statusMessage: 'sent',
+            };
 
-          return getLastChats(draftChatHistory, [newMessage], 5);
-        }
-      );
+            return getLastChats(draftChatHistory, [newMessage], 5);
+          }
+        );
 
-      dispatch(updateChatHistoryThunk);
+        dispatch(updateChatHistoryThunk);
+      }
 
       form.setFields([{ name: 'response', warnings: [t('SUCCESS_SENDING_MESSAGE')] }]);
 

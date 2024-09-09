@@ -15,6 +15,7 @@ export interface SendMessageParametersInterface
   extends InstanceInterface,
     SendingBaseParametersInterface {
   linkPreview?: boolean;
+  refetchLastMessages?: boolean;
 }
 
 // Todo interface for body

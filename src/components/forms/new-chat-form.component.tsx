@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector, useFormWithLanguageValidation } from 'hooks';
 import { useCheckWhatsappMutation, useSendMessageMutation } from 'services/green-api/endpoints';
 import { journalsGreenApiEndpoints } from 'services/green-api/endpoints/journals.green-api.endpoints';
+import { selectMiniVersion } from 'store/slices/chat.slice';
 import { selectAuth, selectCredentials } from 'store/slices/user.slice';
 import { MessageInterface, NewChatFormValues } from 'types';
 import { getLastChats } from 'utils';
@@ -18,6 +19,7 @@ interface NewChatFormProps {
 const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
   const userCredentials = useAppSelector(selectCredentials);
   const isAuth = useAppSelector(selectAuth);
+  const isMiniVersion = useAppSelector(selectMiniVersion);
 
   const dispatch = useAppDispatch();
 
@@ -100,7 +102,7 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
               statusMessage: 'sent',
             };
 
-            return getLastChats(draftChatHistory, [newMessage], 5);
+            return getLastChats(draftChatHistory, [newMessage], isMiniVersion ? 5 : undefined);
           }
         );
 

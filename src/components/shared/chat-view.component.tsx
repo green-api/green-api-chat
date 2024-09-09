@@ -47,7 +47,7 @@ const ChatView: FC = () => {
   if (isLoading) {
     return (
       <Card
-        className={`chat-view flex-center ${isMiniVersion ? '' : 'full'}`}
+        className={`chat-view flex-center ${isMiniVersion ? '' : 'chat-bg full'}`}
         bordered={false}
         style={{ boxShadow: 'unset' }}
       >
@@ -58,7 +58,11 @@ const ChatView: FC = () => {
 
   if (error) {
     return (
-      <Card className="chat-view flex-center" bordered={false} style={{ boxShadow: 'unset' }}>
+      <Card
+        className={`chat-view flex-center ${isMiniVersion ? '' : 'full'}`}
+        bordered={false}
+        style={{ boxShadow: 'unset' }}
+      >
         <Empty description={getErrorMessage(error, t)} />
       </Card>
     );
@@ -66,7 +70,7 @@ const ChatView: FC = () => {
 
   return (
     <Card
-      className={`chat-view ${isMiniVersion ? '' : 'full'}`}
+      className={`chat-view ${isMiniVersion ? '' : 'chat-bg full'}`}
       bordered={false}
       style={{ boxShadow: 'unset' }}
       ref={chatViewRef}

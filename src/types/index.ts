@@ -49,17 +49,32 @@ export type LanguageLiteral = 'en' | 'ru' | 'he';
 
 export interface ChatFormValues {
   message: string;
+  quotedMessageId?: string;
 }
 
 export interface NewChatFormValues extends ChatFormValues {
   chatId: string;
 }
 
-export interface SendFileFormValues {
+export interface SendFileFormValues extends ChatFormValues {
   file: File;
   name?: string;
   caption?: string;
-  quotedMessageId?: string;
+}
+
+export interface SendContactFormValues extends ChatFormValues {
+  phoneContact: string;
+  firstName?: string;
+  lastName?: string;
+  middleName?: string;
+  company?: string;
+}
+
+export interface SendLocationFormValues extends ChatFormValues {
+  latitude: string;
+  longitude: string;
+  nameLocation?: string;
+  address?: string;
 }
 
 export type MessageData = MessageDataInit | MessageDataSetCredentials | MessageDataLocaleChange;

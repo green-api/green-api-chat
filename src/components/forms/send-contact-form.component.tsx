@@ -1,20 +1,18 @@
 import { FC } from 'react';
 
 import { Button, Form, Input } from 'antd';
-import TextArea from 'antd/es/input/TextArea';
 import { useTranslation } from 'react-i18next';
 
-import UploadOneFile from 'components/UI/upload-one-file.components';
 import { formItemMethodApiLayout } from 'configs';
 import { useActions, useAppDispatch, useAppSelector, useFormWithLanguageValidation } from 'hooks';
-import { useSendFileByUploadMutation } from 'services/green-api/endpoints';
+import { useSendContactMutation } from 'services/green-api/endpoints';
 import { journalsGreenApiEndpoints } from 'services/green-api/endpoints/journals.green-api.endpoints';
 import { selectActiveChat } from 'store/slices/chat.slice';
 import { selectCredentials } from 'store/slices/user.slice';
-import { ActiveChat, SendFileFormValues } from 'types';
+import { ActiveChat, SendContactFormValues } from 'types';
 import { getErrorMessage, isApiError } from 'utils';
 
-const SendFileForm: FC = () => {
+const SendContactForm: FC = () => {
   const userCredentials = useAppSelector(selectCredentials);
   const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
 
@@ -23,20 +21,20 @@ const SendFileForm: FC = () => {
 
   const { t } = useTranslation();
 
-  const [sendFileByUpload, { isLoading }] = useSendFileByUploadMutation();
+  const [sendContact, { isLoading }] = useSendContactMutation();
 
-  const [form] = useFormWithLanguageValidation<SendFileFormValues>();
+  const [form] = useFormWithLanguageValidation<SendContactFormValues>();
 
-  const onFinish = async (values: SendFileFormValues) => {
+  const onFinish = async (values: SendContactFormValues) => {
     const body = {
       ...userCredentials,
-      ...values,
       chatId: activeChat.chatId,
+      contact: values,
     };
 
     form.setFields([{ name: 'response', errors: [], warnings: [] }]);
 
-    const { data, error } = await sendFileByUpload(body);
+    const { data, error } = await sendContact(body);
 
     if (isApiError(error)) {
       switch (error.status) {
@@ -69,10 +67,11 @@ const SendFileForm: FC = () => {
 
           draftChatHistory.push({
             type: 'outgoing',
-            typeMessage: 'documentMessage', // TODO: check on message type
-            fileName: values.name || values.file.name,
-            caption: values.caption,
-            downloadUrl: data.urlFile,
+            typeMessage: 'contactMessage',
+            contact: {
+              displayName: `${values.firstName || ''} ${values.middleName || ''} ${values.lastName || ''}`,
+              vcard: '',
+            },
             timestamp: Math.floor(Date.now() / 1000),
             senderName: '',
             senderContactName: '',
@@ -96,18 +95,27 @@ const SendFileForm: FC = () => {
   return (
     <Form form={form} {...formItemMethodApiLayout} onFinish={onFinish}>
       <Form.Item
-        name="file"
-        label={t('FILE_LABEL')}
-        rules={[{ required: true, message: t('EMPTY_FIELD_ERROR') }]}
-        normalize={(value) => value.file}
+        name="phoneContact"
+        label={t('CONTACT_PHONE_LABEL')}
+        rules={[
+          { required: true, message: t('EMPTY_FIELD_ERROR') },
+          { min: 9, message: t('CONTACT_PHONE_INVALID_MESSAGE') },
+        ]}
+        normalize={(value: string) => value.replaceAll(/\D/g, '')}
       >
-        <UploadOneFile />
+        <Input type="tel" placeholder={t('CONTACT_PHONE_LABEL')} />
       </Form.Item>
-      <Form.Item name="name" label={t('FILENAME_LABEL')}>
-        <Input placeholder={t('FILENAME_LABEL')} />
+      <Form.Item name="firstName" label={t('NAME_LABEL')}>
+        <Input placeholder={t('NAME_LABEL')} />
       </Form.Item>
-      <Form.Item name="caption" label={t('DESCRIPTION')}>
-        <TextArea placeholder={t('DESCRIPTION')} />
+      <Form.Item name="lastName" label={t('LASTNAME_LABEL')}>
+        <Input placeholder={t('LASTNAME_LABEL')} />
+      </Form.Item>
+      <Form.Item name="middleName" label={t('MIDDLENAME_LABEL')}>
+        <Input placeholder={t('MIDDLENAME_LABEL')} />
+      </Form.Item>
+      <Form.Item name="company" label={t('COMPANY_LABEL')}>
+        <Input placeholder={t('COMPANY_LABEL')} />
       </Form.Item>
       <Form.Item name="quotedMessageId" label={t('QUOTED_MESSAGE_ID_LABEL')}>
         <Input placeholder={t('QUOTED_MESSAGE_ID_LABEL')} />
@@ -136,4 +144,4 @@ const SendFileForm: FC = () => {
   );
 };
 
-export default SendFileForm;
+export default SendContactForm;

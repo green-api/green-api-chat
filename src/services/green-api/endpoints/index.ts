@@ -19,6 +19,7 @@ export const {
   useLastMessagesQuery,
   useSendFileByUploadMutation,
   useSendContactMutation,
+  useSendLocationMutation,
 } = {
   ...sendingGreenApiEndpoints,
   ...receivingGreenApiEndpoints,

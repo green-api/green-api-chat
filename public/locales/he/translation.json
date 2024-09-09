@@ -30,5 +30,15 @@
 
   "QUOTED_MESSAGE_ID_LABEL": "מזהה ההודעה המצוטטת",
 
+  "NAME_LABEL": "שם",
+  "LASTNAME_LABEL": "שם משפחה",
+  "MIDDLENAME_LABEL": "שם פטרונימי",
+  "COMPANY_LABEL": "החברה",
+
+  "LATITUDE_LABEL": "רוחב המיקום",
+  "LONGITUDE_LABEL": "מיקום קו אורך",
+  "LOCATION_NAME_LABEL": "שם המיקום",
+  "ADDRESS_LABEL": "כתובת",
+
   "ADD_NEW_CHAT_HEADER": "צ'אט חדש"
 }

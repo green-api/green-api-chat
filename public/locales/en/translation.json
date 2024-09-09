@@ -30,5 +30,15 @@
 
   "QUOTED_MESSAGE_ID_LABEL": "Quoted message ID",
 
+  "NAME_LABEL": "First Name",
+  "LASTNAME_LABEL": "Last Name",
+  "MIDDLENAME_LABEL": "Middle Name",
+  "COMPANY_LABEL": "Company",
+
+  "LATITUDE_LABEL": "Location latitude",
+  "LONGITUDE_LABEL": "Location longitude",
+  "LOCATION_NAME_LABEL": "Location name",
+  "ADDRESS_LABEL": "Address",
+
   "ADD_NEW_CHAT_HEADER": "New chat"
 }

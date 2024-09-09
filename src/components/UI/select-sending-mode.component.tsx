@@ -3,7 +3,7 @@ import { FC } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 import { Select } from 'antd';
 
-import SendingModal from 'components/modals/sending-mode-modal.component';
+import SendingModal from 'components/modals/sending-modal.component';
 import { useActions } from 'hooks';
 import { SendingMethodName } from 'types';
 

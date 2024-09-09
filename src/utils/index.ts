@@ -207,7 +207,7 @@ export function getJSONMessage(message: MessageInterface): string {
     copyMessage.caption = copyMessage.caption.slice(0, 150) + '...';
   }
 
-  if (copyMessage.location) {
+  if (copyMessage.location && copyMessage.location.jpegThumbnail.length > 50) {
     copyMessage.location.jpegThumbnail = copyMessage.location.jpegThumbnail.slice(0, 50) + '...';
   }
 

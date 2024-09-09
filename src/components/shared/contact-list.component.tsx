@@ -1,6 +1,6 @@
 import { FC } from 'react';
 
-import { Empty, Flex, Row, Spin } from 'antd';
+import { Empty, List } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import ContactListItem from './contact-list-item.component';
@@ -24,18 +24,6 @@ const ContactList: FC = () => {
     { skipPollingIfUnfocused: true, pollingInterval: 15000 }
   );
 
-  if (isLoading) {
-    return (
-      <Row
-        justify="center"
-        align="middle"
-        className={`${isMiniVersion ? 'min-height-460' : 'min-height-820'}`}
-      >
-        <Spin size="large" />
-      </Row>
-    );
-  }
-
   if (error) {
     return (
       <Empty
@@ -45,22 +33,21 @@ const ContactList: FC = () => {
     );
   }
 
-  if (!data?.length) {
-    return (
-      <Empty
-        className={`empty p-10 ${isMiniVersion ? 'min-height-460' : 'min-height-820'}`}
-        description={t('EMPTY_CHAT_LIST')}
-      />
-    );
-  }
-
   return (
-    <Flex
-      vertical
+    <List
+      itemLayout="horizontal"
       className={`contact-list ${isMiniVersion ? 'min-height-460' : 'min-height-820'}`}
-    >
-      {data?.map((message) => <ContactListItem key={message.chatId} lastMessage={message} />)}
-    </Flex>
+      dataSource={data}
+      renderItem={(message) => <ContactListItem key={message.chatId} lastMessage={message} />}
+      loading={{
+        spinning: isLoading,
+        className: `${isMiniVersion ? 'min-height-460' : 'min-height-820'}`,
+        size: 'large',
+      }}
+      locale={{
+        emptyText: <Empty className="empty p-10" description={t('EMPTY_CHAT_LIST')} />,
+      }}
+    />
   );
 };
 

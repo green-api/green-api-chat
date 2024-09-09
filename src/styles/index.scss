@@ -22,6 +22,10 @@ html {
   background: linear-gradient(180deg, var(--primary-color) 15%, #e0dddd 15%);
 }
 
+.chat-bg {
+  background: #efeae2 url("../assets/chat_bg.png");
+}
+
 .flex-center {
   display: flex;
   justify-content: center;

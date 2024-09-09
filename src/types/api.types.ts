@@ -74,8 +74,8 @@ export interface MessageInterface
 export type GetChatHistoryResponse = MessageInterface[];
 
 export interface LocationInterface {
-  nameLocation: string;
-  address: string;
+  nameLocation?: string;
+  address?: string;
   latitude: string;
   longitude: string;
   jpegThumbnail: string;
@@ -197,4 +197,13 @@ export interface ContactInterface {
   middleName?: string;
   lastName?: string;
   company?: string;
+}
+
+export interface SendLocationParametersInterface
+  extends InstanceInterface,
+    Pick<SendingBaseParametersInterface, 'chatId' | 'quotedMessageId'> {
+  nameLocation?: string;
+  address?: string;
+  latitude: string;
+  longitude: string;
 }

@@ -170,8 +170,8 @@ const Message: FC<MessageProps> = ({
             }}
             trigger={window.outerWidth < 769 || 'cordova' in window ? 'focus' : 'hover'}
             title={
-              <Flex vertical={true}>
-                <pre style={{ textWrap: 'nowrap' }}>{jsonMessage}</pre>
+              <Flex vertical>
+                <pre style={{ textWrap: 'wrap' }}>{jsonMessage}</pre>
                 <div
                   className="copy-massage-code-button"
                   onPointerDown={() => {

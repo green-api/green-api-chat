@@ -30,5 +30,16 @@
 
   "QUOTED_MESSAGE_ID_LABEL": "Идентификатор цитируемого сообщения",
 
+  "NAME_LABEL": "Имя",
+  "LASTNAME_LABEL": "Фамилия",
+  "MIDDLENAME_LABEL": "Отчество",
+
+  "COMPANY_LABEL": "Компания",
+
+  "LATITUDE_LABEL": "Широта локации",
+  "LONGITUDE_LABEL": "Долгота локации",
+  "LOCATION_NAME_LABEL": "Название локации",
+  "ADDRESS_LABEL": "Адрес",
+
   "ADD_NEW_CHAT_HEADER": "Новый чат"
 }

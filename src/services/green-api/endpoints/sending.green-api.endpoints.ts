@@ -5,13 +5,18 @@ import { getGreenApiUrls } from 'utils';
 export const sendingGreenApiEndpoints = greenAPI.injectEndpoints({
   endpoints: (builder) => ({
     sendMessage: builder.mutation<SendingResponseInterface, SendMessageParametersInterface>({
-      query: ({ idInstance, apiTokenInstance, ...body }) => ({
+      query: ({ idInstance, apiTokenInstance, refetchLastMessages, ...body }) => ({
         url: `${
           getGreenApiUrls(idInstance).api
         }/waInstance${idInstance}/sendMessage/${apiTokenInstance}`,
         method: 'POST',
         body,
       }),
+      invalidatesTags: (result, error, arg) => {
+        if (!result || !arg.refetchLastMessages) return [];
+
+        return ['lastMessages'];
+      },
     }),
   }),
 });

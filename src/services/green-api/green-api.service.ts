@@ -79,4 +79,5 @@ export const greenAPI = createApi({
   reducerPath: 'greenAPI',
   baseQuery: customQuery,
   endpoints: () => ({}),
+  tagTypes: ['lastMessages'],
 });

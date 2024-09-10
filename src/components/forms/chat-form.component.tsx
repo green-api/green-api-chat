@@ -106,7 +106,7 @@ const ChatForm: FC = () => {
     >
       <Form.Item style={{ marginBottom: 0 }} name="response" className="response-form-item">
         <SendingModal />
-        <Row gutter={[15, 15]} align="middle">
+        <Row gutter={[15, 15]} align={isMiniVersion ? 'bottom' : 'middle'}>
           <Col flex="auto">
             <Form.Item
               style={{ marginBottom: 0 }}

@@ -6,6 +6,7 @@ import {
   SendFileByUploadParametersInterface,
   SendContactParametersInterface,
   SendLocationParametersInterface,
+  SendPollParametersInterface,
 } from 'types';
 import { getFormData, getGreenApiUrls } from 'utils';
 
@@ -39,6 +40,15 @@ export const sendingGreenApiEndpoints = greenAPI.injectEndpoints({
         url: `${
           getGreenApiUrls(idInstance).api
         }/waInstance${idInstance}/sendLocation/${apiTokenInstance}`,
+        method: 'POST',
+        body,
+      }),
+    }),
+    sendPoll: builder.mutation<SendingResponseInterface, SendPollParametersInterface>({
+      query: ({ idInstance, apiTokenInstance, ...body }) => ({
+        url: `${
+          getGreenApiUrls(idInstance).api
+        }/waInstance${idInstance}/sendPoll/${apiTokenInstance}`,
         method: 'POST',
         body,
       }),

@@ -40,5 +40,12 @@
   "LOCATION_NAME_LABEL": "שם המיקום",
   "ADDRESS_LABEL": "כתובת",
 
-  "ADD_NEW_CHAT_HEADER": "צ'אט חדש"
+  "OPTIONS_LABEL": "אפשרויות תשובה",
+  "OPTION_PLACEHOLDER": "תשובה",
+  "MULTIPLE_ANSWERS_LABEL": "אפשר תשובות מרובות",
+
+  "ADD_NEW_CHAT_HEADER": "צ'אט חדש",
+
+  "ADD": "הוסף",
+  "MESSAGE_LABEL": "הודעה"
 }

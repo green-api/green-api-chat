@@ -42,6 +42,7 @@ export type TypeMessage =
   | 'locationMessage'
   | 'contactMessage'
   | 'extendedTextMessage'
+  | 'pollMessage'
   | 'reactionMessage';
 
 export type Contact = {
@@ -206,4 +207,25 @@ export interface SendLocationParametersInterface
   address?: string;
   latitude: string;
   longitude: string;
+}
+
+export interface SendPollParametersInterface
+  extends InstanceInterface,
+    Pick<SendingBaseParametersInterface, 'chatId' | 'message' | 'quotedMessageId'> {
+  multipleAnswers?: boolean;
+  options: { optionName: string }[];
+}
+
+export enum StateInstanceEnum {
+  Authorized = 'authorized',
+  NotAuthorized = 'notAuthorized',
+  Blocked = 'blocked',
+  SleepMode = 'sleepMode',
+  Starting = 'starting',
+  YellowCard = 'yellowCard',
+  PendingCode = 'pendingCode',
+}
+
+export interface GetStateInstanceResponseInterface {
+  stateInstance: StateInstanceEnum;
 }

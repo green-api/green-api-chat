@@ -41,5 +41,12 @@
   "LOCATION_NAME_LABEL": "Название локации",
   "ADDRESS_LABEL": "Адрес",
 
-  "ADD_NEW_CHAT_HEADER": "Новый чат"
+  "OPTIONS_LABEL": "Варианты ответов",
+  "OPTION_PLACEHOLDER": "Ответ",
+  "MULTIPLE_ANSWERS_LABEL": "Разрешить несколько ответов",
+
+  "ADD_NEW_CHAT_HEADER": "Новый чат",
+
+  "ADD": "Добавить",
+  "MESSAGE_LABEL": "Сообщение"
 }

@@ -1,14 +1,16 @@
 import { FC, useState } from 'react';
 
-import { UserAddOutlined } from '@ant-design/icons';
-import { Flex } from 'antd';
+import { LogoutOutlined, UserAddOutlined } from '@ant-design/icons';
+import { Flex, Space } from 'antd';
 import { Header } from 'antd/es/layout/layout';
 import { useTranslation } from 'react-i18next';
 
 import AsideAddNewChat from './aside-add-new-chat.component';
+import { useActions } from 'hooks';
 
 const AsideHeader: FC = () => {
   const { t } = useTranslation();
+  const { logout } = useActions();
 
   const [isVisible, setIsVisible] = useState(false);
 
@@ -16,7 +18,14 @@ const AsideHeader: FC = () => {
     <Header>
       <Flex justify="space-between">
         <h1>{t('CHAT_HEADER')}</h1>
-        <UserAddOutlined style={{ fontSize: 20 }} onClick={() => setIsVisible(true)} />
+        <Space>
+          <UserAddOutlined
+            style={{ fontSize: 20 }}
+            onClick={() => setIsVisible(true)}
+            title={t('ADD_NEW_CHAT_HEADER')}
+          />
+          <LogoutOutlined style={{ fontSize: 20 }} onClick={() => logout()} />
+        </Space>
       </Flex>
       <AsideAddNewChat isVisible={isVisible} setIsVisible={setIsVisible} />
     </Header>

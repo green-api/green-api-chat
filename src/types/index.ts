@@ -1,5 +1,7 @@
 import { Dispatch, ReactElement, SetStateAction } from 'react';
 
+import { FormItemProps } from 'antd';
+
 import { MessageInterface } from './api.types';
 
 export * from './api.types';
@@ -75,6 +77,18 @@ export interface SendLocationFormValues extends ChatFormValues {
   longitude: string;
   nameLocation?: string;
   address?: string;
+}
+
+export interface SendPollFormValues extends ChatFormValues {
+  options: { optionName: string }[];
+  multipleAnswers?: boolean;
+}
+
+export interface FormRequestItemInterface extends Omit<FormItemProps, 'name'> {
+  key: string;
+  name?: string | string[];
+  isCustomElement?: boolean;
+  showRequired?: boolean;
 }
 
 export type MessageData = MessageDataInit | MessageDataSetCredentials | MessageDataLocaleChange;

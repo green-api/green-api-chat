@@ -40,5 +40,12 @@
   "LOCATION_NAME_LABEL": "Location name",
   "ADDRESS_LABEL": "Address",
 
-  "ADD_NEW_CHAT_HEADER": "New chat"
+  "OPTIONS_LABEL": "Answer options",
+  "OPTION_PLACEHOLDER": "Answer",
+  "MULTIPLE_ANSWERS_LABEL": "Allow multiple answers",
+
+  "ADD_NEW_CHAT_HEADER": "New chat",
+
+  "ADD": "Add",
+  "MESSAGE_LABEL": "Message"
 }

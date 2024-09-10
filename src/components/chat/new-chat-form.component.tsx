@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useRef } from 'react';
 
 import { LoadingOutlined, SendOutlined } from '@ant-design/icons';
 import { Button, Col, Form, Input, Row } from 'antd';
@@ -23,11 +23,18 @@ const NewChatForm: FC = () => {
   const [checkWhatsapp] = useCheckWhatsappMutation();
 
   const [form] = Form.useForm<NewChatFormValues>();
+  const responseTimerReference = useRef<number | null>(null);
 
   const onSendMessage = async (values: NewChatFormValues) => {
     if (!isAuth) return;
 
     const { message, chatId } = values;
+
+    if (responseTimerReference.current) {
+      clearTimeout(responseTimerReference.current);
+
+      responseTimerReference.current = null;
+    }
 
     form.setFields([
       { name: 'response', errors: [], warnings: [] },
@@ -37,7 +44,7 @@ const NewChatForm: FC = () => {
     const isGroupChat = /\d{17}/.test(chatId);
     const fullChatId = isGroupChat ? `${chatId}@g.us` : `${chatId}@c.us`;
 
-    let addNewChatInList = true;
+    let addNewChatInList = !isGroupChat;
 
     if (!isGroupChat) {
       const { data, error } = await checkWhatsapp({
@@ -104,6 +111,10 @@ const NewChatForm: FC = () => {
       }
 
       form.setFields([{ name: 'response', warnings: [t('SUCCESS_SENDING_MESSAGE')] }]);
+
+      responseTimerReference.current = setTimeout(() => {
+        form.setFields([{ name: 'response', errors: [], warnings: [] }]);
+      }, 5000);
     }
   };
 

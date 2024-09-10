@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useRef } from 'react';
 
 import { SendOutlined } from '@ant-design/icons';
 import { Button, Col, Form, Input, Row } from 'antd';
@@ -25,6 +25,7 @@ const ChatForm: FC = () => {
   const [sendMessage, { isLoading }] = useSendMessageMutation();
 
   const [form] = Form.useForm<FormValues>();
+  const responseTimerReference = useRef<number | null>(null);
 
   const onSendMessage = async (values: FormValues) => {
     const { message } = values;
@@ -34,6 +35,12 @@ const ChatForm: FC = () => {
       chatId: activeChat.chatId,
       message,
     };
+
+    if (responseTimerReference.current) {
+      clearTimeout(responseTimerReference.current);
+
+      responseTimerReference.current = null;
+    }
 
     form.setFields([{ name: 'response', errors: [], warnings: [] }]);
 
@@ -83,6 +90,10 @@ const ChatForm: FC = () => {
       dispatch(updateChatHistoryThunk);
 
       form.setFields([{ name: 'response', warnings: [t('SUCCESS_SENDING_MESSAGE')] }]);
+
+      responseTimerReference.current = setTimeout(() => {
+        form.setFields([{ name: 'response', errors: [], warnings: [] }]);
+      }, 5000);
     }
   };
 

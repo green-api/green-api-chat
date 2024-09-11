@@ -4,7 +4,6 @@
   box-shadow: 0 6px 18px var(--register-form-shadow-color);
   border-radius: 0;
   background-color: var(--main-background);
-  overflow-y: hidden;
   @include scrollBar();
 
   @media screen and (max-width: 1440px) {

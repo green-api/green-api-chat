@@ -20,6 +20,11 @@
   "CHECK_WHATSAPP_QUOTE_REACHED": "The quota for the CheckWhatsApp method has been exhausted",
   "LOGO_TITLE": "GREEN API: send and receive WhatsApp messages",
 
+  "FILE": "File",
+  "CONTACT": "Contact",
+  "LOCATION": "Location",
+  "POLL": "Poll",
+
   "SELECT_FILE": "Select file",
   "FILE_LABEL": "File",
   "FILENAME_LABEL": "File name",
@@ -45,7 +50,18 @@
   "MULTIPLE_ANSWERS_LABEL": "Allow multiple answers",
 
   "ADD_NEW_CHAT_HEADER": "New chat",
+  "LOGIN": "Login",
+  "LOGOUT": "Logout",
 
   "ADD": "Add",
-  "MESSAGE_LABEL": "Message"
+  "MESSAGE_LABEL": "Message",
+
+  "ERROR": "An error has occurred",
+  "WARNING": "Warning",
+  "WARNING_DESCRIPTION_BANNED": "Instance banned",
+  "WARNING_DESCRIPTION_NOT_AUTHORIZED": "Instance is not authorized",
+  "WARNING_DESCRIPTION_STARTING": "Instance in the process of launching",
+  "WARNING_DESCRIPTION_YELLOW_CARD": "The instance has partially or completely suspended sending messages due to spam activity",
+
+  "AUTHORIZATION": "Authorization"
 }

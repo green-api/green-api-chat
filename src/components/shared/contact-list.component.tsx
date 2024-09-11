@@ -27,7 +27,7 @@ const ContactList: FC = () => {
   if (error) {
     return (
       <Empty
-        className={`empty p-10 ${isMiniVersion ? 'min-height-460' : 'min-height-820'}`}
+        className={`empty p-10 ${isMiniVersion ? 'min-height-460' : 'min-height-760'}`}
         description={getErrorMessage(error, t)}
       />
     );
@@ -36,12 +36,12 @@ const ContactList: FC = () => {
   return (
     <List
       itemLayout="horizontal"
-      className={`contact-list ${isMiniVersion ? 'min-height-460' : 'min-height-820'}`}
+      className={`contact-list ${isMiniVersion ? 'min-height-460' : 'min-height-760'}`}
       dataSource={data}
       renderItem={(message) => <ContactListItem key={message.chatId} lastMessage={message} />}
       loading={{
         spinning: isLoading,
-        className: `${isMiniVersion ? 'min-height-460' : 'min-height-820'}`,
+        className: `${isMiniVersion ? 'min-height-460' : 'min-height-760'}`,
         size: 'large',
       }}
       locale={{

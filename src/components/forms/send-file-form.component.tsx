@@ -9,7 +9,7 @@ import { formItemMethodApiLayout } from 'configs';
 import { useActions, useAppDispatch, useAppSelector, useFormWithLanguageValidation } from 'hooks';
 import { useSendFileByUploadMutation } from 'services/green-api/endpoints';
 import { journalsGreenApiEndpoints } from 'services/green-api/endpoints/journals.green-api.endpoints';
-import { selectActiveChat } from 'store/slices/chat.slice';
+import { selectActiveChat, selectMessageCount } from 'store/slices/chat.slice';
 import { selectCredentials } from 'store/slices/user.slice';
 import { ActiveChat, SendFileFormValues } from 'types';
 import { getErrorMessage, isApiError } from 'utils';
@@ -17,6 +17,7 @@ import { getErrorMessage, isApiError } from 'utils';
 const SendFileForm: FC = () => {
   const userCredentials = useAppSelector(selectCredentials);
   const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
+  const messageCount = useAppSelector(selectMessageCount);
 
   const dispatch = useAppDispatch();
   const { setActiveSendingMode } = useActions();
@@ -57,7 +58,7 @@ const SendFileForm: FC = () => {
           idInstance: userCredentials.idInstance,
           apiTokenInstance: userCredentials.apiTokenInstance,
           chatId: activeChat.chatId,
-          count: 80,
+          count: messageCount,
         },
         (draftChatHistory) => {
           const existingMessage = draftChatHistory.find((msg) => msg.idMessage === data.idMessage);
@@ -70,7 +71,7 @@ const SendFileForm: FC = () => {
           draftChatHistory.push({
             type: 'outgoing',
             typeMessage: 'documentMessage', // TODO: check on message type
-            fileName: values.name || values.file.name,
+            fileName: values.fileName || values.file.name,
             caption: values.caption,
             downloadUrl: data.urlFile,
             timestamp: Math.floor(Date.now() / 1000),
@@ -103,7 +104,7 @@ const SendFileForm: FC = () => {
       >
         <UploadOneFile />
       </Form.Item>
-      <Form.Item name="name" label={t('FILENAME_LABEL')}>
+      <Form.Item name="fileName" label={t('FILENAME_LABEL')}>
         <Input placeholder={t('FILENAME_LABEL')} />
       </Form.Item>
       <Form.Item name="caption" label={t('DESCRIPTION')}>

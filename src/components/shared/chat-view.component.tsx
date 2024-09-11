@@ -4,9 +4,9 @@ import { Card, Empty, Spin } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import Message from './message.component';
-import { useAppSelector } from 'hooks';
+import { useActions, useAppSelector } from 'hooks';
 import { useGetChatHistoryQuery } from 'services/green-api/endpoints';
-import { selectActiveChat, selectMiniVersion } from 'store/slices/chat.slice';
+import { selectActiveChat, selectMessageCount, selectMiniVersion } from 'store/slices/chat.slice';
 import { selectCredentials } from 'store/slices/user.slice';
 import { ActiveChat } from 'types';
 import { getErrorMessage, getJSONMessage } from 'utils';
@@ -15,6 +15,9 @@ const ChatView: FC = () => {
   const userCredentials = useAppSelector(selectCredentials);
   const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
   const isMiniVersion = useAppSelector(selectMiniVersion);
+  const messageCount = useAppSelector(selectMessageCount);
+
+  const { setMessageCount } = useActions();
 
   let previousMessageAreOutgoing = false;
   let previousSenderName = '';
@@ -23,6 +26,7 @@ const ChatView: FC = () => {
 
   const chatViewRef = useRef<HTMLDivElement>(null);
 
+  const setPageTimerReference = useRef<ReturnType<typeof setTimeout>>();
   const {
     data: messages,
     isLoading,
@@ -32,16 +36,54 @@ const ChatView: FC = () => {
       idInstance: userCredentials.idInstance,
       apiTokenInstance: userCredentials.apiTokenInstance,
       chatId: activeChat.chatId,
-      count: isMiniVersion ? 10 : 80,
+      count: isMiniVersion ? 10 : messageCount,
     },
     { skipPollingIfUnfocused: true, pollingInterval: 15000 }
   );
 
+  // reset message count on new chat
+  useEffect(() => {
+    const timerId = setTimeout(() => {
+      setMessageCount(20);
+    }, 500);
+
+    return () => clearTimeout(timerId);
+  }, [activeChat.chatId]);
+
+  // scroll to bottom when open chat
   useEffect(() => {
     const element = chatViewRef.current;
-    if (element) {
+    if (element && messageCount === 20) {
       element.scrollTop = element.scrollHeight;
     }
+  }, [messages, messageCount]);
+
+  // scroll top handler
+  useEffect(() => {
+    const element = chatViewRef.current;
+    if (!element) {
+      return;
+    }
+
+    const handleScrollTop = () => {
+      if (
+        !isMiniVersion &&
+        element.scrollTop === 0 &&
+        element.scrollHeight > element.clientHeight &&
+        messageCount < 150
+      ) {
+        clearTimeout(setPageTimerReference.current);
+
+        setPageTimerReference.current = setTimeout(() => {
+          setMessageCount(messageCount + 10);
+          element.scrollTo({ top: 10 });
+        }, 500);
+      }
+    };
+
+    element.addEventListener('scroll', handleScrollTop);
+
+    return () => element.removeEventListener('scroll', handleScrollTop);
   }, [messages]);
 
   if (isLoading) {

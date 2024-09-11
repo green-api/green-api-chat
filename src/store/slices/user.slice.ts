@@ -3,12 +3,18 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from 'store';
 import { UserCredentials, UserState } from 'types';
 
-const initialState: UserState = {
+const getInitialStateFromStorage = (): UserState | null => {
+  const initialState = localStorage.getItem('userState');
+
+  return initialState ? (JSON.parse(initialState) as UserState) : null;
+};
+
+const initialState: UserState = getInitialStateFromStorage() || {
   credentials: {
-    idInstance: '1103957425',
-    apiTokenInstance: '9b2e3490817d46c09d646c25d08ad61c47bb86452aae49f090',
+    idInstance: '',
+    apiTokenInstance: '',
   },
-  isAuth: true,
+  isAuth: false,
 };
 
 const userSlice = createSlice({

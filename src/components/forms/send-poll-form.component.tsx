@@ -8,7 +8,7 @@ import { formItemMethodApiLayout } from 'configs';
 import { useActions, useAppDispatch, useAppSelector, useFormWithLanguageValidation } from 'hooks';
 import { useSendPollMutation } from 'services/green-api/endpoints';
 import { journalsGreenApiEndpoints } from 'services/green-api/endpoints/journals.green-api.endpoints';
-import { selectActiveChat } from 'store/slices/chat.slice';
+import { selectActiveChat, selectMessageCount } from 'store/slices/chat.slice';
 import { selectCredentials } from 'store/slices/user.slice';
 import { ActiveChat, SendPollFormValues } from 'types';
 import { getErrorMessage, isApiError } from 'utils';
@@ -16,6 +16,7 @@ import { getErrorMessage, isApiError } from 'utils';
 const SendPollForm: FC = () => {
   const userCredentials = useAppSelector(selectCredentials);
   const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
+  const messageCount = useAppSelector(selectMessageCount);
 
   const dispatch = useAppDispatch();
   const { setActiveSendingMode } = useActions();
@@ -56,7 +57,7 @@ const SendPollForm: FC = () => {
           idInstance: userCredentials.idInstance,
           apiTokenInstance: userCredentials.apiTokenInstance,
           chatId: activeChat.chatId,
-          count: 80,
+          count: messageCount,
         },
         (draftChatHistory) => {
           const existingMessage = draftChatHistory.find((msg) => msg.idMessage === data.idMessage);

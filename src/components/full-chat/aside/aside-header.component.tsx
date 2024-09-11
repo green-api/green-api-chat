@@ -10,9 +10,14 @@ import { useActions } from 'hooks';
 
 const AsideHeader: FC = () => {
   const { t } = useTranslation();
-  const { logout } = useActions();
+  const { logout, setActiveChat } = useActions();
 
   const [isVisible, setIsVisible] = useState(false);
+
+  const onLogoutClick = () => {
+    setActiveChat(null);
+    logout();
+  };
 
   return (
     <Header>
@@ -24,7 +29,7 @@ const AsideHeader: FC = () => {
             onClick={() => setIsVisible(true)}
             title={t('ADD_NEW_CHAT_HEADER')}
           />
-          <LogoutOutlined style={{ fontSize: 20 }} onClick={() => logout()} />
+          <LogoutOutlined style={{ fontSize: 20 }} onClick={onLogoutClick} title={t('LOGOUT')} />
         </Space>
       </Flex>
       <AsideAddNewChat isVisible={isVisible} setIsVisible={setIsVisible} />

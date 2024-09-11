@@ -2,12 +2,15 @@ import { FC } from 'react';
 
 import { PlusOutlined } from '@ant-design/icons';
 import { Select } from 'antd';
+import { useTranslation } from 'react-i18next';
 
 import SendingModal from 'components/modals/sending-modal.component';
 import { useActions } from 'hooks';
 import { SendingMethodName } from 'types';
 
 const SelectSendingMode: FC = () => {
+  const { t } = useTranslation();
+
   const { setActiveSendingMode } = useActions();
 
   return (
@@ -16,10 +19,10 @@ const SelectSendingMode: FC = () => {
         variant="borderless"
         value=""
         options={[
-          { value: 'sendFileByUpload', label: 'Файл' },
-          { value: 'sendContact', label: 'Контакт' },
-          { value: 'sendLocation', label: 'Локация' },
-          { value: 'sendPoll', label: 'Опрос' },
+          { value: 'sendFileByUpload', label: t('FILE') },
+          { value: 'sendContact', label: t('CONTACT') },
+          { value: 'sendLocation', label: t('LOCATION') },
+          { value: 'sendPoll', label: t('POLL') },
         ]}
         style={{ width: 50 }}
         dropdownStyle={{ width: 120 }}

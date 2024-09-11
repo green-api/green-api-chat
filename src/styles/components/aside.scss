@@ -1,8 +1,15 @@
 .aside {
+  display: flex;
+  flex-direction: column;
   position: relative;
   max-width: 550px;
   min-width: 380px;
   width: 100%;
+
+  &-footer {
+    min-height: 50px;
+    align-self: center;
+  }
 }
 
 .add-new-chat-menu {
@@ -13,6 +20,10 @@
   transform: translateX(-100%);
   z-index: 5;
   @include useAbsolutePosition();
+
+  &.rtl {
+    transform: translateX(100%);
+  }
 
   &.active {
     transform: translateX(0);

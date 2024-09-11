@@ -19,6 +19,7 @@ export interface ChatState {
   activeChat: ActiveChat | null;
   isMiniVersion: boolean;
   activeSendingMode: SendingMethodName | null;
+  messageCount: number;
 }
 
 export interface ActiveChat extends MessageInterface {
@@ -60,7 +61,7 @@ export interface NewChatFormValues extends ChatFormValues {
 
 export interface SendFileFormValues extends ChatFormValues {
   file: File;
-  name?: string;
+  fileName?: string;
   caption?: string;
 }
 

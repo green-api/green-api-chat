@@ -20,6 +20,11 @@
   "CHECK_WHATSAPP_QUOTE_REACHED": "Исчерпана квота для метода CheckWhatsApp",
   "LOGO_TITLE": "Green API для отправки и получения сообщений Whatsapp",
 
+  "FILE": "Файл",
+  "CONTACT": "Контакт",
+  "LOCATION": "Локация",
+  "POLL": "Опрос",
+
   "SELECT_FILE": "Выберите файл",
   "FILE_LABEL":  "Файл",
   "FILENAME_LABEL": "Название файла",
@@ -46,7 +51,18 @@
   "MULTIPLE_ANSWERS_LABEL": "Разрешить несколько ответов",
 
   "ADD_NEW_CHAT_HEADER": "Новый чат",
+  "LOGIN": "Войти",
+  "LOGOUT": "Выйти",
 
   "ADD": "Добавить",
-  "MESSAGE_LABEL": "Сообщение"
+  "MESSAGE_LABEL": "Сообщение",
+
+  "ERROR": "Произошла ошибка",
+  "WARNING": "Предупреждение",
+  "WARNING_DESCRIPTION_BANNED": "Инстанс забанен",
+  "WARNING_DESCRIPTION_NOT_AUTHORIZED": "Инстанс не авторизован",
+  "WARNING_DESCRIPTION_STARTING": "Инстанс в процессе запуска",
+  "WARNING_DESCRIPTION_YELLOW_CARD": "The instance has partially or completely suspended sending messages due to spam activity",
+
+  "AUTHORIZATION": "Авторизация"
 }

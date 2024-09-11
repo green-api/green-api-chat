@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useEffect, useRef } from 'react';
 
 import {
   AudioOutlined,
@@ -45,6 +45,7 @@ const Message: FC<MessageProps> = ({
   downloadUrl,
   statusMessage,
   phone,
+  isLastMessage,
 }) => {
   const isMiniVersion = useAppSelector(selectMiniVersion);
 
@@ -56,6 +57,8 @@ const Message: FC<MessageProps> = ({
   const messageDate = getMessageDate(timestamp * 1000, resolvedLanguage as LanguageLiteral);
 
   const [message, contextMessageHolder] = useMessage();
+
+  const messageRef = useRef<HTMLDivElement>(null);
 
   const getMessageTypeIcon = () => {
     let messageTypeIcon: JSX.Element | null = null;
@@ -120,8 +123,15 @@ const Message: FC<MessageProps> = ({
     }
   };
 
+  useEffect(() => {
+    if (isLastMessage && messageRef.current && !isMiniVersion) {
+      messageRef.current.scrollIntoView();
+    }
+  }, [isLastMessage]);
+
   return (
     <div
+      ref={messageRef}
       style={{
         alignSelf: type === 'incoming' ? 'flex-start' : 'flex-end',
         maxWidth: isMiniVersion ? 'unset' : 500,

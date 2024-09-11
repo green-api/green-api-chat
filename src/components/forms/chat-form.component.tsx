@@ -8,7 +8,7 @@ import SendingModal from 'components/modals/sending-modal.component';
 import { useAppDispatch, useAppSelector, useFormWithLanguageValidation } from 'hooks';
 import { useSendMessageMutation } from 'services/green-api/endpoints';
 import { journalsGreenApiEndpoints } from 'services/green-api/endpoints/journals.green-api.endpoints';
-import { selectActiveChat, selectMiniVersion } from 'store/slices/chat.slice';
+import { selectActiveChat, selectMessageCount, selectMiniVersion } from 'store/slices/chat.slice';
 import { selectCredentials } from 'store/slices/user.slice';
 import { ActiveChat, ChatFormValues } from 'types';
 
@@ -16,6 +16,7 @@ const ChatForm: FC = () => {
   const userCredentials = useAppSelector(selectCredentials);
   const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
   const isMiniVersion = useAppSelector(selectMiniVersion);
+  const messageCount = useAppSelector(selectMessageCount);
 
   const dispatch = useAppDispatch();
 
@@ -60,7 +61,7 @@ const ChatForm: FC = () => {
           idInstance: userCredentials.idInstance,
           apiTokenInstance: userCredentials.apiTokenInstance,
           chatId: activeChat.chatId,
-          count: isMiniVersion ? 10 : 80,
+          count: isMiniVersion ? 10 : messageCount,
         },
         (draftChatHistory) => {
           const existingMessage = draftChatHistory.find((msg) => msg.idMessage === data.idMessage);

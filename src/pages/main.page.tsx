@@ -11,7 +11,7 @@ const Main: FC = () => {
   const isMiniVersion = useAppSelector(selectMiniVersion);
 
   return (
-    <Layout.Content className="main flex-center">
+    <Layout.Content className={`main ${isMiniVersion ? '' : 'flex-center'}`}>
       {isMiniVersion ? <MiniChat /> : <FullChat />}
     </Layout.Content>
   );

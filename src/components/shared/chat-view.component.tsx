@@ -45,7 +45,7 @@ const ChatView: FC = () => {
   useEffect(() => {
     const timerId = setTimeout(() => {
       setMessageCount(20);
-    }, 500);
+    }, 1000);
 
     return () => clearTimeout(timerId);
   }, [activeChat.chatId]);
@@ -70,7 +70,7 @@ const ChatView: FC = () => {
         !isMiniVersion &&
         element.scrollTop === 0 &&
         element.scrollHeight > element.clientHeight &&
-        messageCount < 150
+        messageCount < 200
       ) {
         clearTimeout(setPageTimerReference.current);
 

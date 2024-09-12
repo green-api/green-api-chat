@@ -63,5 +63,9 @@
   "WARNING_DESCRIPTION_STARTING": "Instance in the process of launching",
   "WARNING_DESCRIPTION_YELLOW_CARD": "The instance has partially or completely suspended sending messages due to spam activity",
 
-  "AUTHORIZATION": "Authorization"
+  "AUTHORIZATION": "Authorization",
+
+  "RUSSIAN": "Русский",
+  "ENGLISH": "English",
+  "HEBREW":  "עִבְרִית"
 }

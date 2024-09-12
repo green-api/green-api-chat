@@ -1,14 +1,16 @@
 import { FC } from 'react';
 
-import { Flex } from 'antd';
+import { Flex, Space } from 'antd';
 
 import MessengerLink from 'components/shared/messenger-link.component';
+import SelectLanguage from 'components/UI/select-language.component';
 
 const AsideFooter: FC = () => {
   return (
-    <Flex className="aside-footer">
+    <Space className="aside-footer" direction="vertical" align="center">
+      <SelectLanguage />
       <MessengerLink />
-    </Flex>
+    </Space>
   );
 };
 

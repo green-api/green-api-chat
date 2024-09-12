@@ -63,5 +63,9 @@
   "WARNING_DESCRIPTION_STARTING": "מופע בתהליך ההשקה",
   "WARNING_DESCRIPTION_YELLOW_CARD": "המופע השעה חלקית או מלאה את שליחת ההודעות עקב פעילות ספאם",
 
-  "AUTHORIZATION": "הַרשָׁאָה"
+  "AUTHORIZATION": "הַרשָׁאָה",
+
+  "RUSSIAN": "Русский",
+  "ENGLISH": "English",
+  "HEBREW":  "עִבְרִית"
 }

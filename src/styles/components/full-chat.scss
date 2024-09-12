@@ -1,0 +1,40 @@
+.full-chat {
+  max-width: 1600px;
+  width: 97%;
+  box-shadow: 0 6px 18px var(--register-form-shadow-color);
+  border-radius: 0;
+  background-color: var(--main-background);
+  @include scrollBar();
+
+  @media screen and (max-width: 1440px) {
+    width: 100vw;
+    height: 100vh;
+  }
+}
+
+.content-side {
+  min-width: 420px;
+  width: 100%;
+  background-color: var(--second-background);
+}
+
+.home-view {
+  height: 100%;
+}
+
+.contact-chat {
+  &-header {
+    display: flex;
+    align-items: center;
+    padding: 10px 16px;
+    background-color: var(--second-background);
+  }
+}
+
+.chat-view.full {
+  min-height: 720px;
+
+  @media screen and (max-width: 1440px) {
+    min-height: 770px;
+  }
+}

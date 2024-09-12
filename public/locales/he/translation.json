@@ -17,5 +17,55 @@
   "SUCCESS_SENDING_MESSAGE": "ההודעה נשלחה",
   "PHONE_DOES_NOT_HAVE_WHATSAPP": "למספר הזה אין WhatsApp",
   "QUOTE_REACHED": "מכסת המכס מוצתה",
-  "CHECK_WHATSAPP_QUOTE_REACHED": "מכסה מותשת לשיטת CheckWhatsApp"
+  "CHECK_WHATSAPP_QUOTE_REACHED": "מכסה מותשת לשיטת CheckWhatsApp",
+  "LOGO_TITLE": "GREEN API: שלח וקבל הודעות ווטסאפ",
+
+  "FILE": "קוֹבֶץ",
+  "CONTACT": "מַגָע",
+  "LOCATION": "מַגָע",
+  "POLL": "מִשׁאָל",
+
+  "SELECT_FILE": "בחר קובץ",
+  "FILE_LABEL": "קובץ",
+  "FILENAME_LABEL": "שם הקובץ",
+  "DESCRIPTION": "תיאור",
+
+  "CONTACT_PHONE_LABEL": "מספר קשר",
+  "CONTACT_PHONE_INVALID_MESSAGE": "משמעות שגויה",
+
+  "QUOTED_MESSAGE_ID_LABEL": "מזהה ההודעה המצוטטת",
+
+  "NAME_LABEL": "שם",
+  "LASTNAME_LABEL": "שם משפחה",
+  "MIDDLENAME_LABEL": "שם פטרונימי",
+  "COMPANY_LABEL": "החברה",
+
+  "LATITUDE_LABEL": "רוחב המיקום",
+  "LONGITUDE_LABEL": "מיקום קו אורך",
+  "LOCATION_NAME_LABEL": "שם המיקום",
+  "ADDRESS_LABEL": "כתובת",
+
+  "OPTIONS_LABEL": "אפשרויות תשובה",
+  "OPTION_PLACEHOLDER": "תשובה",
+  "MULTIPLE_ANSWERS_LABEL": "אפשר תשובות מרובות",
+
+  "ADD_NEW_CHAT_HEADER": "צ'אט חדש",
+  "LOGIN": "כְּנִיסָה לַמַעֲרֶכֶת",
+  "LOGOUT": "התנתק",
+
+  "ADD": "הוסף",
+  "MESSAGE_LABEL": "הודעה",
+
+  "ERROR": "אירעה שגיאה",
+  "WARNING": "אַזהָרָה",
+  "WARNING_DESCRIPTION_BANNED": "החשבון נאסר",
+  "WARNING_DESCRIPTION_NOT_AUTHORIZED": "החשבון אינו מורשה",
+  "WARNING_DESCRIPTION_STARTING": "מופע בתהליך ההשקה",
+  "WARNING_DESCRIPTION_YELLOW_CARD": "המופע השעה חלקית או מלאה את שליחת ההודעות עקב פעילות ספאם",
+
+  "AUTHORIZATION": "הַרשָׁאָה",
+
+  "RUSSIAN": "Русский",
+  "ENGLISH": "English",
+  "HEBREW":  "עִבְרִית"
 }

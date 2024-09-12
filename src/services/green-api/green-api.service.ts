@@ -8,7 +8,7 @@ import {
 
 import { RootState } from 'store';
 import { InstanceInterface, MessageInterface } from 'types';
-import { getGreenApiUrls, getLastFiveChats, updateLastChats } from 'utils';
+import { getGreenApiUrls, getLastChats, isPageInIframe, updateLastChats } from 'utils';
 
 const baseQuery = fetchBaseQuery({
   baseUrl: '',
@@ -33,7 +33,7 @@ const customQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError>
   let minutes = 3;
 
   if (!currentChats) {
-    minutes = 1440;
+    minutes = isPageInIframe() ? 1440 : 20160;
   }
 
   const [lastIncomingMessages, lastOutgoingMessages] = await Promise.all([
@@ -57,9 +57,10 @@ const customQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError>
 
   if (lastIncomingMessages.data && lastOutgoingMessages.data) {
     lastIncomingMessages.data = !currentChats
-      ? getLastFiveChats(
+      ? getLastChats(
           lastIncomingMessages.data as MessageInterface[],
-          lastOutgoingMessages.data as MessageInterface[]
+          lastOutgoingMessages.data as MessageInterface[],
+          isPageInIframe() ? 5 : undefined
         )
       : updateLastChats(
           currentChats as MessageInterface[],

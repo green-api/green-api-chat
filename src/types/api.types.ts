@@ -42,6 +42,7 @@ export type TypeMessage =
   | 'locationMessage'
   | 'contactMessage'
   | 'extendedTextMessage'
+  | 'pollMessage'
   | 'reactionMessage';
 
 export type Contact = {
@@ -67,13 +68,15 @@ export interface MessageInterface
   extendedTextMessage?: ExtendedTextMessage;
   quotedMessage?: MessageInterface;
   downloadUrl?: string;
+  location?: LocationInterface;
+  fileName?: string;
 }
 
 export type GetChatHistoryResponse = MessageInterface[];
 
 export interface LocationInterface {
-  nameLocation: string;
-  address: string;
+  nameLocation?: string;
+  address?: string;
   latitude: string;
   longitude: string;
   jpegThumbnail: string;
@@ -165,4 +168,64 @@ interface ProductInterface {
   description: string;
   price: string;
   isHidden: boolean;
+}
+
+export interface SendFileByUploadResponseInterface extends SendingResponseInterface {
+  urlFile: string;
+}
+
+export interface SendFileByUploadParametersInterface
+  extends InstanceInterface,
+    Pick<SendingBaseParametersInterface, 'chatId' | 'quotedMessageId'>,
+    SendingBaseFileParametersInterface {
+  file: File;
+}
+
+export interface SendingBaseFileParametersInterface {
+  fileName?: string;
+  caption?: string;
+}
+
+export interface SendContactParametersInterface
+  extends InstanceInterface,
+    Pick<SendingBaseParametersInterface, 'chatId' | 'quotedMessageId'> {
+  contact: ContactInterface;
+}
+
+export interface ContactInterface {
+  phoneContact: string;
+  firstName?: string;
+  middleName?: string;
+  lastName?: string;
+  company?: string;
+}
+
+export interface SendLocationParametersInterface
+  extends InstanceInterface,
+    Pick<SendingBaseParametersInterface, 'chatId' | 'quotedMessageId'> {
+  nameLocation?: string;
+  address?: string;
+  latitude: string;
+  longitude: string;
+}
+
+export interface SendPollParametersInterface
+  extends InstanceInterface,
+    Pick<SendingBaseParametersInterface, 'chatId' | 'message' | 'quotedMessageId'> {
+  multipleAnswers?: boolean;
+  options: { optionName: string }[];
+}
+
+export enum StateInstanceEnum {
+  Authorized = 'authorized',
+  NotAuthorized = 'notAuthorized',
+  Blocked = 'blocked',
+  SleepMode = 'sleepMode',
+  Starting = 'starting',
+  YellowCard = 'yellowCard',
+  PendingCode = 'pendingCode',
+}
+
+export interface GetStateInstanceResponseInterface {
+  stateInstance: StateInstanceEnum;
 }

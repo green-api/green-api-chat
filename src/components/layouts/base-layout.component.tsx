@@ -3,9 +3,14 @@ import { FC } from 'react';
 import { Layout } from 'antd';
 import { Outlet } from 'react-router-dom';
 
+import { useAppSelector } from 'hooks';
+import { selectMiniVersion } from 'store/slices/chat.slice';
+
 const BaseLayout: FC = () => {
+  const isMiniVersion = useAppSelector(selectMiniVersion);
+
   return (
-    <Layout className="app">
+    <Layout className={`app ${!isMiniVersion ? 'bg' : ''}`}>
       <Outlet />
     </Layout>
   );

@@ -4,30 +4,30 @@ import { SendOutlined } from '@ant-design/icons';
 import { Button, Col, Form, Input, Row } from 'antd';
 import { useTranslation } from 'react-i18next';
 
-import { useAppDispatch, useAppSelector } from 'hooks';
+import SendingModal from 'components/modals/sending-modal.component';
+import { useAppDispatch, useAppSelector, useFormWithLanguageValidation } from 'hooks';
 import { useSendMessageMutation } from 'services/green-api/endpoints';
 import { journalsGreenApiEndpoints } from 'services/green-api/endpoints/journals.green-api.endpoints';
-import { selectActiveChat } from 'store/slices/chat.slice';
+import { selectActiveChat, selectMessageCount, selectMiniVersion } from 'store/slices/chat.slice';
 import { selectCredentials } from 'store/slices/user.slice';
-
-interface FormValues {
-  message: string;
-}
+import { ActiveChat, ChatFormValues } from 'types';
 
 const ChatForm: FC = () => {
   const userCredentials = useAppSelector(selectCredentials);
-  const activeChat = useAppSelector(selectActiveChat);
+  const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
+  const isMiniVersion = useAppSelector(selectMiniVersion);
+  const messageCount = useAppSelector(selectMessageCount);
 
   const dispatch = useAppDispatch();
 
   const { t } = useTranslation();
 
-  const [sendMessage, { isLoading }] = useSendMessageMutation();
+  const [sendMessage, { isLoading: isSendMessageLoading }] = useSendMessageMutation();
 
-  const [form] = Form.useForm<FormValues>();
+  const [form] = useFormWithLanguageValidation<ChatFormValues>();
   const responseTimerReference = useRef<number | null>(null);
 
-  const onSendMessage = async (values: FormValues) => {
+  const onSendMessage = async (values: ChatFormValues) => {
     const { message } = values;
     const body = {
       idInstance: userCredentials.idInstance,
@@ -61,7 +61,7 @@ const ChatForm: FC = () => {
           idInstance: userCredentials.idInstance,
           apiTokenInstance: userCredentials.apiTokenInstance,
           chatId: activeChat.chatId,
-          count: 10,
+          count: isMiniVersion ? 10 : messageCount,
         },
         (draftChatHistory) => {
           const existingMessage = draftChatHistory.find((msg) => msg.idMessage === data.idMessage);
@@ -106,7 +106,8 @@ const ChatForm: FC = () => {
       form={form}
     >
       <Form.Item style={{ marginBottom: 0 }} name="response" className="response-form-item">
-        <Row gutter={[15, 15]} align="bottom">
+        <SendingModal />
+        <Row gutter={[15, 15]} align={isMiniVersion ? 'bottom' : 'middle'}>
           <Col flex="auto">
             <Form.Item
               style={{ marginBottom: 0 }}
@@ -119,7 +120,7 @@ const ChatForm: FC = () => {
               }}
             >
               <Input.TextArea
-                autoSize={{ minRows: 5, maxRows: 5 }}
+                autoSize={{ minRows: isMiniVersion ? 5 : 2, maxRows: 5 }}
                 maxLength={500}
                 placeholder={t('MESSAGE_PLACEHOLDER')}
               />
@@ -132,7 +133,7 @@ const ChatForm: FC = () => {
                 htmlType="submit"
                 size="large"
                 className="login-form-button"
-                loading={isLoading}
+                loading={isSendMessageLoading}
               >
                 <SendOutlined />
               </Button>

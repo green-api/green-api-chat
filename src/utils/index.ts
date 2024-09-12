@@ -84,9 +84,10 @@ export function formatDate(
   }
 }
 
-export function getLastFiveChats(
+export function getLastChats(
   lastIncomingMessages: GetChatHistoryResponse,
-  lastOutgoingMessages: GetChatHistoryResponse
+  lastOutgoingMessages: GetChatHistoryResponse,
+  count?: number
 ): GetChatHistoryResponse {
   if (!lastIncomingMessages.length && !lastOutgoingMessages.length) {
     return [];
@@ -99,7 +100,7 @@ export function getLastFiveChats(
   const resultMap = new Map<string, MessageInterface>();
 
   for (const message of allMessagesFilteredAndSorted) {
-    if (resultMap.size === 5) {
+    if (count && resultMap.size === count) {
       break;
     }
 
@@ -118,7 +119,7 @@ export function updateLastChats(
 ): GetChatHistoryResponse {
   const updates = [...lastIncomingMessages, ...lastOutgoingMessages];
 
-  return getLastFiveChats(currentChats, updates);
+  return getLastChats(currentChats, updates, isPageInIframe() ? 5 : undefined);
 }
 
 export function getMessageDate(
@@ -206,9 +207,29 @@ export function getJSONMessage(message: MessageInterface): string {
     copyMessage.caption = copyMessage.caption.slice(0, 150) + '...';
   }
 
+  if (copyMessage.location && copyMessage.location.jpegThumbnail.length > 50) {
+    copyMessage.location.jpegThumbnail = copyMessage.location.jpegThumbnail.slice(0, 50) + '...';
+  }
+
   if (copyMessage.quotedMessage) {
     copyMessage.quotedMessage = JSON.parse(getJSONMessage(copyMessage.quotedMessage));
   }
 
   return JSON.stringify(copyMessage, null, 2);
+}
+
+export function isPageInIframe() {
+  return window.location !== window.parent.location;
+}
+
+export function getFormData<Object_ extends object>(data: Object_): FormData {
+  const formData = new FormData();
+
+  for (const [key, value] of Object.entries(data)) {
+    if (!value) continue;
+
+    formData.set(key, value);
+  }
+
+  return formData;
 }

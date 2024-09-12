@@ -1,0 +1,44 @@
+.selectLanguage {
+  min-width: 96px;
+  max-width: 96px;
+
+  .ant-select-selector {
+    position: relative;
+
+    &:before {
+      content: '';
+      position: absolute;
+      height: 100%;
+      width: calc(100% + 20px);
+      top: 0;
+      left: -20px;
+    }
+  }
+
+  &.ant-select-rtl .ant-select-selector {
+    &:before {
+      left: auto;
+      right: -20px;
+    }
+  }
+
+  &__itemBox {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    justify-content: space-between;
+    padding-right: 8px;
+  }
+
+  &__text {
+    text-align: center;
+    padding-left: 3px
+  }
+
+  &__icon {
+    text-align: center;
+    border-width: 1px;
+    border-style: solid;
+    border-color: gray
+  }
+}

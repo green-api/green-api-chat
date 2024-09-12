@@ -1,0 +1,43 @@
+.message {
+  display: flex;
+  flex-direction: column;
+
+  &-text {
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+  }
+
+  &-arrow {
+    transition: .5s all;
+    width: 0;
+    overflow: hidden;
+
+    @media screen and (hover: none) {
+      width: 15px;
+    }
+  }
+
+  &-date {
+    margin-left: auto;
+  }
+
+  &:hover {
+    .message-arrow {
+      width: 15px;
+    }
+  }
+}
+
+.outgoing {
+  background-color: var(--second-background);
+
+  &.full {
+    background-color: var(--main-background);
+  }
+}
+
+.incoming {
+  background-color: var(--light-primary-color);
+  color: var(--main-background)
+}

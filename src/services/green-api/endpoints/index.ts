@@ -1,3 +1,4 @@
+import { accountGreenApiEndpoints } from './account.green-api.endpoints';
 import { groupGreenApiEndpoints } from './group.green-api.endpoints';
 import { journalsGreenApiEndpoints } from './journals.green-api.endpoints';
 import { receivingGreenApiEndpoints } from './receiving.green-api.endpoints';
@@ -17,7 +18,13 @@ export const {
   useCheckWhatsappMutation,
   useGetAvatarQuery,
   useLastMessagesQuery,
+  useSendFileByUploadMutation,
+  useSendContactMutation,
+  useSendLocationMutation,
+  useSendPollMutation,
+  useLazyGetStateInstanceQuery,
 } = {
+  ...accountGreenApiEndpoints,
   ...sendingGreenApiEndpoints,
   ...receivingGreenApiEndpoints,
   ...journalsGreenApiEndpoints,

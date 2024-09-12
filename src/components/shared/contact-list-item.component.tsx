@@ -4,6 +4,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { Flex, Spin } from 'antd';
 import { useTranslation } from 'react-i18next';
 
+import AvatarImage from './avatar-image.component';
 import emptyAvatar from 'assets/emptyAvatar.png';
 import emptyAvatarGroup from 'assets/emptyAvatarGroup.png';
 import { useActions, useAppSelector } from 'hooks';
@@ -12,6 +13,7 @@ import {
   useGetContactInfoQuery,
   useGetGroupDataQuery,
 } from 'services/green-api/endpoints';
+import { selectActiveChat } from 'store/slices/chat.slice';
 import { selectCredentials } from 'store/slices/user.slice';
 import { LanguageLiteral, MessageInterface } from 'types';
 import { getMessageDate } from 'utils';
@@ -26,6 +28,8 @@ const ContactListItem: FC<ContactListItemProps> = ({ lastMessage }) => {
   } = useTranslation();
 
   const userCredentials = useAppSelector(selectCredentials);
+  const activeChat = useAppSelector(selectActiveChat);
+
   const { setActiveChat } = useActions();
 
   const messageDate = getMessageDate(
@@ -80,12 +84,12 @@ const ContactListItem: FC<ContactListItemProps> = ({ lastMessage }) => {
 
   return (
     <Flex
-      className="contact-list__item"
+      className={`contact-list__item ${activeChat && lastMessage.chatId === activeChat.chatId ? 'active' : ''}`}
       align="center"
       gap="small"
-      onClick={() => setActiveChat({ ...lastMessage, senderName: chatName })}
+      onClick={() => setActiveChat({ ...lastMessage, senderName: chatName, avatar })}
     >
-      <img className="avatar-image" src={avatar} alt="avatar" />
+      <AvatarImage src={avatar} />
       <Flex className="contact-list__item-wrapper">
         <Flex vertical gap="small" className="contact-list__item-body">
           {isLoading ? (

@@ -4,16 +4,22 @@ import { LoadingOutlined, SendOutlined } from '@ant-design/icons';
 import { Button, Col, Form, Input, Row } from 'antd';
 import { useTranslation } from 'react-i18next';
 
-import { getLastFiveChats } from '../../utils';
-import { useAppDispatch, useAppSelector } from 'hooks';
+import { useAppDispatch, useAppSelector, useFormWithLanguageValidation } from 'hooks';
 import { useCheckWhatsappMutation, useSendMessageMutation } from 'services/green-api/endpoints';
 import { journalsGreenApiEndpoints } from 'services/green-api/endpoints/journals.green-api.endpoints';
+import { selectMiniVersion } from 'store/slices/chat.slice';
 import { selectAuth, selectCredentials } from 'store/slices/user.slice';
 import { MessageInterface, NewChatFormValues } from 'types';
+import { getLastChats } from 'utils';
 
-const NewChatForm: FC = () => {
+interface NewChatFormProps {
+  onSubmitCallback?: () => void;
+}
+
+const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
   const userCredentials = useAppSelector(selectCredentials);
   const isAuth = useAppSelector(selectAuth);
+  const isMiniVersion = useAppSelector(selectMiniVersion);
 
   const dispatch = useAppDispatch();
 
@@ -22,7 +28,7 @@ const NewChatForm: FC = () => {
   const [sendMessage, { isLoading }] = useSendMessageMutation();
   const [checkWhatsapp] = useCheckWhatsappMutation();
 
-  const [form] = Form.useForm<NewChatFormValues>();
+  const [form] = useFormWithLanguageValidation<NewChatFormValues>();
   const responseTimerReference = useRef<number | null>(null);
 
   const onSendMessage = async (values: NewChatFormValues) => {
@@ -103,7 +109,7 @@ const NewChatForm: FC = () => {
               statusMessage: 'sent',
             };
 
-            return getLastFiveChats(draftChatHistory, [newMessage]);
+            return getLastChats(draftChatHistory, [newMessage], isMiniVersion ? 5 : undefined);
           }
         );
 
@@ -111,6 +117,10 @@ const NewChatForm: FC = () => {
       }
 
       form.setFields([{ name: 'response', warnings: [t('SUCCESS_SENDING_MESSAGE')] }]);
+
+      if (onSubmitCallback) {
+        onSubmitCallback();
+      }
 
       responseTimerReference.current = setTimeout(() => {
         form.setFields([{ name: 'response', errors: [], warnings: [] }]);

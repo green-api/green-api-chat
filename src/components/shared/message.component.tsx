@@ -1,10 +1,12 @@
-import { FC } from 'react';
+import { FC, useEffect, useRef } from 'react';
 
 import {
   AudioOutlined,
   CopyOutlined,
   DownOutlined,
   FileImageOutlined,
+  FileOutlined,
+  UserOutlined,
   VideoCameraOutlined,
 } from '@ant-design/icons';
 import { Flex, Space, Tooltip, Typography } from 'antd';
@@ -13,6 +15,8 @@ import { useTranslation } from 'react-i18next';
 
 import DoubleTickIcon from 'assets/double-tick.svg?react';
 import TickIcon from 'assets/tick.svg?react';
+import { useAppSelector } from 'hooks';
+import { selectMiniVersion } from 'store/slices/chat.slice';
 import { LanguageLiteral, StatusMessage, TypeConnectionMessage, TypeMessage } from 'types';
 import { getMessageDate } from 'utils';
 
@@ -41,7 +45,10 @@ const Message: FC<MessageProps> = ({
   downloadUrl,
   statusMessage,
   phone,
+  isLastMessage,
 }) => {
+  const isMiniVersion = useAppSelector(selectMiniVersion);
+
   const {
     t,
     i18n: { resolvedLanguage },
@@ -51,11 +58,9 @@ const Message: FC<MessageProps> = ({
 
   const [message, contextMessageHolder] = useMessage();
 
-  const getMessageTypeIcon = () => {
-    if (!downloadUrl) {
-      return null;
-    }
+  const messageRef = useRef<HTMLDivElement>(null);
 
+  const getMessageTypeIcon = () => {
     let messageTypeIcon: JSX.Element | null = null;
 
     switch (typeMessage) {
@@ -69,6 +74,18 @@ const Message: FC<MessageProps> = ({
 
       case 'videoMessage':
         messageTypeIcon = <VideoCameraOutlined />;
+        break;
+
+      case 'documentMessage':
+        messageTypeIcon = <FileOutlined />;
+        break;
+
+      case 'locationMessage':
+        messageTypeIcon = <FileOutlined />;
+        break;
+
+      case 'contactMessage':
+        messageTypeIcon = <UserOutlined />;
         break;
 
       default:
@@ -106,14 +123,24 @@ const Message: FC<MessageProps> = ({
     }
   };
 
+  useEffect(() => {
+    if (isLastMessage && messageRef.current && !isMiniVersion) {
+      messageRef.current.scrollIntoView();
+    }
+  }, [isLastMessage]);
+
   return (
     <div
+      ref={messageRef}
       style={{
         alignSelf: type === 'incoming' ? 'flex-start' : 'flex-end',
+        maxWidth: isMiniVersion ? 'unset' : 500,
       }}
       className="message"
     >
-      <div className={`message-text ${type === 'outgoing' ? 'outgoing' : 'incoming'} p-10`}>
+      <div
+        className={`message-text ${type === 'outgoing' ? `outgoing ${isMiniVersion ? '' : 'full'}` : 'incoming'} p-10`}
+      >
         {showSenderName && (
           <Flex>
             <h4
@@ -135,8 +162,8 @@ const Message: FC<MessageProps> = ({
         <Space>
           {getMessageTypeIcon()}
           <Typography.Paragraph
-            className={`${type === 'outgoing' ? 'outgoing' : 'incoming'}`}
-            style={{ fontSize: 16, margin: 0 }}
+            className={`${type === 'outgoing' ? 'outgoing' : 'incoming'} ${isMiniVersion ? '' : 'full'}`}
+            style={{ fontSize: isMiniVersion ? 16 : 14, margin: 0 }}
             ellipsis={{ rows: 5, expandable: true, symbol: t('SHOW_ALL_TEXT') }}
           >
             {textMessage}
@@ -153,8 +180,8 @@ const Message: FC<MessageProps> = ({
             }}
             trigger={window.outerWidth < 769 || 'cordova' in window ? 'focus' : 'hover'}
             title={
-              <Flex vertical={true}>
-                <pre style={{ textWrap: 'nowrap' }}>{jsonMessage}</pre>
+              <Flex vertical>
+                <pre style={{ textWrap: 'wrap' }}>{jsonMessage}</pre>
                 <div
                   className="copy-massage-code-button"
                   onPointerDown={() => {

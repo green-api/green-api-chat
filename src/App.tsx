@@ -5,11 +5,11 @@ import en_US from 'antd/es/locale/en_US';
 import { useTranslation } from 'react-i18next';
 import { RouterProvider } from 'react-router-dom';
 
-import { isConsoleMessageData } from './utils';
 import { localisation, THEME } from 'configs';
 import { useActions } from 'hooks';
 import router from 'router';
 import { MessageData, MessageEventTypeEnum } from 'types';
+import { isConsoleMessageData } from 'utils';
 
 function App() {
   const { i18n } = useTranslation();

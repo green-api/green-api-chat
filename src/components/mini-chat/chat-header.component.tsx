@@ -1,9 +1,8 @@
 import { FC } from 'react';
 
 import { LeftOutlined } from '@ant-design/icons';
-import { Flex, Space } from 'antd';
+import { Flex, Space, Typography } from 'antd';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
 
 import { useActions, useAppSelector } from 'hooks';
 import { selectActiveChat } from 'store/slices/chat.slice';
@@ -32,9 +31,9 @@ const ChatHeader: FC = () => {
   return (
     <Flex justify="space-between" align="center">
       <h3 className="text-overflow">{t('CHAT_HEADER')}</h3>
-      <Link to="/" target="_blank">
+      <Typography.Link href={''} target="_blank" rel="noreferrer">
         {t('FULL_VERSION')}
-      </Link>
+      </Typography.Link>
     </Flex>
   );
 };

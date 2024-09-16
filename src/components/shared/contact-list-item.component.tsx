@@ -101,7 +101,6 @@ const ContactListItem: FC<ContactListItemProps> = ({ lastMessage }) => {
         </Flex>
         <span
           style={{
-            minWidth: messageDate.styleWidth ? messageDate.styleWidth : undefined,
             textAlign: 'end',
           }}
         >

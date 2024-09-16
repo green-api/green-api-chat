@@ -54,7 +54,7 @@ const Message: FC<MessageProps> = ({
     i18n: { resolvedLanguage },
   } = useTranslation();
 
-  const messageDate = getMessageDate(timestamp * 1000, resolvedLanguage as LanguageLiteral);
+  const messageDate = getMessageDate(timestamp * 1000, resolvedLanguage as LanguageLiteral, 'long');
 
   const [message, contextMessageHolder] = useMessage();
 

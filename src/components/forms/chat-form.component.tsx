@@ -1,4 +1,4 @@
-import { FC, useRef } from 'react';
+import { FC, useEffect, useRef } from 'react';
 
 import { SendOutlined } from '@ant-design/icons';
 import { Button, Col, Form, Input, Row } from 'antd';
@@ -96,6 +96,10 @@ const ChatForm: FC = () => {
       }, 5000);
     }
   };
+
+  useEffect(() => {
+    form.setFields([{ name: 'message', errors: [] }]);
+  }, [activeChat.chatId, form]);
 
   return (
     <Form

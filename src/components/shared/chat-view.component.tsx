@@ -99,6 +99,18 @@ const ChatView: FC = () => {
   }
 
   if (error) {
+    if ('status' in error && error.status === 429) {
+      return (
+        <Card
+          className={`chat-view flex-center ${isMiniVersion ? '' : 'chat-bg full'}`}
+          bordered={false}
+          style={{ boxShadow: 'unset' }}
+        >
+          <Spin size="large" />
+        </Card>
+      );
+    }
+
     return (
       <Card
         className={`chat-view flex-center ${isMiniVersion ? '' : 'full'}`}

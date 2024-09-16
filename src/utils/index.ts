@@ -52,36 +52,24 @@ export function getGreenApiUrls(
 
 export function formatDate(
   timeCreated: number | string | Date,
-  language: LanguageLiteral | undefined
+  language: LanguageLiteral = 'en',
+  format: 'short' | 'long' = 'short'
 ) {
-  switch (language) {
-    case 'ru': {
-      return new Date(timeCreated).toLocaleDateString(language, {
-        weekday: 'short',
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric',
-      });
-    }
+  const options: Intl.DateTimeFormatOptions =
+    format === 'short'
+      ? {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+        }
+      : {
+          weekday: 'short',
+          day: '2-digit',
+          month: 'short',
+          year: 'numeric',
+        };
 
-    case 'he': {
-      return new Date(timeCreated).toLocaleDateString(language, {
-        weekday: 'short',
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric',
-      });
-    }
-
-    default: {
-      return new Date(timeCreated).toLocaleDateString(language, {
-        weekday: 'short',
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric',
-      });
-    }
-  }
+  return new Date(timeCreated).toLocaleDateString(language, options);
 }
 
 export function getLastChats(
@@ -124,10 +112,11 @@ export function updateLastChats(
 
 export function getMessageDate(
   timestamp: number,
-  language: LanguageLiteral
+  language: LanguageLiteral = 'en',
+  format: 'short' | 'long' = 'short'
 ): { date: string; styleWidth?: number } {
-  const messageDate = formatDate(timestamp, language);
-  const nowDate = formatDate(Date.now(), language);
+  const messageDate = formatDate(timestamp, language, format);
+  const nowDate = formatDate(Date.now(), language, format);
 
   if (messageDate === nowDate) {
     const date = new Date(timestamp);

@@ -1,11 +1,12 @@
 import { FC, useState } from 'react';
 
 import { LogoutOutlined, UserAddOutlined } from '@ant-design/icons';
-import { Flex, Space } from 'antd';
+import { Flex, Space, Image } from 'antd';
 import { Header } from 'antd/es/layout/layout';
 import { useTranslation } from 'react-i18next';
 
 import AsideAddNewChat from './aside-add-new-chat.component';
+import logo from 'assets/header-logo.png';
 import { useActions } from 'hooks';
 
 const AsideHeader: FC = () => {
@@ -22,9 +23,9 @@ const AsideHeader: FC = () => {
   };
 
   return (
-    <Header>
+    <Header style={{ padding: '5px 37px' }}>
       <Flex justify="space-between">
-        <h1>{t('CHAT_HEADER')}</h1>
+        <Image src={logo} preview={false} width={60} height={60} />
         <Space>
           <UserAddOutlined
             style={{ fontSize: 20 }}

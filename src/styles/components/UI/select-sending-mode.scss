@@ -1,0 +1,11 @@
+.select-sending-mode {
+  & > .ant-select-arrow {
+    height: 22px;
+    top: 35%;
+    left: 35%;
+  }
+
+  &.rtl > .ant-select-arrow {
+    left: 0;
+  }
+}

@@ -19,7 +19,8 @@ const TextArea: FC<TextAreaProps> = ({ value, onChange }) => {
 
   return (
     <Input.TextArea
-      autoSize={{ minRows: isMiniVersion ? 5 : 2, maxRows: 5 }}
+      style={{ height: isMiniVersion ? '' : '42px !important' }}
+      autoSize={{ minRows: isMiniVersion ? 5 : 1, maxRows: 5 }}
       maxLength={500}
       placeholder={t('MESSAGE_PLACEHOLDER')}
       onKeyDown={(e) => {

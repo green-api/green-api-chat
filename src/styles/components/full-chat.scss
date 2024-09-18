@@ -20,6 +20,7 @@
 
 .home-view {
   height: 100%;
+  width: 100%;
 }
 
 .contact-chat {
@@ -32,9 +33,10 @@
 }
 
 .chat-view.full {
-  min-height: 720px;
+  height: 720px;
+  flex: 1 0 auto;
 
   @media screen and (max-width: 1440px) {
-    min-height: 770px;
+    height: 770px;
   }
 }

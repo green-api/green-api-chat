@@ -109,7 +109,8 @@ const ChatForm: FC = () => {
       onFinish={onSendMessage}
       onSubmitCapture={() => form.setFields([{ name: 'response', errors: [], warnings: [] }])}
       form={form}
-      onKeyDown={(e) => e.key === 'Enter' && form.submit()}
+      onKeyDown={(e) => !e.ctrlKey && e.key === 'Enter' && form.submit()}
+      disabled={isSendMessageLoading}
     >
       <Form.Item style={{ marginBottom: 0 }} name="response" className="response-form-item">
         <SendingModal />
@@ -128,19 +129,21 @@ const ChatForm: FC = () => {
               <TextArea />
             </Form.Item>
           </Col>
-          <Col>
-            <Form.Item style={{ marginBottom: 0 }}>
-              <Button
-                type="link"
-                htmlType="submit"
-                size="large"
-                className="login-form-button"
-                loading={isSendMessageLoading}
-              >
-                <SendOutlined />
-              </Button>
-            </Form.Item>
-          </Col>
+          {isMiniVersion && (
+            <Col>
+              <Form.Item style={{ marginBottom: 0 }}>
+                <Button
+                  type="link"
+                  htmlType="submit"
+                  size="large"
+                  className="login-form-button"
+                  loading={isSendMessageLoading}
+                >
+                  <SendOutlined />
+                </Button>
+              </Form.Item>
+            </Col>
+          )}
         </Row>
       </Form.Item>
     </Form>

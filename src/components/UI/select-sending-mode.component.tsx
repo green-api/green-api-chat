@@ -1,21 +1,24 @@
 import { FC } from 'react';
 
-import { PlusOutlined } from '@ant-design/icons';
 import { Select } from 'antd';
 import { useTranslation } from 'react-i18next';
 
+import AttachIcon from 'assets/attach-icon.svg?react';
 import SendingModal from 'components/modals/sending-modal.component';
 import { useActions } from 'hooks';
 import { SendingMethodName } from 'types';
 
 const SelectSendingMode: FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const { setActiveSendingMode } = useActions();
+
+  const dir = i18n.dir();
 
   return (
     <>
       <Select
+        className={`select-sending-mode ${dir === 'rtl' ? 'rtl' : ''}`}
         variant="borderless"
         value=""
         options={[
@@ -26,9 +29,7 @@ const SelectSendingMode: FC = () => {
         ]}
         style={{ width: 50 }}
         dropdownStyle={{ width: 120 }}
-        suffixIcon={
-          <PlusOutlined className="send-mode-select-btn" style={{ pointerEvents: 'none' }} />
-        }
+        suffixIcon={<AttachIcon style={{ pointerEvents: 'none' }} />}
         onSelect={(value) => setActiveSendingMode(value as SendingMethodName)}
       />
       <SendingModal />

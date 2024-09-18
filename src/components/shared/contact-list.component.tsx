@@ -1,6 +1,6 @@
 import { FC } from 'react';
 
-import { Empty, List } from 'antd';
+import { Empty, Flex, List, Spin } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import ContactListItem from './contact-list-item.component';
@@ -25,6 +25,18 @@ const ContactList: FC = () => {
   );
 
   if (error) {
+    if ('status' in error && error.status === 429) {
+      return (
+        <Flex
+          className={`contact-list ${isMiniVersion ? 'min-height-460' : 'min-height-720'}`}
+          align="center"
+          justify="center"
+        >
+          <Spin size="large" />
+        </Flex>
+      );
+    }
+
     return (
       <Empty
         className={`empty p-10 ${isMiniVersion ? 'min-height-460' : 'height-720'}`}

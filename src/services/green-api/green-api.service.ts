@@ -14,6 +14,8 @@ const baseQuery = fetchBaseQuery({
   baseUrl: '',
 });
 
+let attemptIdToGetChats = 1;
+
 const customQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> = async (
   args,
   api,
@@ -34,6 +36,11 @@ const customQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError>
 
   if (!currentChats) {
     minutes = isPageInIframe() ? 1440 : 20160;
+  }
+
+  if (!currentChats && isPageInIframe() && attemptIdToGetChats < 6) {
+    minutes = 1440;
+    attemptIdToGetChats++;
   }
 
   const [lastIncomingMessages, lastOutgoingMessages] = await Promise.all([

@@ -16,7 +16,7 @@ import {
 import { selectActiveChat } from 'store/slices/chat.slice';
 import { selectCredentials } from 'store/slices/user.slice';
 import { LanguageLiteral, MessageInterface } from 'types';
-import { getMessageDate } from 'utils';
+import { getMessageDate, getOutgoingStatusMessageIcon } from 'utils';
 
 interface ContactListItemProps {
   lastMessage: MessageInterface;
@@ -97,7 +97,10 @@ const ContactListItem: FC<ContactListItemProps> = ({ lastMessage }) => {
           ) : (
             <h6 className="text-overflow">{chatName}</h6>
           )}
-          <span className="text-overflow">{textMessage}</span>
+          <Flex align="center">
+            {lastMessage.statusMessage && getOutgoingStatusMessageIcon(lastMessage.statusMessage)}
+            <span className="text-overflow">{textMessage}</span>
+          </Flex>
         </Flex>
         <span
           style={{

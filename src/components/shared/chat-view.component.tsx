@@ -30,6 +30,7 @@ const ChatView: FC = () => {
   const {
     data: messages,
     isLoading,
+    isFetching,
     error,
   } = useGetChatHistoryQuery(
     {
@@ -61,23 +62,26 @@ const ChatView: FC = () => {
   // scroll top handler
   useEffect(() => {
     const element = chatViewRef.current;
-    if (!element) {
+    if (!element || isMiniVersion) {
       return;
     }
 
+    let timer: number;
+
     const handleScrollTop = () => {
       if (
-        !isMiniVersion &&
         element.scrollTop === 0 &&
         element.scrollHeight > element.clientHeight &&
         messageCount < 200
       ) {
         clearTimeout(setPageTimerReference.current);
+        clearTimeout(timer);
 
         setPageTimerReference.current = setTimeout(() => {
           setMessageCount(messageCount + 10);
-          element.scrollTo({ top: 10 });
-        }, 500);
+
+          timer = setTimeout(() => element.scrollTo({ top: element.clientHeight / 5 }), 350);
+        }, 600);
       }
     };
 
@@ -129,6 +133,11 @@ const ChatView: FC = () => {
       style={{ boxShadow: 'unset' }}
       ref={chatViewRef}
     >
+      {isFetching &&
+        chatViewRef.current?.scrollTop === 0 &&
+        chatViewRef.current?.scrollHeight > chatViewRef.current?.clientHeight && (
+          <Spin size="large" />
+        )}
       {messages?.map((message, idx) => {
         const typeMessage = message.typeMessage;
         const showSenderName =

@@ -28,9 +28,7 @@ const customQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError>
   const state = api.getState() as RootState;
   const { idInstance, apiTokenInstance } = (args as FetchArgs).params as InstanceInterface;
 
-  const key =
-    `lastMessages(${JSON.stringify({ apiTokenInstance, idInstance })})` as keyof typeof state.greenAPI.queries;
-  const currentChats = state.greenAPI.queries[key]?.data;
+  const currentChats = state.greenAPI.queries['lastMessages']?.data;
 
   let minutes = 3;
 

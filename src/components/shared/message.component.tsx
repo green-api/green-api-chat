@@ -16,7 +16,7 @@ import { useTranslation } from 'react-i18next';
 import { useAppSelector } from 'hooks';
 import { selectMiniVersion } from 'store/slices/chat.slice';
 import { LanguageLiteral, StatusMessage, TypeConnectionMessage, TypeMessage } from 'types';
-import { getMessageDate, getOutgoingStatusMessageIcon } from 'utils';
+import { getMessageDate, getOutgoingStatusMessageIcon, isSafari } from 'utils';
 
 interface MessageProps {
   type: TypeConnectionMessage;
@@ -102,8 +102,9 @@ const Message: FC<MessageProps> = ({
   };
 
   useEffect(() => {
-    if (isLastMessage && messageRef.current && !isMiniVersion) {
-      messageRef.current.scrollIntoView();
+    const element = messageRef.current;
+    if (isLastMessage && element && !isMiniVersion && !isSafari()) {
+      element.scrollIntoView({ behavior: 'smooth' });
     }
   }, [isLastMessage]);
 

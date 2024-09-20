@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef } from 'react';
+import { FC, useEffect, useRef, useState } from 'react';
 
 import { Card, Empty, Spin } from 'antd';
 import { useTranslation } from 'react-i18next';
@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import Message from './message.component';
 import { useActions, useAppSelector } from 'hooks';
 import { useGetChatHistoryQuery } from 'services/green-api/endpoints';
-import { selectActiveChat, selectMessageCount, selectMiniVersion } from 'store/slices/chat.slice';
+import { selectActiveChat, selectMiniVersion } from 'store/slices/chat.slice';
 import { selectCredentials } from 'store/slices/user.slice';
 import { ActiveChat } from 'types';
 import { getErrorMessage, getJSONMessage } from 'utils';
@@ -15,8 +15,8 @@ const ChatView: FC = () => {
   const userCredentials = useAppSelector(selectCredentials);
   const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
   const isMiniVersion = useAppSelector(selectMiniVersion);
-  const messageCount = useAppSelector(selectMessageCount);
 
+  const [count, setCount] = useState(20);
   const { setMessageCount } = useActions();
 
   let previousMessageAreOutgoing = false;
@@ -37,27 +37,18 @@ const ChatView: FC = () => {
       idInstance: userCredentials.idInstance,
       apiTokenInstance: userCredentials.apiTokenInstance,
       chatId: activeChat.chatId,
-      count: isMiniVersion ? 10 : messageCount,
+      count: isMiniVersion ? 10 : count,
     },
     { skipPollingIfUnfocused: true, pollingInterval: 15000 }
   );
 
-  // reset message count on new chat
-  useEffect(() => {
-    const timerId = setTimeout(() => {
-      setMessageCount(20);
-    }, 1000);
-
-    return () => clearTimeout(timerId);
-  }, [activeChat.chatId]);
-
   // scroll to bottom when open chat
   useEffect(() => {
     const element = chatViewRef.current;
-    if (element && messageCount === 20) {
-      element.scrollTop = element.scrollHeight;
+    if (element && count === 20) {
+      element.scrollTo({ top: element.scrollHeight });
     }
-  }, [messages, messageCount]);
+  }, [messages]);
 
   // scroll top handler
   useEffect(() => {
@@ -69,19 +60,15 @@ const ChatView: FC = () => {
     let timer: number;
 
     const handleScrollTop = () => {
-      if (
-        element.scrollTop === 0 &&
-        element.scrollHeight > element.clientHeight &&
-        messageCount < 200
-      ) {
+      if (element.scrollTop === 0 && element.scrollHeight > element.clientHeight && count < 180) {
         clearTimeout(setPageTimerReference.current);
         clearTimeout(timer);
 
         setPageTimerReference.current = setTimeout(() => {
-          setMessageCount(messageCount + 10);
-
+          setMessageCount(count + 10);
+          setCount((count) => count + 10);
           timer = setTimeout(() => element.scrollTo({ top: element.clientHeight / 5 }), 350);
-        }, 600);
+        }, 500);
       }
     };
 

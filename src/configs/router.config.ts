@@ -1,6 +1,7 @@
 export enum Routes {
   baseUrl = '/chat',
   main = '/',
+  auth = '/auth',
 }
 
 export const consoleUrl = 'https://console.green-api.com/';

@@ -11,7 +11,7 @@ const ContactChat: FC = () => {
   return (
     <Flex vertical style={{ width: '100%' }}>
       <ContactChatHeader />
-      <ChatView />
+      <ChatView key={Date.now()} />
       <Flex align="center">
         <SelectSendingMode />
         <div style={{ flex: '1' }}>

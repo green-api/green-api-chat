@@ -224,3 +224,9 @@ export function getFormData<Object_ extends object>(data: Object_): FormData {
 
   return formData;
 }
+
+export function isSafari() {
+  return (
+    window.navigator.userAgent.includes('Safari') && !window.navigator.userAgent.includes('Chrome')
+  );
+}

@@ -173,6 +173,14 @@ export function getErrorMessage(error: unknown, t: i18n['t']): string | null {
   return errorMessage;
 }
 
+export function getTextMessage(message: MessageInterface) {
+  return message.extendedTextMessage?.text || message.textMessage || message.typeMessage;
+}
+
+export function getPhoneNumberFromChatId(chatId: string) {
+  return chatId.replace(/\@.*$/, '');
+}
+
 export function getJSONMessage(message: MessageInterface): string {
   const copyMessage = structuredClone(message);
 

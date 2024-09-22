@@ -3,13 +3,13 @@ import { FC, useEffect, useRef, useState } from 'react';
 import { Card, Empty, Spin } from 'antd';
 import { useTranslation } from 'react-i18next';
 
-import Message from './message.component';
+import Message from './message/message.component';
 import { useActions, useAppSelector } from 'hooks';
 import { useGetChatHistoryQuery } from 'services/green-api/endpoints';
 import { selectActiveChat, selectMiniVersion } from 'store/slices/chat.slice';
 import { selectCredentials } from 'store/slices/user.slice';
 import { ActiveChat } from 'types';
-import { getErrorMessage, getJSONMessage } from 'utils';
+import { getErrorMessage, getJSONMessage, getPhoneNumberFromChatId, getTextMessage } from 'utils';
 
 const ChatView: FC = () => {
   const userCredentials = useAppSelector(selectCredentials);
@@ -142,18 +142,15 @@ const ChatView: FC = () => {
             showSenderName={showSenderName}
             type={message.type}
             typeMessage={typeMessage}
-            textMessage={
-              !typeMessage.toLowerCase().includes('text')
-                ? typeMessage
-                : message.extendedTextMessage?.text || message.textMessage || message.typeMessage
-            }
+            textMessage={getTextMessage(message)}
             senderName={message.type === 'outgoing' ? t('YOU_SENDER_NAME') : message.senderName!}
-            phone={message.senderId?.replace(/\@.*$/, '')}
+            phone={message.senderId && getPhoneNumberFromChatId(message.senderId)}
             isLastMessage={idx === messages?.length - 1}
             timestamp={message.timestamp}
             jsonMessage={getJSONMessage(message)}
             downloadUrl={message.downloadUrl}
             statusMessage={message.statusMessage}
+            quotedMessage={message.quotedMessage}
           />
         );
       })}

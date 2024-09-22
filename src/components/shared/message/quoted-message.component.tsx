@@ -1,6 +1,7 @@
 import { FC } from 'react';
 
 import { Space, Typography } from 'antd';
+import { useTranslation } from 'react-i18next';
 
 import MessageTooltip from './message-tooltip.component';
 import { useAppSelector } from 'hooks';
@@ -21,17 +22,21 @@ interface QuotedMessageProps {
 const QuotedMessage: FC<QuotedMessageProps> = ({ quotedMessage, type }) => {
   const { typeMessage, downloadUrl } = quotedMessage;
 
+  const { i18n } = useTranslation();
+
   const isMiniVersion = useAppSelector(selectMiniVersion);
 
   const textMessage = getTextMessage(quotedMessage);
   const jsonMessage = getJSONMessage(quotedMessage);
   const participant = getPhoneNumberFromChatId(quotedMessage.participant);
 
+  const dir = i18n.dir();
+
   return (
     <MessageTooltip jsonMessage={jsonMessage} isQuotedMessage>
       <Space
         direction="vertical"
-        className={`quoted-message ${isMiniVersion ? '' : 'full'} ${type === 'outgoing' ? 'outgoing' : 'incoming'}`}
+        className={`quoted-message ${isMiniVersion ? '' : 'full'} ${type === 'outgoing' ? 'outgoing' : 'incoming'} ${dir === 'rtl' ? 'rtl' : ''}`}
       >
         <h5 className="text-overflow">{participant}</h5>
         <Space>

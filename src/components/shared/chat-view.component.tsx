@@ -42,6 +42,11 @@ const ChatView: FC = () => {
     { skipPollingIfUnfocused: true, pollingInterval: 15000 }
   );
 
+  // reset global message count
+  useEffect(() => {
+    setMessageCount(20);
+  }, [activeChat, activeChat.chatId]);
+
   // scroll to bottom when open chat
   useEffect(() => {
     const element = chatViewRef.current;

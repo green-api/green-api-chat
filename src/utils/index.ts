@@ -86,7 +86,9 @@ export function getLastChats(
   const allMessagesFilteredAndSorted = [...lastIncomingMessages, ...lastOutgoingMessages]
     .filter(
       (message) =>
-        message.typeMessage !== 'reactionMessage' && message.typeMessage !== 'deletedMessage'
+        message.typeMessage !== 'reactionMessage' &&
+        message.typeMessage !== 'deletedMessage' &&
+        message.typeMessage !== 'editedMessage'
     )
     .sort((a, b) => b.timestamp - a.timestamp);
 

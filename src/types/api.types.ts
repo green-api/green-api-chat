@@ -44,6 +44,7 @@ export type TypeMessage =
   | 'extendedTextMessage'
   | 'pollMessage'
   | 'deletedMessage'
+  | 'editedMessage'
   | 'reactionMessage';
 
 export type Contact = {

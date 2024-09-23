@@ -20,16 +20,6 @@ export const journalsGreenApiEndpoints = greenAPI.injectEndpoints({
       }),
       transformResponse: (res: GetChatHistoryResponse) =>
         res.filter((msg) => msg.typeMessage !== 'reactionMessage').reverse(),
-      merge: (currentCache, newItems) => {
-        if (currentCache.length === newItems.length) {
-          return currentCache;
-        }
-
-        const newMsgs = newItems.slice(currentCache.length, newItems.length);
-
-        currentCache.push(...newMsgs);
-      },
-      keepUnusedDataFor: 5,
     }),
     getMessage: builder.mutation<MessageInterface, GetChatInformationParameters>({
       query: ({ idInstance, apiTokenInstance, ...body }) => ({
@@ -70,9 +60,6 @@ export const journalsGreenApiEndpoints = greenAPI.injectEndpoints({
           apiTokenInstance,
         },
       }),
-      serializeQueryArgs: ({ endpointName }) => {
-        return endpointName;
-      },
       providesTags: ['lastMessages'],
     }),
   }),

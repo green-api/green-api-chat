@@ -84,7 +84,10 @@ export function getLastChats(
   }
 
   const allMessagesFilteredAndSorted = [...lastIncomingMessages, ...lastOutgoingMessages]
-    .filter((message) => message.typeMessage !== 'reactionMessage')
+    .filter(
+      (message) =>
+        message.typeMessage !== 'reactionMessage' && message.typeMessage !== 'deletedMessage'
+    )
     .sort((a, b) => b.timestamp - a.timestamp);
 
   const resultMap = new Map<string, MessageInterface>();
@@ -106,8 +109,6 @@ export function getLastChats(
       existingChat &&
       existingChat.idMessage === message.idMessage &&
       existingChat.statusMessage !== message.statusMessage
-      // (existingChat.statusMessage === 'sent' || existingChat.statusMessage === 'delivered') &&
-      // (message.statusMessage === 'read' || message.statusMessage === 'delivered')
     ) {
       resultMap.set(existingChat.chatId, message);
     }

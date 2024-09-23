@@ -66,10 +66,15 @@ export interface MessageInterface
   caption?: string;
   contact?: Contact;
   extendedTextMessage?: ExtendedTextMessage;
-  quotedMessage?: MessageInterface;
+  quotedMessage?: QuotedMessageInterface;
   downloadUrl?: string;
   location?: LocationInterface;
   fileName?: string;
+}
+
+export interface QuotedMessageInterface extends MessageInterface {
+  participant: string;
+  senderName: string;
 }
 
 export type GetChatHistoryResponse = MessageInterface[];

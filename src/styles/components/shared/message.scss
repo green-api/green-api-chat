@@ -1,12 +1,7 @@
 .message {
   display: flex;
   flex-direction: column;
-
-  &-text {
-    display: flex;
-    flex-direction: column;
-    border-radius: 10px;
-  }
+  border-radius: 10px;
 
   &-arrow {
     transition: .5s all;
@@ -31,6 +26,7 @@
 
 .outgoing {
   background-color: var(--second-background);
+  align-self: flex-end;
 
   &.full {
     background-color: var(--main-background);
@@ -39,5 +35,38 @@
 
 .incoming {
   background-color: var(--light-primary-color);
-  color: var(--main-background)
+  color: var(--main-background);
+  align-self: flex-start;
 }
+
+.quoted-message {
+  width: 100%;
+  padding: 5px;
+  border-radius: 5px;
+
+  &.outgoing {
+    background-color: var(--main-background);
+    border-left: var(--primary-color) 5px solid;
+
+    &.rtl {
+      border-left: unset;
+      border-right: var(--primary-color) 5px solid;
+    }
+
+    &.full {
+      background-color: var(--second-background);
+    }
+  }
+
+  &.incoming {
+    background-color: var(--primary-color);
+    border-left: var(--main-background) 5px solid;
+    color: var(--main-background);
+
+    &.rtl {
+      border-left: unset;
+      border-right: var(--main-background) 5px solid;
+    }
+  }
+}
+

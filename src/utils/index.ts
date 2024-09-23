@@ -96,6 +96,20 @@ export function getLastChats(
 
     if (!resultMap.has(message.chatId)) {
       resultMap.set(message.chatId, message);
+      continue;
+    }
+
+    const existingChat = resultMap.get(message.chatId);
+
+    // need for update existing chat last message status
+    if (
+      existingChat &&
+      existingChat.idMessage === message.idMessage &&
+      existingChat.statusMessage !== message.statusMessage
+      // (existingChat.statusMessage === 'sent' || existingChat.statusMessage === 'delivered') &&
+      // (message.statusMessage === 'read' || message.statusMessage === 'delivered')
+    ) {
+      resultMap.set(existingChat.chatId, message);
     }
   }
 
@@ -171,6 +185,14 @@ export function getErrorMessage(error: unknown, t: i18n['t']): string | null {
   }
 
   return errorMessage;
+}
+
+export function getTextMessage(message: MessageInterface) {
+  return message.extendedTextMessage?.text || message.textMessage || message.typeMessage;
+}
+
+export function getPhoneNumberFromChatId(chatId: string) {
+  return chatId.replace(/\@.*$/, '');
 }
 
 export function getJSONMessage(message: MessageInterface): string {

@@ -16,7 +16,12 @@ import {
 import { selectActiveChat } from 'store/slices/chat.slice';
 import { selectCredentials } from 'store/slices/user.slice';
 import { LanguageLiteral, MessageInterface } from 'types';
-import { getMessageDate, getOutgoingStatusMessageIcon } from 'utils';
+import {
+  getMessageDate,
+  getMessageTypeIcon,
+  getPhoneNumberFromChatId,
+  getOutgoingStatusMessageIcon,
+} from 'utils';
 
 interface ContactListItemProps {
   lastMessage: MessageInterface;
@@ -69,7 +74,7 @@ const ContactListItem: FC<ContactListItemProps> = ({ lastMessage }) => {
     contactInfo?.name ||
     lastMessage.senderContactName ||
     lastMessage.senderName ||
-    lastMessage.chatId.slice(0, lastMessage.chatId.indexOf('@'));
+    getPhoneNumberFromChatId(lastMessage.chatId);
 
   const avatar = useMemo<string>(() => {
     if (avatarData && avatarData.urlAvatar) {
@@ -97,8 +102,10 @@ const ContactListItem: FC<ContactListItemProps> = ({ lastMessage }) => {
           ) : (
             <h6 className="text-overflow">{chatName}</h6>
           )}
-          <Flex align="center">
-            {lastMessage.statusMessage && getOutgoingStatusMessageIcon(lastMessage.statusMessage)}
+          <Flex align="center" gap={5}>
+            {lastMessage.statusMessage &&
+              getOutgoingStatusMessageIcon(lastMessage.statusMessage, { width: 20, height: 20 })}
+            {getMessageTypeIcon(lastMessage.typeMessage)}
             <span className="text-overflow">{textMessage}</span>
           </Flex>
         </Flex>

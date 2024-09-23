@@ -96,6 +96,20 @@ export function getLastChats(
 
     if (!resultMap.has(message.chatId)) {
       resultMap.set(message.chatId, message);
+      continue;
+    }
+
+    const existingChat = resultMap.get(message.chatId);
+
+    // need for update existing chat last message status
+    if (
+      existingChat &&
+      existingChat.idMessage === message.idMessage &&
+      existingChat.statusMessage !== message.statusMessage
+      // (existingChat.statusMessage === 'sent' || existingChat.statusMessage === 'delivered') &&
+      // (message.statusMessage === 'read' || message.statusMessage === 'delivered')
+    ) {
+      resultMap.set(existingChat.chatId, message);
     }
   }
 

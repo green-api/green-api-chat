@@ -13,12 +13,10 @@ import { Flex, Space, Tooltip, Typography } from 'antd';
 import useMessage from 'antd/es/message/useMessage';
 import { useTranslation } from 'react-i18next';
 
-import DoubleTickIcon from 'assets/double-tick.svg?react';
-import TickIcon from 'assets/tick.svg?react';
 import { useAppSelector } from 'hooks';
 import { selectMiniVersion } from 'store/slices/chat.slice';
 import { LanguageLiteral, StatusMessage, TypeConnectionMessage, TypeMessage } from 'types';
-import { getMessageDate } from 'utils';
+import { getMessageDate, getOutgoingStatusMessageIcon } from 'utils';
 
 interface MessageProps {
   type: TypeConnectionMessage;
@@ -101,26 +99,6 @@ const Message: FC<MessageProps> = ({
         {messageTypeIcon}
       </a>
     );
-  };
-
-  const getOutgoingStatusMessageIcon = () => {
-    if (!statusMessage) {
-      return null;
-    }
-
-    switch (statusMessage) {
-      case 'sent':
-        return <TickIcon style={{ color: '#8696a0' }} />;
-
-      case 'delivered':
-        return <DoubleTickIcon style={{ color: '#8696a0' }} />;
-
-      case 'read':
-        return <DoubleTickIcon style={{ color: 'var(--light-primary-color)' }} />;
-
-      default:
-        return null;
-    }
   };
 
   useEffect(() => {
@@ -209,7 +187,7 @@ const Message: FC<MessageProps> = ({
             {contextMessageHolder}
           </Tooltip>
           <span style={{ fontSize: 14 }}>{messageDate.date}</span>
-          {statusMessage && getOutgoingStatusMessageIcon()}
+          {statusMessage && getOutgoingStatusMessageIcon(statusMessage)}
         </Space>
       </div>
     </div>

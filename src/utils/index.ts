@@ -11,6 +11,8 @@ import {
   MessageInterface,
 } from 'types';
 
+export * from './component.utils';
+
 export function getGreenApiUrls(
   idInstance: InstanceInterface['idInstance']
 ): GreenApiUrlsInterface {

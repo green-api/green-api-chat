@@ -1,5 +1,7 @@
 import { FC } from 'react';
 
+import { Flex } from 'antd';
+
 import ContactChat from './contact-chat/contact-chat.component';
 import HomeView from './home-view.component';
 import { useAppSelector } from 'hooks';
@@ -10,16 +12,16 @@ const ContentSide: FC = () => {
 
   if (activeChat) {
     return (
-      <div className="content-side">
+      <Flex className="content-side">
         <ContactChat />
-      </div>
+      </Flex>
     );
   }
 
   return (
-    <div className="content-side">
+    <Flex className="content-side">
       <HomeView />
-    </div>
+    </Flex>
   );
 };
 

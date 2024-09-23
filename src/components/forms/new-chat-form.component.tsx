@@ -4,6 +4,7 @@ import { LoadingOutlined, SendOutlined } from '@ant-design/icons';
 import { Button, Col, Form, Input, Row } from 'antd';
 import { useTranslation } from 'react-i18next';
 
+import TextArea from 'components/UI/text-area.component';
 import { useAppDispatch, useAppSelector, useFormWithLanguageValidation } from 'hooks';
 import { useCheckWhatsappMutation, useSendMessageMutation } from 'services/green-api/endpoints';
 import { journalsGreenApiEndpoints } from 'services/green-api/endpoints/journals.green-api.endpoints';
@@ -86,8 +87,6 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
       return;
     }
 
-    form.setFieldValue('message', '');
-
     if (data) {
       if (addNewChatInList) {
         const updateChatHistoryThunk = journalsGreenApiEndpoints.util?.updateQueryData(
@@ -115,6 +114,8 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
 
         dispatch(updateChatHistoryThunk);
       }
+
+      form.resetFields();
 
       form.setFields([{ name: 'response', warnings: [t('SUCCESS_SENDING_MESSAGE')] }]);
 
@@ -170,12 +171,7 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
                 return value;
               }}
             >
-              <Input.TextArea
-                autoSize={{ minRows: 5, maxRows: 5 }}
-                maxLength={500}
-                placeholder={t('MESSAGE_PLACEHOLDER')}
-                disabled={!isAuth}
-              />
+              <TextArea />
             </Form.Item>
           </Col>
           <Col>

@@ -9,7 +9,7 @@ import SelectSendingMode from 'components/UI/select-sending-mode.component';
 
 const ContactChat: FC = () => {
   return (
-    <Flex vertical>
+    <Flex vertical style={{ width: '100%' }}>
       <ContactChatHeader />
       <ChatView />
       <Flex align="center">

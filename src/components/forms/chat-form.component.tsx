@@ -1,10 +1,11 @@
 import { FC, useEffect, useRef } from 'react';
 
 import { SendOutlined } from '@ant-design/icons';
-import { Button, Col, Form, Input, Row } from 'antd';
+import { Button, Col, Form, Row } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import SendingModal from 'components/modals/sending-modal.component';
+import TextArea from 'components/UI/text-area.component';
 import { useAppDispatch, useAppSelector, useFormWithLanguageValidation } from 'hooks';
 import { useSendMessageMutation } from 'services/green-api/endpoints';
 import { journalsGreenApiEndpoints } from 'services/green-api/endpoints/journals.green-api.endpoints';
@@ -52,8 +53,6 @@ const ChatForm: FC = () => {
       return;
     }
 
-    form.setFieldValue('message', '');
-
     if (data) {
       const updateChatHistoryThunk = journalsGreenApiEndpoints.util?.updateQueryData(
         'getChatHistory',
@@ -89,6 +88,8 @@ const ChatForm: FC = () => {
 
       dispatch(updateChatHistoryThunk);
 
+      form.resetFields();
+
       form.setFields([{ name: 'response', warnings: [t('SUCCESS_SENDING_MESSAGE')] }]);
 
       responseTimerReference.current = setTimeout(() => {
@@ -108,6 +109,8 @@ const ChatForm: FC = () => {
       onFinish={onSendMessage}
       onSubmitCapture={() => form.setFields([{ name: 'response', errors: [], warnings: [] }])}
       form={form}
+      onKeyDown={(e) => !e.ctrlKey && e.key === 'Enter' && form.submit()}
+      disabled={isSendMessageLoading}
     >
       <Form.Item style={{ marginBottom: 0 }} name="response" className="response-form-item">
         <SendingModal />
@@ -123,26 +126,24 @@ const ChatForm: FC = () => {
                 return value;
               }}
             >
-              <Input.TextArea
-                autoSize={{ minRows: isMiniVersion ? 5 : 2, maxRows: 5 }}
-                maxLength={500}
-                placeholder={t('MESSAGE_PLACEHOLDER')}
-              />
+              <TextArea />
             </Form.Item>
           </Col>
-          <Col>
-            <Form.Item style={{ marginBottom: 0 }}>
-              <Button
-                type="link"
-                htmlType="submit"
-                size="large"
-                className="login-form-button"
-                loading={isSendMessageLoading}
-              >
-                <SendOutlined />
-              </Button>
-            </Form.Item>
-          </Col>
+          {isMiniVersion && (
+            <Col>
+              <Form.Item style={{ marginBottom: 0 }}>
+                <Button
+                  type="link"
+                  htmlType="submit"
+                  size="large"
+                  className="login-form-button"
+                  loading={isSendMessageLoading}
+                >
+                  <SendOutlined />
+                </Button>
+              </Form.Item>
+            </Col>
+          )}
         </Row>
       </Form.Item>
     </Form>

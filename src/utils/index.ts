@@ -195,7 +195,7 @@ export function getTextMessage(message: MessageInterface) {
 }
 
 export function getPhoneNumberFromChatId(chatId: string) {
-  return chatId.replace(/\@.*$/, '');
+  return chatId?.replace(/\@.*$/, '');
 }
 
 export function getJSONMessage(message: MessageInterface): string {

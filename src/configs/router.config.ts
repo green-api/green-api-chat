@@ -34,3 +34,5 @@ export const EXTERNAL_LINKS = {
   website_en: 'https://green-api.com/en/',
   website_he: 'https://green-api.org.il/',
 };
+
+export const CHAT_APP_URL = import.meta.env.VITE_CHAT_APP_HOST ?? window.origin + '/chat/';

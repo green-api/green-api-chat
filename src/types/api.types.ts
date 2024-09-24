@@ -75,7 +75,7 @@ export interface MessageInterface
 }
 
 export interface QuotedMessageInterface extends MessageInterface {
-  participant: string;
+  participant?: string;
   senderName: string;
 }
 

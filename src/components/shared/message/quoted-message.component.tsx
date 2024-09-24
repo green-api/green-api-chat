@@ -28,7 +28,9 @@ const QuotedMessage: FC<QuotedMessageProps> = ({ quotedMessage, type }) => {
 
   const textMessage = getTextMessage(quotedMessage);
   const jsonMessage = getJSONMessage(quotedMessage);
-  const participant = getPhoneNumberFromChatId(quotedMessage.participant);
+  const participant = quotedMessage.participant
+    ? getPhoneNumberFromChatId(quotedMessage.participant)
+    : null;
 
   const dir = i18n.dir();
 
@@ -38,7 +40,7 @@ const QuotedMessage: FC<QuotedMessageProps> = ({ quotedMessage, type }) => {
         direction="vertical"
         className={`quoted-message ${isMiniVersion ? '' : 'full'} ${type === 'outgoing' ? 'outgoing' : 'incoming'} ${dir === 'rtl' ? 'rtl' : ''}`}
       >
-        <h5 className="text-overflow">{participant}</h5>
+        {participant && <h5 className="text-overflow">{participant}</h5>}
         <Space>
           {getMessageTypeIcon(typeMessage, downloadUrl)}
           <Typography.Paragraph

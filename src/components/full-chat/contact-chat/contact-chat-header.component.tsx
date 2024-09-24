@@ -22,7 +22,9 @@ const ContactChatHeader: FC = () => {
       </Space>
 
       <Space>
-        {activeChat.chatId.includes('@c') && <span>{activeChat.chatId.replace(/\@.*$/, '')}</span>}
+        {activeChat.chatId?.includes('@c') && (
+          <span>{activeChat.chatId?.replace(/\@.*$/, '')}</span>
+        )}
         <CloseOutlined style={{ width: 13 }} onClick={() => setActiveChat(null)} />
       </Space>
     </Header>

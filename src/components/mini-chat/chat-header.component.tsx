@@ -4,6 +4,7 @@ import { LeftOutlined } from '@ant-design/icons';
 import { Flex, Space, Typography } from 'antd';
 import { useTranslation } from 'react-i18next';
 
+import { CHAT_APP_URL } from 'configs';
 import { useActions, useAppSelector } from 'hooks';
 import { selectActiveChat } from 'store/slices/chat.slice';
 
@@ -23,7 +24,7 @@ const ChatHeader: FC = () => {
           </a>
           <h3 className="text-overflow">{activeChat.senderName}</h3>
         </Space>
-        {activeChat.chatId.includes('@c') && <div>{activeChat.chatId.replace(/\@.*$/, '')}</div>}
+        {activeChat.chatId?.includes('@c') && <div>{activeChat.chatId?.replace(/\@.*$/, '')}</div>}
       </Flex>
     );
   }
@@ -31,7 +32,7 @@ const ChatHeader: FC = () => {
   return (
     <Flex justify="space-between" align="center">
       <h3 className="text-overflow">{t('CHAT_HEADER')}</h3>
-      <Typography.Link href={''} target="_blank" rel="noreferrer">
+      <Typography.Link href={CHAT_APP_URL} target="_blank" rel="noreferrer">
         {t('FULL_VERSION')}
       </Typography.Link>
     </Flex>

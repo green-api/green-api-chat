@@ -30,7 +30,11 @@ const SendContactForm: FC = () => {
     const body = {
       ...userCredentials,
       chatId: activeChat.chatId,
-      contact: values,
+      contact: {
+        ...values,
+        quotedMessageId: undefined,
+      },
+      quotedMessageId: values.quotedMessageId,
     };
 
     form.setFields([{ name: 'response', errors: [], warnings: [] }]);

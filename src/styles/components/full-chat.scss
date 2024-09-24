@@ -10,6 +10,10 @@
     width: 100vw;
     height: 100vh;
   }
+
+  @media screen and (max-height: 900px) {
+    height: 100vh;
+  }
 }
 
 .content-side {
@@ -34,9 +38,5 @@
 
 .chat-view.full {
   height: 720px;
-  flex: 1 0 auto;
-
-  @media screen and (max-width: 1440px) {
-    height: 770px;
-  }
+  flex-grow: 1;
 }

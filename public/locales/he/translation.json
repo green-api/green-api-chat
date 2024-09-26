@@ -69,5 +69,15 @@
   "ENGLISH": "English",
   "HEBREW":  "עִבְרִית",
 
-  "FULL_VERSION": "גרסה מלאה"
+  "FULL_VERSION": "גרסה מלאה",
+
+  "LOGIN_TITLE": "היכנס",
+  "INPUT_EMAIL_INVALID": "הכתובת שהוזנה אינה אימייל, נסה שנית",
+  "INPUT_EMAIL_HINT": "הכנס כתובת אימייל",
+  "E_MAIL": "אימייל",
+  "INPUT_USER_PASSWORD": "סיסמה",
+  "CHECK_REMEMBER_ME": "זכור אותי",
+  "CLICK_FORGOT_PASSWORD": "שכחתי סיסמה",
+  "CLICK_LOGIN": "התחברות",
+  "CLICK_REGISTER_NOW": "הירשם"
 }

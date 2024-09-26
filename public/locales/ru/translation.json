@@ -70,5 +70,15 @@
   "ENGLISH": "English",
   "HEBREW":  "עִבְרִית",
 
-  "FULL_VERSION": "Полная версия"
+  "FULL_VERSION": "Полная версия",
+
+  "LOGIN_TITLE": "Вход",
+  "INPUT_EMAIL_INVALID": "Введенный адрес не является E-mail!",
+  "INPUT_EMAIL_HINT": "Введите адрес электронной почты!",
+  "E_MAIL": "Электронная почта",
+  "INPUT_USER_PASSWORD": "Пароль",
+  "CHECK_REMEMBER_ME": "Запомнить меня",
+  "CLICK_FORGOT_PASSWORD": "Забыли пароль?",
+  "CLICK_LOGIN": "Войти",
+  "CLICK_REGISTER_NOW": "Зарегистрироваться"
 }

@@ -69,5 +69,15 @@
   "ENGLISH": "English",
   "HEBREW":  "עִבְרִית",
 
-  "FULL_VERSION": "Full version"
+  "FULL_VERSION": "Full version",
+
+  "LOGIN_TITLE": "Login",
+  "INPUT_EMAIL_INVALID": "Entered address is not an E-mail!",
+  "INPUT_EMAIL_HINT": "Enter email address!",
+  "E_MAIL": "Email",
+  "INPUT_USER_PASSWORD": "Password",
+  "CHECK_REMEMBER_ME": "Remember me",
+  "CLICK_FORGOT_PASSWORD": "Forgot your password?",
+  "CLICK_LOGIN": "Login",
+  "CLICK_REGISTER_NOW": "Register"
 }

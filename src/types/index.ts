@@ -2,16 +2,16 @@ import { Dispatch, ReactElement, SetStateAction } from 'react';
 
 import { FormItemProps } from 'antd';
 
-import { MessageInterface } from './api.types';
+import { MessageInterface, UserInterface } from './api.types';
 
 export * from './api.types';
 
 export interface UserState {
-  credentials: UserCredentials;
-  isAuth: boolean;
+  user: UserInterface;
 }
-export interface UserCredentials {
-  idInstance: string;
+
+export interface InstanceCredentials {
+  idInstance: number;
   apiTokenInstance: string;
 }
 
@@ -26,8 +26,13 @@ export interface ActiveChat extends MessageInterface {
   avatar: string;
 }
 
+export interface InstancesState {
+  selectedInstance: InstanceCredentials;
+  defaultIdInstance?: string;
+}
+
 export interface InstanceInterface {
-  idInstance: string;
+  idInstance: number;
   apiTokenInstance: string;
 }
 
@@ -49,6 +54,12 @@ export interface GreenApiRouteInterface extends GreenApiUrlsInterface {
 }
 
 export type LanguageLiteral = 'en' | 'ru' | 'he';
+
+export interface AuthFormValues {
+  login: string;
+  password: string;
+  remember: boolean;
+}
 
 export interface ChatFormValues {
   message: string;
@@ -102,7 +113,7 @@ export enum MessageEventTypeEnum {
 
 export interface MessageDataInit {
   type: MessageEventTypeEnum.INIT;
-  payload: UserCredentials &
+  payload: InstanceCredentials &
     LocaleChangeMessage & {
       isMiniVersion: boolean;
     };
@@ -115,7 +126,7 @@ export interface MessageDataLocaleChange {
 
 export interface MessageDataSetCredentials {
   type: MessageEventTypeEnum.SET_CREDENTIALS;
-  payload: UserCredentials;
+  payload: InstanceCredentials;
 }
 
 interface LocaleChangeMessage {
@@ -132,4 +143,11 @@ export interface SendingMethod {
 export interface GlobalModalPropertiesInterface {
   isVisible: boolean;
   setIsVisible: Dispatch<SetStateAction<boolean>>;
+}
+
+export interface CookieOptionsInterface {
+  'max-age'?: number;
+  secure?: boolean;
+  path?: string;
+  domain?: string;
 }

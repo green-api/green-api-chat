@@ -19,7 +19,14 @@ export const journalsGreenApiEndpoints = greenAPI.injectEndpoints({
         body,
       }),
       transformResponse: (res: GetChatHistoryResponse) =>
-        res.filter((msg) => msg.typeMessage !== 'reactionMessage').reverse(),
+        res
+          .filter(
+            (msg) =>
+              msg.typeMessage !== 'reactionMessage' &&
+              msg.typeMessage !== 'deletedMessage' &&
+              msg.typeMessage !== 'editedMessage'
+          )
+          .reverse(),
     }),
     getMessage: builder.mutation<MessageInterface, GetChatInformationParameters>({
       query: ({ idInstance, apiTokenInstance, ...body }) => ({

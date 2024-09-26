@@ -10,12 +10,12 @@ import { useActions, useAppDispatch, useAppSelector, useFormWithLanguageValidati
 import { useSendFileByUploadMutation } from 'services/green-api/endpoints';
 import { journalsGreenApiEndpoints } from 'services/green-api/endpoints/journals.green-api.endpoints';
 import { selectActiveChat, selectMessageCount } from 'store/slices/chat.slice';
-import { selectCredentials } from 'store/slices/user.slice';
+import { selectInstance } from 'store/slices/instances.slice';
 import { ActiveChat, SendFileFormValues } from 'types';
 import { getErrorMessage, isApiError } from 'utils';
 
 const SendFileForm: FC = () => {
-  const userCredentials = useAppSelector(selectCredentials);
+  const instanceCredentials = useAppSelector(selectInstance);
   const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
   const messageCount = useAppSelector(selectMessageCount);
 
@@ -30,7 +30,7 @@ const SendFileForm: FC = () => {
 
   const onFinish = async (values: SendFileFormValues) => {
     const body = {
-      ...userCredentials,
+      ...instanceCredentials,
       ...values,
       chatId: activeChat.chatId,
     };
@@ -55,8 +55,8 @@ const SendFileForm: FC = () => {
       const updateChatHistoryThunk = journalsGreenApiEndpoints.util?.updateQueryData(
         'getChatHistory',
         {
-          idInstance: userCredentials.idInstance,
-          apiTokenInstance: userCredentials.apiTokenInstance,
+          idInstance: instanceCredentials.idInstance,
+          apiTokenInstance: instanceCredentials.apiTokenInstance,
           chatId: activeChat.chatId,
           count: messageCount,
         },

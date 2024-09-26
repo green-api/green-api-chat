@@ -13,7 +13,7 @@ import { isConsoleMessageData } from 'utils';
 
 function App() {
   const { i18n } = useTranslation();
-  const { setCredentials } = useActions();
+  const { setSelectedInstance } = useActions();
 
   useEffect(() => {
     document.documentElement.classList.add('default-theme');
@@ -28,7 +28,7 @@ function App() {
 
       switch (event.data.type) {
         case MessageEventTypeEnum.INIT:
-          setCredentials({
+          setSelectedInstance({
             idInstance: event.data.payload.idInstance,
             apiTokenInstance: event.data.payload.apiTokenInstance,
           });
@@ -36,7 +36,7 @@ function App() {
           return i18n.changeLanguage(event.data.payload.locale);
 
         case MessageEventTypeEnum.SET_CREDENTIALS:
-          return setCredentials(event.data.payload);
+          return setSelectedInstance(event.data.payload);
 
         case MessageEventTypeEnum.LOCALE_CHANGE:
           return i18n.changeLanguage(event.data.payload.locale);

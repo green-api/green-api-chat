@@ -9,17 +9,18 @@ import { useAppDispatch, useAppSelector, useFormWithLanguageValidation } from 'h
 import { useCheckWhatsappMutation, useSendMessageMutation } from 'services/green-api/endpoints';
 import { journalsGreenApiEndpoints } from 'services/green-api/endpoints/journals.green-api.endpoints';
 import { selectMiniVersion } from 'store/slices/chat.slice';
-import { selectAuth, selectCredentials } from 'store/slices/user.slice';
+import { selectInstance } from 'store/slices/instances.slice';
+import { selectUser } from 'store/slices/user.slice';
 import { MessageInterface, NewChatFormValues } from 'types';
-import { getLastChats } from 'utils';
+import { getLastChats, isAuth } from 'utils';
 
 interface NewChatFormProps {
   onSubmitCallback?: () => void;
 }
 
 const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
-  const userCredentials = useAppSelector(selectCredentials);
-  const isAuth = useAppSelector(selectAuth);
+  const instanceCredentials = useAppSelector(selectInstance);
+  const user = useAppSelector(selectUser);
   const isMiniVersion = useAppSelector(selectMiniVersion);
 
   const dispatch = useAppDispatch();
@@ -33,7 +34,7 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
   const responseTimerReference = useRef<number | null>(null);
 
   const onSendMessage = async (values: NewChatFormValues) => {
-    if (!isAuth) return;
+    if (!isAuth(user)) return;
 
     const { message, chatId } = values;
 
@@ -55,8 +56,8 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
 
     if (!isGroupChat) {
       const { data, error } = await checkWhatsapp({
-        idInstance: userCredentials.idInstance,
-        apiTokenInstance: userCredentials.apiTokenInstance,
+        idInstance: instanceCredentials.idInstance,
+        apiTokenInstance: instanceCredentials.apiTokenInstance,
         phoneNumber: chatId,
       });
 
@@ -72,8 +73,8 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
     }
 
     const body = {
-      idInstance: userCredentials.idInstance,
-      apiTokenInstance: userCredentials.apiTokenInstance,
+      idInstance: instanceCredentials.idInstance,
+      apiTokenInstance: instanceCredentials.apiTokenInstance,
       chatId: fullChatId,
       refetchLastMessages: !addNewChatInList,
       message,
@@ -92,8 +93,8 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
         const updateChatHistoryThunk = journalsGreenApiEndpoints.util?.updateQueryData(
           'lastMessages',
           {
-            idInstance: userCredentials.idInstance,
-            apiTokenInstance: userCredentials.apiTokenInstance,
+            idInstance: instanceCredentials.idInstance,
+            apiTokenInstance: instanceCredentials.apiTokenInstance,
           },
           (draftChatHistory) => {
             const newMessage: MessageInterface = {

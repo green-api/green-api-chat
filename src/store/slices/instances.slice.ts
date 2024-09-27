@@ -22,8 +22,6 @@ const initialState: InstancesState = {
     idInstance: 0,
     apiTokenInstance: '',
   },
-
-  defaultIdInstance: sessionStorage.getItem('defaultIdInstanceForMethods') ?? undefined,
 };
 
 export const instancesSlice = createSlice({
@@ -33,15 +31,6 @@ export const instancesSlice = createSlice({
     setSelectedInstance: (state, action: PayloadAction<InstancesState['selectedInstance']>) => {
       state.selectedInstance = action.payload;
     },
-    setDefaultIdInstance: (state, action: PayloadAction<InstancesState['defaultIdInstance']>) => {
-      state.defaultIdInstance = action.payload;
-
-      if (action.payload) {
-        sessionStorage.setItem('defaultIdInstanceForMethods', action.payload);
-      }
-
-      sessionStorage.removeItem('defaultIdInstanceForMethods');
-    },
   },
 });
 
@@ -49,5 +38,3 @@ export const instancesActions = instancesSlice.actions;
 export default instancesSlice.reducer;
 
 export const selectInstance = (state: RootState) => state.instancesReducer.selectedInstance;
-export const selectDefaultIdInstance = (state: RootState) =>
-  state.instancesReducer.defaultIdInstance;

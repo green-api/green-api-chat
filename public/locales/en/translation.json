@@ -79,5 +79,13 @@
   "CHECK_REMEMBER_ME": "Remember me",
   "CLICK_FORGOT_PASSWORD": "Forgot your password?",
   "CLICK_LOGIN": "Login",
-  "CLICK_REGISTER_NOW": "Register"
+  "CLICK_REGISTER_NOW": "Register",
+  "USER_NOT_FOUND": "The user not found",
+  "PASSWORD_INCORRECT": "The login/password is incorrect",
+
+  "CHATS_TITLE": "Chats",
+  "SETTINGS_TITLE": "Settings",
+  "PROFILE_TITLE": "Profile",
+
+  "INSTANCE": "Instance"
 }

@@ -295,3 +295,10 @@ export interface ExpandedInstanceInterface extends InstanceInterface {
 }
 
 export type GetInstancesResponse = AppApiResponse<ExpandedInstanceInterface[]>;
+
+export interface GetWaSettingsResponseInterface {
+  stateInstance: StateInstanceEnum;
+  avatar: string;
+  phone: string;
+  deviceId: string;
+}

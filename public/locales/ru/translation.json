@@ -80,5 +80,13 @@
   "CHECK_REMEMBER_ME": "Запомнить меня",
   "CLICK_FORGOT_PASSWORD": "Забыли пароль?",
   "CLICK_LOGIN": "Войти",
-  "CLICK_REGISTER_NOW": "Зарегистрироваться"
+  "CLICK_REGISTER_NOW": "Зарегистрироваться",
+  "USER_NOT_FOUND": "Пользователь не найден",
+  "PASSWORD_INCORRECT": "Неправильный логин/пароль",
+
+  "CHATS_TITLE": "Чаты",
+  "SETTINGS_TITLE": "Настройки",
+  "PROFILE_TITLE": "Профиль",
+
+  "INSTANCE": "Инстанс"
 }

@@ -2,7 +2,7 @@ import { Dispatch, ReactElement, SetStateAction } from 'react';
 
 import { FormItemProps } from 'antd';
 
-import { MessageInterface, UserInterface } from './api.types';
+import { ExpandedInstanceInterface, MessageInterface, UserInterface } from './api.types';
 
 export * from './api.types';
 
@@ -17,8 +17,9 @@ export interface InstanceCredentials {
 
 export interface ChatState {
   activeChat: ActiveChat | null;
-  isMiniVersion: boolean;
+  userSideActiveMode: UserSideActiveMode;
   activeSendingMode: SendingMethodName | null;
+  isMiniVersion: boolean;
   messageCount: number;
 }
 
@@ -28,7 +29,6 @@ export interface ActiveChat extends MessageInterface {
 
 export interface InstancesState {
   selectedInstance: InstanceCredentials;
-  defaultIdInstance?: string;
 }
 
 export interface InstanceInterface {
@@ -135,6 +135,8 @@ interface LocaleChangeMessage {
 
 export type SendingMethodName = 'sendFileByUpload' | 'sendContact' | 'sendLocation' | 'sendPoll';
 
+export type UserSideActiveMode = 'chats' | 'settings' | 'profile';
+
 export interface SendingMethod {
   name: SendingMethodName;
   element: ReactElement;
@@ -151,3 +153,20 @@ export interface CookieOptionsInterface {
   path?: string;
   domain?: string;
 }
+
+export interface AsideItem {
+  item: UserSideActiveMode;
+  title: string;
+  icon: ReactElement;
+}
+
+export interface UserSideItem {
+  item: UserSideActiveMode;
+  element: ReactElement;
+}
+
+export interface SelectInstanceItemInterface extends ExpandedInstanceInterface {
+  label: JSX.Element | string;
+}
+
+export type HasDefaultInstance = 'unknown' | 'yes' | 'no';

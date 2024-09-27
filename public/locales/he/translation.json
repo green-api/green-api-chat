@@ -79,5 +79,13 @@
   "CHECK_REMEMBER_ME": "זכור אותי",
   "CLICK_FORGOT_PASSWORD": "שכחתי סיסמה",
   "CLICK_LOGIN": "התחברות",
-  "CLICK_REGISTER_NOW": "הירשם"
+  "CLICK_REGISTER_NOW": "הירשם",
+  "USER_NOT_FOUND": "המשתמש לא נמצא",
+  "PASSWORD_INCORRECT": "כניסה/סיסמה שגויה",
+
+  "CHATS_TITLE": "צ'אטים",
+  "SETTINGS_TITLE": "הגדרות",
+  "PROFILE_TITLE": "פּרוֹפִיל",
+
+  "INSTANCE": "מופע"
 }

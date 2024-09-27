@@ -1,0 +1,19 @@
+.statusCircle {
+  display: block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  box-shadow: 0 0 5px 1px currentColor;
+  margin: 0 4px;
+
+  &__auth {
+    background: var(--authorized-status-color);
+    color: var(--authorized-status-color);
+  }
+
+  &__notAuth {
+    background: var(--not-authorized-status-color);
+    color: var(--not-authorized-status-color);
+  }
+
+}

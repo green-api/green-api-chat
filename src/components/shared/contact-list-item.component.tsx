@@ -94,7 +94,7 @@ const ContactListItem: FC<ContactListItemProps> = ({ lastMessage }) => {
       gap="small"
       onClick={() => setActiveChat({ ...lastMessage, senderName: chatName, avatar })}
     >
-      <AvatarImage src={avatar} />
+      <AvatarImage src={avatar} size="large" />
       <Flex className="contact-list__item-wrapper">
         <Flex vertical gap="small" className="contact-list__item-body">
           {isLoading ? (

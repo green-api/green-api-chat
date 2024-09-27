@@ -1,6 +1,6 @@
 import { ThemeConfig } from 'antd';
 
-export const THEME: ThemeConfig = {
+export const DEFAULT_THEME: ThemeConfig = {
   token: {
     colorBgBase: 'var(--main-background)',
     colorBgContainer: 'var(--main-background)',
@@ -15,6 +15,10 @@ export const THEME: ThemeConfig = {
   components: {
     Progress: {
       colorInfo: '#009805',
+    },
+    Tooltip: {
+      colorBgSpotlight: '#fff',
+      colorTextLightSolid: '#000',
     },
     Layout: {
       colorBgHeader: 'var(--main-background)',

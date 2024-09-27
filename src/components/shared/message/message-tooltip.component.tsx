@@ -22,8 +22,6 @@ const MessageTooltip: FC<PropsWithChildren<MessageTooltipProps>> = ({
   return (
     <Tooltip
       overlayInnerStyle={{
-        background: 'var(--main-background)',
-        color: '#000',
         overflow: isQuotedMessage ? '' : 'hidden',
         maxWidth: '100vw',
       }}

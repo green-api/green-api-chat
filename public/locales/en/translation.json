@@ -69,7 +69,8 @@
   "ENGLISH": "English",
   "HEBREW":  "עִבְרִית",
 
-  "FULL_VERSION": "Full version",
+  "FULL_VERSION": "Open chats",
+  "FULL_VERSION_TITLE": "Open in a separate window",
 
   "LOGIN_TITLE": "Login",
   "INPUT_EMAIL_INVALID": "Entered address is not an E-mail!",
@@ -87,5 +88,6 @@
   "SETTINGS_TITLE": "Settings",
   "PROFILE_TITLE": "Profile",
 
-  "INSTANCE": "Instance"
+  "INSTANCE": "Instance",
+  "NO_SELECTED_INSTANCE_ERROR": "Select your instance in the settings!"
 }

@@ -21,8 +21,21 @@ const ContactList: FC = () => {
       idInstance: instanceCredentials.idInstance,
       apiTokenInstance: instanceCredentials.apiTokenInstance,
     },
-    { skipPollingIfUnfocused: true, pollingInterval: isMiniVersion ? 17000 : 15000 }
+    {
+      skipPollingIfUnfocused: true,
+      pollingInterval: isMiniVersion ? 17000 : 15000,
+      skip: !instanceCredentials.idInstance || !instanceCredentials.apiTokenInstance,
+    }
   );
+
+  if (!instanceCredentials.idInstance || !instanceCredentials.apiTokenInstance) {
+    return (
+      <Empty
+        className={`empty p-10 ${isMiniVersion ? 'min-height-460' : 'height-720'}`}
+        description={t('NO_SELECTED_INSTANCE_ERROR')}
+      />
+    );
+  }
 
   if (error && !data) {
     if ('status' in error && error.status === 429) {

@@ -11,7 +11,7 @@ import { useActions } from 'hooks';
 
 const ChatsHeader: FC = () => {
   const { t, i18n } = useTranslation();
-  const { logout, setActiveChat } = useActions();
+  const { logout, setActiveChat, setSelectedInstance } = useActions();
 
   const [isVisible, setIsVisible] = useState(false);
 
@@ -19,6 +19,7 @@ const ChatsHeader: FC = () => {
 
   const onLogoutClick = () => {
     setActiveChat(null);
+    setSelectedInstance({ idInstance: 0, apiTokenInstance: '' });
     logout();
   };
 

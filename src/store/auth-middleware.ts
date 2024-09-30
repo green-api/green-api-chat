@@ -38,6 +38,7 @@ listenerMiddleware.startListening({
     localStorage.removeItem('login');
     localStorage.removeItem('apiTokenUser');
     localStorage.removeItem('idUser');
+    localStorage.removeItem('selectedInstance');
   },
 });
 

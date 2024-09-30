@@ -69,7 +69,8 @@
   "ENGLISH": "English",
   "HEBREW":  "עִבְרִית",
 
-  "FULL_VERSION": "גרסה מלאה",
+  "FULL_VERSION": "פתח צ'אטים",
+  "FULL_VERSION_TITLE": "פתח בחלון נפרד",
 
   "LOGIN_TITLE": "היכנס",
   "INPUT_EMAIL_INVALID": "הכתובת שהוזנה אינה אימייל, נסה שנית",
@@ -87,5 +88,6 @@
   "SETTINGS_TITLE": "הגדרות",
   "PROFILE_TITLE": "פּרוֹפִיל",
 
-  "INSTANCE": "מופע"
+  "INSTANCE": "מופע",
+  "NO_SELECTED_INSTANCE_ERROR": "בחר את המופע שלך בהגדרות!"
 }

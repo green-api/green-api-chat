@@ -107,10 +107,7 @@ const SelectInstance: FC = () => {
       setHasDefaultInstance('yes');
     };
 
-    if (
-      instancesRequestData?.result &&
-      selectedInstance.idInstance === selectedInstance.idInstance
-    ) {
+    if (instancesRequestData?.result && selectedInstance.idInstance) {
       const defaultInstance = instancesRequestData.data.find(
         ({ idInstance }) => idInstance === selectedInstance.idInstance
       );

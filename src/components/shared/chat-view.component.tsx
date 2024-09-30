@@ -7,12 +7,12 @@ import Message from './message/message.component';
 import { useActions, useAppSelector } from 'hooks';
 import { useGetChatHistoryQuery } from 'services/green-api/endpoints';
 import { selectActiveChat, selectMiniVersion } from 'store/slices/chat.slice';
-import { selectCredentials } from 'store/slices/user.slice';
+import { selectInstance } from 'store/slices/instances.slice';
 import { ActiveChat } from 'types';
 import { getErrorMessage, getJSONMessage, getPhoneNumberFromChatId, getTextMessage } from 'utils';
 
 const ChatView: FC = () => {
-  const userCredentials = useAppSelector(selectCredentials);
+  const userCredentials = useAppSelector(selectInstance);
   const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
   const isMiniVersion = useAppSelector(selectMiniVersion);
 
@@ -24,7 +24,7 @@ const ChatView: FC = () => {
 
   const { t } = useTranslation();
 
-  const chatViewRef = useRef<HTMLDivElement>(null);
+  const chatViewRef = useRef<HTMLDivElement | null>(null);
 
   const setPageTimerReference = useRef<ReturnType<typeof setTimeout>>();
   const {
@@ -41,6 +41,8 @@ const ChatView: FC = () => {
     },
     { skipPollingIfUnfocused: true, pollingInterval: 15000 }
   );
+
+  const [scrollHeight, setScrollHeight] = useState(0);
 
   // reset global message count
   useEffect(() => {
@@ -72,7 +74,10 @@ const ChatView: FC = () => {
         setPageTimerReference.current = setTimeout(() => {
           setMessageCount(count + 10);
           setCount((count) => count + 10);
-          timer = setTimeout(() => element.scrollTo({ top: element.clientHeight / 5 }), 350);
+          timer = setTimeout(
+            () => element.scrollTo({ top: element.scrollHeight - scrollHeight }),
+            350
+          );
         }, 500);
       }
     };
@@ -80,7 +85,7 @@ const ChatView: FC = () => {
     element.addEventListener('scroll', handleScrollTop);
 
     return () => element.removeEventListener('scroll', handleScrollTop);
-  }, [messages]);
+  }, [messages, scrollHeight, count, isMiniVersion, setMessageCount]);
 
   if (isLoading) {
     return (
@@ -94,7 +99,7 @@ const ChatView: FC = () => {
     );
   }
 
-  if (error) {
+  if (error && !messages) {
     if ('status' in error && error.status === 429) {
       return (
         <Card
@@ -119,11 +124,15 @@ const ChatView: FC = () => {
   }
 
   return (
-    <Card
+    <div
       className={`chat-view ${isMiniVersion ? '' : 'chat-bg full'}`}
-      bordered={false}
-      style={{ boxShadow: 'unset' }}
-      ref={chatViewRef}
+      ref={(node) => {
+        chatViewRef.current = node;
+
+        if (node) {
+          setScrollHeight(node.scrollHeight);
+        }
+      }}
     >
       {isFetching &&
         chatViewRef.current?.scrollTop === 0 &&
@@ -159,7 +168,7 @@ const ChatView: FC = () => {
           />
         );
       })}
-    </Card>
+    </div>
   );
 };
 

@@ -6,6 +6,7 @@
 
 @import "components/full-chat";
 @import "components/mini-chat";
+@import "components/user-side";
 @import "components/aside";
 
 @import "components/shared/contact-list";
@@ -14,6 +15,9 @@
 
 @import "components/UI/select-language";
 @import "components/UI/select-sending-mode";
+@import "components/UI/status-circle";
+
+@import "components/forms/auth-form";
 
 html {
   overflow: hidden;
@@ -31,10 +35,26 @@ html {
   background: #efeae2 url("../assets/chat_bg.png");
 }
 
+.auth-layout {
+  max-width: 450px;
+  width: 100%;
+  flex-direction: column;
+}
+
 .flex-center {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.text-center {
+  text-align: center;
+
+  &-mobile {
+    @media screen and (max-width: $sm) {
+      text-align: center;
+    }
+  }
 }
 
 .spin-wrapper {
@@ -54,6 +74,76 @@ html {
   min-height: 720px;
 }
 
+.margin {
+
+  &-horizontal {
+    margin-left: 15px;
+    margin-right: 15px;
+  }
+
+  &-horizontal-auto {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  &-vertical {
+    margin-top: 15px;
+    margin-bottom: 15px;
+  }
+
+  &-vertical-auto {
+    margin-top: auto;
+    margin-bottom: auto;
+  }
+
+  &-left {
+    margin-left: 15px;
+  }
+
+  &-left-auto {
+    margin-left: auto;
+  }
+
+  &-right {
+    margin-right: 15px;
+  }
+
+  &-right-auto {
+    margin-right: auto;
+  }
+
+  &-top {
+    margin-top: 15px;
+  }
+
+  &-top-auto {
+    margin-top: auto;
+  }
+
+  &-bottom {
+    margin-bottom: 15px;
+  }
+
+  &-top-x2 {
+    margin-top: 30px;
+  }
+
+  &-bottom-x2 {
+    margin-bottom: 30px;
+  }
+
+  &-0 {
+    margin: 0;
+  }
+}
+
+.w-100 {
+  width: 100%;
+}
+
+.h-100 {
+  height: 100%;
+}
 
 .p-10 {
   padding: 10px

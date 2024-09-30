@@ -8,19 +8,20 @@ import MiniChat from 'components/mini-chat/chat.component';
 import { Routes } from 'configs';
 import { useAppSelector } from 'hooks';
 import { selectMiniVersion } from 'store/slices/chat.slice';
-import { selectAuth } from 'store/slices/user.slice';
+import { selectUser } from 'store/slices/user.slice';
+import { isAuth } from 'utils';
 
 const BaseLayout: FC = () => {
   const isMiniVersion = useAppSelector(selectMiniVersion);
-  const isAuth = useAppSelector(selectAuth);
+  const user = useAppSelector(selectUser);
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!isAuth) {
+    if (!isAuth(user) && !isMiniVersion) {
       navigate(Routes.auth);
     }
-  }, [isAuth]);
+  }, [user, navigate, isMiniVersion]);
 
   return (
     <Layout className={`app ${!isMiniVersion ? 'bg' : ''}`}>

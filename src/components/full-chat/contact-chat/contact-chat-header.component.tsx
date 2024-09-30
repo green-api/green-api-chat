@@ -17,7 +17,7 @@ const ContactChatHeader: FC = () => {
   return (
     <Header className="contact-chat-header">
       <Space className="chatHeader-space">
-        <AvatarImage src={activeChat.avatar} />
+        <AvatarImage src={activeChat.avatar} size="large" />
         <h3 className="text-overflow">{activeChat.senderName}</h3>
       </Space>
 
@@ -25,7 +25,9 @@ const ContactChatHeader: FC = () => {
         {activeChat.chatId?.includes('@c') && (
           <span>{activeChat.chatId?.replace(/\@.*$/, '')}</span>
         )}
-        <CloseOutlined style={{ width: 13 }} onClick={() => setActiveChat(null)} />
+        <a>
+          <CloseOutlined style={{ width: 13 }} onClick={() => setActiveChat(null)} />
+        </a>
       </Space>
     </Header>
   );

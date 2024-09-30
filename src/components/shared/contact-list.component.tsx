@@ -7,24 +7,24 @@ import ContactListItem from './contact-list-item.component';
 import { useAppSelector } from 'hooks';
 import { useLastMessagesQuery } from 'services/green-api/endpoints';
 import { selectMiniVersion } from 'store/slices/chat.slice';
-import { selectCredentials } from 'store/slices/user.slice';
+import { selectInstance } from 'store/slices/instances.slice';
 import { getErrorMessage } from 'utils';
 
 const ContactList: FC = () => {
-  const userCredentials = useAppSelector(selectCredentials);
+  const instanceCredentials = useAppSelector(selectInstance);
   const isMiniVersion = useAppSelector(selectMiniVersion);
 
   const { t } = useTranslation();
 
   const { data, isLoading, error } = useLastMessagesQuery(
     {
-      idInstance: userCredentials.idInstance,
-      apiTokenInstance: userCredentials.apiTokenInstance,
+      idInstance: instanceCredentials.idInstance,
+      apiTokenInstance: instanceCredentials.apiTokenInstance,
     },
-    { skipPollingIfUnfocused: true, pollingInterval: 15000 }
+    { skipPollingIfUnfocused: true, pollingInterval: isMiniVersion ? 17000 : 15000 }
   );
 
-  if (error) {
+  if (error && !data) {
     if ('status' in error && error.status === 429) {
       return (
         <Flex

@@ -10,11 +10,11 @@ import { useAppDispatch, useAppSelector, useFormWithLanguageValidation } from 'h
 import { useSendMessageMutation } from 'services/green-api/endpoints';
 import { journalsGreenApiEndpoints } from 'services/green-api/endpoints/journals.green-api.endpoints';
 import { selectActiveChat, selectMessageCount, selectMiniVersion } from 'store/slices/chat.slice';
-import { selectCredentials } from 'store/slices/user.slice';
+import { selectInstance } from 'store/slices/instances.slice';
 import { ActiveChat, ChatFormValues } from 'types';
 
 const ChatForm: FC = () => {
-  const userCredentials = useAppSelector(selectCredentials);
+  const instanceCredentials = useAppSelector(selectInstance);
   const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
   const isMiniVersion = useAppSelector(selectMiniVersion);
   const messageCount = useAppSelector(selectMessageCount);
@@ -31,8 +31,8 @@ const ChatForm: FC = () => {
   const onSendMessage = async (values: ChatFormValues) => {
     const { message } = values;
     const body = {
-      idInstance: userCredentials.idInstance,
-      apiTokenInstance: userCredentials.apiTokenInstance,
+      idInstance: instanceCredentials.idInstance,
+      apiTokenInstance: instanceCredentials.apiTokenInstance,
       chatId: activeChat.chatId,
       message,
     };
@@ -57,8 +57,8 @@ const ChatForm: FC = () => {
       const updateChatHistoryThunk = journalsGreenApiEndpoints.util?.updateQueryData(
         'getChatHistory',
         {
-          idInstance: userCredentials.idInstance,
-          apiTokenInstance: userCredentials.apiTokenInstance,
+          idInstance: instanceCredentials.idInstance,
+          apiTokenInstance: instanceCredentials.apiTokenInstance,
           chatId: activeChat.chatId,
           count: isMiniVersion ? 10 : messageCount,
         },

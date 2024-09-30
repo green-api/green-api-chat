@@ -5,11 +5,11 @@ import { Flex, Space, Image } from 'antd';
 import { Header } from 'antd/es/layout/layout';
 import { useTranslation } from 'react-i18next';
 
-import AsideAddNewChat from './aside-add-new-chat.component';
+import AddNewChat from './add-new-chat.component';
 import logo from 'assets/header-logo.png';
 import { useActions } from 'hooks';
 
-const AsideHeader: FC = () => {
+const ChatsHeader: FC = () => {
   const { t, i18n } = useTranslation();
   const { logout, setActiveChat } = useActions();
 
@@ -27,21 +27,25 @@ const AsideHeader: FC = () => {
       <Flex justify="space-between">
         <Image src={logo} preview={false} width={60} height={60} />
         <Space>
-          <UserAddOutlined
-            style={{ fontSize: 20 }}
-            onClick={() => setIsVisible(true)}
-            title={t('ADD_NEW_CHAT_HEADER')}
-          />
-          <LogoutOutlined
-            style={{ fontSize: 20, transform: dir === 'rtl' ? 'rotateY(180deg)' : 'unset' }}
-            onClick={onLogoutClick}
-            title={t('LOGOUT')}
-          />
+          <a>
+            <UserAddOutlined
+              style={{ fontSize: 20 }}
+              onClick={() => setIsVisible(true)}
+              title={t('ADD_NEW_CHAT_HEADER')}
+            />
+          </a>
+          <a>
+            <LogoutOutlined
+              style={{ fontSize: 20, transform: dir === 'rtl' ? 'rotateY(180deg)' : 'unset' }}
+              onClick={onLogoutClick}
+              title={t('LOGOUT')}
+            />
+          </a>
         </Space>
       </Flex>
-      <AsideAddNewChat isVisible={isVisible} setIsVisible={setIsVisible} />
+      <AddNewChat isVisible={isVisible} setIsVisible={setIsVisible} />
     </Header>
   );
 };
 
-export default AsideHeader;
+export default ChatsHeader;

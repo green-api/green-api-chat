@@ -4,6 +4,13 @@ import ru_RU from 'antd/es/locale/ru_RU';
 
 import { GreenApiRouteInterface } from 'types';
 
+export const APP_API_URL = 'https://console.green-api.com/api/v1/';
+
+export const APP_API_TOKEN =
+  import.meta.env.VITE_DEV_MODE === 'true'
+    ? 'test.gac.243b2746f7ef4e18b2dfa98c302f5f27'
+    : 'gac.cb546085ecfd42f1a135480c82c9279e';
+
 export const GREEN_API_INSTANCES_ROUTER: GreenApiRouteInterface[] = [
   {
     api: 'https://api.green-api.com',

@@ -6,19 +6,20 @@ import { Outlet, useNavigate } from 'react-router-dom';
 import { Routes } from 'configs';
 import { useAppSelector } from 'hooks';
 import { selectMiniVersion } from 'store/slices/chat.slice';
-import { selectAuth } from 'store/slices/user.slice';
+import { selectUser } from 'store/slices/user.slice';
+import { isAuth } from 'utils';
 
 const AuthLayout: FC = () => {
   const isMiniVersion = useAppSelector(selectMiniVersion);
-  const isAuth = useAppSelector(selectAuth);
+  const user = useAppSelector(selectUser);
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (isAuth) {
+    if (isAuth(user)) {
       navigate(Routes.main);
     }
-  }, [isAuth]);
+  }, [user, navigate]);
 
   if (isMiniVersion) {
     return <></>;
@@ -26,7 +27,9 @@ const AuthLayout: FC = () => {
 
   return (
     <Layout className="app bg flex-center">
-      <Outlet />
+      <Layout.Content className="auth-layout flex-center">
+        <Outlet />
+      </Layout.Content>
     </Layout>
   );
 };

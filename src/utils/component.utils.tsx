@@ -81,7 +81,6 @@ export function getMessageTypeIcon(typeMessage: TypeMessage, downloadUrl?: strin
 }
 
 export function getFormattedMessage(textMessage: string) {
-  // const formattedText = format(textMessage, formatRulesConfig);
   const formattedText = TextFormatter(textMessage);
 
   if (!formattedText) {

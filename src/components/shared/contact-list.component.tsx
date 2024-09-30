@@ -28,7 +28,7 @@ const ContactList: FC = () => {
     if ('status' in error && error.status === 429) {
       return (
         <Flex
-          className={`contact-list ${isMiniVersion ? 'min-height-460' : 'min-height-720'}`}
+          className={`contact-list ${isMiniVersion ? 'min-height-460' : 'height-720'}`}
           align="center"
           justify="center"
         >
@@ -53,7 +53,7 @@ const ContactList: FC = () => {
       renderItem={(message) => <ContactListItem key={message.chatId} lastMessage={message} />}
       loading={{
         spinning: isLoading,
-        className: `${isMiniVersion ? 'min-height-460' : 'min-height-720'}`,
+        className: `${isMiniVersion ? 'min-height-460' : 'height-720'}`,
         size: 'large',
       }}
       locale={{

@@ -28,6 +28,8 @@ const ChatForm: FC = () => {
   const [form] = useFormWithLanguageValidation<ChatFormValues>();
   const responseTimerReference = useRef<number | null>(null);
 
+  const textAreaRef = useRef<HTMLTextAreaElement>(null);
+
   const onSendMessage = async (values: ChatFormValues) => {
     const { message } = values;
     const body = {
@@ -90,7 +92,7 @@ const ChatForm: FC = () => {
 
       form.resetFields();
 
-      form.setFields([{ name: 'response', warnings: [t('SUCCESS_SENDING_MESSAGE')] }]);
+      setTimeout(() => textAreaRef.current?.focus(), 100);
 
       responseTimerReference.current = setTimeout(() => {
         form.setFields([{ name: 'response', errors: [], warnings: [] }]);
@@ -101,6 +103,10 @@ const ChatForm: FC = () => {
   useEffect(() => {
     form.setFields([{ name: 'message', errors: [] }]);
   }, [activeChat.chatId, form]);
+
+  useEffect(() => {
+    textAreaRef.current?.focus();
+  });
 
   return (
     <Form
@@ -126,7 +132,7 @@ const ChatForm: FC = () => {
                 return value;
               }}
             >
-              <TextArea />
+              <TextArea ref={textAreaRef} />
             </Form.Item>
           </Col>
           {isMiniVersion && (

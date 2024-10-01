@@ -67,7 +67,7 @@ const Message: FC<MessageProps> = ({
   useEffect(() => {
     const element = messageRef.current;
     if (isLastMessage && element && !isMiniVersion && !isSafari()) {
-      element.scrollIntoView({ behavior: 'smooth' });
+      element.scrollIntoView();
     }
   }, [isLastMessage]);
 

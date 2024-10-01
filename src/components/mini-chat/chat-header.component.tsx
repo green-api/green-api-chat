@@ -34,7 +34,7 @@ const ChatHeader: FC = () => {
       <h3 className="text-overflow">{t('CHAT_HEADER')}</h3>
       <Typography.Link
         href={CHAT_APP_URL}
-        target="_parent"
+        target="_blank"
         rel="noreferrer"
         title={t('FULL_VERSION_TITLE')}
       >

@@ -1,6 +1,6 @@
 import { FC, useEffect, useRef, useState } from 'react';
 
-import { Select, Spin } from 'antd';
+import { Select } from 'antd';
 import { BaseSelectRef } from 'rc-select';
 import { useTranslation } from 'react-i18next';
 
@@ -143,14 +143,14 @@ const SelectInstance: FC = () => {
   }, [instances, isSuccessLoadingInstances]);
 
   if (isLoadingInstances || !instances || hasDefaultInstance === 'unknown') {
-    return <Spin className="margin-left" />;
+    return <></>;
   }
 
   return (
     <Select
       size="large"
       showSearch
-      style={{ marginTop: 8 }}
+      style={{ margin: '8px 0', padding: '0 5px' }}
       placeholder={t('SELECT_INSTANCE_PLACEHOLDER')}
       className="w-100"
       defaultValue={defaultInstanceToRender ?? instances[0]?.idInstance}

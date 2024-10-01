@@ -9,7 +9,6 @@ export const asideTopIconItems: AsideItem[] = [
 ];
 
 export const asideBottomIconItems: AsideItem[] = [
-  { item: 'settings', title: 'SETTINGS_TITLE', icon: <SettingOutlined /> },
   { item: 'profile', title: 'PROFILE_TITLE', icon: <SettingOutlined /> },
 ];
 

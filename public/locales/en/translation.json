@@ -75,6 +75,7 @@
   "LOGIN_TITLE": "Login",
   "INPUT_EMAIL_INVALID": "Entered address is not an E-mail!",
   "INPUT_EMAIL_HINT": "Enter email address!",
+  "INPUT_USER_PASSWORD_HINT": "Please enter your password!",
   "E_MAIL": "Email",
   "INPUT_USER_PASSWORD": "Password",
   "CHECK_REMEMBER_ME": "Remember me",
@@ -89,5 +90,5 @@
   "PROFILE_TITLE": "Profile",
 
   "INSTANCE": "Instance",
-  "NO_SELECTED_INSTANCE_ERROR": "Select your instance in the settings!"
+  "SELECT_INSTANCE_PLACEHOLDER": "Select an instance"
 }

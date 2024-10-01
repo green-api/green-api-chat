@@ -32,7 +32,7 @@ const ContactList: FC = () => {
     return (
       <Empty
         className={`empty p-10 ${isMiniVersion ? 'min-height-460' : 'height-720'}`}
-        description={t('NO_SELECTED_INSTANCE_ERROR')}
+        description={t('SELECT_INSTANCE_PLACEHOLDER')}
       />
     );
   }

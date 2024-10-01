@@ -75,6 +75,7 @@
   "LOGIN_TITLE": "היכנס",
   "INPUT_EMAIL_INVALID": "הכתובת שהוזנה אינה אימייל, נסה שנית",
   "INPUT_EMAIL_HINT": "הכנס כתובת אימייל",
+  "INPUT_USER_PASSWORD_HINT": "הכנס סיסמה",
   "E_MAIL": "אימייל",
   "INPUT_USER_PASSWORD": "סיסמה",
   "CHECK_REMEMBER_ME": "זכור אותי",
@@ -89,5 +90,5 @@
   "PROFILE_TITLE": "פּרוֹפִיל",
 
   "INSTANCE": "מופע",
-  "NO_SELECTED_INSTANCE_ERROR": "בחר את המופע שלך בהגדרות!"
+  "SELECT_INSTANCE_PLACEHOLDER": "בחר מופע"
 }

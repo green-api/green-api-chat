@@ -76,6 +76,7 @@
   "LOGIN_TITLE": "Вход",
   "INPUT_EMAIL_INVALID": "Введенный адрес не является E-mail!",
   "INPUT_EMAIL_HINT": "Введите адрес электронной почты!",
+  "INPUT_USER_PASSWORD_HINT": "Пожалуйста, введите пароль!",
   "E_MAIL": "Электронная почта",
   "INPUT_USER_PASSWORD": "Пароль",
   "CHECK_REMEMBER_ME": "Запомнить меня",
@@ -90,5 +91,5 @@
   "PROFILE_TITLE": "Профиль",
 
   "INSTANCE": "Инстанс",
-  "NO_SELECTED_INSTANCE_ERROR": "Выберите инстанс в настройках!"
+  "SELECT_INSTANCE_PLACEHOLDER":  "Выберите инстанс"
 }

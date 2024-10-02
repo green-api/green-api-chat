@@ -71,6 +71,8 @@ function App() {
             apiTokenInstance: event.data.payload.apiTokenInstance,
           });
 
+          dispatch(setTheme(event.data.payload.theme));
+
           return i18n.changeLanguage(event.data.payload.locale);
 
         case MessageEventTypeEnum.SET_CREDENTIALS:

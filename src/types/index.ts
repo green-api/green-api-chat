@@ -119,7 +119,8 @@ export enum MessageEventTypeEnum {
 export interface MessageDataInit {
   type: MessageEventTypeEnum.INIT;
   payload: InstanceCredentials &
-    LocaleChangeMessage & {
+    LocaleChangeMessage &
+    ThemeChangeMessage & {
       isMiniVersion: boolean;
     };
 }
@@ -131,9 +132,7 @@ export interface MessageDataLocaleChange {
 
 export interface MessageDataSetTheme {
   type: MessageEventTypeEnum.SET_THEME;
-  payload: {
-    theme: Themes;
-  };
+  payload: ThemeChangeMessage;
 }
 
 export interface MessageDataSetCredentials {
@@ -143,6 +142,10 @@ export interface MessageDataSetCredentials {
 
 interface LocaleChangeMessage {
   locale: LanguageLiteral;
+}
+
+interface ThemeChangeMessage {
+  theme: Themes;
 }
 
 export type SendingMethodName = 'sendFileByUpload' | 'sendContact' | 'sendLocation' | 'sendPoll';
@@ -158,7 +161,6 @@ export interface GlobalModalPropertiesInterface {
   isVisible: boolean;
   setIsVisible: Dispatch<SetStateAction<boolean>>;
 }
-
 
 export const enum Themes {
   Default = 'default',

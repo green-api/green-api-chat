@@ -4,6 +4,7 @@ import { LeftOutlined } from '@ant-design/icons';
 import { Flex, Space, Typography } from 'antd';
 import { useTranslation } from 'react-i18next';
 
+import { CONSOLE_URL } from '../../configs';
 import { useActions, useAppSelector } from 'hooks';
 import { selectActiveChat } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
@@ -35,8 +36,8 @@ const ChatHeader: FC = () => {
       <h3 className="text-overflow">{t('CHAT_HEADER')}</h3>
       <Typography.Link
         href={
-          document.referrer +
-          `chats?idInstance=${instanceCredentials.idInstance}&apiTokenInstance=${instanceCredentials.apiTokenInstance}`
+          CONSOLE_URL +
+          `/chats?idInstance=${instanceCredentials.idInstance}&apiTokenInstance=${instanceCredentials.apiTokenInstance}`
         }
         target="_parent"
         rel="noreferrer"

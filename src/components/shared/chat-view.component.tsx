@@ -1,6 +1,6 @@
 import { FC, useEffect, useRef, useState } from 'react';
 
-import { Card, Empty, Spin } from 'antd';
+import { Empty, Spin } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import Message from './message/message.component';
@@ -16,7 +16,7 @@ const ChatView: FC = () => {
   const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
   const isMiniVersion = useAppSelector(selectMiniVersion);
 
-  const [count, setCount] = useState(20);
+  const [count, setCount] = useState(30);
   const { setMessageCount } = useActions();
 
   let previousMessageAreOutgoing = false;
@@ -89,43 +89,34 @@ const ChatView: FC = () => {
 
   if (isLoading) {
     return (
-      <Card
-        className={`chat-view flex-center ${isMiniVersion ? '' : 'chat-bg full'}`}
-        bordered={false}
-        style={{ boxShadow: 'unset' }}
-      >
+      <div className={`chat-view flex-center ${isMiniVersion ? '' : 'full'}`}>
         <Spin size="large" />
-      </Card>
+      </div>
     );
   }
 
   if (error && !messages) {
     if ('status' in error && error.status === 429) {
       return (
-        <Card
-          className={`chat-view flex-center ${isMiniVersion ? '' : 'chat-bg full'}`}
-          bordered={false}
-          style={{ boxShadow: 'unset' }}
-        >
+        <div className={`chat-view flex-center ${isMiniVersion ? '' : 'full'}`}>
           <Spin size="large" />
-        </Card>
+        </div>
       );
     }
 
     return (
-      <Card
+      <div
         className={`chat-view flex-center ${isMiniVersion ? '' : 'full'}`}
-        bordered={false}
         style={{ boxShadow: 'unset' }}
       >
         <Empty description={getErrorMessage(error, t)} />
-      </Card>
+      </div>
     );
   }
 
   return (
     <div
-      className={`chat-view ${isMiniVersion ? '' : 'chat-bg full'}`}
+      className={`chat-view ${isMiniVersion ? '' : 'full'}`}
       ref={(node) => {
         chatViewRef.current = node;
 

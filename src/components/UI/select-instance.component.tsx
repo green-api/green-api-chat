@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import SelectInstanceLabel from './select-instance-label.component';
 import { useActions, useAppSelector } from 'hooks';
 import { useGetInstancesQuery } from 'services/app/endpoints';
+import { selectType } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
 import {
   ExpandedInstanceInterface,
@@ -16,6 +17,8 @@ import {
 } from 'types';
 
 const SelectInstance: FC = () => {
+  const type = useAppSelector(selectType);
+
   const { t } = useTranslation();
 
   const {
@@ -150,7 +153,7 @@ const SelectInstance: FC = () => {
     <Select
       size="large"
       showSearch
-      style={{ margin: '8px 0', padding: '0 5px' }}
+      style={{ margin: type === 'console-page' ? '5px 0' : '8px 0', padding: '0 5px' }}
       placeholder={t('SELECT_INSTANCE_PLACEHOLDER')}
       className="w-100"
       defaultValue={defaultInstanceToRender ?? instances[0]?.idInstance}

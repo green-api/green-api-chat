@@ -20,8 +20,11 @@ export interface ChatState {
   userSideActiveMode: UserSideActiveMode;
   activeSendingMode: SendingMethodName | null;
   isMiniVersion: boolean;
+  type: ChatType;
   messageCount: number;
 }
+
+export type ChatType = 'tab' | 'console-page' | 'instance-view-page';
 
 export interface ActiveChat extends MessageInterface {
   avatar: string;
@@ -118,11 +121,7 @@ export enum MessageEventTypeEnum {
 
 export interface MessageDataInit {
   type: MessageEventTypeEnum.INIT;
-  payload: InstanceCredentials &
-    LocaleChangeMessage &
-    ThemeChangeMessage & {
-      isMiniVersion: boolean;
-    };
+  payload: InstanceCredentials & LocaleChangeMessage & ThemeChangeMessage;
 }
 
 export interface MessageDataLocaleChange {

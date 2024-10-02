@@ -7,6 +7,7 @@
   }
 
   &-view {
+    z-index: 1000;
     font-size: 15px;
     height: 500px;
     display: flex;
@@ -17,7 +18,7 @@
   }
 
   &-form {
-    padding: 10px
+    padding: 10px;
   }
 
   &-form-wrapper {
@@ -25,6 +26,11 @@
     flex-direction: column;
     row-gap: 15px;
     padding-top: 1px;
+  }
+
+  &-form-container {
+    z-index: 1000;
+    background-color: var(--second-background);
   }
 
   &-footer {

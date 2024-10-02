@@ -5,19 +5,16 @@ import en_US from 'antd/es/locale/en_US';
 import { useTranslation } from 'react-i18next';
 import { RouterProvider } from 'react-router-dom';
 
-import { selectTheme, themeActions } from './store/slices/theme.slice';
 import { DARK_THEME, DEFAULT_THEME, localisation } from 'configs';
-import { useActions, useAppDispatch, useAppSelector } from 'hooks';
+import { useActions, useAppSelector } from 'hooks';
 import router from 'router';
+import { selectTheme } from 'store/slices/theme.slice';
 import { MessageData, MessageEventTypeEnum, Themes } from 'types';
 import { isConsoleMessageData, isPageInIframe } from 'utils';
 
 function App() {
   const { i18n } = useTranslation();
-  const { setSelectedInstance } = useActions();
-
-  const setTheme = themeActions.setTheme;
-  const dispatch = useAppDispatch();
+  const { setSelectedInstance, setTheme } = useActions();
 
   const currentTheme = useAppSelector(selectTheme);
   const themesList = {
@@ -71,7 +68,7 @@ function App() {
             apiTokenInstance: event.data.payload.apiTokenInstance,
           });
 
-          dispatch(setTheme(event.data.payload.theme));
+          setTheme(event.data.payload.theme);
 
           return i18n.changeLanguage(event.data.payload.locale);
 
@@ -82,7 +79,7 @@ function App() {
           return i18n.changeLanguage(event.data.payload.locale);
 
         case MessageEventTypeEnum.SET_THEME:
-          return dispatch(setTheme(event.data.payload.theme));
+          return setTheme(event.data.payload.theme);
 
         default:
           return;

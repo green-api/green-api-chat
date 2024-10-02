@@ -3,6 +3,7 @@ import { i18n } from 'i18next';
 import { GREEN_API_INSTANCES_ROUTER, Routes } from 'configs';
 import {
   ApiErrorResponse,
+  ChatType,
   CookieOptionsInterface,
   ExpandedInstanceInterface,
   GetChatHistoryResponse,
@@ -125,11 +126,12 @@ export function getLastChats(
 export function updateLastChats(
   currentChats: MessageInterface[],
   lastIncomingMessages: GetChatHistoryResponse,
-  lastOutgoingMessages: GetChatHistoryResponse
+  lastOutgoingMessages: GetChatHistoryResponse,
+  count?: number
 ): GetChatHistoryResponse {
   const updates = [...lastIncomingMessages, ...lastOutgoingMessages];
 
-  return getLastChats(currentChats, updates, isPageInIframe() ? 5 : undefined);
+  return getLastChats(currentChats, updates, count);
 }
 
 export function getMessageDate(
@@ -239,6 +241,10 @@ export function getJSONMessage(message: MessageInterface): string {
 
 export function isPageInIframe() {
   return window.location !== window.parent.location;
+}
+
+export function getIsMiniVersion(type: ChatType) {
+  return isPageInIframe() && type === 'instance-view-page';
 }
 
 export function getFormData<Object_ extends object>(data: Object_): FormData {

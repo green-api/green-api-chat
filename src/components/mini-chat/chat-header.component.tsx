@@ -4,12 +4,13 @@ import { LeftOutlined } from '@ant-design/icons';
 import { Flex, Space, Typography } from 'antd';
 import { useTranslation } from 'react-i18next';
 
-import { CHAT_APP_URL } from 'configs';
 import { useActions, useAppSelector } from 'hooks';
 import { selectActiveChat } from 'store/slices/chat.slice';
+import { selectInstance } from 'store/slices/instances.slice';
 
 const ChatHeader: FC = () => {
   const activeChat = useAppSelector(selectActiveChat);
+  const instanceCredentials = useAppSelector(selectInstance);
 
   const { t } = useTranslation();
 
@@ -33,8 +34,11 @@ const ChatHeader: FC = () => {
     <Flex justify="space-between" align="center">
       <h3 className="text-overflow">{t('CHAT_HEADER')}</h3>
       <Typography.Link
-        href={CHAT_APP_URL}
-        target="_blank"
+        href={
+          document.referrer +
+          `chats?idInstance=${instanceCredentials.idInstance}&apiTokenInstance=${instanceCredentials.apiTokenInstance}`
+        }
+        target="_parent"
         rel="noreferrer"
         title={t('FULL_VERSION_TITLE')}
       >

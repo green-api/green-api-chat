@@ -1,4 +1,6 @@
 .select-sending-mode {
+  z-index: 1000;
+
   & > .ant-select-arrow {
     height: 22px;
     top: 35%;

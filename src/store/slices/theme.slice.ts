@@ -1,8 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { isPageInIframe } from '../../utils';
-import { RootState } from '../index';
+import { RootState } from 'store';
 import { Themes } from 'types';
+import { isPageInIframe } from 'utils';
 
 function getInitialState() {
   if (!isPageInIframe()) return Themes.Default;

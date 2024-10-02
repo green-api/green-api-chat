@@ -10,9 +10,10 @@ import SelectSendingMode from 'components/UI/select-sending-mode.component';
 const ContactChat: FC = () => {
   return (
     <Flex vertical style={{ width: '100%' }}>
+      <div className="chat-bg" />
       <ContactChatHeader />
       <ChatView key={Date.now()} />
-      <Flex align="center">
+      <Flex align="center" className="chat-form-container">
         <SelectSendingMode />
         <div style={{ flex: '1' }}>
           <ChatForm />

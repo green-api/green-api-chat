@@ -1,35 +1,42 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { RootState } from 'store';
-import { ActiveChat, ChatState, SendingMethodName, UserSideActiveMode } from 'types';
-import { isPageInIframe } from 'utils';
+import { ChatState } from 'types';
+import { getIsMiniVersion } from 'utils';
 
 const initialState: ChatState = {
   activeChat: null,
   userSideActiveMode: 'chats',
   activeSendingMode: null,
-  isMiniVersion: isPageInIframe(),
-  messageCount: 20,
+  type: 'tab',
+  isMiniVersion: getIsMiniVersion('tab'),
+  messageCount: 30,
 };
 
 const chatSlice = createSlice({
   name: 'chatSlice',
   initialState,
   reducers: {
-    setActiveChat: (state, action: PayloadAction<ActiveChat | null>) => {
+    setActiveChat: (state, action: PayloadAction<ChatState['activeChat']>) => {
       state.activeChat = action.payload;
     },
 
-    setUserSideActiveMode: (state, action: PayloadAction<UserSideActiveMode>) => {
+    setUserSideActiveMode: (state, action: PayloadAction<ChatState['userSideActiveMode']>) => {
       state.userSideActiveMode = action.payload;
     },
 
-    setActiveSendingMode: (state, action: PayloadAction<SendingMethodName | null>) => {
+    setActiveSendingMode: (state, action: PayloadAction<ChatState['activeSendingMode']>) => {
       state.activeSendingMode = action.payload;
     },
 
-    setMessageCount: (state, action: PayloadAction<number>) => {
+    setMessageCount: (state, action: PayloadAction<ChatState['messageCount']>) => {
       state.messageCount = action.payload;
+    },
+
+    setType: (state, action: PayloadAction<ChatState['type']>) => {
+      state.type = action.payload;
+
+      state.isMiniVersion = getIsMiniVersion(action.payload);
     },
   },
 });
@@ -42,3 +49,4 @@ export const selectUserSideActiveMode = (state: RootState) => state.chatReducer.
 export const selectActiveSendingMode = (state: RootState) => state.chatReducer.activeSendingMode;
 export const selectMiniVersion = (state: RootState) => state.chatReducer.isMiniVersion;
 export const selectMessageCount = (state: RootState) => state.chatReducer.messageCount;
+export const selectType = (state: RootState) => state.chatReducer.type;

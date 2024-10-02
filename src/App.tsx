@@ -5,19 +5,57 @@ import en_US from 'antd/es/locale/en_US';
 import { useTranslation } from 'react-i18next';
 import { RouterProvider } from 'react-router-dom';
 
-import { localisation, THEME } from 'configs';
-import { useActions } from 'hooks';
+import { selectTheme, themeActions } from './store/slices/theme.slice';
+import { DARK_THEME, DEFAULT_THEME, localisation } from 'configs';
+import { useActions, useAppDispatch, useAppSelector } from 'hooks';
 import router from 'router';
-import { MessageData, MessageEventTypeEnum } from 'types';
-import { isConsoleMessageData } from 'utils';
+import { MessageData, MessageEventTypeEnum, Themes } from 'types';
+import { isConsoleMessageData, isPageInIframe } from 'utils';
 
 function App() {
   const { i18n } = useTranslation();
   const { setSelectedInstance } = useActions();
 
+  const setTheme = themeActions.setTheme;
+  const dispatch = useAppDispatch();
+
+  const currentTheme = useAppSelector(selectTheme);
+  const themesList = {
+    [Themes.Default]: {
+      className: 'default-theme',
+      theme: DEFAULT_THEME,
+    },
+    [Themes.Dark]: {
+      className: 'dark-theme',
+      theme: DARK_THEME,
+    },
+  };
+
+  // Add theme for html
   useEffect(() => {
-    document.documentElement.classList.add('default-theme');
-  }, []);
+    const html = document.documentElement;
+
+    if (!isPageInIframe()) {
+      html.classList.add('default-theme');
+
+      return;
+    }
+
+    for (const key in themesList) {
+      if (
+        html.classList.contains(themesList[key as keyof typeof themesList].className) &&
+        currentTheme !== key
+      ) {
+        html.classList.remove(themesList[key as keyof typeof themesList].className);
+
+        continue;
+      }
+
+      if (currentTheme === key) {
+        html.classList.add(themesList[key].className);
+      }
+    }
+  }, [currentTheme]);
 
   useEffect(() => {
     function handleMessage(event: MessageEvent<MessageData>) {
@@ -41,6 +79,9 @@ function App() {
         case MessageEventTypeEnum.LOCALE_CHANGE:
           return i18n.changeLanguage(event.data.payload.locale);
 
+        case MessageEventTypeEnum.SET_THEME:
+          return dispatch(setTheme(event.data.payload.theme));
+
         default:
           return;
       }
@@ -55,7 +96,7 @@ function App() {
     <ConfigProvider
       direction={i18n.dir()}
       locale={localisation[i18n.resolvedLanguage as keyof typeof localisation] || en_US}
-      theme={THEME}
+      theme={themesList[currentTheme as keyof typeof themesList].theme}
     >
       <RouterProvider router={router} />
     </ConfigProvider>

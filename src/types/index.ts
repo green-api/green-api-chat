@@ -103,12 +103,17 @@ export interface FormRequestItemInterface extends Omit<FormItemProps, 'name'> {
   showRequired?: boolean;
 }
 
-export type MessageData = MessageDataInit | MessageDataSetCredentials | MessageDataLocaleChange;
+export type MessageData =
+  | MessageDataInit
+  | MessageDataSetCredentials
+  | MessageDataLocaleChange
+  | MessageDataSetTheme;
 
 export enum MessageEventTypeEnum {
   INIT = 'init',
   LOCALE_CHANGE = 'localeChange',
   SET_CREDENTIALS = 'setCredentials',
+  SET_THEME = 'setTheme',
 }
 
 export interface MessageDataInit {
@@ -122,6 +127,13 @@ export interface MessageDataInit {
 export interface MessageDataLocaleChange {
   type: MessageEventTypeEnum.LOCALE_CHANGE;
   payload: LocaleChangeMessage;
+}
+
+export interface MessageDataSetTheme {
+  type: MessageEventTypeEnum.SET_THEME;
+  payload: {
+    theme: Themes;
+  };
 }
 
 export interface MessageDataSetCredentials {
@@ -145,6 +157,12 @@ export interface SendingMethod {
 export interface GlobalModalPropertiesInterface {
   isVisible: boolean;
   setIsVisible: Dispatch<SetStateAction<boolean>>;
+}
+
+
+export const enum Themes {
+  Default = 'default',
+  Dark = 'dark',
 }
 
 export interface CookieOptionsInterface {

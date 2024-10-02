@@ -7,28 +7,41 @@ import ContactListItem from './contact-list-item.component';
 import { useAppSelector } from 'hooks';
 import { useLastMessagesQuery } from 'services/green-api/endpoints';
 import { selectMiniVersion } from 'store/slices/chat.slice';
-import { selectCredentials } from 'store/slices/user.slice';
+import { selectInstance } from 'store/slices/instances.slice';
 import { getErrorMessage } from 'utils';
 
 const ContactList: FC = () => {
-  const userCredentials = useAppSelector(selectCredentials);
+  const instanceCredentials = useAppSelector(selectInstance);
   const isMiniVersion = useAppSelector(selectMiniVersion);
 
   const { t } = useTranslation();
 
   const { data, isLoading, error } = useLastMessagesQuery(
     {
-      idInstance: userCredentials.idInstance,
-      apiTokenInstance: userCredentials.apiTokenInstance,
+      idInstance: instanceCredentials.idInstance,
+      apiTokenInstance: instanceCredentials.apiTokenInstance,
     },
-    { skipPollingIfUnfocused: true, pollingInterval: 15000 }
+    {
+      skipPollingIfUnfocused: true,
+      pollingInterval: isMiniVersion ? 17000 : 15000,
+      skip: !instanceCredentials.idInstance || !instanceCredentials.apiTokenInstance,
+    }
   );
 
-  if (error) {
+  if (!instanceCredentials.idInstance || !instanceCredentials.apiTokenInstance) {
+    return (
+      <Empty
+        className={`empty p-10 ${isMiniVersion ? 'min-height-460' : 'height-720'}`}
+        description={t('SELECT_INSTANCE_PLACEHOLDER')}
+      />
+    );
+  }
+
+  if (error && !data) {
     if ('status' in error && error.status === 429) {
       return (
         <Flex
-          className={`contact-list ${isMiniVersion ? 'min-height-460' : 'min-height-720'}`}
+          className={`contact-list ${isMiniVersion ? 'min-height-460' : 'height-720'}`}
           align="center"
           justify="center"
         >
@@ -53,7 +66,7 @@ const ContactList: FC = () => {
       renderItem={(message) => <ContactListItem key={message.chatId} lastMessage={message} />}
       loading={{
         spinning: isLoading,
-        className: `${isMiniVersion ? 'min-height-460' : 'min-height-720'}`,
+        className: `${isMiniVersion ? 'min-height-460' : 'height-720'}`,
         size: 'large',
       }}
       locale={{

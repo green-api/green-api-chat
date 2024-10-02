@@ -1,10 +1,10 @@
 import { FC } from 'react';
 
 import { useAppSelector } from 'hooks';
-import { selectCredentials } from 'store/slices/user.slice';
+import { selectInstance } from 'store/slices/instances.slice';
 
 const InstanceInfo: FC = () => {
-  const userCredentials = useAppSelector(selectCredentials);
+  const userCredentials = useAppSelector(selectInstance);
 
   return <h3 style={{ padding: '10px 45px' }}>idInstance: {userCredentials.idInstance}</h3>;
 };

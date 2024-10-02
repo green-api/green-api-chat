@@ -69,5 +69,26 @@
   "ENGLISH": "English",
   "HEBREW":  "עִבְרִית",
 
-  "FULL_VERSION": "גרסה מלאה"
+  "FULL_VERSION": "פתח צ'אטים",
+  "FULL_VERSION_TITLE": "פתח בחלון נפרד",
+
+  "LOGIN_TITLE": "היכנס",
+  "INPUT_EMAIL_INVALID": "הכתובת שהוזנה אינה אימייל, נסה שנית",
+  "INPUT_EMAIL_HINT": "הכנס כתובת אימייל",
+  "INPUT_USER_PASSWORD_HINT": "הכנס סיסמה",
+  "E_MAIL": "אימייל",
+  "INPUT_USER_PASSWORD": "סיסמה",
+  "CHECK_REMEMBER_ME": "זכור אותי",
+  "CLICK_FORGOT_PASSWORD": "שכחתי סיסמה",
+  "CLICK_LOGIN": "התחברות",
+  "CLICK_REGISTER_NOW": "הירשם",
+  "USER_NOT_FOUND": "המשתמש לא נמצא",
+  "PASSWORD_INCORRECT": "כניסה/סיסמה שגויה",
+
+  "CHATS_TITLE": "צ'אטים",
+  "SETTINGS_TITLE": "הגדרות",
+  "PROFILE_TITLE": "פּרוֹפִיל",
+
+  "INSTANCE": "מופע",
+  "SELECT_INSTANCE_PLACEHOLDER": "בחר מופע"
 }

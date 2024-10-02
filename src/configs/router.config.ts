@@ -4,6 +4,11 @@ export enum Routes {
   auth = '/auth',
 }
 
+export enum GreenApiRoutes {
+  registration = 'https://console.green-api.com/registration',
+  recoverPassword = 'https://console.green-api.com/auth/restore',
+}
+
 export const consoleUrl = 'https://console.green-api.com/';
 
 export const EXTERNAL_LINKS = {

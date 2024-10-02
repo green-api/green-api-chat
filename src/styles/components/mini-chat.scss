@@ -9,16 +9,11 @@
   &-view {
     font-size: 15px;
     height: 500px;
-    border-radius: 0;
-
+    display: flex;
+    flex-direction: column;
+    row-gap: 15px;
+    padding: 5px 10px;
     @include scrollBar();
-
-    & .ant-card-body {
-      display: flex;
-      flex-direction: column;
-      row-gap: 15px;
-      padding: 5px 10px;
-    }
   }
 
   &-form {

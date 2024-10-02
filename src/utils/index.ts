@@ -1,14 +1,17 @@
 import { i18n } from 'i18next';
 
-import { GREEN_API_INSTANCES_ROUTER } from 'configs';
+import { GREEN_API_INSTANCES_ROUTER, Routes } from 'configs';
 import {
   ApiErrorResponse,
+  CookieOptionsInterface,
+  ExpandedInstanceInterface,
   GetChatHistoryResponse,
   GreenApiUrlsInterface,
   InstanceInterface,
   LanguageLiteral,
   MessageData,
   MessageInterface,
+  UserInterface,
 } from 'types';
 
 export * from './component.utils';
@@ -254,4 +257,49 @@ export function isSafari() {
   return (
     window.navigator.userAgent.includes('Safari') && !window.navigator.userAgent.includes('Chrome')
   );
+}
+
+export function getCookie(name: string): string | undefined {
+  const matches = document.cookie.match(
+    new RegExp('(?:^|; )' + name.replaceAll(/([$()*+./?[\\\]^{|}])/g, '\\$1') + '=([^;]*)')
+  );
+
+  return matches ? decodeURIComponent(matches[1]) : undefined;
+}
+
+export function setCookie(name: string, value: string, options: CookieOptionsInterface = {}): void {
+  options.path = options.path ?? Routes.baseUrl;
+  options['max-age'] = options['max-age'] ?? 31_536_000;
+
+  let updatedCookie = encodeURIComponent(name) + '=' + encodeURIComponent(value);
+
+  for (const optionKey in options) {
+    updatedCookie += '; ' + optionKey;
+
+    const optionValue = options[optionKey as keyof CookieOptionsInterface];
+
+    if (optionValue !== true) updatedCookie += '=' + optionValue;
+  }
+
+  document.cookie = updatedCookie;
+}
+
+export function deleteCookie(name: string): void {
+  setCookie(name, '', {
+    'max-age': -1,
+  });
+}
+
+export function isAuth(user: UserInterface) {
+  return !!(user.idUser && user.apiTokenUser && user.login);
+}
+
+export function isNewInstance(timeCreated: ExpandedInstanceInterface['timeCreated']) {
+  return (getUTCDate(new Date()).getTime() - new Date(timeCreated).getTime()) / 1000 < 121;
+}
+
+export function getUTCDate(date: Date, utc = 3) {
+  const offset = date.getTimezoneOffset() / 60 + utc;
+
+  return new Date(date.getTime() + offset * 3600 * 1000);
 }

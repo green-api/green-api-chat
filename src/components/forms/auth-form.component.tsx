@@ -1,105 +1,171 @@
-import { FC } from 'react';
+import { FC, useRef } from 'react';
 
-import { Button, Card, Form, Input, notification } from 'antd';
+import { LockOutlined, UserOutlined } from '@ant-design/icons';
+import { Button, Checkbox, Col, Form, Input, Row, Typography } from 'antd';
+import useModal from 'antd/es/modal/useModal';
 import { useTranslation } from 'react-i18next';
+import { Link, useNavigate } from 'react-router-dom';
 
-import { useActions, useFormWithLanguageValidation } from 'hooks';
-import { useLazyGetStateInstanceQuery } from 'services/green-api/endpoints';
-import { StateInstanceEnum, UserCredentials } from 'types';
-import { getErrorMessage } from 'utils';
+import SelectLanguage from 'components/UI/select-language.component';
+import { GreenApiRoutes, Routes } from 'configs';
+import { useActions, useAppDispatch, useFormWithLanguageValidation } from 'hooks';
+import { useLoginMutation } from 'services/app/endpoints';
+import { AuthFormValues } from 'types';
 
 const AuthForm: FC = () => {
-  const { setCredentials } = useActions();
-
-  const [getStateInstance, { isLoading }] = useLazyGetStateInstanceQuery();
-
   const { t } = useTranslation();
+  const navigator = useNavigate();
+  const [form] = useFormWithLanguageValidation<AuthFormValues>();
 
-  const [form] = useFormWithLanguageValidation<UserCredentials>();
+  // To avoid twice rendering of modal window
+  const needToUpdateModal = useRef(false);
 
-  const onSignIn = async (values: UserCredentials) => {
-    const { apiTokenInstance, idInstance } = values;
-    const credentials = { idInstance, apiTokenInstance };
+  const [login, { isLoading, isError, data, isSuccess }] = useLoginMutation();
+  const dispatch = useAppDispatch();
+  const { login: loginUser } = useActions();
 
-    const { data, error } = await getStateInstance({ apiTokenInstance, idInstance });
+  const [modalFactory, contextHolder] = useModal();
 
-    if (data) {
-      switch (data.stateInstance) {
-        case StateInstanceEnum.Authorized:
-          setCredentials(credentials);
+  if (isError) {
+    needToUpdateModal.current = false;
 
-          return;
+    modalFactory.error({
+      title: 'Unknown error!',
+    });
+  }
 
-        case StateInstanceEnum.Blocked:
-          return notification.warning({
-            message: t('WARNING'),
-            description: t('WARNING_DESCRIPTION_BANNED'),
-            duration: 4,
-          });
+  if (isSuccess && data) {
+    if (!data.result) {
+      if (data.error.code === 404) {
+        form.setFields([
+          {
+            name: 'login',
+            errors: [t('USER_NOT_FOUND')],
+          },
+        ]);
+      }
 
-        case StateInstanceEnum.NotAuthorized:
-          return notification.warning({
-            message: t('WARNING'),
-            description: t('WARNING_DESCRIPTION_NOT_AUTHORIZED'),
-            duration: 4,
-          });
-
-        case StateInstanceEnum.Starting:
-          return notification.warning({
-            message: t('WARNING'),
-            description: t('WARNING_DESCRIPTION_STARTING'),
-            duration: 4,
-          });
-
-        case StateInstanceEnum.YellowCard:
-          return notification.warning({
-            message: t('WARNING'),
-            description: t('WARNING_DESCRIPTION_YELLOW_CARD'),
-            duration: 4,
-          });
+      if (data.error.code === 401) {
+        form.setFields([
+          {
+            name: 'password',
+            errors: [t('PASSWORD_INCORRECT')],
+          },
+          {
+            name: 'login',
+            errors: [''],
+          },
+        ]);
       }
     }
 
-    if (error) {
-      notification.error({
-        message: t('ERROR'),
-        description: getErrorMessage(error, t),
-        duration: 4,
-      });
+    if (data.result) {
+      dispatch(
+        loginUser({
+          login: form.getFieldValue('login'),
+          ...data.data,
+          remember: form.getFieldValue('remember'),
+        })
+      );
+
+      navigator(Routes.main);
+      return;
     }
-  };
+  }
 
   return (
-    <Card className="form-card" title={<h2>{t('AUTHORIZATION')}</h2>}>
-      <Form name="auth-form" size="large" onFinish={onSignIn} form={form}>
+    <div style={{ width: '100%' }}>
+      <Form form={form} onSubmitCapture={handlerSubmit} scrollToFirstError className="auth-form">
+        <Typography.Title className="text-center" level={3}>
+          {t('LOGIN_TITLE')}
+        </Typography.Title>
         <Form.Item
-          name="idInstance"
-          hasFeedback
+          name="login"
+          normalize={(value) => value.replaceAll(/^\s+|\s+$/g, '')}
           rules={[
-            { required: true, message: t('EMPTY_FIELD_ERROR') },
-            { whitespace: true, message: t('EMPTY_FIELD_ERROR') },
+            {
+              type: 'email',
+              message: t('INPUT_EMAIL_INVALID'),
+            },
+            {
+              required: true,
+              message: t('INPUT_EMAIL_HINT'),
+            },
           ]}
         >
-          <Input placeholder="idInstance" autoComplete="off" />
+          <Input
+            prefix={<UserOutlined className="site-form-item-icon" />}
+            placeholder={t('E_MAIL')}
+          />
         </Form.Item>
+
         <Form.Item
-          name="apiTokenInstance"
-          hasFeedback
-          rules={[
-            { required: true, message: t('EMPTY_FIELD_ERROR') },
-            { whitespace: true, message: t('EMPTY_FIELD_ERROR') },
-          ]}
+          name="password"
+          rules={[{ required: true, message: t('INPUT_USER_PASSWORD_HINT') }]}
         >
-          <Input placeholder="apiTokenInstance" autoComplete="off" />
+          <Input.Password
+            prefix={<LockOutlined className="site-form-item-icon" />}
+            placeholder={t('INPUT_USER_PASSWORD')}
+          />
         </Form.Item>
-        <Form.Item>
-          <Button disabled={isLoading} htmlType="submit" size="large" type="primary">
-            {t('LOGIN')}
+
+        <Row justify="space-between">
+          <Col>
+            <Form.Item initialValue={true} name="remember" valuePropName="checked" noStyle>
+              <Checkbox>{t('CHECK_REMEMBER_ME')}</Checkbox>
+            </Form.Item>
+          </Col>
+          <Col>
+            <Link
+              to={GreenApiRoutes.recoverPassword}
+              className="link link-blue link-hover-underline"
+            >
+              {t('CLICK_FORGOT_PASSWORD')}
+            </Link>
+          </Col>
+        </Row>
+
+        <div className="margin-vertical">
+          <Button
+            disabled={isLoading}
+            type="primary"
+            htmlType="submit"
+            className="w-100"
+            loading={isLoading}
+          >
+            {t('CLICK_LOGIN')}
           </Button>
-        </Form.Item>
+        </div>
+
+        <div className="text-center margin-bottom">
+          <Link to={GreenApiRoutes.registration} className="link link-blue link-hover-underline">
+            {t('CLICK_REGISTER_NOW')}
+          </Link>
+        </div>
+
+        <Row justify="center">
+          <SelectLanguage />
+        </Row>
       </Form>
-    </Card>
+      {contextHolder}
+    </div>
   );
+
+  async function handlerSubmit() {
+    if (isLoading) return;
+
+    try {
+      await form.validateFields();
+    } catch {
+      return;
+    }
+
+    const values = form.getFieldsValue();
+
+    needToUpdateModal.current = true;
+
+    login({ login: values.login, password: values.password });
+  }
 };
 
 export default AuthForm;

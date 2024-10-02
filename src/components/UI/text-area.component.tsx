@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { forwardRef, useState } from 'react';
 
 import { Input } from 'antd';
 import { useTranslation } from 'react-i18next';
@@ -11,7 +11,7 @@ interface TextAreaProps {
   onChange?: (value: string) => void;
 }
 
-const TextArea: FC<TextAreaProps> = ({ value, onChange }) => {
+const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(({ value, onChange }, ref) => {
   const isMiniVersion = useAppSelector(selectMiniVersion);
   const { t } = useTranslation();
 
@@ -19,6 +19,7 @@ const TextArea: FC<TextAreaProps> = ({ value, onChange }) => {
 
   return (
     <Input.TextArea
+      ref={ref}
       style={{ height: isMiniVersion ? '' : '42px !important' }}
       autoSize={{ minRows: isMiniVersion ? 5 : 1, maxRows: 5 }}
       maxLength={500}
@@ -39,6 +40,6 @@ const TextArea: FC<TextAreaProps> = ({ value, onChange }) => {
       }}
     />
   );
-};
+});
 
 export default TextArea;

@@ -8,6 +8,7 @@ import { useAppSelector } from 'hooks';
 import { selectMiniVersion } from 'store/slices/chat.slice';
 import { QuotedMessageInterface, TypeConnectionMessage } from 'types';
 import {
+  getFormattedMessage,
   getJSONMessage,
   getMessageTypeIcon,
   getPhoneNumberFromChatId,
@@ -26,11 +27,12 @@ const QuotedMessage: FC<QuotedMessageProps> = ({ quotedMessage, type }) => {
 
   const isMiniVersion = useAppSelector(selectMiniVersion);
 
-  const textMessage = getTextMessage(quotedMessage);
-  const jsonMessage = getJSONMessage(quotedMessage);
   const participant = quotedMessage.participant
     ? getPhoneNumberFromChatId(quotedMessage.participant)
     : null;
+  const textMessage = getTextMessage(quotedMessage);
+  const jsonMessage = getJSONMessage(quotedMessage);
+  const formattedMessage = getFormattedMessage(textMessage);
 
   const dir = i18n.dir();
 
@@ -47,7 +49,7 @@ const QuotedMessage: FC<QuotedMessageProps> = ({ quotedMessage, type }) => {
             style={{ fontSize: 12, margin: 0, color: 'inherit' }}
             ellipsis={{ rows: 2, expandable: false }}
           >
-            {textMessage}
+            {formattedMessage}
           </Typography.Paragraph>
         </Space>
       </Space>

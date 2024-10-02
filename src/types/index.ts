@@ -2,23 +2,24 @@ import { Dispatch, ReactElement, SetStateAction } from 'react';
 
 import { FormItemProps } from 'antd';
 
-import { MessageInterface } from './api.types';
+import { ExpandedInstanceInterface, MessageInterface, UserInterface } from './api.types';
 
 export * from './api.types';
 
 export interface UserState {
-  credentials: UserCredentials;
-  isAuth: boolean;
+  user: UserInterface;
 }
-export interface UserCredentials {
-  idInstance: string;
+
+export interface InstanceCredentials {
+  idInstance: number;
   apiTokenInstance: string;
 }
 
 export interface ChatState {
   activeChat: ActiveChat | null;
-  isMiniVersion: boolean;
+  userSideActiveMode: UserSideActiveMode;
   activeSendingMode: SendingMethodName | null;
+  isMiniVersion: boolean;
   messageCount: number;
 }
 
@@ -26,8 +27,12 @@ export interface ActiveChat extends MessageInterface {
   avatar: string;
 }
 
+export interface InstancesState {
+  selectedInstance: InstanceCredentials;
+}
+
 export interface InstanceInterface {
-  idInstance: string;
+  idInstance: number;
   apiTokenInstance: string;
 }
 
@@ -49,6 +54,12 @@ export interface GreenApiRouteInterface extends GreenApiUrlsInterface {
 }
 
 export type LanguageLiteral = 'en' | 'ru' | 'he';
+
+export interface AuthFormValues {
+  login: string;
+  password: string;
+  remember: boolean;
+}
 
 export interface ChatFormValues {
   message: string;
@@ -107,7 +118,7 @@ export enum MessageEventTypeEnum {
 
 export interface MessageDataInit {
   type: MessageEventTypeEnum.INIT;
-  payload: UserCredentials &
+  payload: InstanceCredentials &
     LocaleChangeMessage & {
       isMiniVersion: boolean;
     };
@@ -127,7 +138,7 @@ export interface MessageDataSetTheme {
 
 export interface MessageDataSetCredentials {
   type: MessageEventTypeEnum.SET_CREDENTIALS;
-  payload: UserCredentials;
+  payload: InstanceCredentials;
 }
 
 interface LocaleChangeMessage {
@@ -135,6 +146,8 @@ interface LocaleChangeMessage {
 }
 
 export type SendingMethodName = 'sendFileByUpload' | 'sendContact' | 'sendLocation' | 'sendPoll';
+
+export type UserSideActiveMode = 'chats' | 'settings' | 'profile';
 
 export interface SendingMethod {
   name: SendingMethodName;
@@ -146,7 +159,32 @@ export interface GlobalModalPropertiesInterface {
   setIsVisible: Dispatch<SetStateAction<boolean>>;
 }
 
+
 export const enum Themes {
   Default = 'default',
   Dark = 'dark',
 }
+
+export interface CookieOptionsInterface {
+  'max-age'?: number;
+  secure?: boolean;
+  path?: string;
+  domain?: string;
+}
+
+export interface AsideItem {
+  item: UserSideActiveMode;
+  title: string;
+  icon: ReactElement;
+}
+
+export interface UserSideItem {
+  item: UserSideActiveMode;
+  element: ReactElement;
+}
+
+export interface SelectInstanceItemInterface extends ExpandedInstanceInterface {
+  label: JSX.Element | string;
+}
+
+export type HasDefaultInstance = 'unknown' | 'yes' | 'no';

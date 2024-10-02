@@ -1,5 +1,11 @@
 import { InstanceInterface } from 'types';
 
+export interface UserInterface {
+  idUser: string;
+  apiTokenUser: string;
+  login: string;
+}
+
 export interface SendingResponseInterface {
   idMessage: string;
 }
@@ -235,4 +241,64 @@ export enum StateInstanceEnum {
 
 export interface GetStateInstanceResponseInterface {
   stateInstance: StateInstanceEnum;
+}
+
+export enum AppMethodsEnum {
+  GetInstances = 'user.instances.list',
+  Login = 'loginUser',
+  Registration = 'registerUser',
+  Verify = 'verifyUser',
+  Recover = 'recoverUser',
+}
+
+export type AppApiResponse<Data> = AppApiSuccessResponseInterface<Data> | AppApiErrorResponse;
+
+export interface AppApiSuccessResponseInterface<Data> {
+  result: true;
+  data: Data;
+  error: object;
+}
+
+export interface AppApiErrorResponse {
+  result: false;
+  data: object;
+  error: {
+    code: number;
+    description: string;
+  };
+}
+
+export interface UserLoginDataInterface extends Pick<UserInterface, 'login'> {
+  password: string;
+}
+export enum TariffsEnum {
+  Developer = 'DEVELOPER',
+  Business = 'BUSINESS',
+  BusinessUSD = 'BUSINESS_USD',
+  BusinessKZT = 'BUSINESS_KZT',
+}
+
+export interface ExpandedInstanceInterface extends InstanceInterface {
+  deleted: boolean;
+  idInstanceDeleted: boolean;
+  isExpired: boolean;
+  isFree: boolean;
+  isPartner: boolean;
+  name: string;
+  partnerUserUiid: string;
+  tariff: TariffsEnum;
+  timeCreated: string;
+  timeDeleted: string;
+  expirationDate: string;
+  typeAccount: string;
+  typeInstance: string;
+}
+
+export type GetInstancesResponse = AppApiResponse<ExpandedInstanceInterface[]>;
+
+export interface GetWaSettingsResponseInterface {
+  stateInstance: StateInstanceEnum;
+  avatar: string;
+  phone: string;
+  deviceId: string;
 }

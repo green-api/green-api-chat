@@ -14,7 +14,7 @@ import {
   useGetGroupDataQuery,
 } from 'services/green-api/endpoints';
 import { selectActiveChat } from 'store/slices/chat.slice';
-import { selectCredentials } from 'store/slices/user.slice';
+import { selectInstance } from 'store/slices/instances.slice';
 import { LanguageLiteral, MessageInterface } from 'types';
 import {
   getMessageDate,
@@ -32,7 +32,7 @@ const ContactListItem: FC<ContactListItemProps> = ({ lastMessage }) => {
     i18n: { resolvedLanguage },
   } = useTranslation();
 
-  const userCredentials = useAppSelector(selectCredentials);
+  const instanceCredentials = useAppSelector(selectInstance);
   const activeChat = useAppSelector(selectActiveChat);
 
   const { setActiveChat } = useActions();
@@ -44,8 +44,8 @@ const ContactListItem: FC<ContactListItemProps> = ({ lastMessage }) => {
 
   const { data: groupData, isLoading: isGroupDataLoading } = useGetGroupDataQuery(
     {
-      idInstance: userCredentials.idInstance,
-      apiTokenInstance: userCredentials.apiTokenInstance,
+      idInstance: instanceCredentials.idInstance,
+      apiTokenInstance: instanceCredentials.apiTokenInstance,
       groupId: lastMessage.chatId,
     },
     { skip: !lastMessage.chatId.includes('g.us') }
@@ -53,16 +53,16 @@ const ContactListItem: FC<ContactListItemProps> = ({ lastMessage }) => {
 
   const { data: contactInfo, isLoading: isContactInfoLoading } = useGetContactInfoQuery(
     {
-      idInstance: userCredentials.idInstance,
-      apiTokenInstance: userCredentials.apiTokenInstance,
+      idInstance: instanceCredentials.idInstance,
+      apiTokenInstance: instanceCredentials.apiTokenInstance,
       chatId: lastMessage.chatId,
     },
     { skip: !!lastMessage.senderName || lastMessage.chatId.includes('g.us') }
   );
 
   const { data: avatarData } = useGetAvatarQuery({
-    idInstance: userCredentials.idInstance,
-    apiTokenInstance: userCredentials.apiTokenInstance,
+    idInstance: instanceCredentials.idInstance,
+    apiTokenInstance: instanceCredentials.apiTokenInstance,
     chatId: lastMessage.chatId,
   });
 
@@ -94,7 +94,7 @@ const ContactListItem: FC<ContactListItemProps> = ({ lastMessage }) => {
       gap="small"
       onClick={() => setActiveChat({ ...lastMessage, senderName: chatName, avatar })}
     >
-      <AvatarImage src={avatar} />
+      <AvatarImage src={avatar} size="large" />
       <Flex className="contact-list__item-wrapper">
         <Flex vertical gap="small" className="contact-list__item-body">
           {isLoading ? (

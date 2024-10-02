@@ -7,15 +7,17 @@ import {
   UserOutlined,
   VideoCameraOutlined,
 } from '@ant-design/icons';
+import parse from 'html-react-parser';
 
+import { TextFormatter } from './text-formatter';
 import DoubleTickIcon from 'assets/double-tick.svg?react';
 import TickIcon from 'assets/tick.svg?react';
 import { StatusMessage, TypeMessage } from 'types';
 
-export const getOutgoingStatusMessageIcon = (
+export function getOutgoingStatusMessageIcon(
   statusMessage?: StatusMessage,
   styles?: CSSProperties
-) => {
+) {
   switch (statusMessage) {
     case 'sent':
       return <TickIcon style={{ ...styles, color: '#8696a0' }} />;
@@ -29,9 +31,9 @@ export const getOutgoingStatusMessageIcon = (
     default:
       return null;
   }
-};
+}
 
-export const getMessageTypeIcon = (typeMessage: TypeMessage, downloadUrl?: string) => {
+export function getMessageTypeIcon(typeMessage: TypeMessage, downloadUrl?: string) {
   let messageTypeIcon: JSX.Element | null = null;
 
   switch (typeMessage) {
@@ -76,4 +78,14 @@ export const getMessageTypeIcon = (typeMessage: TypeMessage, downloadUrl?: strin
       {messageTypeIcon}
     </a>
   );
-};
+}
+
+export function getFormattedMessage(textMessage: string) {
+  const formattedText = TextFormatter(textMessage);
+
+  if (!formattedText) {
+    return textMessage;
+  }
+
+  return parse(formattedText);
+}

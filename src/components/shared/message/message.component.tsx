@@ -14,7 +14,13 @@ import {
   TypeConnectionMessage,
   TypeMessage,
 } from 'types';
-import { getMessageDate, getMessageTypeIcon, getOutgoingStatusMessageIcon, isSafari } from 'utils';
+import {
+  getFormattedMessage,
+  getMessageDate,
+  getMessageTypeIcon,
+  getOutgoingStatusMessageIcon,
+  isSafari,
+} from 'utils';
 
 interface MessageProps {
   type: TypeConnectionMessage;
@@ -56,10 +62,12 @@ const Message: FC<MessageProps> = ({
 
   const messageRef = useRef<HTMLDivElement>(null);
 
+  const formattedMessage = getFormattedMessage(textMessage);
+
   useEffect(() => {
     const element = messageRef.current;
     if (isLastMessage && element && !isMiniVersion && !isSafari()) {
-      element.scrollIntoView({ behavior: 'smooth' });
+      element.scrollIntoView();
     }
   }, [isLastMessage]);
 
@@ -87,9 +95,9 @@ const Message: FC<MessageProps> = ({
         <Typography.Paragraph
           className={`${type === 'outgoing' ? 'outgoing' : 'incoming'} ${isMiniVersion ? '' : 'full'}`}
           style={{ fontSize: isMiniVersion ? 16 : 14, margin: 0 }}
-          ellipsis={{ rows: 5, expandable: true, symbol: t('SHOW_ALL_TEXT') }}
+          ellipsis={{ rows: 6, expandable: true, symbol: t('SHOW_ALL_TEXT') }}
         >
-          {textMessage}
+          {formattedMessage}
         </Typography.Paragraph>
       </Space>
       <Space style={{ alignSelf: type === 'incoming' ? 'start' : 'end' }}>

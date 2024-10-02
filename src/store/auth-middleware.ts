@@ -1,26 +1,55 @@
-import { createListenerMiddleware, isAnyOf } from '@reduxjs/toolkit';
+import { createListenerMiddleware, isAnyOf, PayloadAction } from '@reduxjs/toolkit';
 
 import { actionCreators } from './actions';
 import { RootState } from 'store';
+import { UserInterface } from 'types';
+import { deleteCookie, setCookie } from 'utils';
 
 export const listenerMiddleware = createListenerMiddleware();
 
 listenerMiddleware.startListening({
-  matcher: isAnyOf(actionCreators.setCredentials),
-  effect: (_, api) => {
+  matcher: isAnyOf(actionCreators.login),
+  effect: (action: PayloadAction<UserInterface & { remember: boolean }>, api) => {
     const state = api.getState() as RootState;
 
-    // if (!state.chatReducer.isMiniVersion) {
-    //   localStorage.setItem('userState', JSON.stringify(state.userReducer));
-    // }
+    if (action.payload.remember) {
+      setCookie('login', state.userReducer.user.login);
+      setCookie('apiTokenUser', state.userReducer.user.apiTokenUser);
+      setCookie('idUser', state.userReducer.user.idUser);
+    }
 
-    localStorage.setItem('userState', JSON.stringify(state.userReducer));
+    sessionStorage.setItem('login', state.userReducer.user.login);
+    sessionStorage.setItem('apiTokenUser', state.userReducer.user.apiTokenUser);
+    sessionStorage.setItem('idUser', state.userReducer.user.idUser);
   },
 });
 
 listenerMiddleware.startListening({
   matcher: isAnyOf(actionCreators.logout),
   effect: () => {
-    localStorage.removeItem('userState');
+    deleteCookie('login');
+    deleteCookie('idUser');
+    deleteCookie('apiTokenUser');
+
+    sessionStorage.removeItem('login');
+    sessionStorage.removeItem('apiTokenUser');
+    sessionStorage.removeItem('idUser');
+
+    localStorage.removeItem('login');
+    localStorage.removeItem('apiTokenUser');
+    localStorage.removeItem('idUser');
+    localStorage.removeItem('selectedInstance');
+  },
+});
+
+listenerMiddleware.startListening({
+  matcher: isAnyOf(actionCreators.setSelectedInstance),
+  effect: (_, api) => {
+    const state = api.getState() as RootState;
+
+    localStorage.setItem(
+      'selectedInstance',
+      JSON.stringify(state.instancesReducer.selectedInstance)
+    );
   },
 });

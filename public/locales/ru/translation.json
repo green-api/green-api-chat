@@ -70,5 +70,26 @@
   "ENGLISH": "English",
   "HEBREW":  "עִבְרִית",
 
-  "FULL_VERSION": "Полная версия"
+  "FULL_VERSION": "Открыть чаты",
+  "FULL_VERSION_TITLE": "Открыть в отдельном окне",
+
+  "LOGIN_TITLE": "Вход",
+  "INPUT_EMAIL_INVALID": "Введенный адрес не является E-mail!",
+  "INPUT_EMAIL_HINT": "Введите адрес электронной почты!",
+  "INPUT_USER_PASSWORD_HINT": "Пожалуйста, введите пароль!",
+  "E_MAIL": "Электронная почта",
+  "INPUT_USER_PASSWORD": "Пароль",
+  "CHECK_REMEMBER_ME": "Запомнить меня",
+  "CLICK_FORGOT_PASSWORD": "Забыли пароль?",
+  "CLICK_LOGIN": "Войти",
+  "CLICK_REGISTER_NOW": "Зарегистрироваться",
+  "USER_NOT_FOUND": "Пользователь не найден",
+  "PASSWORD_INCORRECT": "Неправильный логин/пароль",
+
+  "CHATS_TITLE": "Чаты",
+  "SETTINGS_TITLE": "Настройки",
+  "PROFILE_TITLE": "Профиль",
+
+  "INSTANCE": "Инстанс",
+  "SELECT_INSTANCE_PLACEHOLDER":  "Выберите инстанс"
 }

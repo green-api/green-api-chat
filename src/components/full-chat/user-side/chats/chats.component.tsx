@@ -22,7 +22,7 @@ const Chats: FC = () => {
   return (
     <Flex className="chats" vertical>
       {!isMiniVersion && type === 'tab' && <ChatsHeader />}
-      <Flex align="center" gap={8} justify="center" style={{ padding: '0 5px' }}>
+      <Flex align="center" gap={8} style={{ padding: '0 5px' }}>
         <SelectInstance />
         {!isMiniVersion && type === 'console-page' && (
           <a>
@@ -35,7 +35,9 @@ const Chats: FC = () => {
         )}
       </Flex>
       <ContactList />
-      <AddNewChat isVisible={isVisible} setIsVisible={setIsVisible} />
+      {!isMiniVersion && type === 'console-page' && (
+        <AddNewChat isVisible={isVisible} setIsVisible={setIsVisible} />
+      )}
     </Flex>
   );
 };

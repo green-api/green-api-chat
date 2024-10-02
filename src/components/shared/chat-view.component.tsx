@@ -46,13 +46,13 @@ const ChatView: FC = () => {
 
   // reset global message count
   useEffect(() => {
-    setMessageCount(20);
+    setMessageCount(30);
   }, [activeChat, activeChat.chatId]);
 
   // scroll to bottom when open chat
   useEffect(() => {
     const element = chatViewRef.current;
-    if (element && count === 20) {
+    if (element && count === 30) {
       element.scrollTo({ top: element.scrollHeight });
     }
   }, [messages]);
@@ -105,10 +105,7 @@ const ChatView: FC = () => {
     }
 
     return (
-      <div
-        className={`chat-view flex-center ${isMiniVersion ? '' : 'full'}`}
-        style={{ boxShadow: 'unset' }}
-      >
+      <div className={`chat-view flex-center ${isMiniVersion ? '' : 'full'}`}>
         <Empty description={getErrorMessage(error, t)} />
       </div>
     );

@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react';
+import { FC, useLayoutEffect } from 'react';
 
 import { useSearchParams } from 'react-router-dom';
 
@@ -14,7 +14,7 @@ const Main: FC = () => {
 
   const { setType } = useActions();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (params.has('type')) {
       setType(params.get('type') as ChatType);
     }

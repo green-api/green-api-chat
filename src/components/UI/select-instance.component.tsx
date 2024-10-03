@@ -6,9 +6,10 @@ import { useTranslation } from 'react-i18next';
 
 import SelectInstanceLabel from './select-instance-label.component';
 import { useActions, useAppSelector } from 'hooks';
-import { useGetInstancesQuery } from 'services/app/endpoints';
+import { useLazyGetInstancesQuery } from 'services/app/endpoints';
 import { selectType } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
+import { selectUser } from 'store/slices/user.slice';
 import {
   ExpandedInstanceInterface,
   HasDefaultInstance,
@@ -18,14 +19,18 @@ import {
 
 const SelectInstance: FC = () => {
   const type = useAppSelector(selectType);
+  const { idUser, apiTokenUser } = useAppSelector(selectUser);
 
   const { t } = useTranslation();
 
-  const {
-    data: instancesRequestData,
-    isLoading: isLoadingInstances,
-    isSuccess: isSuccessLoadingInstances,
-  } = useGetInstancesQuery();
+  const [
+    getInstancesTrigger,
+    {
+      isLoading: isLoadingInstances,
+      data: instancesRequestData,
+      isSuccess: isSuccessLoadingInstances,
+    },
+  ] = useLazyGetInstancesQuery();
 
   const selectedInstance = useAppSelector(selectInstance);
 
@@ -45,6 +50,14 @@ const SelectInstance: FC = () => {
   const setPageTimerReference = useRef<ReturnType<typeof setTimeout>>();
 
   const selectReference = useRef<BaseSelectRef>(null);
+
+  useEffect(() => {
+    if (!idUser || !apiTokenUser) {
+      return;
+    }
+
+    getInstancesTrigger();
+  }, [idUser, apiTokenUser]);
 
   // useEffect - для добавления полей в инстансы (поля: label и isLoadingStatus)
   useEffect(() => {

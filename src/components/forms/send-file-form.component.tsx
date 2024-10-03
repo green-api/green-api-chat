@@ -108,7 +108,7 @@ const SendFileForm: FC = () => {
         <Input placeholder={t('FILENAME_LABEL')} />
       </Form.Item>
       <Form.Item name="caption" label={t('DESCRIPTION')}>
-        <TextArea placeholder={t('DESCRIPTION')} />
+        <TextArea placeholder={t('DESCRIPTION')} autoSize={{ minRows: 2, maxRows: 5 }} />
       </Form.Item>
       <Form.Item name="quotedMessageId" label={t('QUOTED_MESSAGE_ID_LABEL')}>
         <Input placeholder={t('QUOTED_MESSAGE_ID_LABEL')} />

@@ -37,7 +37,7 @@ const ContactList: FC = () => {
     );
   }
 
-  if (error && !data) {
+  if (error) {
     if ('status' in error && error.status === 429) {
       return (
         <Flex

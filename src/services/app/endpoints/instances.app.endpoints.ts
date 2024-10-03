@@ -1,15 +1,17 @@
 import { appAPI } from 'services/app/app.service';
-import { AppMethodsEnum, GetInstancesResponse } from 'types';
+import { AppMethodsEnum, GetInstancesResponse, UserInterface } from 'types';
 import { isNewInstance } from 'utils';
 
 export const instancesAppApiEndpoints = appAPI.injectEndpoints({
   endpoints: (builder) => ({
-    getInstances: builder.query<GetInstancesResponse, void>({
-      query: () => ({
+    getInstances: builder.query<GetInstancesResponse, Omit<UserInterface, 'login'>>({
+      query: ({ idUser, apiTokenUser }) => ({
         url: '',
         method: 'POST',
         headers: {
           'x-ga-method': AppMethodsEnum.GetInstances,
+          'x-ga-user-id': idUser,
+          'x-ga-user-token': apiTokenUser,
         },
       }),
       transformResponse: (response: GetInstancesResponse) => {

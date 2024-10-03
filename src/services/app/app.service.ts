@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { APP_API_TOKEN, APP_API_URL, Routes } from 'configs';
 import { RootState } from 'store';
 import { AppApiResponse, AppMethodsEnum } from 'types';
-import { deleteCookie } from 'utils';
+import { deleteCookie, isPageInIframe } from 'utils';
 
 let ignoreNotAuthorizedError = false;
 
@@ -40,7 +40,9 @@ export const appAPI = createApi({
 
         sessionStorage.clear();
 
-        document.location.href = Routes.auth;
+        if (!isPageInIframe()) {
+          document.location.href = Routes.baseUrl + Routes.auth;
+        }
       }
 
       return result;

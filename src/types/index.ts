@@ -121,7 +121,7 @@ export enum MessageEventTypeEnum {
 
 export interface MessageDataInit {
   type: MessageEventTypeEnum.INIT;
-  payload: InstanceCredentials & LocaleChangeMessage & ThemeChangeMessage;
+  payload: InstanceCredentials & LocaleChangeMessage & ThemeChangeMessage & UserInterface;
 }
 
 export interface MessageDataLocaleChange {

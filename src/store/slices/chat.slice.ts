@@ -9,6 +9,7 @@ const initialState: ChatState = {
   userSideActiveMode: 'chats',
   activeSendingMode: null,
   type: 'tab',
+  platform: 'web',
   isMiniVersion: getIsMiniVersion('tab'),
   messageCount: 30,
 };
@@ -38,6 +39,10 @@ const chatSlice = createSlice({
 
       state.isMiniVersion = getIsMiniVersion(action.payload);
     },
+
+    setPlatform: (state, action: PayloadAction<ChatState['platform']>) => {
+      state.platform = action.payload;
+    },
   },
 });
 
@@ -50,3 +55,4 @@ export const selectActiveSendingMode = (state: RootState) => state.chatReducer.a
 export const selectMiniVersion = (state: RootState) => state.chatReducer.isMiniVersion;
 export const selectMessageCount = (state: RootState) => state.chatReducer.messageCount;
 export const selectType = (state: RootState) => state.chatReducer.type;
+export const selectPlatform = (state: RootState) => state.chatReducer.platform;

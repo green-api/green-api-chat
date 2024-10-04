@@ -14,7 +14,7 @@ import { isConsoleMessageData, isPageInIframe } from 'utils';
 
 function App() {
   const { i18n } = useTranslation();
-  const { setSelectedInstance, setTheme, login } = useActions();
+  const { setSelectedInstance, setTheme, login, setPlatform } = useActions();
 
   const currentTheme = useAppSelector(selectTheme);
   const themesList = {
@@ -74,6 +74,8 @@ function App() {
             apiTokenUser: event.data.payload.apiTokenUser,
             remember: true,
           });
+
+          setPlatform(event.data.payload.platform);
 
           setTheme(event.data.payload.theme);
 

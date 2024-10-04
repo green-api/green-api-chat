@@ -27,7 +27,7 @@ const SelectInstance: FC = () => {
     isLoading: isLoadingInstances,
     data: instancesRequestData,
     isSuccess: isSuccessLoadingInstances,
-  } = useGetInstancesQuery({ idUser, apiTokenUser });
+  } = useGetInstancesQuery({ idUser, apiTokenUser }, { skip: !idUser || !apiTokenUser });
 
   const selectedInstance = useAppSelector(selectInstance);
 

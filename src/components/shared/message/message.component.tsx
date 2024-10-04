@@ -100,7 +100,7 @@ const Message: FC<MessageProps> = ({
           {formattedMessage}
         </Typography.Paragraph>
       </Space>
-      <Space style={{ alignSelf: type === 'incoming' ? 'start' : 'end' }}>
+      <Space style={{ alignSelf: 'end' }}>
         <MessageTooltip jsonMessage={jsonMessage} />
         <span style={{ fontSize: 14 }}>{messageDate.date}</span>
         {getOutgoingStatusMessageIcon(statusMessage)}

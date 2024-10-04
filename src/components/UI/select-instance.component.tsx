@@ -155,9 +155,8 @@ const SelectInstance: FC = () => {
     <Select
       size="large"
       showSearch
-      style={{ margin: type === 'console-page' ? '5px 0' : '8px 0', padding: '0 5px' }}
+      style={{ margin: type === 'console-page' ? '5px 0' : '8px 0', padding: '0 5px', width: '95%' }}
       placeholder={t('SELECT_INSTANCE_PLACEHOLDER')}
-      className="w-100"
       defaultValue={defaultInstanceToRender ?? instances[0]?.idInstance}
       options={instances}
       ref={selectReference}

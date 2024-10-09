@@ -2,8 +2,8 @@ import { ThemeConfig } from 'antd';
 
 export const DARK_THEME: ThemeConfig = {
   token: {
-    colorBgBase: '#0e0e0e',
-    colorBgContainer: '#0e0e0e',
+    colorBgBase: '#4b4b4b',
+    colorBgContainer: '#4b4b4b',
     colorLink: '#fff',
     colorLinkHover: 'var(--link-hover-color)',
     colorBgElevated: 'var(--main-background)',
@@ -21,8 +21,8 @@ export const DARK_THEME: ThemeConfig = {
       colorInfo: '#009805',
     },
     Tooltip: {
-      colorBgBase: '#000',
-      colorBgContainerDisabled: '#000',
+      colorBgBase: '#4b4b4b',
+      colorBgContainerDisabled: '#4b4b4b',
       colorText: '#fff',
     },
     Layout: {
@@ -42,6 +42,11 @@ export const DARK_THEME: ThemeConfig = {
     },
     Spin: {
       colorPrimary: '#009805',
+    },
+    Input: {
+      colorErrorHover: '#ff4d4f',
+      colorErrorBorderHover: '#ff4d4f',
+      colorErrorOutline: '#ff4d4f',
     },
   },
 };

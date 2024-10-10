@@ -21,6 +21,7 @@ import {
   getMessageTypeIcon,
   getPhoneNumberFromChatId,
   getOutgoingStatusMessageIcon,
+  getTextMessage,
 } from 'utils';
 
 interface ContactListItemProps {
@@ -96,8 +97,7 @@ const ChatListItem: FC<ContactListItemProps> = ({ lastMessage }) => {
     return lastMessage.chatId.includes('g.us') ? emptyAvatarGroup : emptyAvatar;
   }, [avatarData, lastMessage]);
 
-  const textMessage =
-    lastMessage.textMessage || lastMessage.extendedTextMessage?.text || lastMessage.typeMessage;
+  const textMessage = getTextMessage(lastMessage);
 
   return (
     <Flex

@@ -51,7 +51,9 @@ export type TypeMessage =
   | 'pollMessage'
   | 'deletedMessage'
   | 'editedMessage'
-  | 'reactionMessage';
+  | 'reactionMessage'
+  | 'templateMessage'
+  | 'templateButtonsReplyMessage';
 
 export type Contact = {
   displayName: string;
@@ -75,6 +77,7 @@ export interface MessageInterface
   contact?: Contact;
   extendedTextMessage?: ExtendedTextMessage;
   quotedMessage?: QuotedMessageInterface;
+  templateButtonReplyMessage?: TemplateButtonReplyMessage;
   downloadUrl?: string;
   location?: LocationInterface;
   fileName?: string;
@@ -95,13 +98,20 @@ export interface LocationInterface {
   jpegThumbnail: string;
 }
 
-export type ExtendedTextMessage = {
+export interface ExtendedTextMessage {
   text: string;
   description: string;
   title: string;
   previewType: string;
   jpegThumbnail: string;
-};
+}
+
+export interface TemplateButtonReplyMessage {
+  stanzaId: string;
+  selectedIndex: number;
+  selectedId: string;
+  selectedDisplayText: string;
+}
 
 export interface GetChatHistoryParametersInterface
   extends InstanceInterface,

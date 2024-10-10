@@ -24,7 +24,7 @@ const Chats: FC = () => {
   return (
     <Flex className="chats" vertical>
       {!isMiniVersion && type === 'tab' && <ChatsHeader />}
-      <Flex align="center" gap={8} style={{ padding: '0 5px' }}>
+      <Flex align="center" gap={8} style={{ padding: '0 5px' }} justify="space-around">
         <SelectInstance />
         {!isMiniVersion && type === 'console-page' && (
           <a>

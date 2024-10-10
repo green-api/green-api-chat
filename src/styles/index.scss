@@ -9,6 +9,7 @@
 @import "components/mini-chat";
 @import "components/user-side";
 @import "components/aside";
+@import "components/content-side";
 
 @import "components/shared/contact-list";
 @import "components/shared/message";
@@ -52,6 +53,14 @@ html {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.relative {
+  position: relative;
+}
+
+.display-none {
+  display: none;
 }
 
 .text-center {

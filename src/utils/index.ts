@@ -196,7 +196,12 @@ export function getErrorMessage(error: unknown, t: i18n['t']): string | null {
 }
 
 export function getTextMessage(message: MessageInterface) {
-  return message.extendedTextMessage?.text || message.textMessage || message.typeMessage;
+  return (
+    message.extendedTextMessage?.text ||
+    message.textMessage ||
+    message.templateButtonReplyMessage?.selectedDisplayText ||
+    message.typeMessage
+  );
 }
 
 export function getPhoneNumberFromChatId(chatId: string) {

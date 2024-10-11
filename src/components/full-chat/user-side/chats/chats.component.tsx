@@ -6,14 +6,16 @@ import { useTranslation } from 'react-i18next';
 
 import AddNewChat from './add-new-chat.component';
 import ChatsHeader from './chats-header.component';
-import ContactList from 'components/shared/contact-list.component';
+import ChatList from 'components/shared/chat-list.component';
 import SelectInstance from 'components/UI/select-instance.component';
 import { useAppSelector } from 'hooks';
 import { selectMiniVersion, selectType } from 'store/slices/chat.slice';
+import { selectInstance } from 'store/slices/instances.slice';
 
 const Chats: FC = () => {
   const isMiniVersion = useAppSelector(selectMiniVersion);
   const type = useAppSelector(selectType);
+  const instanceCredentials = useAppSelector(selectInstance);
 
   const { t } = useTranslation();
 
@@ -34,7 +36,7 @@ const Chats: FC = () => {
           </a>
         )}
       </Flex>
-      <ContactList />
+      <ChatList key={instanceCredentials.idInstance} />
       {!isMiniVersion && type === 'console-page' && (
         <AddNewChat isVisible={isVisible} setIsVisible={setIsVisible} />
       )}

@@ -27,7 +27,7 @@ interface ContactListItemProps {
   lastMessage: MessageInterface;
 }
 
-const ContactListItem: FC<ContactListItemProps> = ({ lastMessage }) => {
+const ChatListItem: FC<ContactListItemProps> = ({ lastMessage }) => {
   const {
     i18n: { resolvedLanguage },
   } = useTranslation();
@@ -48,7 +48,11 @@ const ContactListItem: FC<ContactListItemProps> = ({ lastMessage }) => {
       apiTokenInstance: instanceCredentials.apiTokenInstance,
       groupId: lastMessage.chatId,
     },
-    { skip: !lastMessage.chatId.includes('g.us') }
+    {
+      skip:
+        !lastMessage.chatId.includes('g.us') ||
+        instanceCredentials.idInstance.toString().startsWith('7835'),
+    }
   );
 
   const { data: contactInfo, isLoading: isContactInfoLoading } = useGetContactInfoQuery(
@@ -57,14 +61,22 @@ const ContactListItem: FC<ContactListItemProps> = ({ lastMessage }) => {
       apiTokenInstance: instanceCredentials.apiTokenInstance,
       chatId: lastMessage.chatId,
     },
-    { skip: !!lastMessage.senderName || lastMessage.chatId.includes('g.us') }
+    {
+      skip:
+        !!lastMessage.senderName ||
+        lastMessage.chatId.includes('g.us') ||
+        instanceCredentials.idInstance.toString().startsWith('7835'),
+    }
   );
 
-  const { data: avatarData } = useGetAvatarQuery({
-    idInstance: instanceCredentials.idInstance,
-    apiTokenInstance: instanceCredentials.apiTokenInstance,
-    chatId: lastMessage.chatId,
-  });
+  const { data: avatarData } = useGetAvatarQuery(
+    {
+      idInstance: instanceCredentials.idInstance,
+      apiTokenInstance: instanceCredentials.apiTokenInstance,
+      chatId: lastMessage.chatId,
+    },
+    { skip: instanceCredentials.idInstance.toString().startsWith('7835') }
+  );
 
   const isLoading = isGroupDataLoading || isContactInfoLoading;
 
@@ -106,7 +118,9 @@ const ContactListItem: FC<ContactListItemProps> = ({ lastMessage }) => {
             {lastMessage.statusMessage &&
               getOutgoingStatusMessageIcon(lastMessage.statusMessage, { width: 20, height: 20 })}
             {getMessageTypeIcon(lastMessage.typeMessage)}
-            <span className="text-overflow">{textMessage}</span>
+            <span className="text-overflow" style={{ width: 300 }}>
+              {textMessage}
+            </span>
           </Flex>
         </Flex>
         <span
@@ -121,4 +135,4 @@ const ContactListItem: FC<ContactListItemProps> = ({ lastMessage }) => {
   );
 };
 
-export default ContactListItem;
+export default ChatListItem;

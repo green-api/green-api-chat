@@ -5,7 +5,7 @@ import { Card } from 'antd';
 import ChatFooter from './chat-footer.component';
 import ChatHeader from './chat-header.component';
 import ContactChat from './contact-chat/contact-chat.component';
-import ContactList from '../shared/contact-list.component';
+import ChatList from 'components/shared/chat-list.component';
 import { useAppSelector } from 'hooks';
 import { selectActiveChat } from 'store/slices/chat.slice';
 
@@ -22,7 +22,7 @@ const Chat: FC = () => {
 
   return (
     <Card title={<ChatHeader />} className="chat">
-      <ContactList />
+      <ChatList />
       <ChatFooter />
     </Card>
   );

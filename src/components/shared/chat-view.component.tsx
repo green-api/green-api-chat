@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef, useState } from 'react';
+import { FC, SyntheticEvent, useEffect, useRef, useState } from 'react';
 
 import { Empty, Spin } from 'antd';
 import { useTranslation } from 'react-i18next';
@@ -27,6 +27,8 @@ const ChatView: FC = () => {
   const chatViewRef = useRef<HTMLDivElement | null>(null);
 
   const setPageTimerReference = useRef<ReturnType<typeof setTimeout>>();
+  const scrollTimerReference = useRef<ReturnType<typeof setTimeout>>();
+
   const {
     data: messages,
     isLoading,
@@ -44,6 +46,28 @@ const ChatView: FC = () => {
 
   const [scrollHeight, setScrollHeight] = useState(0);
 
+  const handleScrollTop = (event: SyntheticEvent<HTMLDivElement>) => {
+    const target = event.target as HTMLDivElement;
+
+    if (!target || isMiniVersion) {
+      return;
+    }
+
+    if (target.scrollTop === 0 && target.scrollHeight > target.clientHeight && count < 180) {
+      clearTimeout(setPageTimerReference.current);
+      clearTimeout(scrollTimerReference.current);
+
+      setPageTimerReference.current = setTimeout(() => {
+        setMessageCount(count + 10);
+        setCount((count) => count + 10);
+        scrollTimerReference.current = setTimeout(
+          () => target.scrollTo({ top: target.scrollHeight - scrollHeight }),
+          350
+        );
+      }, 500);
+    }
+  };
+
   // reset global message count
   useEffect(() => {
     setMessageCount(30);
@@ -57,36 +81,6 @@ const ChatView: FC = () => {
     }
   }, [messages]);
 
-  // scroll top handler
-  useEffect(() => {
-    const element = chatViewRef.current;
-    if (!element || isMiniVersion) {
-      return;
-    }
-
-    let timer: number;
-
-    const handleScrollTop = () => {
-      if (element.scrollTop === 0 && element.scrollHeight > element.clientHeight && count < 180) {
-        clearTimeout(setPageTimerReference.current);
-        clearTimeout(timer);
-
-        setPageTimerReference.current = setTimeout(() => {
-          setMessageCount(count + 10);
-          setCount((count) => count + 10);
-          timer = setTimeout(
-            () => element.scrollTo({ top: element.scrollHeight - scrollHeight }),
-            350
-          );
-        }, 500);
-      }
-    };
-
-    element.addEventListener('scroll', handleScrollTop);
-
-    return () => element.removeEventListener('scroll', handleScrollTop);
-  }, [messages, scrollHeight, count, isMiniVersion, setMessageCount]);
-
   if (isLoading) {
     return (
       <div className={`chat-view flex-center ${isMiniVersion ? '' : 'full'}`}>
@@ -95,7 +89,7 @@ const ChatView: FC = () => {
     );
   }
 
-  if (error && !messages) {
+  if (error) {
     if ('status' in error && error.status === 429) {
       return (
         <div className={`chat-view flex-center ${isMiniVersion ? '' : 'full'}`}>
@@ -121,8 +115,11 @@ const ChatView: FC = () => {
           setScrollHeight(node.scrollHeight);
         }
       }}
+      onScroll={handleScrollTop}
     >
-      {isFetching &&
+      {!isMiniVersion &&
+        count < 180 &&
+        isFetching &&
         chatViewRef.current?.scrollTop === 0 &&
         chatViewRef.current?.scrollHeight > chatViewRef.current?.clientHeight && (
           <Spin size="large" />

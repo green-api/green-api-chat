@@ -47,7 +47,7 @@ const QuotedMessage: FC<QuotedMessageProps> = ({ quotedMessage, type }) => {
           {getMessageTypeIcon(typeMessage, downloadUrl)}
           <Typography.Paragraph
             style={{ fontSize: 12, margin: 0, color: 'inherit' }}
-            ellipsis={{ rows: 2, expandable: false }}
+            ellipsis={{ rows: 3, expandable: false }}
           >
             {formattedMessage}
           </Typography.Paragraph>

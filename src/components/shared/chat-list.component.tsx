@@ -1,16 +1,17 @@
-import { FC } from 'react';
+import { FC, useEffect, useRef, useState } from 'react';
 
 import { Empty, Flex, List, Spin } from 'antd';
 import { useTranslation } from 'react-i18next';
 
-import ContactListItem from './contact-list-item.component';
+import ChatListItem from './chat-list-item.component';
 import { useAppSelector } from 'hooks';
 import { useLastMessagesQuery } from 'services/green-api/endpoints';
 import { selectMiniVersion } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
+import { MessageInterface } from 'types';
 import { getErrorMessage } from 'utils';
 
-const ContactList: FC = () => {
+const ChatList: FC = () => {
   const instanceCredentials = useAppSelector(selectInstance);
   const isMiniVersion = useAppSelector(selectMiniVersion);
 
@@ -27,6 +28,65 @@ const ContactList: FC = () => {
       skip: !instanceCredentials.idInstance || !instanceCredentials.apiTokenInstance,
     }
   );
+
+  const chatListRef = useRef<HTMLDivElement | null>(null);
+
+  const [chatList, setChatList] = useState<MessageInterface[]>([]);
+
+  const limit = isMiniVersion ? 5 : 12;
+  const [page, setPage] = useState(1);
+  const [startIdx, setStartIdx] = useState(0);
+
+  useEffect(() => {
+    if (isLoading) return;
+
+    if (data) {
+      const bufferChats: MessageInterface[] = [];
+
+      for (let i = startIdx; i < data.length; i++) {
+        if (i === page * limit) {
+          setStartIdx(i);
+          break;
+        }
+
+        bufferChats.push(data[i]);
+      }
+
+      if (page === 1) {
+        setChatList(bufferChats);
+      } else {
+        setChatList((prev) => [...prev, ...bufferChats]);
+      }
+    }
+  }, [data, page]);
+
+  // scroll bottom handler
+  useEffect(() => {
+    const element = chatListRef.current;
+    if (!element) {
+      return;
+    }
+
+    let setPageTimer: number;
+
+    const handleScrollBottom = () => {
+      if (
+        element.scrollTop + element.offsetHeight + 50 >= element.scrollHeight &&
+        data &&
+        data.length > page * limit
+      ) {
+        clearTimeout(setPageTimer);
+
+        setPageTimer = setTimeout(() => {
+          setPage((prev) => prev + 1);
+        }, 500);
+      }
+    };
+
+    element.addEventListener('scroll', handleScrollBottom);
+
+    return () => element.removeEventListener('scroll', handleScrollBottom);
+  }, [data, page]);
 
   if (!instanceCredentials.idInstance || !instanceCredentials.apiTokenInstance) {
     return (
@@ -60,10 +120,11 @@ const ContactList: FC = () => {
 
   return (
     <List
+      ref={chatListRef}
       itemLayout="horizontal"
       className={`contact-list ${isMiniVersion ? 'min-height-460' : 'height-720'}`}
-      dataSource={data}
-      renderItem={(message) => <ContactListItem key={message.chatId} lastMessage={message} />}
+      dataSource={chatList}
+      renderItem={(message) => <ChatListItem key={message.chatId} lastMessage={message} />}
       loading={{
         spinning: isLoading,
         className: `${isMiniVersion ? 'min-height-460' : 'height-720'}`,
@@ -76,4 +137,4 @@ const ContactList: FC = () => {
   );
 };
 
-export default ContactList;
+export default ChatList;

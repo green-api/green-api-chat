@@ -12,6 +12,7 @@ import { getGreenApiUrls, getIsMiniVersion, getLastChats, updateLastChats } from
 
 const baseQuery = fetchBaseQuery({
   baseUrl: '',
+  timeout: 10000,
 });
 
 let attemptIdToGetChats = 1;

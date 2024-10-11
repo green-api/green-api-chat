@@ -76,7 +76,11 @@ const ChatListItem: FC<ContactListItemProps> = ({ lastMessage }) => {
       apiTokenInstance: instanceCredentials.apiTokenInstance,
       chatId: lastMessage.chatId,
     },
-    { skip: instanceCredentials.idInstance.toString().startsWith('7835') }
+    {
+      skip:
+        !!(contactInfo && 'avatar' in contactInfo) ||
+        instanceCredentials.idInstance.toString().startsWith('7835'),
+    }
   );
 
   const isLoading = isGroupDataLoading || isContactInfoLoading;
@@ -90,12 +94,16 @@ const ChatListItem: FC<ContactListItemProps> = ({ lastMessage }) => {
     getPhoneNumberFromChatId(lastMessage.chatId);
 
   const avatar = useMemo<string>(() => {
+    if (contactInfo && contactInfo.avatar) {
+      return contactInfo.avatar;
+    }
+
     if (avatarData && avatarData.urlAvatar) {
       return avatarData.urlAvatar;
     }
 
     return lastMessage.chatId.includes('g.us') ? emptyAvatarGroup : emptyAvatar;
-  }, [avatarData, lastMessage]);
+  }, [contactInfo, avatarData, lastMessage]);
 
   const textMessage = getTextMessage(lastMessage);
 

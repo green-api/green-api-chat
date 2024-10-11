@@ -68,6 +68,7 @@ export interface AuthFormValues {
 
 export interface ChatFormValues {
   message: string;
+  response: string;
   quotedMessageId?: string;
 }
 

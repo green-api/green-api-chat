@@ -158,7 +158,7 @@ const SelectInstance: FC = () => {
       style={{
         margin: type === 'console-page' ? '5px 0' : '8px 0',
         padding: '0 5px',
-        width: '95%',
+        width: type === 'console-page' ? '93%' : '100%',
       }}
       placeholder={t('SELECT_INSTANCE_PLACEHOLDER')}
       defaultValue={defaultInstanceToRender ?? instances[0]?.idInstance}

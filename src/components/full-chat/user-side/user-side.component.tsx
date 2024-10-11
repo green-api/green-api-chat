@@ -2,20 +2,21 @@ import { FC } from 'react';
 
 import UserSideFooter from './user-side-footer.component';
 import { USER_SIDE_ITEMS } from 'configs';
-import { useAppSelector } from 'hooks';
-import { selectMiniVersion, selectType, selectUserSideActiveMode } from 'store/slices/chat.slice';
+import { useAppSelector, useMediaQuery } from 'hooks';
+import { selectActiveChat, selectType, selectUserSideActiveMode } from 'store/slices/chat.slice';
 
 const UserSide: FC = () => {
   const userSideActiveMode = useAppSelector(selectUserSideActiveMode);
-  const isMiniVersion = useAppSelector(selectMiniVersion);
   const type = useAppSelector(selectType);
+  const activeChat = useAppSelector(selectActiveChat);
+  const matchMedia = useMediaQuery('(max-width: 975px)');
 
   const content = USER_SIDE_ITEMS.find((item) => item.item === userSideActiveMode);
 
   return (
-    <div className="user-side">
+    <div className={`user-side relative ${matchMedia && activeChat ? 'display-none' : ''}`}>
       {content?.element}
-      {!isMiniVersion && type === 'tab' && <UserSideFooter />}
+      {type === 'tab' && <UserSideFooter />}
     </div>
   );
 };

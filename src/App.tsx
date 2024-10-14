@@ -63,6 +63,8 @@ function App() {
 
       switch (event.data.type) {
         case MessageEventTypeEnum.INIT:
+          console.log(event);
+
           if (event.data.payload.instanceData) {
             setSelectedInstance(event.data.payload.instanceData);
           }

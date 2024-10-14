@@ -26,9 +26,7 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     login: (state, action: PayloadAction<UserInterface & { remember: boolean }>) => {
-      state.user.idUser = action.payload.idUser;
-      state.user.apiTokenUser = action.payload.apiTokenUser;
-      state.user.login = action.payload.login;
+      state.user = action.payload;
     },
     logout: (state) => {
       state.user.idUser = '';

@@ -13,10 +13,6 @@ const SendingModal: FC = () => {
 
   const { setActiveSendingMode } = useActions();
 
-  if (!modalContent) {
-    return null;
-  }
-
   return (
     <Modal
       centered
@@ -25,7 +21,7 @@ const SendingModal: FC = () => {
       footer={null}
       width={780}
     >
-      {modalContent.element}
+      {modalContent?.element}
     </Modal>
   );
 };

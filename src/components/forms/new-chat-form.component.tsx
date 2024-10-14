@@ -137,6 +137,7 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
       onFinish={onSendMessage}
       form={form}
       onSubmitCapture={() => form.setFields([{ name: 'response', errors: [], warnings: [] }])}
+      onKeyDown={(e) => !e.ctrlKey && e.key === 'Enter' && form.submit()}
     >
       <Form.Item
         name="chatId"

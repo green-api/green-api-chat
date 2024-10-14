@@ -124,10 +124,11 @@ export enum MessageEventTypeEnum {
 
 export interface MessageDataInit {
   type: MessageEventTypeEnum.INIT;
-  payload: InstanceCredentials &
-    LocaleChangeMessage &
-    ThemeChangeMessage &
-    UserInterface & { platform: ChatPlatform };
+  payload: {
+    instanceData?: InstanceCredentials;
+    userData: UserInterface;
+  } & LocaleChangeMessage &
+    ThemeChangeMessage & { platform: ChatPlatform };
 }
 
 export interface MessageDataLocaleChange {

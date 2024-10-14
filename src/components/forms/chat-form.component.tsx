@@ -4,7 +4,6 @@ import { SendOutlined } from '@ant-design/icons';
 import { Button, Col, Form, Row } from 'antd';
 import { useTranslation } from 'react-i18next';
 
-import SendingModal from 'components/modals/sending-modal.component';
 import TextArea from 'components/UI/text-area.component';
 import { useAppDispatch, useAppSelector, useFormWithLanguageValidation } from 'hooks';
 import { useSendMessageMutation } from 'services/green-api/endpoints';
@@ -119,7 +118,6 @@ const ChatForm: FC = () => {
       disabled={isSendMessageLoading}
     >
       <Form.Item style={{ marginBottom: 0 }} name="response" className="response-form-item">
-        <SendingModal />
         <Row gutter={[15, 15]} align={isMiniVersion ? 'bottom' : 'middle'}>
           <Col flex="auto">
             <Form.Item

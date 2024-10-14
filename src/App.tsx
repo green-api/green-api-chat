@@ -63,15 +63,12 @@ function App() {
 
       switch (event.data.type) {
         case MessageEventTypeEnum.INIT:
-          setSelectedInstance({
-            idInstance: event.data.payload.idInstance,
-            apiTokenInstance: event.data.payload.apiTokenInstance,
-          });
+          if (event.data.payload.instanceData) {
+            setSelectedInstance(event.data.payload.instanceData);
+          }
 
           login({
-            login: event.data.payload.login,
-            idUser: event.data.payload.idUser,
-            apiTokenUser: event.data.payload.apiTokenUser,
+            ...event.data.payload.userData,
             remember: true,
           });
 

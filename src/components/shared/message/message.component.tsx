@@ -81,7 +81,13 @@ const Message: FC<MessageProps> = ({
     >
       {showSenderName && (
         <Space>
-          <h4 className="text-overflow message-signerData">{senderName}</h4>
+          <h4
+            className="text-overflow message-signerData"
+            style={{ maxWidth: 205 }}
+            title={senderName}
+          >
+            {senderName}
+          </h4>
           {phone && (
             <div className="message-signerData" style={{ marginLeft: senderName ? 5 : undefined }}>
               {phone}
@@ -97,6 +103,12 @@ const Message: FC<MessageProps> = ({
           style={{ fontSize: isMiniVersion ? 16 : 14, margin: 0 }}
           ellipsis={{ rows: 6, expandable: true, symbol: t('SHOW_ALL_TEXT') }}
         >
+          {typeMessage === 'templateButtonsReplyMessage' && (
+            <>
+              <em>Button reply:</em>
+              <br />
+            </>
+          )}
           {formattedMessage}
         </Typography.Paragraph>
       </Space>

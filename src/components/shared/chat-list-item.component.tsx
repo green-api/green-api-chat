@@ -120,7 +120,7 @@ const ChatListItem: FC<ContactListItemProps> = ({ lastMessage }) => {
           {isLoading ? (
             <Spin indicator={<LoadingOutlined />} size="small" style={{ alignSelf: 'start' }} />
           ) : (
-            <h6 className="text-overflow">{chatName}</h6>
+            <h6 className="text-overflow message-signerData">{chatName}</h6>
           )}
           <Flex align="center" gap={5}>
             {lastMessage.statusMessage &&

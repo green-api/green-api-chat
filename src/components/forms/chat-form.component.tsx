@@ -8,15 +8,22 @@ import TextArea from 'components/UI/text-area.component';
 import { useAppDispatch, useAppSelector, useFormWithLanguageValidation } from 'hooks';
 import { useSendMessageMutation } from 'services/green-api/endpoints';
 import { journalsGreenApiEndpoints } from 'services/green-api/endpoints/journals.green-api.endpoints';
-import { selectActiveChat, selectMessageCount, selectMiniVersion } from 'store/slices/chat.slice';
+import {
+  selectActiveChat,
+  selectMessageCount,
+  selectMiniVersion,
+  selectPlatform,
+} from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
-import { ActiveChat, ChatFormValues } from 'types';
+import { ActiveChat, ChatFormValues, MessageInterface } from 'types';
+import { getLastChats } from 'utils';
 
 const ChatForm: FC = () => {
   const instanceCredentials = useAppSelector(selectInstance);
   const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
   const isMiniVersion = useAppSelector(selectMiniVersion);
   const messageCount = useAppSelector(selectMessageCount);
+  const platform = useAppSelector(selectPlatform);
 
   const dispatch = useAppDispatch();
 
@@ -76,8 +83,8 @@ const ChatForm: FC = () => {
             typeMessage: 'textMessage',
             textMessage: message,
             timestamp: Math.floor(Date.now() / 1000),
-            senderName: '',
-            senderContactName: '',
+            senderName: activeChat.senderName || '',
+            senderContactName: activeChat.senderContactName || '',
             idMessage: data.idMessage,
             chatId: activeChat.chatId,
             statusMessage: 'sent',
@@ -87,6 +94,30 @@ const ChatForm: FC = () => {
         }
       );
 
+      const updateChatListThunk = journalsGreenApiEndpoints.util?.updateQueryData(
+        'lastMessages',
+        {
+          idInstance: instanceCredentials.idInstance,
+          apiTokenInstance: instanceCredentials.apiTokenInstance,
+        },
+        (draftChatHistory) => {
+          const newMessage: MessageInterface = {
+            type: 'outgoing',
+            typeMessage: 'textMessage',
+            textMessage: message,
+            timestamp: Math.floor(Date.now() / 1000),
+            senderName: activeChat.senderName || '',
+            senderContactName: activeChat.senderContactName || '',
+            idMessage: data.idMessage,
+            chatId: activeChat.chatId,
+            statusMessage: 'sent',
+          };
+
+          return getLastChats(draftChatHistory, [newMessage], isMiniVersion ? 5 : undefined);
+        }
+      );
+
+      dispatch(updateChatListThunk);
       dispatch(updateChatHistoryThunk);
 
       form.resetFields();
@@ -104,7 +135,9 @@ const ChatForm: FC = () => {
   }, [activeChat.chatId, form]);
 
   useEffect(() => {
-    textAreaRef.current?.focus();
+    if (platform === 'web') {
+      textAreaRef.current?.focus();
+    }
   });
 
   return (

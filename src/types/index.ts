@@ -28,7 +28,8 @@ export interface ChatState {
 export type ChatType = 'tab' | 'console-page' | 'instance-view-page';
 export type ChatPlatform = 'web' | 'ios' | 'android';
 
-export interface ActiveChat extends MessageInterface {
+export interface ActiveChat
+  extends Pick<MessageInterface, 'chatId' | 'senderName' | 'senderContactName'> {
   avatar: string;
 }
 

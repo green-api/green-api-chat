@@ -90,7 +90,7 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
 
     if (data) {
       if (addNewChatInList) {
-        const updateChatHistoryThunk = journalsGreenApiEndpoints.util?.updateQueryData(
+        const updateChatListThunk = journalsGreenApiEndpoints.util?.updateQueryData(
           'lastMessages',
           {
             idInstance: instanceCredentials.idInstance,
@@ -113,7 +113,7 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
           }
         );
 
-        dispatch(updateChatHistoryThunk);
+        dispatch(updateChatListThunk);
       }
 
       form.resetFields();

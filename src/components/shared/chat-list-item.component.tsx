@@ -112,7 +112,14 @@ const ChatListItem: FC<ContactListItemProps> = ({ lastMessage }) => {
       className={`contact-list__item ${activeChat && lastMessage.chatId === activeChat.chatId ? 'active' : ''}`}
       align="center"
       gap="small"
-      onClick={() => setActiveChat({ ...lastMessage, senderName: chatName, avatar })}
+      onClick={() =>
+        setActiveChat({
+          chatId: lastMessage.chatId,
+          senderName: chatName,
+          senderContactName: lastMessage.senderContactName,
+          avatar: avatar,
+        })
+      }
     >
       <AvatarImage src={avatar} size="large" />
       <Flex className="contact-list__item-wrapper">

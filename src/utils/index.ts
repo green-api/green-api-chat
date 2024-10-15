@@ -12,6 +12,7 @@ import {
   LanguageLiteral,
   MessageData,
   MessageInterface,
+  StatusMessage,
   UserInterface,
 } from 'types';
 
@@ -114,13 +115,26 @@ export function getLastChats(
     if (
       existingChat &&
       existingChat.idMessage === message.idMessage &&
-      existingChat.statusMessage !== message.statusMessage
+      existingChat.statusMessage !== message.statusMessage &&
+      isNewStatusMessageForExistingChat(existingChat.statusMessage, message.statusMessage)
     ) {
       resultMap.set(existingChat.chatId, message);
     }
   }
 
   return Array.from(resultMap.values());
+}
+
+function isNewStatusMessageForExistingChat(
+  existingStatus: StatusMessage | undefined,
+  newStatus: StatusMessage | undefined
+): boolean {
+  return (
+    (existingStatus === 'pending' &&
+      (newStatus === 'sent' || newStatus === 'delivered' || newStatus === 'read')) ||
+    (existingStatus === 'sent' && (newStatus === 'delivered' || newStatus === 'read')) ||
+    (existingStatus === 'delivered' && newStatus === 'read')
+  );
 }
 
 export function updateLastChats(

@@ -64,7 +64,6 @@ const ChatListItem: FC<ContactListItemProps> = ({ lastMessage }) => {
     },
     {
       skip:
-        !!lastMessage.senderName ||
         lastMessage.chatId.includes('g.us') ||
         instanceCredentials.idInstance.toString().startsWith('7835'),
     }
@@ -78,7 +77,7 @@ const ChatListItem: FC<ContactListItemProps> = ({ lastMessage }) => {
     },
     {
       skip:
-        !!(contactInfo && 'avatar' in contactInfo) ||
+        !lastMessage.chatId.includes('g.us') ||
         instanceCredentials.idInstance.toString().startsWith('7835'),
     }
   );

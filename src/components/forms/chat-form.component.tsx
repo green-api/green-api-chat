@@ -117,8 +117,8 @@ const ChatForm: FC = () => {
         }
       );
 
-      dispatch(updateChatListThunk);
       dispatch(updateChatHistoryThunk);
+      dispatch(updateChatListThunk);
 
       form.resetFields();
 

@@ -35,7 +35,6 @@ const ChatList: FC = () => {
 
   const limit = isMiniVersion ? 5 : 12;
   const [page, setPage] = useState(1);
-  const [startIdx, setStartIdx] = useState(0);
 
   useEffect(() => {
     if (isLoading) return;
@@ -43,20 +42,15 @@ const ChatList: FC = () => {
     if (data) {
       const bufferChats: MessageInterface[] = [];
 
-      for (let i = startIdx; i < data.length; i++) {
+      for (let i = 0; i < data.length; i++) {
         if (i === page * limit) {
-          setStartIdx(i);
           break;
         }
 
         bufferChats.push(data[i]);
       }
 
-      if (page === 1) {
-        setChatList(bufferChats);
-      } else {
-        setChatList((prev) => [...prev, ...bufferChats]);
-      }
+      setChatList(bufferChats);
     }
   }, [data, page]);
 

@@ -8,13 +8,9 @@ import TextArea from 'components/UI/text-area.component';
 import { useAppDispatch, useAppSelector, useFormWithLanguageValidation } from 'hooks';
 import { useSendMessageMutation } from 'services/green-api/endpoints';
 import { journalsGreenApiEndpoints } from 'services/green-api/endpoints/journals.green-api.endpoints';
-import {
-  selectActiveChat,
-  selectMessageCount,
-  selectMiniVersion,
-  selectPlatform,
-} from 'store/slices/chat.slice';
+import { selectActiveChat, selectMessageCount, selectMiniVersion } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
+import { selectPlatform } from 'store/slices/user.slice';
 import { ActiveChat, ChatFormValues, MessageInterface } from 'types';
 import { getLastChats } from 'utils';
 

@@ -19,6 +19,7 @@ const initialState: UserState = {
       localStorage.getItem('idUser') ??
       '',
   },
+  platform: 'web',
 };
 
 const userSlice = createSlice({
@@ -28,10 +29,15 @@ const userSlice = createSlice({
     login: (state, action: PayloadAction<UserInterface & { remember: boolean }>) => {
       state.user = action.payload;
     },
+
     logout: (state) => {
       state.user.idUser = '';
       state.user.apiTokenUser = '';
       state.user.login = '';
+    },
+
+    setPlatform: (state, action: PayloadAction<UserState['platform']>) => {
+      state.platform = action.payload;
     },
   },
 });
@@ -40,3 +46,4 @@ export const userActions = userSlice.actions;
 export default userSlice.reducer;
 
 export const selectUser = (state: RootState) => state.userReducer.user;
+export const selectPlatform = (state: RootState) => state.userReducer.platform;

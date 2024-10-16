@@ -2,12 +2,19 @@ import { Dispatch, ReactElement, SetStateAction } from 'react';
 
 import { FormItemProps } from 'antd';
 
-import { ExpandedInstanceInterface, MessageInterface, UserInterface } from './api.types';
+import {
+  ExpandedInstanceInterface,
+  GetContactInfoResponseInterface,
+  GetGroupDataResponseInterface,
+  MessageInterface,
+  UserInterface,
+} from './api.types';
 
 export * from './api.types';
 
 export interface UserState {
   user: UserInterface;
+  platform: ChatPlatform;
 }
 
 export interface InstanceCredentials {
@@ -21,8 +28,8 @@ export interface ChatState {
   activeSendingMode: SendingMethodName | null;
   isMiniVersion: boolean;
   type: ChatType;
-  platform: ChatPlatform;
   messageCount: number;
+  isContactInfoOpen: boolean;
 }
 
 export type ChatType = 'tab' | 'console-page' | 'instance-view-page';
@@ -31,6 +38,7 @@ export type ChatPlatform = 'web' | 'ios' | 'android';
 export interface ActiveChat
   extends Pick<MessageInterface, 'chatId' | 'senderName' | 'senderContactName'> {
   avatar: string;
+  contactInfo?: GetContactInfoResponseInterface | GetGroupDataResponseInterface;
 }
 
 export interface InstancesState {

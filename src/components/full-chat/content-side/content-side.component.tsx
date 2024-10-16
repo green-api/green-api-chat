@@ -11,7 +11,9 @@ const ContentSide: FC = () => {
   const matchMedia = useMediaQuery('(max-width: 975px)');
 
   return (
-    <Flex className={`content-side relative ${matchMedia && !activeChat ? 'display-none' : ''}`}>
+    <Flex
+      className={`content-side relative ${matchMedia && !activeChat ? 'display-none' : ''} chat-border`}
+    >
       <Outlet />
     </Flex>
   );

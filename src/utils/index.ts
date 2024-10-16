@@ -7,6 +7,8 @@ import {
   CookieOptionsInterface,
   ExpandedInstanceInterface,
   GetChatHistoryResponse,
+  GetContactInfoResponseInterface,
+  GetGroupDataResponseInterface,
   GreenApiUrlsInterface,
   InstanceInterface,
   LanguageLiteral,
@@ -327,4 +329,10 @@ export function getUTCDate(date: Date, utc = 3) {
   const offset = date.getTimezoneOffset() / 60 + utc;
 
   return new Date(date.getTime() + offset * 3600 * 1000);
+}
+
+export function isContactInfo(
+  info: GetContactInfoResponseInterface | GetGroupDataResponseInterface
+): info is GetContactInfoResponseInterface {
+  return 'chatId' in info;
 }

@@ -12,11 +12,11 @@ import { ActiveChat } from 'types';
 const ContactChatHeader: FC = () => {
   const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
 
-  const { setActiveChat } = useActions();
+  const { setActiveChat, setContactInfoOpen } = useActions();
 
   return (
     <Header className="contact-chat-header">
-      <Space className="chatHeader-space">
+      <Space className="chatHeader-space" onClick={() => setContactInfoOpen(true)}>
         <AvatarImage src={activeChat.avatar} size="large" />
         <h3 className="text-overflow">{activeChat.senderName}</h3>
       </Space>

@@ -117,6 +117,7 @@ const ChatListItem: FC<ContactListItemProps> = ({ lastMessage }) => {
           senderName: chatName,
           senderContactName: lastMessage.senderContactName,
           avatar: avatar,
+          contactInfo: contactInfo || groupData,
         })
       }
     >

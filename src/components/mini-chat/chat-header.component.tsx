@@ -6,8 +6,9 @@ import { useTranslation } from 'react-i18next';
 
 import { CONSOLE_URL } from 'configs';
 import { useActions, useAppSelector } from 'hooks';
-import { selectActiveChat, selectPlatform } from 'store/slices/chat.slice';
+import { selectActiveChat } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
+import { selectPlatform } from 'store/slices/user.slice';
 
 const ChatHeader: FC = () => {
   const activeChat = useAppSelector(selectActiveChat);

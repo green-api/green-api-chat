@@ -3,10 +3,9 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { APP_API_TOKEN, APP_API_URL, Routes } from 'configs';
 import { RootState } from 'store';
 import { AppApiResponse, AppMethodsEnum } from 'types';
-import { deleteCookie } from 'utils';
+import { deleteCookie, isPageInIframe } from 'utils';
 
 let ignoreNotAuthorizedError = false;
-let rootState: RootState;
 
 export const appAPI = createApi({
   reducerPath: 'appApi',
@@ -15,7 +14,7 @@ export const appAPI = createApi({
     prepareHeaders: (headers, { getState }) => {
       headers.set('Authorization', `Bearer ${APP_API_TOKEN}`);
 
-      rootState = getState() as RootState;
+      const rootState = getState() as RootState;
 
       headers.set('x-ga-user-id', rootState.userReducer.user.idUser);
       headers.set('x-ga-user-token', rootState.userReducer.user.apiTokenUser);
@@ -41,7 +40,7 @@ export const appAPI = createApi({
 
         sessionStorage.clear();
 
-        if (rootState && rootState.chatReducer.type === 'tab') {
+        if (!isPageInIframe()) {
           document.location.href = Routes.baseUrl + Routes.auth;
         }
       }

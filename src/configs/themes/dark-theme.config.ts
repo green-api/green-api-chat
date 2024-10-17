@@ -2,8 +2,8 @@ import { ThemeConfig } from 'antd';
 
 export const DARK_THEME: ThemeConfig = {
   token: {
-    colorBgBase: '#4b4b4b',
-    colorBgContainer: '#4b4b4b',
+    colorBgBase: '#181a1b',
+    colorBgContainer: '#181a1b',
     colorLink: '#fff',
     colorLinkHover: 'var(--link-hover-color)',
     colorBgElevated: 'var(--main-background)',

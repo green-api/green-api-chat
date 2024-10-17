@@ -55,7 +55,7 @@ const GroupContactListItem: FC<GroupContactListItemProps> = ({ participant }) =>
           }
           description={contactName === phoneNumber ? null : phoneNumber}
         />
-        {participant.isSuperAdmin && <Tag color="green">Group admin</Tag>}
+        {(participant.isSuperAdmin || participant.isAdmin) && <Tag color="green">Group admin</Tag>}
       </Skeleton>
     </List.Item>
   );

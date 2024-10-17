@@ -10,18 +10,13 @@
 
 
 .contact-info {
-  transform: translateX(100%);
   position: absolute;
-
-  &.active {
-    transform: translateX(0%);
-  }
 
   &-wrapper {
     background-color: var(--second-background);
 
     &.active {
-      flex: 0 0 30%;
+      flex: 0 0 45%;
 
       @media screen and (max-width: 1400px) {
         flex: 0 0 40%;
@@ -45,5 +40,7 @@
 
   &-description {
     background-color: var(--main-background);
+    max-height: 350px;
+    @include scrollBar();
   }
 }

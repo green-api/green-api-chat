@@ -19,10 +19,6 @@ const ContactInfo: FC = () => {
     setContactInfoOpen(false);
   }, [activeChat]);
 
-  if (!activeChat.contactInfo) {
-    return null;
-  }
-
   if (!isContactInfoOpen) {
     return null;
   }

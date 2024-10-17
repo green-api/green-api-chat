@@ -24,7 +24,7 @@ const GroupContactList: FC = () => {
       className="group-contact-list p-10"
       dataSource={activeChat.contactInfo.participants}
       pagination={{
-        pageSize: 8,
+        pageSize: 4,
         showLessItems: true,
       }}
       renderItem={(participant) => <GroupContactListItem participant={participant} />}

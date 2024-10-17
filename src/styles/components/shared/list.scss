@@ -6,25 +6,14 @@
     overflow-x: hidden;
   }
 
-  &__item {
+  .ant-list-items &__item {
     cursor: pointer;
-    padding: 20px;
+    padding: 19px;
     transition: all .2s ease-in-out;
-    transform: scale(1);
     position: relative;
 
     &.active {
       background-color: rgb(220 233 220 / 50%);
-    }
-
-    &:not(:last-child):after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      right: 0;
-      background: var(--border-list);
-      width: calc(100% - 68px);
-      height: 1px;
     }
 
     &:hover {
@@ -51,4 +40,21 @@
     }
 
   }
+}
+
+.ant-list-items .list-item {
+  border-block-end: 1px solid var(--border-list);
+}
+
+.ant-list-item-meta-avatar {
+  align-self: center;
+}
+
+.ant-list-item-meta-description {
+  color: inherit !important;
+}
+
+.group-contact-list {
+  background-color: var(--main-background);
+  @include scrollBar();
 }

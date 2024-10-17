@@ -3,7 +3,7 @@ import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import emptyAvatar from 'assets/emptyAvatar.png';
-import AvatarImage from 'components/shared/avatar-image.component';
+import AvatarImage from 'components/UI/avatar-image.component';
 import { useActions, useAppSelector } from 'hooks';
 import { useGetWaSettingsQuery } from 'services/green-api/endpoints';
 import { selectUserSideActiveMode } from 'store/slices/chat.slice';

@@ -14,24 +14,61 @@ const ContactInfoHeader: FC = () => {
 
   const { setContactInfoOpen } = useActions();
 
-  if (!activeChat.contactInfo) {
-    return null;
-  }
+  const info = activeChat.chatId.includes('@c.us') ? 'Contact info' : 'Group info';
 
-  const info = isContactInfo(activeChat.contactInfo) ? 'Contact info' : 'Group info';
+  const getHeaderBody = () => {
+    if (!activeChat.contactInfo) {
+      const contactName = activeChat.chatId?.replace(/\@.*$/, '');
 
-  const contactName =
-    (isContactInfo(activeChat.contactInfo)
-      ? activeChat.contactInfo.contactName || activeChat.contactInfo.name
-      : activeChat.contactInfo.subject) || activeChat.senderName;
+      const contactCredentials = activeChat.chatId.includes('@c.us')
+        ? activeChat.chatId?.replace(/\@.*$/, '')
+        : 'Group';
 
-  const contactCredentials = isContactInfo(activeChat.contactInfo)
-    ? activeChat.chatId?.replace(/\@.*$/, '')
-    : `Group  ·  ${activeChat.contactInfo.participants.length} members`;
+      return (
+        <Flex vertical gap={2} justify="center" align="center" className="w-100">
+          <Typography.Title level={2} style={{ marginBottom: 'unset' }}>
+            {contactName}
+          </Typography.Title>
+          {contactCredentials !== contactName && (
+            <Typography.Text style={{ fontSize: 18 }}>{contactCredentials}</Typography.Text>
+          )}
+        </Flex>
+      );
+    }
 
-  const category = isContactInfo(activeChat.contactInfo) && activeChat.contactInfo.category;
+    const contactName =
+      (isContactInfo(activeChat.contactInfo)
+        ? activeChat.contactInfo.contactName || activeChat.contactInfo.name
+        : activeChat.contactInfo.subject) || activeChat.senderName;
 
-  const isBusiness = isContactInfo(activeChat.contactInfo) && activeChat.contactInfo.isBusiness;
+    const contactCredentials = isContactInfo(activeChat.contactInfo)
+      ? activeChat.chatId?.replace(/\@.*$/, '')
+      : `Group  ·  ${activeChat.contactInfo.participants.length} members`;
+
+    const category = isContactInfo(activeChat.contactInfo) && activeChat.contactInfo.category;
+
+    const isBusiness = isContactInfo(activeChat.contactInfo) && activeChat.contactInfo.isBusiness;
+
+    return (
+      <Flex vertical gap={2} justify="center" align="center" className="w-100">
+        <Typography.Title level={2} style={{ marginBottom: 'unset' }}>
+          {contactName}
+        </Typography.Title>
+        {contactCredentials !== contactName && (
+          <Typography.Text style={{ fontSize: 18 }}>{contactCredentials}</Typography.Text>
+        )}
+        {category && <Typography.Text>{category}</Typography.Text>}
+        {isBusiness && (
+          <>
+            <Divider style={{ borderBlockStart: '1px solid rgba(0, 0, 0, 0.1)' }} />
+            <Typography.Text style={{ alignSelf: 'flex-start' }}>
+              This is business account.
+            </Typography.Text>
+          </>
+        )}
+      </Flex>
+    );
+  };
 
   return (
     <Flex vertical gap={20} className="contact-info-header">
@@ -47,23 +84,7 @@ const ContactInfoHeader: FC = () => {
         <div style={{ borderRadius: '50%', width: 200, height: 200, overflow: 'hidden' }}>
           <Image width={200} height={200} src={activeChat.avatar} />
         </div>
-        <Flex vertical gap={2} justify="center" align="center" className="w-100">
-          <Typography.Title level={2} style={{ marginBottom: 'unset' }}>
-            {contactName}
-          </Typography.Title>
-          {contactCredentials !== contactName && (
-            <Typography.Text style={{ fontSize: 18 }}>{contactCredentials}</Typography.Text>
-          )}
-          {category && <Typography.Text>{category}</Typography.Text>}
-          {isBusiness && (
-            <>
-              <Divider style={{ borderBlockStart: '1px solid rgba(0, 0, 0, 0.1)' }} />
-              <Typography.Text style={{ alignSelf: 'flex-start' }}>
-                This is business account.
-              </Typography.Text>
-            </>
-          )}
-        </Flex>
+        {getHeaderBody()}
       </Flex>
     </Flex>
   );

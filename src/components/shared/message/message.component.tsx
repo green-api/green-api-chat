@@ -114,7 +114,7 @@ const Message: FC<MessageProps> = ({
       </Space>
       <Space style={{ alignSelf: 'end' }}>
         <MessageTooltip jsonMessage={jsonMessage} />
-        <span style={{ fontSize: 14 }}>{messageDate.date}</span>
+        <span style={{ fontSize: 14 }}>{messageDate}</span>
         {getOutgoingStatusMessageIcon(statusMessage)}
       </Space>
     </div>

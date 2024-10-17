@@ -4,7 +4,7 @@ import { CloseOutlined } from '@ant-design/icons';
 import { Space } from 'antd';
 import { Header } from 'antd/es/layout/layout';
 
-import AvatarImage from 'components/shared/avatar-image.component';
+import AvatarImage from 'components/UI/avatar-image.component';
 import { useActions, useAppSelector } from 'hooks';
 import { selectActiveChat } from 'store/slices/chat.slice';
 import { ActiveChat } from 'types';

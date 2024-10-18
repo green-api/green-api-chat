@@ -71,7 +71,7 @@ const ChatView: FC = () => {
   // reset global message count
   useEffect(() => {
     setMessageCount(30);
-  }, [activeChat, activeChat.chatId]);
+  }, [activeChat]);
 
   // scroll to bottom when open chat
   useEffect(() => {
@@ -80,6 +80,13 @@ const ChatView: FC = () => {
       element.scrollTo({ top: element.scrollHeight });
     }
   }, [messages]);
+
+  const loaderVisible =
+    !isMiniVersion &&
+    count < 180 &&
+    isFetching &&
+    chatViewRef.current?.scrollTop === 0 &&
+    chatViewRef.current?.scrollHeight > chatViewRef.current?.clientHeight;
 
   if (isLoading) {
     return (
@@ -117,13 +124,7 @@ const ChatView: FC = () => {
       }}
       onScroll={handleScrollTop}
     >
-      {!isMiniVersion &&
-        count < 180 &&
-        isFetching &&
-        chatViewRef.current?.scrollTop === 0 &&
-        chatViewRef.current?.scrollHeight > chatViewRef.current?.clientHeight && (
-          <Spin size="large" />
-        )}
+      <Spin size="large" style={{ visibility: loaderVisible ? 'initial' : 'hidden' }} />
       {messages?.map((message, idx) => {
         const typeMessage = message.typeMessage;
         const showSenderName =

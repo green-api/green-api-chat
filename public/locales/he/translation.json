@@ -90,5 +90,11 @@
   "PROFILE_TITLE": "פּרוֹפִיל",
 
   "INSTANCE": "מופע",
-  "SELECT_INSTANCE_PLACEHOLDER": "בחר מופע"
+  "SELECT_INSTANCE_PLACEHOLDER": "בחר מופע",
+
+  "CONTACT_INFO": "פרטי יצירת קשר",
+  "GROUP_INFO": "מידע על הקבוצה",
+  "GROUP_COUNT_MEMBERS": "קְבוּצָה  ·  {0} {1}",
+  "GROUP_CREATED_BY": "הקבוצה נוצרה על ידי {0}, {1}",
+  "BUSINESS_ACCOUNT_DESC": "זה חשבון עסקי"
 }

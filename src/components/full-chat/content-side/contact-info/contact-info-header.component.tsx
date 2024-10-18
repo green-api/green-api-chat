@@ -3,18 +3,24 @@ import { FC } from 'react';
 import { CloseOutlined } from '@ant-design/icons';
 import { Divider, Flex, Image, Space, Typography } from 'antd';
 import { Header } from 'antd/es/layout/layout';
+import { useTranslation } from 'react-i18next';
 
 import { useActions, useAppSelector } from 'hooks';
 import { selectActiveChat } from 'store/slices/chat.slice';
-import { ActiveChat } from 'types';
-import { isContactInfo } from 'utils';
+import { ActiveChat, LanguageLiteral } from 'types';
+import { fillJsxString, isContactInfo, numWord } from 'utils';
 
 const ContactInfoHeader: FC = () => {
   const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
 
+  const {
+    t,
+    i18n: { resolvedLanguage },
+  } = useTranslation();
+
   const { setContactInfoOpen } = useActions();
 
-  const info = activeChat.chatId.includes('@c.us') ? 'Contact info' : 'Group info';
+  const info = activeChat.chatId.includes('@c.us') ? t('CONTACT_INFO') : t('GROUP_INFO');
 
   const getHeaderBody = () => {
     if (!activeChat.contactInfo) {
@@ -43,7 +49,18 @@ const ContactInfoHeader: FC = () => {
 
     const contactCredentials = isContactInfo(activeChat.contactInfo)
       ? activeChat.chatId?.replace(/\@.*$/, '')
-      : `Group  ·  ${activeChat.contactInfo.participants.length} members`;
+      : fillJsxString(t('GROUP_COUNT_MEMBERS'), [
+          activeChat.contactInfo.participants.length.toString(),
+          numWord(
+            activeChat.contactInfo.participants.length,
+            {
+              ru: ['участник', 'участника', 'участников'],
+              en: ['member', 'members', 'members'],
+              he: ['חברים', 'חברים', 'חָבֵר'],
+            },
+            resolvedLanguage as LanguageLiteral
+          ),
+        ]);
 
     const category = isContactInfo(activeChat.contactInfo) && activeChat.contactInfo.category;
 
@@ -62,7 +79,7 @@ const ContactInfoHeader: FC = () => {
           <>
             <Divider style={{ borderBlockStart: '1px solid rgba(0, 0, 0, 0.1)' }} />
             <Typography.Text style={{ alignSelf: 'flex-start' }}>
-              This is business account.
+              {t('BUSINESS_ACCOUNT_DESC')}
             </Typography.Text>
           </>
         )}

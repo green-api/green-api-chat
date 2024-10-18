@@ -91,5 +91,11 @@
   "PROFILE_TITLE": "Профиль",
 
   "INSTANCE": "Инстанс",
-  "SELECT_INSTANCE_PLACEHOLDER":  "Выберите инстанс"
+  "SELECT_INSTANCE_PLACEHOLDER":  "Выберите инстанс",
+
+  "CONTACT_INFO": "Информация о контакте",
+  "GROUP_INFO": "Информация о группе",
+  "GROUP_COUNT_MEMBERS": "Группа  ·  {0} {1}",
+  "GROUP_CREATED_BY": "Группа создана {0}, {1}",
+  "BUSINESS_ACCOUNT_DESC": "Это бизнес аккаунт"
 }

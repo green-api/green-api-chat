@@ -90,5 +90,11 @@
   "PROFILE_TITLE": "Profile",
 
   "INSTANCE": "Instance",
-  "SELECT_INSTANCE_PLACEHOLDER": "Select an instance"
+  "SELECT_INSTANCE_PLACEHOLDER": "Select an instance",
+
+  "CONTACT_INFO": "Contact info",
+  "GROUP_INFO": "Group info",
+  "GROUP_COUNT_MEMBERS": "Group  ·  {0} {1}",
+  "GROUP_CREATED_BY": "Group created by {0}, {1}",
+  "BUSINESS_ACCOUNT_DESC": "This is business account"
 }

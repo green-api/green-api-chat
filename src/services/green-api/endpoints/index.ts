@@ -4,15 +4,11 @@ import { journalsGreenApiEndpoints } from './journals.green-api.endpoints';
 import { receivingGreenApiEndpoints } from './receiving.green-api.endpoints';
 import { sendingGreenApiEndpoints } from './sending.green-api.endpoints';
 import { serviceMethodsGreenApiEndpoints } from './service-methods.green-api.endpoints';
+import { wabaGreenApiEndpoints } from './waba.green-api.endpoints';
 
 export const {
   useSendMessageMutation,
-  useReceiveNotificationQuery,
-  useDeleteNotificationMutation,
   useGetChatHistoryQuery,
-  useLastIncomingMessagesQuery,
-  useLastOutgoingMessagesQuery,
-  useLazyGetGroupDataQuery,
   useGetGroupDataQuery,
   useGetContactInfoQuery,
   useCheckWhatsappMutation,
@@ -22,7 +18,6 @@ export const {
   useSendContactMutation,
   useSendLocationMutation,
   useSendPollMutation,
-  useLazyGetStateInstanceQuery,
   useGetWaSettingsQuery,
 } = {
   ...accountGreenApiEndpoints,
@@ -31,4 +26,5 @@ export const {
   ...journalsGreenApiEndpoints,
   ...groupGreenApiEndpoints,
   ...serviceMethodsGreenApiEndpoints,
+  ...wabaGreenApiEndpoints,
 };

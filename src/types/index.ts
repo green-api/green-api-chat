@@ -11,6 +11,7 @@ import {
 } from './api.types';
 
 export * from './api.types';
+export * from './waba.types';
 
 export interface UserState {
   user: UserInterface;

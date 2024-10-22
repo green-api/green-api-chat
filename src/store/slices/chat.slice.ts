@@ -12,6 +12,7 @@ const initialState: ChatState = {
   isMiniVersion: getIsMiniVersion('tab'),
   messageCount: 30,
   isContactInfoOpen: false,
+  activeTemplate: null,
 };
 
 const chatSlice = createSlice({
@@ -43,6 +44,10 @@ const chatSlice = createSlice({
     setContactInfoOpen: (state, action: PayloadAction<ChatState['isContactInfoOpen']>) => {
       state.isContactInfoOpen = action.payload;
     },
+
+    setActiveTemplate: (state, action: PayloadAction<ChatState['activeTemplate']>) => {
+      state.activeTemplate = action.payload;
+    },
   },
 });
 
@@ -56,3 +61,4 @@ export const selectMiniVersion = (state: RootState) => state.chatReducer.isMiniV
 export const selectMessageCount = (state: RootState) => state.chatReducer.messageCount;
 export const selectType = (state: RootState) => state.chatReducer.type;
 export const selectIsContactInfoOpen = (state: RootState) => state.chatReducer.isContactInfoOpen;
+export const selectActiveTemplate = (state: RootState) => state.chatReducer.activeTemplate;

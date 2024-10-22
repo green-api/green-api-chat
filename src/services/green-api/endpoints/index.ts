@@ -19,6 +19,8 @@ export const {
   useSendLocationMutation,
   useSendPollMutation,
   useGetWaSettingsQuery,
+  useSendTemplateMutation,
+  useGetTemplatesQuery,
 } = {
   ...accountGreenApiEndpoints,
   ...sendingGreenApiEndpoints,

@@ -31,7 +31,6 @@ export const wabaGreenApiEndpoints = greenAPI.injectEndpoints({
         url: `${
           getGreenApiUrls(idInstance).api
         }/waInstance${idInstance}/getTemplates/${apiTokenInstance}`,
-        method: 'POST',
       }),
       providesTags: (result, __, argument) =>
         result

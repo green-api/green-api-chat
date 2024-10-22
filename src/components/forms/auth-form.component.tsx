@@ -6,7 +6,7 @@ import useModal from 'antd/es/modal/useModal';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 
-import SelectLanguage from 'components/UI/select-language.component';
+import SelectLanguage from 'components/UI/select/select-language.component';
 import { GreenApiRoutes, Routes } from 'configs';
 import { useActions, useAppDispatch, useFormWithLanguageValidation } from 'hooks';
 import { useLoginMutation } from 'services/app/endpoints';

@@ -1,4 +1,4 @@
-import { FC, ReactNode, useEffect, useState } from 'react';
+import { FC } from 'react';
 
 import { Select } from 'antd';
 import { useTranslation } from 'react-i18next';
@@ -6,30 +6,29 @@ import { useTranslation } from 'react-i18next';
 import AttachIcon from 'assets/attach-icon.svg?react';
 import SendingModal from 'components/modals/sending-modal.component';
 import { useActions } from 'hooks';
-import { useGetProfileSettingsQuery } from 'services/app/endpoints';
 import { SendingMethodName } from 'types';
 
-const SelectSendingMode: FC = () => {
+interface SelectSendingModeProps {
+  isWaba?: boolean;
+}
+
+const SelectSendingMode: FC<SelectSendingModeProps> = ({ isWaba }) => {
   const { t, i18n } = useTranslation();
 
   const { setActiveSendingMode } = useActions();
 
   const dir = i18n.dir();
 
-  const [options, setOptions] = useState<{ value: string; label: string | ReactNode }[]>([
+  const options = [
     { value: 'sendFileByUpload', label: t('FILE') },
     { value: 'sendContact', label: t('CONTACT') },
     { value: 'sendLocation', label: t('LOCATION') },
     { value: 'sendPoll', label: t('POLL') },
-  ]);
+  ];
 
-  const { data } = useGetProfileSettingsQuery();
-
-  useEffect(() => {
-    if (data && data.result && data.data.isWaba) {
-      setOptions((prev) => [...prev, { value: 'sendTemplate', label: t('TEMPLATE') }]);
-    }
-  }, [data]);
+  if (isWaba) {
+    options.push({ value: 'sendTemplate', label: t('TEMPLATE') });
+  }
 
   return (
     <>

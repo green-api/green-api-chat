@@ -9,6 +9,7 @@ import {
   MessageInterface,
   UserInterface,
 } from './api.types';
+import { WabaTemplateInterface } from './waba.types';
 
 export * from './api.types';
 export * from './waba.types';
@@ -31,6 +32,7 @@ export interface ChatState {
   type: ChatType;
   messageCount: number;
   isContactInfoOpen: boolean;
+  activeTemplate: WabaTemplateInterface | null;
 }
 
 export type ChatType = 'tab' | 'console-page' | 'instance-view-page';
@@ -112,6 +114,11 @@ export interface SendPollFormValues extends ChatFormValues {
   multipleAnswers?: boolean;
 }
 
+export interface SendTemplateValues extends ChatFormValues {
+  params?: { param: string }[];
+  templateId: string;
+}
+
 export interface FormRequestItemInterface extends Omit<FormItemProps, 'name'> {
   key: string;
   name?: string | string[];
@@ -163,7 +170,12 @@ interface ThemeChangeMessage {
   theme: Themes;
 }
 
-export type SendingMethodName = 'sendFileByUpload' | 'sendContact' | 'sendLocation' | 'sendPoll';
+export type SendingMethodName =
+  | 'sendFileByUpload'
+  | 'sendContact'
+  | 'sendLocation'
+  | 'sendPoll'
+  | 'sendTemplate';
 
 export type UserSideActiveMode = 'chats' | 'settings' | 'profile';
 
@@ -205,3 +217,10 @@ export interface SelectInstanceItemInterface extends ExpandedInstanceInterface {
 }
 
 export type HasDefaultInstance = 'unknown' | 'yes' | 'no';
+
+export interface SelectTemplateOption {
+  template: WabaTemplateInterface;
+  value: string;
+  label: string;
+  disabled: boolean;
+}

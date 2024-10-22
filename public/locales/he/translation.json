@@ -25,6 +25,10 @@
   "LOCATION": "מַגָע",
   "POLL": "מִשׁאָל",
   "TEMPLATE": "תבנית",
+  "TEMPLATE_NAME": "שם התבנית",
+  "TEMPLATE_NAME_PLACEHOLDER": "בחר תבנית",
+  "PARAMS_LABEL": "פרמטרים",
+  "PARAM_LABEL": "פרמטר",
 
   "SELECT_FILE": "בחר קובץ",
   "FILE_LABEL": "קובץ",

@@ -25,6 +25,10 @@
   "LOCATION": "Location",
   "POLL": "Poll",
   "TEMPLATE": "Template",
+  "TEMPLATE_NAME": "Template name",
+  "TEMPLATE_NAME_PLACEHOLDER": "Select template",
+  "PARAMS_LABEL": "Parameters",
+  "PARAM_LABEL": "Parameter",
 
   "SELECT_FILE": "Select file",
   "FILE_LABEL": "File",

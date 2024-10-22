@@ -4,6 +4,7 @@ import { Button, Form, Input } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import FormListFields from './form-list-feilds.component';
+import MessagePreview from '../shared/message/message-preview.component';
 import SelectTemplate from 'components/UI/select/select-template.component';
 import { formItemMethodApiLayout } from 'configs';
 import { useActions, useAppDispatch, useAppSelector, useFormWithLanguageValidation } from 'hooks';
@@ -121,7 +122,7 @@ const SendTemplateForm: FC = () => {
       <Form.Item
         name="templateId"
         rules={[{ required: true, message: t('EMPTY_FIELD_ERROR') }]}
-        label={t('TEMPLATE_ID_LABEL')}
+        label={t('TEMPLATE_NAME')}
       >
         <SelectTemplate onSelect={onSelectTemplate} />
       </Form.Item>
@@ -149,27 +150,33 @@ const SendTemplateForm: FC = () => {
           />
         </Form.Item>
       ) : null}
-      {activeTemplate ? (
-        <Form.Item
-          style={{ marginBottom: 0 }}
-          wrapperCol={{
-            span: 24,
-            offset: 0,
-            sm: {
-              span: 20,
-              offset: 4,
-            },
-            lg: {
-              span: 16,
-              offset: 8,
-            },
-          }}
-        >
-          <Button disabled={isLoading} htmlType="submit" size="large" block={true} type="primary">
-            {t('SEND_MESSAGE')}
-          </Button>
-        </Form.Item>
-      ) : null}
+
+      {activeTemplate && (
+        <>
+          <Form.Item label="Preview">
+            <MessagePreview template={activeTemplate} />
+          </Form.Item>
+          <Form.Item
+            style={{ marginBottom: 0 }}
+            wrapperCol={{
+              span: 24,
+              offset: 0,
+              sm: {
+                span: 20,
+                offset: 4,
+              },
+              lg: {
+                span: 16,
+                offset: 8,
+              },
+            }}
+          >
+            <Button disabled={isLoading} htmlType="submit" size="large" block={true} type="primary">
+              {t('SEND_MESSAGE')}
+            </Button>
+          </Form.Item>
+        </>
+      )}
       <Form.Item style={{ marginBottom: 0 }} name="response" className="response-form-item" />
     </Form>
   );

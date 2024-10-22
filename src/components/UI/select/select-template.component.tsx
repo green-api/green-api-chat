@@ -1,6 +1,7 @@
 import { FC } from 'react';
 
 import { Select, Spin } from 'antd';
+import { useTranslation } from 'react-i18next';
 
 import { useAppSelector } from 'hooks';
 import { useGetTemplatesQuery } from 'services/green-api/endpoints';
@@ -13,6 +14,8 @@ interface SelectTemplateProps {
 
 const SelectTemplate: FC<SelectTemplateProps> = ({ onSelect }) => {
   const instanceCredentials = useAppSelector(selectInstance);
+
+  const { t } = useTranslation();
 
   const { data, isLoading } = useGetTemplatesQuery(instanceCredentials);
 
@@ -30,7 +33,7 @@ const SelectTemplate: FC<SelectTemplateProps> = ({ onSelect }) => {
   return (
     <Select
       showSearch
-      placeholder="Select template"
+      placeholder={t('TEMPLATE_NAME_PLACEHOLDER')}
       options={options}
       filterOption={(inputValue, option) =>
         `${option?.template.elementName}`.includes(inputValue) ||

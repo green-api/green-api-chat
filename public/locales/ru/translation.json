@@ -25,6 +25,10 @@
   "LOCATION": "Локация",
   "POLL": "Опрос",
   "TEMPLATE": "Шаблон",
+  "TEMPLATE_NAME": "Название шаблона",
+  "TEMPLATE_NAME_PLACEHOLDER": "Выберите шаблон",
+  "PARAM_LABEL": "Параметр",
+  "PARAMS_LABEL": "Параметры",
 
   "SELECT_FILE": "Выберите файл",
   "FILE_LABEL":  "Файл",

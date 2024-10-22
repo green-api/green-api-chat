@@ -56,6 +56,14 @@ export interface WabaTemplateInterface {
   wabaId: string;
 }
 
+export interface ParsedWabaTemplateInterface
+  extends Pick<WabaTemplateInterface, 'data'>,
+    Pick<CreateTemplateParametersArgumentInterface, 'buttons'> {
+  header: string;
+  footer: string;
+  mediaUrl?: string;
+}
+
 export enum WabaTemplateCategoryEnum {
   Authentication = 'AUTHENTICATION',
   Marketing = 'MARKETING',

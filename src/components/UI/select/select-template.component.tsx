@@ -25,7 +25,7 @@ const SelectTemplate: FC<SelectTemplateProps> = ({ onSelect }) => {
 
   const options = data.templates.map((template) => ({
     template: template,
-    value: template.id,
+    value: template.templateId,
     label: template.elementName,
     disabled: template.status !== 'APPROVED',
   }));

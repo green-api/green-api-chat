@@ -37,13 +37,12 @@ export interface WabaTemplateResponseInterface {
 }
 
 export interface WabaTemplateInterface {
-  appId: string;
   category: WabaTemplateCategoryEnum;
   containerMeta: string;
   createdOn: number;
   data: string;
   elementName: string;
-  id: string;
+  templateId: string;
   languageCode: string;
   meta: string;
   modifiedOn: string;
@@ -53,14 +52,13 @@ export interface WabaTemplateInterface {
   status: string;
   templateType: WabaTemplateTypeEnum;
   vertical: string;
-  wabaId: string;
 }
 
 export interface ParsedWabaTemplateInterface
   extends Pick<WabaTemplateInterface, 'data'>,
     Pick<CreateTemplateParametersArgumentInterface, 'buttons'> {
-  header: string;
-  footer: string;
+  header?: string;
+  footer?: string;
   mediaUrl?: string;
 }
 

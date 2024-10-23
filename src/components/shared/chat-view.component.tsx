@@ -4,15 +4,23 @@ import { Empty, Spin } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import Message from './message/message.component';
+import TemplateMessage from './message/template-message/template-message.component';
 import { useActions, useAppSelector } from 'hooks';
-import { useGetChatHistoryQuery } from 'services/green-api/endpoints';
+import { useGetProfileSettingsQuery } from 'services/app/endpoints';
+import { useGetChatHistoryQuery, useGetTemplatesQuery } from 'services/green-api/endpoints';
 import { selectActiveChat, selectMiniVersion } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
-import { ActiveChat } from 'types';
-import { getErrorMessage, getJSONMessage, getPhoneNumberFromChatId, getTextMessage } from 'utils';
+import { ActiveChat, ParsedWabaTemplateInterface } from 'types';
+import {
+  getErrorMessage,
+  getJSONMessage,
+  getPhoneNumberFromChatId,
+  getTextMessage,
+  isOutgoingTemplateMessage,
+} from 'utils';
 
 const ChatView: FC = () => {
-  const userCredentials = useAppSelector(selectInstance);
+  const instanceCredentials = useAppSelector(selectInstance);
   const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
   const isMiniVersion = useAppSelector(selectMiniVersion);
 
@@ -29,6 +37,15 @@ const ChatView: FC = () => {
   const setPageTimerReference = useRef<ReturnType<typeof setTimeout>>();
   const scrollTimerReference = useRef<ReturnType<typeof setTimeout>>();
 
+  const { data: profileSettings } = useGetProfileSettingsQuery();
+
+  const { data: templates, isLoading: templatesLoading } = useGetTemplatesQuery(
+    instanceCredentials,
+    {
+      skip: !(profileSettings && profileSettings.result && profileSettings.data.isWaba),
+    }
+  );
+
   const {
     data: messages,
     isLoading,
@@ -36,8 +53,8 @@ const ChatView: FC = () => {
     error,
   } = useGetChatHistoryQuery(
     {
-      idInstance: userCredentials.idInstance,
-      apiTokenInstance: userCredentials.apiTokenInstance,
+      idInstance: instanceCredentials.idInstance,
+      apiTokenInstance: instanceCredentials.apiTokenInstance,
       chatId: activeChat.chatId,
       count: isMiniVersion ? 10 : count,
     },
@@ -88,7 +105,7 @@ const ChatView: FC = () => {
     chatViewRef.current?.scrollTop === 0 &&
     chatViewRef.current?.scrollHeight > chatViewRef.current?.clientHeight;
 
-  if (isLoading) {
+  if (isLoading || templatesLoading) {
     return (
       <div className={`chat-view flex-center ${isMiniVersion ? '' : 'full'}`}>
         <Spin size="large" />
@@ -135,6 +152,37 @@ const ChatView: FC = () => {
 
         previousMessageAreOutgoing = message.type === 'outgoing';
         previousSenderName = message.senderName || message.senderId || '';
+
+        if (
+          message.templateMessage &&
+          isOutgoingTemplateMessage(message.templateMessage, message.type) &&
+          !isMiniVersion &&
+          templates
+        ) {
+          const id = message.templateMessage.templateId;
+
+          const templateData = templates.templates.find((template) => template.templateId === id);
+
+          if (!templateData) {
+            return null;
+          }
+
+          const parsedTemplateData = JSON.parse(
+            templateData.containerMeta
+          ) as ParsedWabaTemplateInterface;
+
+          return (
+            <TemplateMessage
+              key={message.idMessage}
+              templateMessage={parsedTemplateData}
+              templateType={templateData.templateType}
+              timestamp={message.timestamp}
+              type={message.type}
+              jsonMessage={getJSONMessage(message)}
+              params={message.templateMessage.params}
+            />
+          );
+        }
 
         return (
           <Message

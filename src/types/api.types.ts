@@ -1,4 +1,4 @@
-import { InstanceInterface } from 'types';
+import { CreateTemplateParametersArgumentInterface, InstanceInterface } from 'types';
 
 export interface UserInterface {
   idUser: string;
@@ -77,7 +77,7 @@ export interface MessageInterface
   contact?: Contact;
   extendedTextMessage?: ExtendedTextMessage;
   quotedMessage?: QuotedMessageInterface;
-  templateMessage?: TemplateMessage;
+  templateMessage?: TemplateMessageInterface;
   templateButtonReplyMessage?: TemplateButtonReplyMessage;
   downloadUrl?: string;
   location?: LocationInterface;
@@ -107,9 +107,18 @@ export interface ExtendedTextMessage {
   jpegThumbnail: string;
 }
 
-export interface TemplateMessage {
+export type TemplateMessageInterface = IncomingTemplateMessage | OutgoingTemplateMessage;
+
+export interface OutgoingTemplateMessage {
   templateId: string;
   params?: string[];
+}
+
+export interface IncomingTemplateMessage
+  extends Pick<CreateTemplateParametersArgumentInterface, 'buttons'> {
+  contentText: string;
+  titleText?: string;
+  footerText?: string;
 }
 
 export interface TemplateButtonReplyMessage {

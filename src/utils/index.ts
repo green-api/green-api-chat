@@ -14,7 +14,10 @@ import {
   LanguageLiteral,
   MessageData,
   MessageInterface,
+  OutgoingTemplateMessage,
   StatusMessage,
+  TemplateMessageInterface,
+  TypeConnectionMessage,
   UserInterface,
 } from 'types';
 
@@ -332,4 +335,11 @@ export function isContactInfo(
   info: GetContactInfoResponseInterface | GetGroupDataResponseInterface
 ): info is GetContactInfoResponseInterface {
   return 'chatId' in info;
+}
+
+export function isOutgoingTemplateMessage(
+  templateMessage: TemplateMessageInterface,
+  type: TypeConnectionMessage
+): templateMessage is OutgoingTemplateMessage {
+  return type === 'outgoing';
 }

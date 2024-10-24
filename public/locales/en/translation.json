@@ -29,6 +29,7 @@
   "TEMPLATE_NAME_PLACEHOLDER": "Select template",
   "PARAMS_LABEL": "Parameters",
   "PARAM_LABEL": "Parameter",
+  "PREVIEW": "Preview",
 
   "SELECT_FILE": "Select file",
   "FILE_LABEL": "File",

@@ -2,28 +2,17 @@ import { FC } from 'react';
 
 import { useTranslation } from 'react-i18next';
 
-import { LanguageLiteral, ParsedWabaTemplateInterface, TypeConnectionMessage } from 'types';
-import {
-  fillTemplateString,
-  getFormattedMessage,
-  getMessageDate,
-  getTemplateMessageLayout,
-} from 'utils';
+import { ParsedWabaTemplateInterface, TypeConnectionMessage } from 'types';
+import { fillTemplateString, getFormattedMessage, getTemplateMessageLayout } from 'utils';
 
 interface TemplateMessageProps {
   templateMessage: ParsedWabaTemplateInterface;
-  timestamp: number;
   type: TypeConnectionMessage;
   params?: string[];
 }
 
-const TemplateMessage: FC<TemplateMessageProps> = ({ templateMessage, timestamp, type }) => {
-  const {
-    t,
-    i18n: { resolvedLanguage },
-  } = useTranslation();
-
-  const time = getMessageDate(timestamp * 1000, resolvedLanguage as LanguageLiteral, 'long');
+const TemplateMessage: FC<TemplateMessageProps> = ({ templateMessage, type }) => {
+  const { t } = useTranslation();
 
   if (type === 'outgoing') {
     const header = templateMessage.header
@@ -44,7 +33,6 @@ const TemplateMessage: FC<TemplateMessageProps> = ({ templateMessage, timestamp,
       footer: footer,
       mediaUrl: mediaUrl,
       buttons: buttons,
-      time: time,
       type: type,
       symbol: t('SHOW_ALL_TEXT'),
     });
@@ -62,7 +50,6 @@ const TemplateMessage: FC<TemplateMessageProps> = ({ templateMessage, timestamp,
     footer: footer,
     mediaUrl: mediaUrl,
     buttons: buttons,
-    time: time,
     type: type,
     symbol: t('SHOW_ALL_TEXT'),
   });

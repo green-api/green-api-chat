@@ -97,13 +97,11 @@ const Message: FC<MessageProps> = ({
   );
 
   if (templateMessage) {
-    messageBody = (
-      <TemplateMessage templateMessage={templateMessage} type={type} timestamp={timestamp} />
-    );
+    messageBody = <TemplateMessage templateMessage={templateMessage} type={type} />;
   }
 
   if (downloadUrl && typeMessage === 'imageMessage' && !isMiniVersion) {
-    messageBody = <Image width={350} height={250} src={downloadUrl} loading="lazy" alt="media" />;
+    messageBody = <Image width={250} height={250} src={downloadUrl} loading="lazy" alt="media" />;
   }
 
   return (

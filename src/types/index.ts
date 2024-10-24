@@ -236,7 +236,7 @@ export interface GetTemplateMessageLayoutOptions {
   content: Renderable;
   footer: Renderable | null;
   symbol: string;
-  time: string;
+  time?: string;
   mediaUrl?: string;
   buttons?: TemplateButtonInterface[];
   type?: TypeConnectionMessage;

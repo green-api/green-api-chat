@@ -19,11 +19,11 @@ const SelectTemplate: FC<SelectTemplateProps> = ({ onSelect }) => {
 
   const { data, isLoading } = useGetTemplatesQuery(instanceCredentials);
 
-  if (isLoading || !data) {
+  if (isLoading) {
     return <Spin />;
   }
 
-  const options = data.templates.map((template) => ({
+  const options = data?.templates.map((template) => ({
     template: template,
     value: template.templateId,
     label: template.elementName,

@@ -166,15 +166,20 @@ const ChatView: FC = () => {
               return null;
             }
 
-            templateMessage = JSON.parse(templateData.containerMeta) as ParsedWabaTemplateInterface;
-            templateMessage.params = message.templateMessage.params;
+            if (templateData.containerMeta) {
+              templateMessage = JSON.parse(
+                templateData.containerMeta
+              ) as ParsedWabaTemplateInterface;
+
+              templateMessage.params = message.templateMessage.params;
+            }
           } else {
             templateMessage = {
               header: message.templateMessage.titleText,
-              data: message.templateMessage.contentText,
+              data: message.templateMessage.contentText || '',
               footer: message.templateMessage.footerText,
               mediaUrl: message.templateMessage.mediaUrl,
-              buttons: message.templateMessage.buttons.map((incomingBtn) => {
+              buttons: message.templateMessage.buttons?.map((incomingBtn) => {
                 if (incomingBtn.callButton) {
                   return {
                     text: incomingBtn.callButton.displayText,
@@ -196,7 +201,7 @@ const ChatView: FC = () => {
                 }
 
                 return {
-                  text: 'incomingBtn.quickReplyButton.displayText',
+                  text: '',
                   value: '',
                   type: TemplateButtonTypesEnum.Url,
                 };

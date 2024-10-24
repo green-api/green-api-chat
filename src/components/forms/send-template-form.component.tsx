@@ -155,7 +155,7 @@ const SendTemplateForm: FC = () => {
 
       {activeTemplate && (
         <>
-          <Form.Item label="Preview">
+          <Form.Item label={t('PREVIEW')}>
             <TemplateMessagePreview template={activeTemplate} />
           </Form.Item>
           <Form.Item

@@ -139,7 +139,8 @@ export function numWord(
 }
 
 export function getTemplateMessageLayout(options: GetTemplateMessageLayoutOptions) {
-  const { containerClassName, header, content, footer, mediaUrl, buttons, symbol, type } = options;
+  const { containerClassName, header, content, footer, mediaUrl, buttons, symbol, type, time } =
+    options;
 
   if (!containerClassName) {
     return (
@@ -167,7 +168,7 @@ export function getTemplateMessageLayout(options: GetTemplateMessageLayoutOption
             <Col>
               <Typography.Paragraph
                 className={`${type === 'outgoing' ? 'outgoing' : 'incoming'} full`}
-                style={{ fontSize: 12, margin: 0, fontStyle: 'italic' }}
+                style={{ fontSize: 13, margin: 0, fontStyle: 'italic' }}
               >
                 {footer}
               </Typography.Paragraph>
@@ -210,13 +211,19 @@ export function getTemplateMessageLayout(options: GetTemplateMessageLayoutOption
       <Row wrap={false} gutter={[15, 15]} className="margin-top">
         {footer && (
           <Col>
-            <Typography.Paragraph style={{ fontSize: 12, margin: 0, fontStyle: 'italic' }}>
+            <Typography.Paragraph style={{ fontSize: 13, margin: 0, fontStyle: 'italic' }}>
               {footer}
             </Typography.Paragraph>
           </Col>
         )}
+        {time && (
+          <Col className="margin-left-auto margin-top-auto">
+            <Space>
+              <span style={{ fontSize: 12 }}>{time}</span>
+            </Space>
+          </Col>
+        )}
       </Row>
-
       {buttons && buttons.length > 0 && (
         <Space direction="vertical">
           {buttons.map((button, idx) => (

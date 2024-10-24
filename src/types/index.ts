@@ -7,6 +7,7 @@ import {
   GetContactInfoResponseInterface,
   GetGroupDataResponseInterface,
   MessageInterface,
+  TypeConnectionMessage,
   UserInterface,
 } from './api.types';
 import { TemplateButtonInterface, WabaTemplateInterface, WabaTemplateTypeEnum } from './waba.types';
@@ -230,7 +231,7 @@ export type Renderable = string | JSX.Element | JSX.Element[];
 
 export interface GetTemplateMessageLayoutOptions {
   containerClassName?: string;
-  templateType: WabaTemplateTypeEnum;
+  templateType?: WabaTemplateTypeEnum;
   header: Renderable | null;
   content: Renderable;
   footer: Renderable | null;
@@ -238,4 +239,5 @@ export interface GetTemplateMessageLayoutOptions {
   time: string;
   mediaUrl?: string;
   buttons?: TemplateButtonInterface[];
+  type?: TypeConnectionMessage;
 }

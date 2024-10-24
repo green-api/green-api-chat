@@ -19,7 +19,6 @@ import {
   Renderable,
   StatusMessage,
   TypeMessage,
-  WabaTemplateTypeEnum,
 } from 'types';
 
 export function getOutgoingStatusMessageIcon(
@@ -140,17 +139,54 @@ export function numWord(
 }
 
 export function getTemplateMessageLayout(options: GetTemplateMessageLayoutOptions) {
-  const {
-    containerClassName,
-    header,
-    content,
-    footer,
-    templateType,
-    mediaUrl,
-    buttons,
-    time,
-    symbol,
-  } = options;
+  const { containerClassName, header, content, footer, mediaUrl, buttons, symbol, type } = options;
+
+  if (!containerClassName) {
+    return (
+      <>
+        <Space direction="vertical">
+          {header && (
+            <Typography.Paragraph
+              style={{ fontSize: 16, margin: 0 }}
+              className={`${type === 'outgoing' ? 'outgoing' : 'incoming'} full`}
+            >
+              {header}
+            </Typography.Paragraph>
+          )}
+          {mediaUrl && <Image width={300} height={200} src={mediaUrl} alt="media" />}
+          <Typography.Paragraph
+            style={{ fontSize: 14, margin: 0 }}
+            ellipsis={{ rows: 6, expandable: true, symbol: symbol }}
+            className={`${type === 'outgoing' ? 'outgoing' : 'incoming'} full`}
+          >
+            {content}
+          </Typography.Paragraph>
+        </Space>
+        <Row wrap={false} gutter={[15, 15]} className="margin-top">
+          {footer && (
+            <Col>
+              <Typography.Paragraph
+                className={`${type === 'outgoing' ? 'outgoing' : 'incoming'} full`}
+                style={{ fontSize: 12, margin: 0, fontStyle: 'italic' }}
+              >
+                {footer}
+              </Typography.Paragraph>
+            </Col>
+          )}
+        </Row>
+
+        {buttons && buttons.length > 0 && (
+          <Space direction="vertical">
+            {buttons.map((button, idx) => (
+              <Button key={`${button.value}-${idx}`} className="w-100">
+                {button.text}
+              </Button>
+            ))}
+          </Space>
+        )}
+      </>
+    );
+  }
 
   return (
     <div
@@ -160,16 +196,10 @@ export function getTemplateMessageLayout(options: GetTemplateMessageLayoutOption
       className={containerClassName}
     >
       <Space direction="vertical">
-        {templateType === WabaTemplateTypeEnum.Text && (
-          <>
-            {header && (
-              <Typography.Paragraph style={{ fontSize: 16, margin: 0 }}>
-                {header}
-              </Typography.Paragraph>
-            )}
-          </>
+        {header && (
+          <Typography.Paragraph style={{ fontSize: 16, margin: 0 }}>{header}</Typography.Paragraph>
         )}
-        {templateType !== WabaTemplateTypeEnum.Text && <Image src={mediaUrl} alt="media" />}
+        {mediaUrl && <Image src={mediaUrl} alt="media" />}
         <Typography.Paragraph
           style={{ fontSize: 14, margin: 0 }}
           ellipsis={{ rows: 6, expandable: true, symbol: symbol }}
@@ -185,11 +215,6 @@ export function getTemplateMessageLayout(options: GetTemplateMessageLayoutOption
             </Typography.Paragraph>
           </Col>
         )}
-        <Col className="margin-left-auto margin-top-auto">
-          <Space style={{ alignSelf: 'end' }}>
-            <span style={{ fontSize: 12 }}>{time}</span>
-          </Space>
-        </Col>
       </Row>
 
       {buttons && buttons.length > 0 && (

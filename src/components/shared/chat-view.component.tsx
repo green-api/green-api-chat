@@ -4,13 +4,12 @@ import { Empty, Spin } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import Message from './message/message.component';
-import TemplateMessage from './message/template-message/template-message.component';
 import { useActions, useAppSelector } from 'hooks';
 import { useGetProfileSettingsQuery } from 'services/app/endpoints';
 import { useGetChatHistoryQuery, useGetTemplatesQuery } from 'services/green-api/endpoints';
 import { selectActiveChat, selectMiniVersion } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
-import { ActiveChat, ParsedWabaTemplateInterface } from 'types';
+import { ActiveChat, ParsedWabaTemplateInterface, TemplateButtonTypesEnum } from 'types';
 import {
   getErrorMessage,
   getJSONMessage,
@@ -96,7 +95,7 @@ const ChatView: FC = () => {
     if (element && count === 30) {
       element.scrollTo({ top: element.scrollHeight });
     }
-  }, [messages]);
+  }, [messages, templates]);
 
   const loaderVisible =
     !isMiniVersion &&
@@ -153,35 +152,57 @@ const ChatView: FC = () => {
         previousMessageAreOutgoing = message.type === 'outgoing';
         previousSenderName = message.senderName || message.senderId || '';
 
-        if (
-          message.templateMessage &&
-          isOutgoingTemplateMessage(message.templateMessage, message.type) &&
-          !isMiniVersion &&
-          templates
-        ) {
-          const id = message.templateMessage.templateId;
+        let templateMessage: ParsedWabaTemplateInterface | undefined;
 
-          const templateData = templates.templates.find((template) => template.templateId === id);
+        if (message.templateMessage && !isMiniVersion) {
+          if (isOutgoingTemplateMessage(message.templateMessage, message.type)) {
+            const id = message.templateMessage.templateId;
 
-          if (!templateData) {
-            return null;
+            const templateData = templates?.templates.find(
+              (template) => template.templateId === id
+            );
+
+            if (!templateData) {
+              return null;
+            }
+
+            templateMessage = JSON.parse(templateData.containerMeta) as ParsedWabaTemplateInterface;
+            templateMessage.params = message.templateMessage.params;
+          } else {
+            templateMessage = {
+              header: message.templateMessage.titleText,
+              data: message.templateMessage.contentText,
+              footer: message.templateMessage.footerText,
+              mediaUrl: message.templateMessage.mediaUrl,
+              buttons: message.templateMessage.buttons.map((incomingBtn) => {
+                if (incomingBtn.callButton) {
+                  return {
+                    text: incomingBtn.callButton.displayText,
+                    value: incomingBtn.callButton.displayText,
+                    type: TemplateButtonTypesEnum.PhoneNumber,
+                  };
+                } else if (incomingBtn.urlButton) {
+                  return {
+                    text: incomingBtn.urlButton.displayText,
+                    value: incomingBtn.urlButton.displayText,
+                    type: TemplateButtonTypesEnum.Url,
+                  };
+                } else if (incomingBtn.quickReplyButton) {
+                  return {
+                    text: incomingBtn.quickReplyButton.displayText,
+                    value: incomingBtn.quickReplyButton.displayText,
+                    type: TemplateButtonTypesEnum.Url,
+                  };
+                }
+
+                return {
+                  text: 'incomingBtn.quickReplyButton.displayText',
+                  value: '',
+                  type: TemplateButtonTypesEnum.Url,
+                };
+              }),
+            };
           }
-
-          const parsedTemplateData = JSON.parse(
-            templateData.containerMeta
-          ) as ParsedWabaTemplateInterface;
-
-          return (
-            <TemplateMessage
-              key={message.idMessage}
-              templateMessage={parsedTemplateData}
-              templateType={templateData.templateType}
-              timestamp={message.timestamp}
-              type={message.type}
-              jsonMessage={getJSONMessage(message)}
-              params={message.templateMessage.params}
-            />
-          );
         }
 
         return (
@@ -199,6 +220,7 @@ const ChatView: FC = () => {
             downloadUrl={message.downloadUrl}
             statusMessage={message.statusMessage}
             quotedMessage={message.quotedMessage}
+            templateMessage={templateMessage}
           />
         );
       })}

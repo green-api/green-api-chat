@@ -1,4 +1,4 @@
-import { CreateTemplateParametersArgumentInterface, InstanceInterface } from 'types';
+import { InstanceInterface } from 'types';
 
 export interface UserInterface {
   idUser: string;
@@ -114,11 +114,21 @@ export interface OutgoingTemplateMessage {
   params?: string[];
 }
 
-export interface IncomingTemplateMessage
-  extends Pick<CreateTemplateParametersArgumentInterface, 'buttons'> {
+export interface IncomingTemplateMessage {
   contentText: string;
   titleText?: string;
   footerText?: string;
+  mediaUrl?: string;
+  buttons: {
+    urlButton: IncomingTemplateButton;
+    quickReplyButton: IncomingTemplateButton;
+    callButton: IncomingTemplateButton;
+  }[];
+}
+
+export interface IncomingTemplateButton {
+  displayText: string;
+  [key: string]: string;
 }
 
 export interface TemplateButtonReplyMessage {

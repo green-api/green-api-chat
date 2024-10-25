@@ -154,7 +154,7 @@ export function getTemplateMessageLayout(options: GetTemplateMessageLayoutOption
               {header}
             </Typography.Paragraph>
           )}
-          {mediaUrl && <Image width={300} height={200} src={mediaUrl} alt="media" />}
+          {mediaUrl && <Image width={300} loading="lazy" src={mediaUrl} alt="media" />}
           <Typography.Paragraph
             style={{ fontSize: 14, margin: 0 }}
             ellipsis={{ rows: 6, expandable: true, symbol: symbol }}
@@ -200,7 +200,7 @@ export function getTemplateMessageLayout(options: GetTemplateMessageLayoutOption
         {header && (
           <Typography.Paragraph style={{ fontSize: 16, margin: 0 }}>{header}</Typography.Paragraph>
         )}
-        {mediaUrl && <Image src={mediaUrl} alt="media" />}
+        {mediaUrl && <Image src={mediaUrl} loading="lazy" alt="media" />}
         <Typography.Paragraph
           style={{ fontSize: 14, margin: 0 }}
           ellipsis={{ rows: 6, expandable: true, symbol: symbol }}

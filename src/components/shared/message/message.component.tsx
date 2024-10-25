@@ -101,7 +101,7 @@ const Message: FC<MessageProps> = ({
   }
 
   if (downloadUrl && typeMessage === 'imageMessage' && !isMiniVersion) {
-    messageBody = <Image width={250} height={250} src={downloadUrl} loading="lazy" alt="media" />;
+    messageBody = <Image width={300} src={downloadUrl} loading="lazy" alt="media" />;
   }
 
   return (

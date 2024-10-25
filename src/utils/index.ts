@@ -160,7 +160,7 @@ export function getMessageDate(
   const messageDate = formatDate(timestamp, language, format);
   const nowDate = formatDate(Date.now(), language, format);
 
-  if (messageDate === nowDate) {
+  if (messageDate === nowDate && format === 'short') {
     const date = new Date(timestamp);
 
     return `0${date.getHours()}`.slice(-2) + ':' + `0${date.getMinutes()}`.slice(-2);

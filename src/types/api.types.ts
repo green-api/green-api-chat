@@ -77,6 +77,7 @@ export interface MessageInterface
   contact?: Contact;
   extendedTextMessage?: ExtendedTextMessage;
   quotedMessage?: QuotedMessageInterface;
+  templateMessage?: TemplateMessage;
   templateButtonReplyMessage?: TemplateButtonReplyMessage;
   downloadUrl?: string;
   location?: LocationInterface;
@@ -104,6 +105,11 @@ export interface ExtendedTextMessage {
   title: string;
   previewType: string;
   jpegThumbnail: string;
+}
+
+export interface TemplateMessage {
+  templateId: string;
+  params?: string[];
 }
 
 export interface TemplateButtonReplyMessage {
@@ -257,9 +263,8 @@ export interface GetStateInstanceResponseInterface {
 export enum AppMethodsEnum {
   GetInstances = 'user.instances.list',
   Login = 'loginUser',
-  Registration = 'registerUser',
   Verify = 'verifyUser',
-  Recover = 'recoverUser',
+  GetProfileSettings = 'user.profile.getSettings',
 }
 
 export type AppApiResponse<Data> = AppApiSuccessResponseInterface<Data> | AppApiErrorResponse;
@@ -313,3 +318,14 @@ export interface GetWaSettingsResponseInterface {
   phone: string;
   deviceId: string;
 }
+
+export interface GetProfileBaseSettingsResponseInterface<T extends boolean> {
+  country: string;
+  language: string;
+  isPartner: T;
+  isWaba: boolean;
+}
+
+export type GetProfileSettingsResponse =
+  | GetProfileBaseSettingsResponseInterface<false>
+  | (GetProfileBaseSettingsResponseInterface<true> & { partnerToken: string });

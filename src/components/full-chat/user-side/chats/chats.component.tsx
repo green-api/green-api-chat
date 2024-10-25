@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import AddNewChat from './add-new-chat.component';
 import ChatsHeader from './chats-header.component';
 import ChatList from 'components/shared/chat-list/chat-list.component';
-import SelectInstance from 'components/UI/select-instance.component';
+import SelectInstance from 'components/UI/select/select-instance.component';
 import { useAppSelector } from 'hooks';
 import { selectMiniVersion, selectType } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';

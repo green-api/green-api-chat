@@ -1,6 +1,6 @@
 import { FC, useEffect, useRef, useState } from 'react';
 
-import { Select } from 'antd';
+import { Select, Spin } from 'antd';
 import { BaseSelectRef } from 'rc-select';
 import { useTranslation } from 'react-i18next';
 
@@ -148,7 +148,7 @@ const SelectInstance: FC = () => {
   }, [instances, isSuccessLoadingInstances]);
 
   if (isLoadingInstances || !instances || hasDefaultInstance === 'unknown') {
-    return <></>;
+    return <Spin />;
   }
 
   return (

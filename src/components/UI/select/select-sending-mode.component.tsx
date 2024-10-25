@@ -8,12 +8,27 @@ import SendingModal from 'components/modals/sending-modal.component';
 import { useActions } from 'hooks';
 import { SendingMethodName } from 'types';
 
-const SelectSendingMode: FC = () => {
+interface SelectSendingModeProps {
+  isWaba?: boolean;
+}
+
+const SelectSendingMode: FC<SelectSendingModeProps> = ({ isWaba }) => {
   const { t, i18n } = useTranslation();
 
   const { setActiveSendingMode } = useActions();
 
   const dir = i18n.dir();
+
+  const options = [
+    { value: 'sendFileByUpload', label: t('FILE') },
+    { value: 'sendContact', label: t('CONTACT') },
+    { value: 'sendLocation', label: t('LOCATION') },
+    { value: 'sendPoll', label: t('POLL') },
+  ];
+
+  if (isWaba) {
+    options.push({ value: 'sendTemplate', label: t('TEMPLATE') });
+  }
 
   return (
     <>
@@ -21,12 +36,7 @@ const SelectSendingMode: FC = () => {
         className={`select-sending-mode ${dir === 'rtl' ? 'rtl' : ''}`}
         variant="borderless"
         value=""
-        options={[
-          { value: 'sendFileByUpload', label: t('FILE') },
-          { value: 'sendContact', label: t('CONTACT') },
-          { value: 'sendLocation', label: t('LOCATION') },
-          { value: 'sendPoll', label: t('POLL') },
-        ]}
+        options={options}
         style={{ width: 50 }}
         dropdownStyle={{ width: 120 }}
         suffixIcon={<AttachIcon style={{ pointerEvents: 'none' }} />}

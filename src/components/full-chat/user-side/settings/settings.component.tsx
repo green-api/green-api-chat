@@ -3,7 +3,7 @@ import { FC } from 'react';
 import { Flex } from 'antd';
 import { useTranslation } from 'react-i18next';
 
-import SelectInstance from 'components/UI/select-instance.component';
+import SelectInstance from 'components/UI/select/select-instance.component';
 
 const Settings: FC = () => {
   const { t } = useTranslation();

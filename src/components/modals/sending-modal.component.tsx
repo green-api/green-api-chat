@@ -11,15 +11,21 @@ const SendingModal: FC = () => {
 
   const modalContent = SENDING_METHODS_CONFIG.find((config) => config.name === activeSendingMode);
 
-  const { setActiveSendingMode } = useActions();
+  const { setActiveSendingMode, setActiveTemplate } = useActions();
+
+  const reset = () => {
+    setActiveSendingMode(null);
+    setActiveTemplate(null);
+  };
 
   return (
     <Modal
       centered
       open={!!activeSendingMode}
-      onCancel={() => setActiveSendingMode(null)}
+      onCancel={reset}
       footer={null}
       width={780}
+      destroyOnClose
     >
       {modalContent?.element}
     </Modal>

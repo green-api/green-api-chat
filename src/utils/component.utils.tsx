@@ -12,7 +12,7 @@ import parse from 'html-react-parser';
 import { TextFormatter } from './text-formatter';
 import DoubleTickIcon from 'assets/double-tick.svg?react';
 import TickIcon from 'assets/tick.svg?react';
-import { StatusMessage, TypeMessage } from 'types';
+import { LanguageLiteral, StatusMessage, TypeMessage } from 'types';
 
 export function getOutgoingStatusMessageIcon(
   statusMessage?: StatusMessage,
@@ -88,4 +88,37 @@ export function getFormattedMessage(textMessage: string) {
   }
 
   return parse(formattedText);
+}
+
+export function fillJsxString(string: string, data: (JSX.Element | string)[]) {
+  const substringArray = string.split(/{\d}/);
+
+  data = data.filter((_, index) => string.includes(`{${index}`));
+
+  return (
+    <span>
+      {substringArray.map((substring, index) => {
+        return (
+          <span key={`${substring}${index}`}>
+            {substring} {data[index] || ''}{' '}
+          </span>
+        );
+      })}
+    </span>
+  );
+}
+
+export function numWord(
+  count: number,
+  words: Record<LanguageLiteral, string[]>,
+  resolvedLanguage: LanguageLiteral
+) {
+  const val = Math.abs(count) % 100;
+  const num = val % 10;
+
+  if (val > 10 && val < 20) return words[resolvedLanguage][2];
+  if (num > 1 && num < 5) return words[resolvedLanguage][1];
+  if (num == 1) return words[resolvedLanguage][0];
+
+  return words[resolvedLanguage][2];
 }

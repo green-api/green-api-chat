@@ -11,7 +11,7 @@
 @import "components/aside";
 @import "components/content-side";
 
-@import "components/shared/contact-list";
+@import "components/shared/list";
 @import "components/shared/message";
 @import "components/shared/messenger-link";
 
@@ -213,6 +213,7 @@ html {
 .chatHeader-space {
   flex: 0 1 100%;
   overflow: hidden;
+  cursor: pointer;
 }
 
 .send-mode-select-btn {
@@ -255,4 +256,8 @@ Button.ant-btn-primary:hover, Button.ant-btn-primary:focus {
 
 .ant-modal-content .ant-modal-body {
   padding-top: 22px
+}
+
+.chat-border {
+  border-left: 1px solid var(--chat-border-color);
 }

@@ -174,12 +174,13 @@ export interface GetContactInfoResponseInterface
   category: string;
   description: string;
   products: ProductInterface[];
-  lastSeen: string;
+  lastSeen: string | null;
   isArchive: boolean;
   isDisappearing: boolean;
+  isBusiness: boolean;
   isMute: boolean;
   messageExpiration: number;
-  muteExpiration: number;
+  muteExpiration: number | null;
 }
 
 interface ProductInterface {

@@ -4,7 +4,7 @@ import { Empty, Flex, List, Spin } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import ChatListItem from './chat-list-item.component';
-import { useAppSelector } from 'hooks';
+import { useAppSelector, useMediaQuery } from 'hooks';
 import { useLastMessagesQuery } from 'services/green-api/endpoints';
 import { selectMiniVersion } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
@@ -14,6 +14,8 @@ import { getErrorMessage } from 'utils';
 const ChatList: FC = () => {
   const instanceCredentials = useAppSelector(selectInstance);
   const isMiniVersion = useAppSelector(selectMiniVersion);
+
+  const matchMedia = useMediaQuery('(min-height: 1200px)');
 
   const { t } = useTranslation();
 
@@ -33,7 +35,7 @@ const ChatList: FC = () => {
 
   const [chatList, setChatList] = useState<MessageInterface[]>([]);
 
-  const limit = isMiniVersion ? 5 : 12;
+  const limit = isMiniVersion ? 5 : matchMedia ? 16 : 12;
   const [page, setPage] = useState(1);
 
   useEffect(() => {

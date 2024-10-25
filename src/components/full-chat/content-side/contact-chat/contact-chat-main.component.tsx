@@ -6,13 +6,21 @@ import ContactChatHeader from './contact-chat-header.component';
 import ChatForm from 'components/forms/chat-form.component';
 import ChatView from 'components/shared/chat-view.component';
 import SelectSendingMode from 'components/UI/select-sending-mode.component';
+import { useAppSelector, useMediaQuery } from 'hooks';
+import { selectActiveChat, selectIsContactInfoOpen } from 'store/slices/chat.slice';
+import { ActiveChat } from 'types';
 
-const ContactChat: FC = () => {
+const ContactChatMain: FC = () => {
+  const isContactInfoOpen = useAppSelector(selectIsContactInfoOpen);
+  const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
+
+  const matchMedia = useMediaQuery('(max-width: 1150px)');
+
   return (
-    <Flex vertical style={{ width: '100%' }}>
+    <Flex vertical className={`w-100 ${matchMedia && isContactInfoOpen ? 'display-none' : ''}`}>
       <div className="chat-bg" />
       <ContactChatHeader />
-      <ChatView key={Date.now()} />
+      <ChatView key={activeChat.chatId} />
       <Flex align="center" className="chat-form-container">
         <SelectSendingMode />
         <div style={{ flex: '1' }}>
@@ -23,4 +31,4 @@ const ContactChat: FC = () => {
   );
 };
 
-export default ContactChat;
+export default ContactChatMain;

@@ -23,6 +23,7 @@ import {
 } from 'utils';
 
 interface MessageProps {
+  id?: string;
   type: TypeConnectionMessage;
   typeMessage: TypeMessage;
   textMessage: string;
@@ -50,6 +51,7 @@ const Message: FC<MessageProps> = ({
   phone,
   isLastMessage,
   quotedMessage,
+  id,
 }) => {
   const isMiniVersion = useAppSelector(selectMiniVersion);
 
@@ -74,6 +76,7 @@ const Message: FC<MessageProps> = ({
   return (
     <div
       ref={messageRef}
+      id={id}
       style={{
         maxWidth: isMiniVersion ? 'unset' : 500,
       }}
@@ -114,7 +117,7 @@ const Message: FC<MessageProps> = ({
       </Space>
       <Space style={{ alignSelf: 'end' }}>
         <MessageTooltip jsonMessage={jsonMessage} />
-        <span style={{ fontSize: 14 }}>{messageDate.date}</span>
+        <span style={{ fontSize: 14 }}>{messageDate}</span>
         {getOutgoingStatusMessageIcon(statusMessage)}
       </Space>
     </div>

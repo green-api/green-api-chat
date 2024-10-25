@@ -7,6 +7,8 @@ import {
   CookieOptionsInterface,
   ExpandedInstanceInterface,
   GetChatHistoryResponse,
+  GetContactInfoResponseInterface,
+  GetGroupDataResponseInterface,
   GreenApiUrlsInterface,
   InstanceInterface,
   LanguageLiteral,
@@ -74,6 +76,8 @@ export function formatDate(
           day: '2-digit',
           month: 'short',
           year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
         };
 
   return new Date(timeCreated).toLocaleDateString(language, options);
@@ -152,22 +156,17 @@ export function getMessageDate(
   timestamp: number,
   language: LanguageLiteral = 'en',
   format: 'short' | 'long' = 'short'
-): { date: string; styleWidth?: number } {
+): string {
   const messageDate = formatDate(timestamp, language, format);
   const nowDate = formatDate(Date.now(), language, format);
 
   if (messageDate === nowDate) {
     const date = new Date(timestamp);
 
-    return {
-      date: `0${date.getHours()}`.slice(-2) + ':' + `0${date.getMinutes()}`.slice(-2),
-    };
+    return `0${date.getHours()}`.slice(-2) + ':' + `0${date.getMinutes()}`.slice(-2);
   }
 
-  return {
-    date: messageDate,
-    styleWidth: 120,
-  };
+  return messageDate;
 }
 
 export function isApiError(error: unknown): error is ApiErrorResponse {
@@ -327,4 +326,10 @@ export function getUTCDate(date: Date, utc = 3) {
   const offset = date.getTimezoneOffset() / 60 + utc;
 
   return new Date(date.getTime() + offset * 3600 * 1000);
+}
+
+export function isContactInfo(
+  info: GetContactInfoResponseInterface | GetGroupDataResponseInterface
+): info is GetContactInfoResponseInterface {
+  return 'chatId' in info;
 }

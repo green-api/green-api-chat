@@ -7,3 +7,40 @@
   height: 100%;
   width: 100%;
 }
+
+
+.contact-info {
+  position: absolute;
+
+  &-wrapper {
+    background-color: var(--second-background);
+
+    &.active {
+      flex: 0 0 45%;
+
+      @media screen and (max-width: 1400px) {
+        flex: 0 0 40%;
+      }
+
+      @media screen and (max-width: 1150px) {
+        flex: 0 0 100%;
+      }
+    }
+  }
+
+  &-header {
+    background-color: var(--main-background);
+
+    & header {
+      display: flex;
+      align-items: center;
+      background: inherit;
+    }
+  }
+
+  &-description {
+    background-color: var(--main-background);
+    max-height: 350px;
+    @include scrollBar();
+  }
+}

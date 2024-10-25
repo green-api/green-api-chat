@@ -1,12 +1,11 @@
 import { FC, useMemo } from 'react';
 
-import { LoadingOutlined } from '@ant-design/icons';
-import { Flex, Spin } from 'antd';
+import { Flex, List, Skeleton } from 'antd';
 import { useTranslation } from 'react-i18next';
 
-import AvatarImage from './avatar-image.component';
 import emptyAvatar from 'assets/emptyAvatar.png';
 import emptyAvatarGroup from 'assets/emptyAvatarGroup.png';
+import AvatarImage from 'components/UI/avatar-image.component';
 import { useActions, useAppSelector } from 'hooks';
 import {
   useGetAvatarQuery,
@@ -84,14 +83,6 @@ const ChatListItem: FC<ContactListItemProps> = ({ lastMessage }) => {
 
   const isLoading = isGroupDataLoading || isContactInfoLoading;
 
-  const chatName =
-    groupData?.subject ||
-    contactInfo?.contactName ||
-    contactInfo?.name ||
-    lastMessage.senderContactName ||
-    lastMessage.senderName ||
-    getPhoneNumberFromChatId(lastMessage.chatId);
-
   const avatar = useMemo<string>(() => {
     if (contactInfo && contactInfo.avatar) {
       return contactInfo.avatar;
@@ -104,48 +95,68 @@ const ChatListItem: FC<ContactListItemProps> = ({ lastMessage }) => {
     return lastMessage.chatId.includes('g.us') ? emptyAvatarGroup : emptyAvatar;
   }, [contactInfo, avatarData, lastMessage]);
 
+  if (groupData && groupData === 'Error: item-not-found') {
+    return null;
+  }
+
+  const chatName =
+    groupData?.subject ||
+    contactInfo?.contactName ||
+    contactInfo?.name ||
+    lastMessage.senderContactName ||
+    lastMessage.senderName ||
+    getPhoneNumberFromChatId(lastMessage.chatId);
+
   const textMessage = getTextMessage(lastMessage);
 
+  const info = contactInfo || groupData;
+
   return (
-    <Flex
-      className={`contact-list__item ${activeChat && lastMessage.chatId === activeChat.chatId ? 'active' : ''}`}
-      align="center"
-      gap="small"
+    <List.Item
+      className={`list-item contact-list__item ${activeChat && lastMessage.chatId === activeChat.chatId ? 'active' : ''}`}
       onClick={() =>
         setActiveChat({
           chatId: lastMessage.chatId,
           senderName: chatName,
           senderContactName: lastMessage.senderContactName,
           avatar: avatar,
+
+          contactInfo: info,
         })
       }
     >
-      <AvatarImage src={avatar} size="large" />
-      <Flex className="contact-list__item-wrapper">
-        <Flex vertical gap="small" className="contact-list__item-body">
-          {isLoading ? (
-            <Spin indicator={<LoadingOutlined />} size="small" style={{ alignSelf: 'start' }} />
-          ) : (
-            <h6 className="text-overflow message-signerData">{chatName}</h6>
-          )}
-          <Flex align="center" gap={5}>
-            {lastMessage.statusMessage &&
-              getOutgoingStatusMessageIcon(lastMessage.statusMessage, { width: 20, height: 20 })}
-            {getMessageTypeIcon(lastMessage.typeMessage)}
-            <span className="text-overflow" style={{ width: 300 }}>
-              {textMessage}
-            </span>
-          </Flex>
-        </Flex>
+      <Skeleton avatar title={false} loading={isLoading} active>
+        <List.Item.Meta
+          avatar={<AvatarImage src={avatar} size="large" />}
+          title={
+            <h6
+              className="text-overflow message-signerData"
+              style={{ fontSize: 14, maxWidth: 280, width: '100%' }}
+            >
+              {chatName}
+            </h6>
+          }
+          description={
+            <Flex align="center" gap={5}>
+              {lastMessage.statusMessage &&
+                getOutgoingStatusMessageIcon(lastMessage.statusMessage, { width: 20, height: 20 })}
+              {getMessageTypeIcon(lastMessage.typeMessage)}
+              <span className="text-overflow" style={{ width: 300 }}>
+                {textMessage}
+              </span>
+            </Flex>
+          }
+        />
         <span
           style={{
             textAlign: 'end',
+            alignSelf: 'start',
           }}
         >
-          {messageDate.date}
+          {messageDate}
         </span>
-      </Flex>
-    </Flex>
+      </Skeleton>
+    </List.Item>
   );
 };
 

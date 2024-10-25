@@ -150,7 +150,7 @@ const SendPollForm: FC = () => {
       <Form.Item
         style={{ marginBottom: 0 }}
         wrapperCol={{
-          span: 24,
+          span: 20,
           offset: 0,
           sm: {
             span: 20,
@@ -158,7 +158,7 @@ const SendPollForm: FC = () => {
           },
           lg: {
             span: 16,
-            offset: 8,
+            offset: 9,
           },
         }}
       >

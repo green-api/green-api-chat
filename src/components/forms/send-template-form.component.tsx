@@ -169,7 +169,7 @@ const SendTemplateForm: FC = () => {
               },
               lg: {
                 span: 16,
-                offset: 8,
+                offset: 9,
               },
             }}
           >

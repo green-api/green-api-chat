@@ -44,6 +44,12 @@
 
 .ant-list-items .list-item {
   border-block-end: 1px solid var(--border-list);
+
+  & .group-admin-tag {
+    color: var(--group-tag-text-color);
+    background: var(--group-tag-bg-color);
+    border-color: var(--group-tag-border-color);
+  }
 }
 
 .ant-list-item-meta-avatar {

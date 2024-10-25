@@ -7,7 +7,8 @@ import AvatarImage from 'components/UI/avatar-image.component';
 import { useAppSelector } from 'hooks';
 import { useGetContactInfoQuery } from 'services/green-api/endpoints';
 import { selectInstance } from 'store/slices/instances.slice';
-import { GroupParticipantInterface } from 'types';
+import { selectTheme } from 'store/slices/theme.slice';
+import { GroupParticipantInterface, Themes } from 'types';
 import { getPhoneNumberFromChatId } from 'utils';
 
 interface GroupContactListItemProps {
@@ -16,6 +17,7 @@ interface GroupContactListItemProps {
 
 const GroupContactListItem: FC<GroupContactListItemProps> = ({ participant }) => {
   const instanceCredentials = useAppSelector(selectInstance);
+  const theme = useAppSelector(selectTheme);
 
   const {
     data: contactInfo,
@@ -55,7 +57,11 @@ const GroupContactListItem: FC<GroupContactListItemProps> = ({ participant }) =>
           }
           description={contactName === phoneNumber ? null : phoneNumber}
         />
-        {(participant.isSuperAdmin || participant.isAdmin) && <Tag color="green">Group admin</Tag>}
+        {(participant.isSuperAdmin || participant.isAdmin) && (
+          <Tag color="green" className={theme === Themes.Dark ? 'group-admin-tag' : ''}>
+            Group admin
+          </Tag>
+        )}
       </Skeleton>
     </List.Item>
   );

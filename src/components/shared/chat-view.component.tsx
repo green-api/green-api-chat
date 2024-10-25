@@ -93,7 +93,9 @@ const ChatView: FC = () => {
   useEffect(() => {
     const element = chatViewRef.current;
     if (element && count === 30) {
-      element.scrollTo({ top: element.scrollHeight });
+      setTimeout(() => {
+        element.scrollTo({ top: element.scrollHeight });
+      }, 10);
     }
   }, [messages, templates]);
 

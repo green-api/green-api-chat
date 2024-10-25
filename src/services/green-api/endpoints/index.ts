@@ -21,6 +21,7 @@ export const {
   useGetWaSettingsQuery,
   useSendTemplateMutation,
   useGetTemplatesQuery,
+  useGetTemplateByIdQuery,
 } = {
   ...accountGreenApiEndpoints,
   ...sendingGreenApiEndpoints,

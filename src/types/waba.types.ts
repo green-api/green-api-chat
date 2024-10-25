@@ -60,6 +60,7 @@ export interface ParsedWabaTemplateInterface
   header?: string;
   footer?: string;
   mediaUrl?: string;
+  params?: string[];
 }
 
 export enum WabaTemplateCategoryEnum {

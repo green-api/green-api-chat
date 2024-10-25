@@ -7,12 +7,19 @@ import {
   UserOutlined,
   VideoCameraOutlined,
 } from '@ant-design/icons';
+import { Button, Col, Row, Space, Typography, Image } from 'antd';
 import parse from 'html-react-parser';
 
 import { TextFormatter } from './text-formatter';
 import DoubleTickIcon from 'assets/double-tick.svg?react';
 import TickIcon from 'assets/tick.svg?react';
-import { LanguageLiteral, StatusMessage, TypeMessage } from 'types';
+import {
+  GetTemplateMessageLayoutOptions,
+  LanguageLiteral,
+  Renderable,
+  StatusMessage,
+  TypeMessage,
+} from 'types';
 
 export function getOutgoingStatusMessageIcon(
   statusMessage?: StatusMessage,
@@ -80,7 +87,7 @@ export function getMessageTypeIcon(typeMessage: TypeMessage, downloadUrl?: strin
   );
 }
 
-export function getFormattedMessage(textMessage: string) {
+export function getFormattedMessage(textMessage: string): Renderable {
   const formattedText = TextFormatter(textMessage);
 
   if (!formattedText) {
@@ -108,6 +115,14 @@ export function fillJsxString(string: string, data: (JSX.Element | string)[]) {
   );
 }
 
+export function fillTemplateString(string: string, data: string[]) {
+  const substringArray = string.split(/{{\d}}/);
+
+  data = data.filter((_, index) => string.includes(`{{${index + 1}}}`));
+
+  return substringArray.map((substring, index) => `${substring}${data[index] || ''}`).join('');
+}
+
 export function numWord(
   count: number,
   words: Record<LanguageLiteral, string[]>,
@@ -121,4 +136,103 @@ export function numWord(
   if (num == 1) return words[resolvedLanguage][0];
 
   return words[resolvedLanguage][2];
+}
+
+export function getTemplateMessageLayout(options: GetTemplateMessageLayoutOptions) {
+  const { containerClassName, header, content, footer, mediaUrl, buttons, symbol, type, time } =
+    options;
+
+  if (!containerClassName) {
+    return (
+      <>
+        <Space direction="vertical">
+          {header && (
+            <Typography.Paragraph
+              style={{ fontSize: 16, margin: 0 }}
+              className={`${type === 'outgoing' ? 'outgoing' : 'incoming'} full`}
+            >
+              {header}
+            </Typography.Paragraph>
+          )}
+          {mediaUrl && <Image width={300} height={200} src={mediaUrl} alt="media" />}
+          <Typography.Paragraph
+            style={{ fontSize: 14, margin: 0 }}
+            ellipsis={{ rows: 6, expandable: true, symbol: symbol }}
+            className={`${type === 'outgoing' ? 'outgoing' : 'incoming'} full`}
+          >
+            {content}
+          </Typography.Paragraph>
+        </Space>
+        <Row wrap={false} gutter={[15, 15]} className="margin-top">
+          {footer && (
+            <Col>
+              <Typography.Paragraph
+                className={`${type === 'outgoing' ? 'outgoing' : 'incoming'} full`}
+                style={{ fontSize: 13, margin: 0, fontStyle: 'italic' }}
+              >
+                {footer}
+              </Typography.Paragraph>
+            </Col>
+          )}
+        </Row>
+
+        {buttons && buttons.length > 0 && (
+          <Space direction="vertical">
+            {buttons.map((button, idx) => (
+              <Button key={`${button.value}-${idx}`} className="w-100">
+                {button.text}
+              </Button>
+            ))}
+          </Space>
+        )}
+      </>
+    );
+  }
+
+  return (
+    <div
+      style={{
+        maxWidth: 500,
+      }}
+      className={containerClassName}
+    >
+      <Space direction="vertical">
+        {header && (
+          <Typography.Paragraph style={{ fontSize: 16, margin: 0 }}>{header}</Typography.Paragraph>
+        )}
+        {mediaUrl && <Image src={mediaUrl} alt="media" />}
+        <Typography.Paragraph
+          style={{ fontSize: 14, margin: 0 }}
+          ellipsis={{ rows: 6, expandable: true, symbol: symbol }}
+        >
+          {content}
+        </Typography.Paragraph>
+      </Space>
+      <Row wrap={false} gutter={[15, 15]} className="margin-top">
+        {footer && (
+          <Col>
+            <Typography.Paragraph style={{ fontSize: 13, margin: 0, fontStyle: 'italic' }}>
+              {footer}
+            </Typography.Paragraph>
+          </Col>
+        )}
+        {time && (
+          <Col className="margin-left-auto margin-top-auto">
+            <Space>
+              <span style={{ fontSize: 12 }}>{time}</span>
+            </Space>
+          </Col>
+        )}
+      </Row>
+      {buttons && buttons.length > 0 && (
+        <Space direction="vertical">
+          {buttons.map((button, idx) => (
+            <Button key={`${button.value}-${idx}`} className="w-100">
+              {button.text}
+            </Button>
+          ))}
+        </Space>
+      )}
+    </div>
+  );
 }

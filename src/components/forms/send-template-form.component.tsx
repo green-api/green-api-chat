@@ -4,7 +4,7 @@ import { Button, Form, Input } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import FormListFields from './form-list-feilds.component';
-import MessagePreview from '../shared/message/message-preview.component';
+import TemplateMessagePreview from 'components/shared/message/template-message/template-message-preview.component';
 import SelectTemplate from 'components/UI/select/select-template.component';
 import { formItemMethodApiLayout } from 'configs';
 import { useActions, useAppDispatch, useAppSelector, useFormWithLanguageValidation } from 'hooks';
@@ -38,6 +38,8 @@ const SendTemplateForm: FC = () => {
 
   const onSelectTemplate = useCallback((option: SelectTemplateOption) => {
     const newCount = new Set(option.template.data.match(/{{\d}}/g) || []).size;
+
+    form.resetFields(['params']);
 
     form.setFields([
       { name: 'templateId', value: option.value },
@@ -153,8 +155,8 @@ const SendTemplateForm: FC = () => {
 
       {activeTemplate && (
         <>
-          <Form.Item label="Preview">
-            <MessagePreview template={activeTemplate} />
+          <Form.Item label={t('PREVIEW')}>
+            <TemplateMessagePreview template={activeTemplate} />
           </Form.Item>
           <Form.Item
             style={{ marginBottom: 0 }}

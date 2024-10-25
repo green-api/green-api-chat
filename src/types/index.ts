@@ -7,9 +7,10 @@ import {
   GetContactInfoResponseInterface,
   GetGroupDataResponseInterface,
   MessageInterface,
+  TypeConnectionMessage,
   UserInterface,
 } from './api.types';
-import { WabaTemplateInterface } from './waba.types';
+import { TemplateButtonInterface, WabaTemplateInterface, WabaTemplateTypeEnum } from './waba.types';
 
 export * from './api.types';
 export * from './waba.types';
@@ -33,6 +34,7 @@ export interface ChatState {
   messageCount: number;
   isContactInfoOpen: boolean;
   activeTemplate: WabaTemplateInterface | null;
+  templateMessagesLoading: boolean;
 }
 
 export type ChatType = 'tab' | 'console-page' | 'instance-view-page';
@@ -223,4 +225,19 @@ export interface SelectTemplateOption {
   value: string;
   label: string;
   disabled: boolean;
+}
+
+export type Renderable = string | JSX.Element | JSX.Element[];
+
+export interface GetTemplateMessageLayoutOptions {
+  containerClassName?: string;
+  templateType?: WabaTemplateTypeEnum;
+  header: Renderable | null;
+  content: Renderable;
+  footer: Renderable | null;
+  symbol: string;
+  time?: string;
+  mediaUrl?: string;
+  buttons?: TemplateButtonInterface[];
+  type?: TypeConnectionMessage;
 }

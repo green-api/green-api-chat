@@ -5,6 +5,7 @@ import en_US from 'antd/es/locale/en_US';
 import { useTranslation } from 'react-i18next';
 import { RouterProvider } from 'react-router-dom';
 
+import { useGetProfileSettingsQuery } from './services/app/endpoints';
 import { DARK_THEME, DEFAULT_THEME, localisation } from 'configs';
 import { useActions, useAppSelector } from 'hooks';
 import router from 'router';
@@ -15,6 +16,8 @@ import { isConsoleMessageData, isPageInIframe } from 'utils';
 function App() {
   const { i18n } = useTranslation();
   const { setSelectedInstance, setTheme, login, setPlatform } = useActions();
+
+  useGetProfileSettingsQuery();
 
   const currentTheme = useAppSelector(selectTheme);
   const themesList = {

@@ -5,14 +5,21 @@ import { useTranslation } from 'react-i18next';
 
 import Message from './message/message.component';
 import { useActions, useAppSelector } from 'hooks';
-import { useGetChatHistoryQuery } from 'services/green-api/endpoints';
+import { useGetProfileSettingsQuery } from 'services/app/endpoints';
+import { useGetChatHistoryQuery, useGetTemplatesQuery } from 'services/green-api/endpoints';
 import { selectActiveChat, selectMiniVersion } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
-import { ActiveChat } from 'types';
-import { getErrorMessage, getJSONMessage, getPhoneNumberFromChatId, getTextMessage } from 'utils';
+import { ActiveChat, ParsedWabaTemplateInterface, TemplateButtonTypesEnum } from 'types';
+import {
+  getErrorMessage,
+  getJSONMessage,
+  getPhoneNumberFromChatId,
+  getTextMessage,
+  isOutgoingTemplateMessage,
+} from 'utils';
 
 const ChatView: FC = () => {
-  const userCredentials = useAppSelector(selectInstance);
+  const instanceCredentials = useAppSelector(selectInstance);
   const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
   const isMiniVersion = useAppSelector(selectMiniVersion);
 
@@ -29,6 +36,15 @@ const ChatView: FC = () => {
   const setPageTimerReference = useRef<ReturnType<typeof setTimeout>>();
   const scrollTimerReference = useRef<ReturnType<typeof setTimeout>>();
 
+  const { data: profileSettings } = useGetProfileSettingsQuery();
+
+  const { data: templates, isLoading: templatesLoading } = useGetTemplatesQuery(
+    instanceCredentials,
+    {
+      skip: !(profileSettings && profileSettings.result && profileSettings.data.isWaba),
+    }
+  );
+
   const {
     data: messages,
     isLoading,
@@ -36,8 +52,8 @@ const ChatView: FC = () => {
     error,
   } = useGetChatHistoryQuery(
     {
-      idInstance: userCredentials.idInstance,
-      apiTokenInstance: userCredentials.apiTokenInstance,
+      idInstance: instanceCredentials.idInstance,
+      apiTokenInstance: instanceCredentials.apiTokenInstance,
       chatId: activeChat.chatId,
       count: isMiniVersion ? 10 : count,
     },
@@ -79,7 +95,7 @@ const ChatView: FC = () => {
     if (element && count === 30) {
       element.scrollTo({ top: element.scrollHeight });
     }
-  }, [messages]);
+  }, [messages, templates]);
 
   const loaderVisible =
     !isMiniVersion &&
@@ -88,7 +104,7 @@ const ChatView: FC = () => {
     chatViewRef.current?.scrollTop === 0 &&
     chatViewRef.current?.scrollHeight > chatViewRef.current?.clientHeight;
 
-  if (isLoading) {
+  if (isLoading || templatesLoading) {
     return (
       <div className={`chat-view flex-center ${isMiniVersion ? '' : 'full'}`}>
         <Spin size="large" />
@@ -136,6 +152,64 @@ const ChatView: FC = () => {
         previousMessageAreOutgoing = message.type === 'outgoing';
         previousSenderName = message.senderName || message.senderId || '';
 
+        let templateMessage: ParsedWabaTemplateInterface | undefined;
+
+        if (message.templateMessage && !isMiniVersion) {
+          if (isOutgoingTemplateMessage(message.templateMessage, message.type)) {
+            const id = message.templateMessage.templateId;
+
+            const templateData = templates?.templates.find(
+              (template) => template.templateId === id
+            );
+
+            if (!templateData) {
+              return null;
+            }
+
+            if (templateData.containerMeta) {
+              templateMessage = JSON.parse(
+                templateData.containerMeta
+              ) as ParsedWabaTemplateInterface;
+
+              templateMessage.params = message.templateMessage.params;
+            }
+          } else {
+            templateMessage = {
+              header: message.templateMessage.titleText,
+              data: message.templateMessage.contentText || '',
+              footer: message.templateMessage.footerText,
+              mediaUrl: message.templateMessage.mediaUrl,
+              buttons: message.templateMessage.buttons?.map((incomingBtn) => {
+                if (incomingBtn.callButton) {
+                  return {
+                    text: incomingBtn.callButton.displayText,
+                    value: incomingBtn.callButton.displayText,
+                    type: TemplateButtonTypesEnum.PhoneNumber,
+                  };
+                } else if (incomingBtn.urlButton) {
+                  return {
+                    text: incomingBtn.urlButton.displayText,
+                    value: incomingBtn.urlButton.displayText,
+                    type: TemplateButtonTypesEnum.Url,
+                  };
+                } else if (incomingBtn.quickReplyButton) {
+                  return {
+                    text: incomingBtn.quickReplyButton.displayText,
+                    value: incomingBtn.quickReplyButton.displayText,
+                    type: TemplateButtonTypesEnum.Url,
+                  };
+                }
+
+                return {
+                  text: '',
+                  value: '',
+                  type: TemplateButtonTypesEnum.Url,
+                };
+              }),
+            };
+          }
+        }
+
         return (
           <Message
             key={message.idMessage}
@@ -151,6 +225,7 @@ const ChatView: FC = () => {
             downloadUrl={message.downloadUrl}
             statusMessage={message.statusMessage}
             quotedMessage={message.quotedMessage}
+            templateMessage={templateMessage}
           />
         );
       })}

@@ -1,14 +1,16 @@
 import { FC, useEffect, useRef } from 'react';
 
-import { Space, Typography } from 'antd';
+import { Image, Space, Typography } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import MessageTooltip from './message-tooltip.component';
 import QuotedMessage from './quoted-message.component';
+import TemplateMessage from './template-message/template-message.component';
 import { useAppSelector } from 'hooks';
 import { selectMiniVersion } from 'store/slices/chat.slice';
 import {
   LanguageLiteral,
+  ParsedWabaTemplateInterface,
   QuotedMessageInterface,
   StatusMessage,
   TypeConnectionMessage,
@@ -36,6 +38,7 @@ interface MessageProps {
   showSenderName: boolean;
   phone?: string;
   quotedMessage?: QuotedMessageInterface;
+  templateMessage?: ParsedWabaTemplateInterface;
 }
 
 const Message: FC<MessageProps> = ({
@@ -51,6 +54,7 @@ const Message: FC<MessageProps> = ({
   phone,
   isLastMessage,
   quotedMessage,
+  templateMessage,
   id,
 }) => {
   const isMiniVersion = useAppSelector(selectMiniVersion);
@@ -72,6 +76,33 @@ const Message: FC<MessageProps> = ({
       element.scrollIntoView();
     }
   }, [isLastMessage]);
+
+  let messageBody = (
+    <Space>
+      {getMessageTypeIcon(typeMessage, downloadUrl)}
+      <Typography.Paragraph
+        className={`${type === 'outgoing' ? 'outgoing' : 'incoming'} ${isMiniVersion ? '' : 'full'}`}
+        style={{ fontSize: isMiniVersion ? 16 : 14, margin: 0 }}
+        ellipsis={{ rows: 6, expandable: true, symbol: t('SHOW_ALL_TEXT') }}
+      >
+        {typeMessage === 'templateButtonsReplyMessage' && (
+          <>
+            <em>Button reply:</em>
+            <br />
+          </>
+        )}
+        {formattedMessage}
+      </Typography.Paragraph>
+    </Space>
+  );
+
+  if (templateMessage) {
+    messageBody = <TemplateMessage templateMessage={templateMessage} type={type} />;
+  }
+
+  if (downloadUrl && typeMessage === 'imageMessage' && !isMiniVersion) {
+    messageBody = <Image width={250} height={250} src={downloadUrl} loading="lazy" alt="media" />;
+  }
 
   return (
     <div
@@ -99,23 +130,8 @@ const Message: FC<MessageProps> = ({
         </Space>
       )}
       {quotedMessage && <QuotedMessage quotedMessage={quotedMessage} type={type} />}
-      <Space>
-        {getMessageTypeIcon(typeMessage, downloadUrl)}
-        <Typography.Paragraph
-          className={`${type === 'outgoing' ? 'outgoing' : 'incoming'} ${isMiniVersion ? '' : 'full'}`}
-          style={{ fontSize: isMiniVersion ? 16 : 14, margin: 0 }}
-          ellipsis={{ rows: 6, expandable: true, symbol: t('SHOW_ALL_TEXT') }}
-        >
-          {typeMessage === 'templateButtonsReplyMessage' && (
-            <>
-              <em>Button reply:</em>
-              <br />
-            </>
-          )}
-          {formattedMessage}
-        </Typography.Paragraph>
-      </Space>
-      <Space style={{ alignSelf: 'end' }}>
+      {messageBody}
+      <Space className="message-date">
         <MessageTooltip jsonMessage={jsonMessage} />
         <span style={{ fontSize: 14 }}>{messageDate}</span>
         {getOutgoingStatusMessageIcon(statusMessage)}

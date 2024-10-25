@@ -13,6 +13,7 @@ const initialState: ChatState = {
   messageCount: 30,
   isContactInfoOpen: false,
   activeTemplate: null,
+  templateMessagesLoading: false,
 };
 
 const chatSlice = createSlice({
@@ -48,6 +49,13 @@ const chatSlice = createSlice({
     setActiveTemplate: (state, action: PayloadAction<ChatState['activeTemplate']>) => {
       state.activeTemplate = action.payload;
     },
+
+    setTemplateMessagesLoading: (
+      state,
+      action: PayloadAction<ChatState['templateMessagesLoading']>
+    ) => {
+      state.templateMessagesLoading = action.payload;
+    },
   },
 });
 
@@ -62,3 +70,5 @@ export const selectMessageCount = (state: RootState) => state.chatReducer.messag
 export const selectType = (state: RootState) => state.chatReducer.type;
 export const selectIsContactInfoOpen = (state: RootState) => state.chatReducer.isContactInfoOpen;
 export const selectActiveTemplate = (state: RootState) => state.chatReducer.activeTemplate;
+export const selectTemplateMessagesLoading = (state: RootState) =>
+  state.chatReducer.templateMessagesLoading;

@@ -77,7 +77,7 @@ export interface MessageInterface
   contact?: Contact;
   extendedTextMessage?: ExtendedTextMessage;
   quotedMessage?: QuotedMessageInterface;
-  templateMessage?: TemplateMessage;
+  templateMessage?: TemplateMessageInterface;
   templateButtonReplyMessage?: TemplateButtonReplyMessage;
   downloadUrl?: string;
   location?: LocationInterface;
@@ -107,9 +107,28 @@ export interface ExtendedTextMessage {
   jpegThumbnail: string;
 }
 
-export interface TemplateMessage {
+export type TemplateMessageInterface = IncomingTemplateMessage | OutgoingTemplateMessage;
+
+export interface OutgoingTemplateMessage {
   templateId: string;
   params?: string[];
+}
+
+export interface IncomingTemplateMessage {
+  contentText: string;
+  titleText?: string;
+  footerText?: string;
+  mediaUrl?: string;
+  buttons: {
+    urlButton: IncomingTemplateButton;
+    quickReplyButton: IncomingTemplateButton;
+    callButton: IncomingTemplateButton;
+  }[];
+}
+
+export interface IncomingTemplateButton {
+  displayText: string;
+  [key: string]: string;
 }
 
 export interface TemplateButtonReplyMessage {

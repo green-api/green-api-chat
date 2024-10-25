@@ -14,7 +14,13 @@
   }
 
   &-date {
-    margin-left: auto;
+    align-self: end;
+  }
+
+  &__image {
+    width: 100%;
+    object-fit: cover;
+    max-height: 400px;
   }
 
   &:hover {

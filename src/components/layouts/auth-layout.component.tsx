@@ -6,11 +6,12 @@ import { Outlet, useNavigate } from 'react-router-dom';
 import { Routes } from 'configs';
 import { useAppSelector } from 'hooks';
 import { selectMiniVersion } from 'store/slices/chat.slice';
-import { selectUser } from 'store/slices/user.slice';
+import { selectPlatform, selectUser } from 'store/slices/user.slice';
 import { isAuth } from 'utils';
 
 const AuthLayout: FC = () => {
   const isMiniVersion = useAppSelector(selectMiniVersion);
+  const platform = useAppSelector(selectPlatform);
   const user = useAppSelector(selectUser);
 
   const navigate = useNavigate();
@@ -21,7 +22,7 @@ const AuthLayout: FC = () => {
     }
   }, [user, navigate]);
 
-  if (isMiniVersion) {
+  if (isMiniVersion || platform !== 'web') {
     return <></>;
   }
 

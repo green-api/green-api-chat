@@ -9,6 +9,7 @@ import { useGetProfileSettingsQuery } from 'services/app/endpoints';
 import { useGetChatHistoryQuery, useGetTemplatesQuery } from 'services/green-api/endpoints';
 import { selectActiveChat, selectMiniVersion } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
+import { selectUser } from 'store/slices/user.slice';
 import { ActiveChat, ParsedWabaTemplateInterface, TemplateButtonTypesEnum } from 'types';
 import {
   getErrorMessage,
@@ -19,6 +20,7 @@ import {
 } from 'utils';
 
 const ChatView: FC = () => {
+  const { idUser, apiTokenUser } = useAppSelector(selectUser);
   const instanceCredentials = useAppSelector(selectInstance);
   const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
   const isMiniVersion = useAppSelector(selectMiniVersion);
@@ -36,7 +38,10 @@ const ChatView: FC = () => {
   const setPageTimerReference = useRef<ReturnType<typeof setTimeout>>();
   const scrollTimerReference = useRef<ReturnType<typeof setTimeout>>();
 
-  const { data: profileSettings } = useGetProfileSettingsQuery();
+  const { data: profileSettings } = useGetProfileSettingsQuery(
+    { idUser, apiTokenUser },
+    { skip: !idUser || !apiTokenUser }
+  );
 
   const { data: templates, isLoading: templatesLoading } = useGetTemplatesQuery(
     instanceCredentials,

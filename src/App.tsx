@@ -10,14 +10,17 @@ import { DARK_THEME, DEFAULT_THEME, localisation } from 'configs';
 import { useActions, useAppSelector } from 'hooks';
 import router from 'router';
 import { selectTheme } from 'store/slices/theme.slice';
+import { selectUser } from 'store/slices/user.slice';
 import { MessageData, MessageEventTypeEnum, Themes } from 'types';
 import { isConsoleMessageData, isPageInIframe } from 'utils';
 
 function App() {
+  const { idUser, apiTokenUser } = useAppSelector(selectUser);
+
   const { i18n } = useTranslation();
   const { setSelectedInstance, setTheme, login, setPlatform } = useActions();
 
-  useGetProfileSettingsQuery();
+  useGetProfileSettingsQuery({ idUser, apiTokenUser }, { skip: !idUser || !apiTokenUser });
 
   const currentTheme = useAppSelector(selectTheme);
   const themesList = {

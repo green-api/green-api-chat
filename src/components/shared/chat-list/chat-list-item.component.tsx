@@ -95,7 +95,8 @@ const ChatListItem: FC<ContactListItemProps> = ({ lastMessage }) => {
     return lastMessage.chatId.includes('g.us') ? emptyAvatarGroup : emptyAvatar;
   }, [contactInfo, avatarData, lastMessage]);
 
-  if (groupData && groupData === 'Error: item-not-found') {
+  // TODO: rework handle groupData error
+  if (groupData && typeof groupData === 'string') {
     return null;
   }
 

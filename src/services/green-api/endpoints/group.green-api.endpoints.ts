@@ -4,10 +4,7 @@ import { getGreenApiUrls } from 'utils';
 
 export const groupGreenApiEndpoints = greenAPI.injectEndpoints({
   endpoints: (builder) => ({
-    getGroupData: builder.query<
-      GetGroupDataResponseInterface | 'Error: item-not-found',
-      GroupBaseParametersInterface
-    >({
+    getGroupData: builder.query<GetGroupDataResponseInterface, GroupBaseParametersInterface>({
       query: ({ idInstance, apiTokenInstance, ...body }) => ({
         url: `${
           getGreenApiUrls(idInstance).api

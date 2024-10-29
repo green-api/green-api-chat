@@ -5,7 +5,7 @@ import { FormItemProps } from 'antd';
 import {
   ExpandedInstanceInterface,
   GetContactInfoResponseInterface,
-  GetGroupDataResponseInterface,
+  GetGroupDataSuccessResponseInterface,
   MessageInterface,
   TypeConnectionMessage,
   UserInterface,
@@ -43,7 +43,7 @@ export type ChatPlatform = 'web' | 'ios' | 'android';
 export interface ActiveChat
   extends Pick<MessageInterface, 'chatId' | 'senderName' | 'senderContactName'> {
   avatar: string;
-  contactInfo?: GetContactInfoResponseInterface | GetGroupDataResponseInterface;
+  contactInfo?: GetContactInfoResponseInterface | GetGroupDataSuccessResponseInterface;
 }
 
 export interface InstancesState {

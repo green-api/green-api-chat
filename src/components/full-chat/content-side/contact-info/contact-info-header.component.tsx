@@ -32,11 +32,17 @@ const ContactInfoHeader: FC = () => {
 
       return (
         <Flex vertical gap={2} justify="center" align="center" className="w-100">
-          <Typography.Title level={2} style={{ marginBottom: 'unset' }}>
+          <Typography.Title
+            level={2}
+            style={{ marginBottom: 'unset' }}
+            className="contact-info-name"
+          >
             {contactName}
           </Typography.Title>
           {contactCredentials !== contactName && (
-            <Typography.Text style={{ fontSize: 18 }}>{contactCredentials}</Typography.Text>
+            <Typography.Text className="contact-info-credentials">
+              {contactCredentials}
+            </Typography.Text>
           )}
         </Flex>
       );
@@ -68,11 +74,13 @@ const ContactInfoHeader: FC = () => {
 
     return (
       <Flex vertical gap={2} justify="center" align="center" className="w-100">
-        <Typography.Title level={2} style={{ marginBottom: 'unset' }}>
+        <Typography.Title level={2} style={{ marginBottom: 'unset' }} className="contact-info-name">
           {contactName}
         </Typography.Title>
         {contactCredentials !== contactName && (
-          <Typography.Text style={{ fontSize: 18 }}>{contactCredentials}</Typography.Text>
+          <Typography.Text className="contact-info-credentials">
+            {contactCredentials}
+          </Typography.Text>
         )}
         {category && <Typography.Text>{category}</Typography.Text>}
         {isBusiness && (
@@ -88,7 +96,7 @@ const ContactInfoHeader: FC = () => {
   };
 
   return (
-    <Flex vertical gap={20} className="contact-info-header">
+    <Flex vertical className="contact-info-header">
       <Header className="p-10">
         <Space>
           <a>
@@ -98,8 +106,8 @@ const ContactInfoHeader: FC = () => {
         </Space>
       </Header>
       <Flex vertical justify="center" align="center" gap={10} className="p-10 text-center">
-        <div style={{ borderRadius: '50%', width: 200, height: 200, overflow: 'hidden' }}>
-          <Image width={200} height={200} src={activeChat.avatar} />
+        <div style={{ borderRadius: '50%', overflow: 'hidden' }}>
+          <Image className="contact-info-avatar" src={activeChat.avatar} />
         </div>
         {getHeaderBody()}
       </Flex>

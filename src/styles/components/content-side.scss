@@ -40,7 +40,32 @@
 
   &-description {
     background-color: var(--main-background);
+    min-height: 65px;
     max-height: 350px;
     @include scrollBar();
+  }
+
+  & &-name {
+    @media screen and (max-width: 500px) {
+      font-size: 20px;
+    }
+  }
+
+  & &-credentials {
+    font-size: 18px;
+
+    @media screen and (max-width: 500px) {
+      font-size: 14px;
+    }
+  }
+
+  & &-avatar {
+    width: 200px;
+    height: 200px;
+
+    @media screen and (max-width: 500px) {
+      width: 120px;
+      height: 120px;
+    }
   }
 }

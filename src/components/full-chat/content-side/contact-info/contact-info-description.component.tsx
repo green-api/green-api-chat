@@ -41,7 +41,9 @@ const ContactInfoDescription: FC = () => {
 
   return (
     <div className="contact-info-description w-100 p-10">
-      <Typography.Paragraph>{formattedDescription}</Typography.Paragraph>
+      <Typography.Paragraph style={{ marginBottom: 'initial' }}>
+        {formattedDescription}
+      </Typography.Paragraph>
     </div>
   );
 };

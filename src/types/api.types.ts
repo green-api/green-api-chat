@@ -156,7 +156,11 @@ export interface GroupBaseParametersInterface extends InstanceInterface {
   groupId: string;
 }
 
-export interface GetGroupDataResponseInterface
+export type GetGroupDataResponseInterface =
+  | GetGroupDataSuccessResponseInterface
+  | GetGroupDataErrorResponse;
+
+export interface GetGroupDataSuccessResponseInterface
   extends Pick<GroupBaseParametersInterface, 'groupId'> {
   owner: string;
   subject: string;
@@ -166,6 +170,8 @@ export interface GetGroupDataResponseInterface
   subjectOwner: string;
   groupInviteLink: string;
 }
+
+export type GetGroupDataErrorResponse = 'Error: item-not-found' | 'Error: forbidden';
 
 export interface GroupParticipantInterface {
   id: string;

@@ -7,7 +7,7 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 export default defineConfig({
   base: '/chat',
   build: {
-    assetsDir: 'assets_0.0.38',
+    assetsDir: 'assets_0.0.39',
   },
   plugins: [svgr(), react(), tsconfigPaths()],
 });

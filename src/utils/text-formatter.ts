@@ -25,7 +25,7 @@ const markdownToText = (textInput: string) => {
     function (match, p1, p2) {
       return ''
         .concat(p1, '<a href="')
-        .concat(escapeMarkdownInUrl(p2), '" target="_blank"">')
+        .concat(escapeMarkdownInUrl(p2), `" title=${p2} target="_blank"">`)
         .concat(escapeMarkdownInUrl(p2), '</a>');
     }
   );

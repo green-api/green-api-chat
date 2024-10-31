@@ -12,6 +12,10 @@
 .contact-info {
   position: absolute;
 
+  & > *  {
+    background-color: var(--main-background);
+  }
+
   &-wrapper {
     background-color: var(--second-background);
 
@@ -29,8 +33,6 @@
   }
 
   &-header {
-    background-color: var(--main-background);
-
     & header {
       display: flex;
       align-items: center;
@@ -39,7 +41,6 @@
   }
 
   &-description {
-    background-color: var(--main-background);
     min-height: 65px;
     max-height: 350px;
     @include scrollBar();

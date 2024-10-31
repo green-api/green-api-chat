@@ -103,5 +103,6 @@
   "GROUP_INFO": "Информация о группе",
   "GROUP_COUNT_MEMBERS": "Группа  ·  {0} {1}",
   "GROUP_CREATED_BY": "Группа создана {0}, {1}",
+  "GROUP_INVITE_LINK": "Ссылка на приглашение в группу",
   "BUSINESS_ACCOUNT_DESC": "Это бизнес аккаунт"
 }

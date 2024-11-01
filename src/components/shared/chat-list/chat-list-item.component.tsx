@@ -95,13 +95,12 @@ const ChatListItem: FC<ContactListItemProps> = ({ lastMessage }) => {
     return lastMessage.chatId.includes('g.us') ? emptyAvatarGroup : emptyAvatar;
   }, [contactInfo, avatarData, lastMessage]);
 
-  // TODO: rework handle groupData error
-  if (groupData && typeof groupData === 'string') {
+  if (groupData && groupData === 'Error: item-not-found') {
     return null;
   }
 
   const chatName =
-    groupData?.subject ||
+    (groupData && groupData !== 'Error: forbidden' && groupData.subject) ||
     contactInfo?.contactName ||
     contactInfo?.name ||
     lastMessage.senderContactName ||

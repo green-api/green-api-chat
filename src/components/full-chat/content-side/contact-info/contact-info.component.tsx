@@ -7,10 +7,9 @@ import ContactInfoHeader from './contact-info-header.component';
 import GroupContactList from 'components/shared/group-contact-list/group-contact-list.component';
 import { useActions, useAppSelector } from 'hooks';
 import { selectActiveChat, selectIsContactInfoOpen } from 'store/slices/chat.slice';
-import { ActiveChat } from 'types';
 
 const ContactInfo: FC = () => {
-  const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
+  const activeChat = useAppSelector(selectActiveChat);
   const isContactInfoOpen = useAppSelector(selectIsContactInfoOpen);
 
   const { setContactInfoOpen } = useActions();
@@ -19,7 +18,7 @@ const ContactInfo: FC = () => {
     setContactInfoOpen(false);
   }, [activeChat]);
 
-  if (!isContactInfoOpen) {
+  if (!isContactInfoOpen || !activeChat) {
     return null;
   }
 

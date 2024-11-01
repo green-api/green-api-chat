@@ -23,7 +23,7 @@ const ContactInfoHeader: FC = () => {
   const info = activeChat.chatId.includes('@c.us') ? t('CONTACT_INFO') : t('GROUP_INFO');
 
   const getHeaderBody = () => {
-    if (!activeChat.contactInfo) {
+    if (!activeChat.contactInfo || activeChat.contactInfo === 'Error: forbidden') {
       const contactName = activeChat.chatId?.replace(/\@.*$/, '');
 
       const contactCredentials = activeChat.chatId.includes('@c.us')

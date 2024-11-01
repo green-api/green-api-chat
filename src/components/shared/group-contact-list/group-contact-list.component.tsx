@@ -11,7 +11,7 @@ import { isContactInfo } from 'utils';
 const GroupContactList: FC = () => {
   const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
 
-  if (!activeChat.contactInfo) {
+  if (!activeChat.contactInfo || activeChat.contactInfo === 'Error: forbidden') {
     return null;
   }
 

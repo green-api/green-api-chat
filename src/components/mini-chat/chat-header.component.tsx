@@ -7,12 +7,10 @@ import { useTranslation } from 'react-i18next';
 import { CONSOLE_URL } from 'configs';
 import { useActions, useAppSelector } from 'hooks';
 import { selectActiveChat } from 'store/slices/chat.slice';
-import { selectInstance } from 'store/slices/instances.slice';
 import { selectPlatform } from 'store/slices/user.slice';
 
 const ChatHeader: FC = () => {
   const activeChat = useAppSelector(selectActiveChat);
-  const instanceCredentials = useAppSelector(selectInstance);
   const platform = useAppSelector(selectPlatform);
 
   const { t } = useTranslation();
@@ -38,10 +36,7 @@ const ChatHeader: FC = () => {
       <h3 className="text-overflow">{t('CHAT_HEADER')}</h3>
       {platform === 'web' && (
         <Typography.Link
-          href={
-            CONSOLE_URL +
-            `/chats?idInstance=${instanceCredentials.idInstance}&apiTokenInstance=${instanceCredentials.apiTokenInstance}`
-          }
+          href={CONSOLE_URL + '/chats'}
           target="_parent"
           rel="noreferrer"
           title={t('FULL_VERSION_TITLE')}

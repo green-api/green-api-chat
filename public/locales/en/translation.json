@@ -102,5 +102,6 @@
   "GROUP_INFO": "Group info",
   "GROUP_COUNT_MEMBERS": "Group  ·  {0} {1}",
   "GROUP_CREATED_BY": "Group created by {0}, {1}",
+  "GROUP_INVITE_LINK": "Group invite link",
   "BUSINESS_ACCOUNT_DESC": "This is business account"
 }

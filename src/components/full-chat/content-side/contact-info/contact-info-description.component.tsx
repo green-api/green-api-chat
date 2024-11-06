@@ -39,12 +39,27 @@ const ContactInfoDescription: FC = () => {
     ? getFormattedMessage(description as string)
     : description;
 
+  const groupInviteLink = !isContactInfo(activeChat.contactInfo)
+    ? activeChat.contactInfo.groupInviteLink
+    : null;
+
+  const formattedLink = groupInviteLink ? getFormattedMessage(groupInviteLink) : null;
+
   return (
-    <div className="contact-info-description w-100 p-10">
-      <Typography.Paragraph style={{ marginBottom: 'initial' }}>
-        {formattedDescription}
-      </Typography.Paragraph>
-    </div>
+    <>
+      <div className="contact-info-description w-100 p-10">
+        <Typography.Paragraph style={{ marginBottom: 'initial' }}>
+          {formattedDescription}
+        </Typography.Paragraph>
+      </div>
+      {formattedLink && (
+        <div className="contact-info-group-link p-10">
+          <Typography.Paragraph style={{ marginBottom: 'initial' }} ellipsis={{ rows: 1 }}>
+            {t('GROUP_INVITE_LINK')}: {formattedLink}
+          </Typography.Paragraph>
+        </div>
+      )}
+    </>
   );
 };
 

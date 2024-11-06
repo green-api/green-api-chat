@@ -16,7 +16,7 @@ const ContactInfoDescription: FC = () => {
     i18n: { resolvedLanguage },
   } = useTranslation();
 
-  if (!activeChat.contactInfo) {
+  if (!activeChat.contactInfo || activeChat.contactInfo === 'Error: forbidden') {
     return null;
   }
 

@@ -43,7 +43,10 @@ export type ChatPlatform = 'web' | 'ios' | 'android';
 export interface ActiveChat
   extends Pick<MessageInterface, 'chatId' | 'senderName' | 'senderContactName'> {
   avatar: string;
-  contactInfo?: GetContactInfoResponseInterface | GetGroupDataSuccessResponseInterface;
+  contactInfo?:
+    | GetContactInfoResponseInterface
+    | GetGroupDataSuccessResponseInterface
+    | 'Error: forbidden';
 }
 
 export interface InstancesState {

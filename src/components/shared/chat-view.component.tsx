@@ -181,39 +181,41 @@ const ChatView: FC = () => {
               templateMessage.params = message.templateMessage.params;
             }
           } else {
-            templateMessage = {
-              header: message.templateMessage.titleText,
-              data: message.templateMessage.contentText || '',
-              footer: message.templateMessage.footerText,
-              mediaUrl: message.templateMessage.mediaUrl,
-              buttons: message.templateMessage.buttons?.map((incomingBtn) => {
-                if (incomingBtn.callButton) {
-                  return {
-                    text: incomingBtn.callButton.displayText,
-                    value: incomingBtn.callButton.displayText,
-                    type: TemplateButtonTypesEnum.PhoneNumber,
-                  };
-                } else if (incomingBtn.urlButton) {
-                  return {
-                    text: incomingBtn.urlButton.displayText,
-                    value: incomingBtn.urlButton.displayText,
-                    type: TemplateButtonTypesEnum.Url,
-                  };
-                } else if (incomingBtn.quickReplyButton) {
-                  return {
-                    text: incomingBtn.quickReplyButton.displayText,
-                    value: incomingBtn.quickReplyButton.displayText,
-                    type: TemplateButtonTypesEnum.Url,
-                  };
-                }
+            if (message.templateMessage.contentText) {
+              templateMessage = {
+                header: message.templateMessage.titleText,
+                data: message.templateMessage.contentText,
+                footer: message.templateMessage.footerText,
+                mediaUrl: message.templateMessage.mediaUrl,
+                buttons: message.templateMessage.buttons?.map((incomingBtn) => {
+                  if (incomingBtn.callButton) {
+                    return {
+                      text: incomingBtn.callButton.displayText,
+                      value: incomingBtn.callButton.displayText,
+                      type: TemplateButtonTypesEnum.PhoneNumber,
+                    };
+                  } else if (incomingBtn.urlButton) {
+                    return {
+                      text: incomingBtn.urlButton.displayText,
+                      value: incomingBtn.urlButton.displayText,
+                      type: TemplateButtonTypesEnum.Url,
+                    };
+                  } else if (incomingBtn.quickReplyButton) {
+                    return {
+                      text: incomingBtn.quickReplyButton.displayText,
+                      value: incomingBtn.quickReplyButton.displayText,
+                      type: TemplateButtonTypesEnum.Url,
+                    };
+                  }
 
-                return {
-                  text: '',
-                  value: '',
-                  type: TemplateButtonTypesEnum.Url,
-                };
-              }),
-            };
+                  return {
+                    text: '',
+                    value: '',
+                    type: TemplateButtonTypesEnum.Url,
+                  };
+                }),
+              };
+            }
           }
         }
 

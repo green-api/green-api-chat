@@ -104,5 +104,7 @@
   "GROUP_CREATED_BY": "Group created by {0}, {1}",
   "GROUP_INVITE_LINK": "Group invite link",
   "CANT_SEND_IN_GROUP": "You can't send messages to this group because you're no longer a member.",
-  "BUSINESS_ACCOUNT_DESC": "This is business account"
+  "BUSINESS_ACCOUNT_DESC": "This is business account",
+
+  "LEFT_THE_GROUP_ALERT_MESSAGE": "You left the group"
 }

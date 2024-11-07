@@ -104,5 +104,7 @@
   "GROUP_CREATED_BY": "הקבוצה נוצרה על ידי {0}, {1}",
   "GROUP_INVITE_LINK": "קישור להזמנה לקבוצה",
   "CANT_SEND_IN_GROUP": "אינך יכול לשלוח הודעות לקבוצה זו כי אינך חבר עוד.",
-  "BUSINESS_ACCOUNT_DESC": "זה חשבון עסקי"
+  "BUSINESS_ACCOUNT_DESC": "זה חשבון עסקי",
+
+  "LEFT_THE_GROUP_ALERT_MESSAGE": "עזבת את הקבוצה"
 }

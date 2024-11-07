@@ -4,6 +4,7 @@ import { Empty, Spin } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import Message from './message/message.component';
+import LeftGroupAlert from 'components/alerts/left-group-alert.component';
 import { useActions, useAppSelector } from 'hooks';
 import { useGetProfileSettingsQuery } from 'services/app/endpoints';
 import { useGetChatHistoryQuery, useGetTemplatesQuery } from 'services/green-api/endpoints';
@@ -238,6 +239,7 @@ const ChatView: FC = () => {
           />
         );
       })}
+      {activeChat.contactInfo === 'Error: forbidden' && <LeftGroupAlert />}
     </div>
   );
 };

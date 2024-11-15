@@ -41,7 +41,7 @@
 
 .incoming {
   background-color: var(--light-primary-color);
-  color: var(--main-background);
+  color: var(--main-background) !important;
   align-self: flex-start;
 }
 

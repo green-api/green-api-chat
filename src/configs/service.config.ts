@@ -27,6 +27,13 @@ export const GREEN_API_INSTANCES_ROUTER: GreenApiRouteInterface[] = [
     instancesCodes: [1103],
   },
   {
+    api: 'https://1204.api.green-api.com',
+    media: 'https://1204.media.green-api.com',
+    qrHost: 'wss://api.green-api.com',
+    qrHttpHost: 'https://qr.green-api.com',
+    instancesCodes: [1204],
+  },
+  {
     api: 'https://5700.api.green-api.com',
     media: 'https://5700.media.green-api.com',
     qrHost: 'wss://5700.api.green-api.com',

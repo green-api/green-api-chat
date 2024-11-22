@@ -52,6 +52,7 @@ export type TypeMessage =
   | 'deletedMessage'
   | 'editedMessage'
   | 'reactionMessage'
+  | 'stickerMessage'
   | 'templateMessage'
   | 'templateButtonsReplyMessage';
 

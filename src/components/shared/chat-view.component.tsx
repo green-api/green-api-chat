@@ -236,6 +236,8 @@ const ChatView: FC = () => {
             statusMessage={message.statusMessage}
             quotedMessage={message.quotedMessage}
             templateMessage={templateMessage}
+            caption={message.caption}
+            fileName={message.fileName}
           />
         );
       })}

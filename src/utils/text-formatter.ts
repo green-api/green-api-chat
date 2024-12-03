@@ -3,10 +3,12 @@ export function TextFormatter(text: string) {
     return null;
   }
 
-  return markdownToText(text);
+  const escaped = escapeMarkdownInUrl(text);
+
+  return markdownToText(escaped);
 }
 
-const escapeMarkdownInUrl = (url: string) => {
+export const escapeMarkdownInUrl = (url: string) => {
   return url.replace(/[<>"']/g, function (char) {
     return (
       {

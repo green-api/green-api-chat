@@ -21,6 +21,8 @@ const initialState: InstancesState = {
   selectedInstance: getSelectedInstanceFromStorage() || {
     idInstance: 0,
     apiTokenInstance: '',
+    apiUrl: '',
+    mediaUrl: '',
   },
 };
 

@@ -56,8 +56,7 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
 
     if (!isGroupChat) {
       const { data, error } = await checkWhatsapp({
-        idInstance: instanceCredentials.idInstance,
-        apiTokenInstance: instanceCredentials.apiTokenInstance,
+        ...instanceCredentials,
         phoneNumber: chatId,
       });
 
@@ -73,8 +72,7 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
     }
 
     const body = {
-      idInstance: instanceCredentials.idInstance,
-      apiTokenInstance: instanceCredentials.apiTokenInstance,
+      ...instanceCredentials,
       chatId: fullChatId,
       refetchLastMessages: !addNewChatInList,
       message,
@@ -92,10 +90,7 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
       if (addNewChatInList) {
         const updateChatListThunk = journalsGreenApiEndpoints.util?.updateQueryData(
           'lastMessages',
-          {
-            idInstance: instanceCredentials.idInstance,
-            apiTokenInstance: instanceCredentials.apiTokenInstance,
-          },
+          instanceCredentials,
           (draftChatHistory) => {
             const newMessage: MessageInterface = {
               type: 'outgoing',

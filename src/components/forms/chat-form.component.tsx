@@ -35,8 +35,7 @@ const ChatForm: FC = () => {
   const onSendMessage = async (values: ChatFormValues) => {
     const { message } = values;
     const body = {
-      idInstance: instanceCredentials.idInstance,
-      apiTokenInstance: instanceCredentials.apiTokenInstance,
+      ...instanceCredentials,
       chatId: activeChat.chatId,
       message,
     };
@@ -61,8 +60,7 @@ const ChatForm: FC = () => {
       const updateChatHistoryThunk = journalsGreenApiEndpoints.util?.updateQueryData(
         'getChatHistory',
         {
-          idInstance: instanceCredentials.idInstance,
-          apiTokenInstance: instanceCredentials.apiTokenInstance,
+          ...instanceCredentials,
           chatId: activeChat.chatId,
           count: isMiniVersion ? 10 : messageCount,
         },
@@ -92,10 +90,7 @@ const ChatForm: FC = () => {
 
       const updateChatListThunk = journalsGreenApiEndpoints.util?.updateQueryData(
         'lastMessages',
-        {
-          idInstance: instanceCredentials.idInstance,
-          apiTokenInstance: instanceCredentials.apiTokenInstance,
-        },
+        instanceCredentials,
         (draftChatHistory) => {
           const newMessage: MessageInterface = {
             type: 'outgoing',

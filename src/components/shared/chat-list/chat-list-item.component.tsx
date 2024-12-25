@@ -44,8 +44,7 @@ const ChatListItem: FC<ContactListItemProps> = ({ lastMessage }) => {
 
   const { data: groupData, isLoading: isGroupDataLoading } = useGetGroupDataQuery(
     {
-      idInstance: instanceCredentials.idInstance,
-      apiTokenInstance: instanceCredentials.apiTokenInstance,
+      ...instanceCredentials,
       groupId: lastMessage.chatId,
     },
     {
@@ -57,8 +56,7 @@ const ChatListItem: FC<ContactListItemProps> = ({ lastMessage }) => {
 
   const { data: contactInfo, isLoading: isContactInfoLoading } = useGetContactInfoQuery(
     {
-      idInstance: instanceCredentials.idInstance,
-      apiTokenInstance: instanceCredentials.apiTokenInstance,
+      ...instanceCredentials,
       chatId: lastMessage.chatId,
     },
     {
@@ -70,8 +68,7 @@ const ChatListItem: FC<ContactListItemProps> = ({ lastMessage }) => {
 
   const { data: avatarData } = useGetAvatarQuery(
     {
-      idInstance: instanceCredentials.idInstance,
-      apiTokenInstance: instanceCredentials.apiTokenInstance,
+      ...instanceCredentials,
       chatId: lastMessage.chatId,
     },
     {

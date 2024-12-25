@@ -8,15 +8,20 @@ import {
   SendLocationParametersInterface,
   SendPollParametersInterface,
 } from 'types';
-import { getFormData, getGreenApiUrls } from 'utils';
+import { getFormData } from 'utils';
 
 export const sendingGreenApiEndpoints = greenAPI.injectEndpoints({
   endpoints: (builder) => ({
     sendMessage: builder.mutation<SendingResponseInterface, SendMessageParametersInterface>({
-      query: ({ idInstance, apiTokenInstance, refetchLastMessages, ...body }) => ({
-        url: `${
-          getGreenApiUrls(idInstance).api
-        }/waInstance${idInstance}/sendMessage/${apiTokenInstance}`,
+      query: ({
+        idInstance,
+        apiTokenInstance,
+        refetchLastMessages,
+        apiUrl,
+        mediaUrl: _,
+        ...body
+      }) => ({
+        url: `${apiUrl}waInstance${idInstance}/sendMessage/${apiTokenInstance}`,
         method: 'POST',
         body,
       }),
@@ -27,28 +32,22 @@ export const sendingGreenApiEndpoints = greenAPI.injectEndpoints({
       },
     }),
     sendContact: builder.mutation<SendingResponseInterface, SendContactParametersInterface>({
-      query: ({ idInstance, apiTokenInstance, ...body }) => ({
-        url: `${
-          getGreenApiUrls(idInstance).api
-        }/waInstance${idInstance}/sendContact/${apiTokenInstance}`,
+      query: ({ idInstance, apiTokenInstance, apiUrl, mediaUrl: _, ...body }) => ({
+        url: `${apiUrl}waInstance${idInstance}/sendContact/${apiTokenInstance}`,
         method: 'POST',
         body,
       }),
     }),
     sendLocation: builder.mutation<SendingResponseInterface, SendLocationParametersInterface>({
-      query: ({ idInstance, apiTokenInstance, ...body }) => ({
-        url: `${
-          getGreenApiUrls(idInstance).api
-        }/waInstance${idInstance}/sendLocation/${apiTokenInstance}`,
+      query: ({ idInstance, apiTokenInstance, apiUrl, mediaUrl: _, ...body }) => ({
+        url: `${apiUrl}waInstance${idInstance}/sendLocation/${apiTokenInstance}`,
         method: 'POST',
         body,
       }),
     }),
     sendPoll: builder.mutation<SendingResponseInterface, SendPollParametersInterface>({
-      query: ({ idInstance, apiTokenInstance, ...body }) => ({
-        url: `${
-          getGreenApiUrls(idInstance).api
-        }/waInstance${idInstance}/sendPoll/${apiTokenInstance}`,
+      query: ({ idInstance, apiTokenInstance, apiUrl, mediaUrl: _, ...body }) => ({
+        url: `${apiUrl}waInstance${idInstance}/sendPoll/${apiTokenInstance}`,
         method: 'POST',
         body,
       }),
@@ -57,10 +56,8 @@ export const sendingGreenApiEndpoints = greenAPI.injectEndpoints({
       SendFileByUploadResponseInterface,
       SendFileByUploadParametersInterface
     >({
-      query: ({ idInstance, apiTokenInstance, ...body }) => ({
-        url: `${
-          getGreenApiUrls(idInstance).media
-        }/waInstance${idInstance}/sendFileByUpload/${apiTokenInstance}`,
+      query: ({ idInstance, apiTokenInstance, mediaUrl, apiUrl: _, ...body }) => ({
+        url: `${mediaUrl}waInstance${idInstance}/sendFileByUpload/${apiTokenInstance}`,
         method: 'POST',
         body: getFormData(body),
         formData: true,

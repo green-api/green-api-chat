@@ -19,7 +19,7 @@ const ChatsHeader: FC = () => {
 
   const onLogoutClick = () => {
     setActiveChat(null);
-    setSelectedInstance({ idInstance: 0, apiTokenInstance: '' });
+    setSelectedInstance({ idInstance: 0, apiTokenInstance: '', apiUrl: '', mediaUrl: '' });
     logout();
   };
 

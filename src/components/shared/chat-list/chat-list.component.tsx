@@ -19,17 +19,11 @@ const ChatList: FC = () => {
 
   const { t } = useTranslation();
 
-  const { data, isLoading, error } = useLastMessagesQuery(
-    {
-      idInstance: instanceCredentials.idInstance,
-      apiTokenInstance: instanceCredentials.apiTokenInstance,
-    },
-    {
-      skipPollingIfUnfocused: true,
-      pollingInterval: isMiniVersion ? 17000 : 15000,
-      skip: !instanceCredentials.idInstance || !instanceCredentials.apiTokenInstance,
-    }
-  );
+  const { data, isLoading, error } = useLastMessagesQuery(instanceCredentials, {
+    skipPollingIfUnfocused: true,
+    pollingInterval: isMiniVersion ? 17000 : 15000,
+    skip: !instanceCredentials.idInstance || !instanceCredentials.apiTokenInstance,
+  });
 
   const chatListRef = useRef<HTMLDivElement | null>(null);
 

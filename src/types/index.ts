@@ -20,11 +20,6 @@ export interface UserState {
   platform: ChatPlatform;
 }
 
-export interface InstanceCredentials {
-  idInstance: number;
-  apiTokenInstance: string;
-}
-
 export interface ChatState {
   activeChat: ActiveChat | null;
   userSideActiveMode: UserSideActiveMode;
@@ -50,12 +45,14 @@ export interface ActiveChat
 }
 
 export interface InstancesState {
-  selectedInstance: InstanceCredentials;
+  selectedInstance: InstanceInterface;
 }
 
 export interface InstanceInterface {
   idInstance: number;
   apiTokenInstance: string;
+  apiUrl: string;
+  mediaUrl: string;
 }
 
 export interface ApiErrorResponse<T = unknown> {
@@ -146,7 +143,7 @@ export enum MessageEventTypeEnum {
 
 export interface MessageDataInit {
   type: MessageEventTypeEnum.INIT;
-  payload: InstanceCredentials &
+  payload: InstanceInterface &
     LocaleChangeMessage &
     ThemeChangeMessage &
     UserInterface & { platform: ChatPlatform };
@@ -164,7 +161,7 @@ export interface MessageDataSetTheme {
 
 export interface MessageDataSetCredentials {
   type: MessageEventTypeEnum.SET_CREDENTIALS;
-  payload: InstanceCredentials;
+  payload: InstanceInterface;
 }
 
 interface LocaleChangeMessage {

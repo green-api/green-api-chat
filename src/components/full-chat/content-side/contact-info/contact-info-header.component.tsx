@@ -77,6 +77,11 @@ const ContactInfoHeader: FC = () => {
         <Typography.Title level={2} style={{ marginBottom: 'unset' }} className="contact-info-name">
           {contactName}
         </Typography.Title>
+        {!isContactInfo(activeChat.contactInfo) && (
+          <Typography.Text style={{ fontSize: 15 }}>
+            id: {activeChat.chatId?.replace(/\@.*$/, '')}
+          </Typography.Text>
+        )}
         {contactCredentials !== contactName && (
           <Typography.Text className="contact-info-credentials">
             {contactCredentials}

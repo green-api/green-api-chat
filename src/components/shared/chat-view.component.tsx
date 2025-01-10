@@ -58,8 +58,7 @@ const ChatView: FC = () => {
     error,
   } = useGetChatHistoryQuery(
     {
-      idInstance: instanceCredentials.idInstance,
-      apiTokenInstance: instanceCredentials.apiTokenInstance,
+      ...instanceCredentials,
       chatId: activeChat.chatId,
       count: isMiniVersion ? 10 : count,
     },

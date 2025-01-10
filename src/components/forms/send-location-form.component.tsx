@@ -53,8 +53,7 @@ const SendLocationForm: FC = () => {
       const updateChatHistoryThunk = journalsGreenApiEndpoints.util?.updateQueryData(
         'getChatHistory',
         {
-          idInstance: instanceCredentials.idInstance,
-          apiTokenInstance: instanceCredentials.apiTokenInstance,
+          ...instanceCredentials,
           chatId: activeChat.chatId,
           count: messageCount,
         },

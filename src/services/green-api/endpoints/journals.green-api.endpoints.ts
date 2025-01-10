@@ -2,19 +2,14 @@ import { greenAPI } from 'services/green-api/green-api.service';
 import {
   GetChatHistoryParametersInterface,
   GetChatHistoryResponse,
-  GetChatInformationParameters,
   LastMessagesParametersInterface,
-  MessageInterface,
 } from 'types';
-import { getGreenApiUrls } from 'utils';
 
 export const journalsGreenApiEndpoints = greenAPI.injectEndpoints({
   endpoints: (builder) => ({
     getChatHistory: builder.query<GetChatHistoryResponse, GetChatHistoryParametersInterface>({
-      query: ({ idInstance, apiTokenInstance, ...body }) => ({
-        url: `${
-          getGreenApiUrls(idInstance).api
-        }/waInstance${idInstance}/getChatHistory/${apiTokenInstance}`,
+      query: ({ idInstance, apiTokenInstance, apiUrl, mediaUrl: _, ...body }) => ({
+        url: `${apiUrl}waInstance${idInstance}/getChatHistory/${apiTokenInstance}`,
         method: 'POST',
         body,
       }),
@@ -28,20 +23,9 @@ export const journalsGreenApiEndpoints = greenAPI.injectEndpoints({
           )
           .reverse(),
     }),
-    getMessage: builder.mutation<MessageInterface, GetChatInformationParameters>({
-      query: ({ idInstance, apiTokenInstance, ...body }) => ({
-        url: `${
-          getGreenApiUrls(idInstance).api
-        }/waInstance${idInstance}/getMessage/${apiTokenInstance}`,
-        method: 'POST',
-        body,
-      }),
-    }),
     lastIncomingMessages: builder.query<GetChatHistoryResponse, LastMessagesParametersInterface>({
-      query: ({ idInstance, apiTokenInstance, minutes }) => ({
-        url: `${
-          getGreenApiUrls(idInstance).api
-        }/waInstance${idInstance}/lastIncomingMessages/${apiTokenInstance}`,
+      query: ({ idInstance, apiTokenInstance, apiUrl, minutes }) => ({
+        url: `${apiUrl}waInstance${idInstance}/lastIncomingMessages/${apiTokenInstance}`,
         method: 'GET',
         params: {
           minutes,
@@ -49,10 +33,8 @@ export const journalsGreenApiEndpoints = greenAPI.injectEndpoints({
       }),
     }),
     lastOutgoingMessages: builder.query<GetChatHistoryResponse, LastMessagesParametersInterface>({
-      query: ({ idInstance, apiTokenInstance, minutes }) => ({
-        url: `${
-          getGreenApiUrls(idInstance).api
-        }/waInstance${idInstance}/lastOutgoingMessages/${apiTokenInstance}`,
+      query: ({ idInstance, apiTokenInstance, apiUrl, minutes }) => ({
+        url: `${apiUrl}waInstance${idInstance}/lastOutgoingMessages/${apiTokenInstance}`,
         method: 'GET',
         params: {
           minutes,
@@ -60,12 +42,9 @@ export const journalsGreenApiEndpoints = greenAPI.injectEndpoints({
       }),
     }),
     lastMessages: builder.query<GetChatHistoryResponse, LastMessagesParametersInterface>({
-      query: ({ idInstance, apiTokenInstance }) => ({
+      query: (params) => ({
         url: '',
-        params: {
-          idInstance,
-          apiTokenInstance,
-        },
+        params,
       }),
       providesTags: ['lastMessages'],
     }),

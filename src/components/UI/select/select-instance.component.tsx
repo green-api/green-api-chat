@@ -133,6 +133,8 @@ const SelectInstance: FC = () => {
         setSelectedInstance({
           idInstance: defaultInstance.idInstance,
           apiTokenInstance: defaultInstance.apiTokenInstance,
+          apiUrl: defaultInstance.apiUrl,
+          mediaUrl: defaultInstance.mediaUrl,
         });
 
         return;
@@ -144,6 +146,8 @@ const SelectInstance: FC = () => {
     setSelectedInstance({
       idInstance: instances[0].idInstance,
       apiTokenInstance: instances[0].apiTokenInstance,
+      apiUrl: instances[0].apiUrl,
+      mediaUrl: instances[0].mediaUrl,
     });
   }, [instances, isSuccessLoadingInstances]);
 
@@ -194,6 +198,8 @@ const SelectInstance: FC = () => {
         setSelectedInstance({
           idInstance: option.idInstance,
           apiTokenInstance: option.apiTokenInstance,
+          apiUrl: option.apiUrl,
+          mediaUrl: option.mediaUrl,
         });
       }}
     />

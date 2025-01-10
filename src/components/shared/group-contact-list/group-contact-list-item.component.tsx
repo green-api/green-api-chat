@@ -24,8 +24,7 @@ const GroupContactListItem: FC<GroupContactListItemProps> = ({ participant }) =>
     isLoading,
     isFetching,
   } = useGetContactInfoQuery({
-    idInstance: instanceCredentials.idInstance,
-    apiTokenInstance: instanceCredentials.apiTokenInstance,
+    ...instanceCredentials,
     chatId: participant.id,
   });
 

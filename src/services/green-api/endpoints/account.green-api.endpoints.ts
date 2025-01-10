@@ -4,7 +4,6 @@ import {
   GetWaSettingsResponseInterface,
   InstanceInterface,
 } from 'types';
-import { getGreenApiUrls } from 'utils';
 
 export const accountGreenApiEndpoints = greenAPI.injectEndpoints({
   endpoints: (builder) => ({
@@ -12,18 +11,14 @@ export const accountGreenApiEndpoints = greenAPI.injectEndpoints({
       GetWaSettingsResponseInterface,
       InstanceInterface & { rtkWaSettingsSessionKey?: number }
     >({
-      query: ({ idInstance, apiTokenInstance }) => ({
-        url: `${
-          getGreenApiUrls(idInstance).api
-        }/waInstance${idInstance}/getWaSettings/${apiTokenInstance}`,
+      query: ({ idInstance, apiTokenInstance, apiUrl }) => ({
+        url: `${apiUrl}waInstance${idInstance}/getWaSettings/${apiTokenInstance}`,
       }),
       keepUnusedDataFor: 1000,
     }),
     getStateInstance: builder.query<GetStateInstanceResponseInterface, InstanceInterface>({
-      query: ({ idInstance, apiTokenInstance }) => ({
-        url: `${
-          getGreenApiUrls(idInstance).api
-        }/waInstance${idInstance}/getStateInstance/${apiTokenInstance}`,
+      query: ({ idInstance, apiTokenInstance, apiUrl }) => ({
+        url: `${apiUrl}waInstance${idInstance}/getStateInstance/${apiTokenInstance}`,
       }),
     }),
   }),

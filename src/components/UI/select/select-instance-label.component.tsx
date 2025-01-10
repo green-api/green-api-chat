@@ -7,11 +7,16 @@ import { useGetWaSettingsQuery } from 'services/green-api/endpoints';
 import { ExpandedInstanceInterface, StateInstanceEnum } from 'types';
 
 const SelectInstanceLabel: FC<
-  Pick<ExpandedInstanceInterface, 'name' | 'idInstance' | 'apiTokenInstance'>
-> = ({ idInstance, apiTokenInstance, name }) => {
+  Pick<
+    ExpandedInstanceInterface,
+    'name' | 'idInstance' | 'apiTokenInstance' | 'apiUrl' | 'mediaUrl'
+  >
+> = ({ idInstance, apiTokenInstance, apiUrl, mediaUrl, name }) => {
   const { data: waSettings, isLoading: isLoadingWaSettings } = useGetWaSettingsQuery({
     idInstance,
     apiTokenInstance,
+    apiUrl,
+    mediaUrl,
   });
 
   return (

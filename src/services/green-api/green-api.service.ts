@@ -8,7 +8,7 @@ import {
 
 import { RootState } from 'store';
 import { InstanceInterface, MessageInterface } from 'types';
-import { getGreenApiUrls, getIsMiniVersion, getLastChats, updateLastChats } from 'utils';
+import { getIsMiniVersion, getLastChats, updateLastChats } from 'utils';
 
 const baseQuery = fetchBaseQuery({
   baseUrl: '',
@@ -28,7 +28,7 @@ const customQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError>
 
   const state = api.getState() as RootState;
   const type = state.chatReducer.type;
-  const { idInstance, apiTokenInstance } = (args as FetchArgs).params as InstanceInterface;
+  const { idInstance, apiTokenInstance, apiUrl } = (args as FetchArgs).params as InstanceInterface;
 
   const cacheKey = `lastMessages(${JSON.stringify({ apiTokenInstance, idInstance })})`;
   const currentChats = state.greenAPI.queries[cacheKey]?.data;
@@ -47,7 +47,7 @@ const customQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError>
   const [lastIncomingMessages, lastOutgoingMessages] = await Promise.all([
     baseQuery(
       {
-        url: `${getGreenApiUrls(idInstance).api}/waInstance${idInstance}/lastIncomingMessages/${apiTokenInstance}`,
+        url: `${apiUrl}waInstance${idInstance}/lastIncomingMessages/${apiTokenInstance}`,
         params: { minutes },
       },
       { ...api, endpoint: 'lastIncomingMessages' },
@@ -55,7 +55,7 @@ const customQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError>
     ),
     baseQuery(
       {
-        url: `${getGreenApiUrls(idInstance).api}/waInstance${idInstance}/lastOutgoingMessages/${apiTokenInstance}`,
+        url: `${apiUrl}waInstance${idInstance}/lastOutgoingMessages/${apiTokenInstance}`,
         params: { minutes },
       },
       { ...api, endpoint: 'lastOutgoingMessages' },

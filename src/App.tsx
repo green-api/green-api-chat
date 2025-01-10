@@ -74,6 +74,8 @@ function App() {
           setSelectedInstance({
             idInstance: event.data.payload.idInstance,
             apiTokenInstance: event.data.payload.apiTokenInstance,
+            apiUrl: event.data.payload.apiUrl,
+            mediaUrl: event.data.payload.mediaUrl,
           });
 
           login({

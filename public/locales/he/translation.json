@@ -18,7 +18,7 @@
   "PHONE_DOES_NOT_HAVE_WHATSAPP": "למספר הזה אין WhatsApp",
   "QUOTE_REACHED": "מכסת המכס מוצתה",
   "CHECK_WHATSAPP_QUOTE_REACHED": "מכסה מותשת לשיטת CheckWhatsApp",
-  "LOGO_TITLE": "GREEN API: שלח וקבל הודעות ווטסאפ",
+  "LOGO_TITLE": "GREEN-API: שלח וקבל הודעות ווטסאפ",
 
   "FILE": "קוֹבֶץ",
   "CONTACT": "מַגָע",
@@ -106,5 +106,7 @@
   "CANT_SEND_IN_GROUP": "אינך יכול לשלוח הודעות לקבוצה זו כי אינך חבר עוד.",
   "BUSINESS_ACCOUNT_DESC": "זה חשבון עסקי",
 
-  "LEFT_THE_GROUP_ALERT_MESSAGE": "עזבת את הקבוצה"
+  "LEFT_THE_GROUP_ALERT_MESSAGE": "עזבת את הקבוצה",
+
+  "BLOCKED_OR_PRIVATE_CHAT": "משתתף הצ'אט חסם אותך או הפעיל את הגדרות הפרטיות"
 }

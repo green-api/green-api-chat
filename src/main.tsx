@@ -8,7 +8,12 @@ import App from './App';
 import './i18n';
 import { setupStore } from 'store';
 
+// eslint-disable-next-line import/no-unresolved,import/order
+import { registerSW } from 'virtual:pwa-register';
+
 import 'styles/index.scss';
+
+registerSW({ immediate: true });
 
 const store = setupStore();
 setupListeners(store.dispatch);

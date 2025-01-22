@@ -5,7 +5,6 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: '/chat',
   build: {
     assetsDir: 'assets_0.0.47',
   },

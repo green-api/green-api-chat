@@ -13,5 +13,5 @@ RUN apk update && apk add --no-cache git
 RUN cd /usr/src/app && npm ci && npm run build
 
 FROM nginx:1.23.3-alpine
-COPY --from=build /usr/src/app/dist /usr/share/nginx/html/chat
+COPY --from=build /usr/src/app/dist /usr/share/nginx/html
 ADD .devops/build/conf.nginx /etc/nginx/conf.d/default.conf

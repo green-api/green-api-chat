@@ -10,7 +10,7 @@ i18n
   .init({
     fallbackLng: 'en',
     backend: {
-      loadPath: '/chat/locales/{{lng}}/translation.json',
+      loadPath: '/locales/{{lng}}/translation.json',
       expirationTime: 24 * 60 * 60 * 1000,
     },
     detection: {

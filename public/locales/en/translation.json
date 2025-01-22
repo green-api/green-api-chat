@@ -108,5 +108,12 @@
 
   "LEFT_THE_GROUP_ALERT_MESSAGE": "You left the group",
 
-  "BLOCKED_OR_PRIVATE_CHAT": "Chat participant has blocked you or turned on privacy settings"
+  "BLOCKED_OR_PRIVATE_CHAT": "Chat participant has blocked you or turned on privacy settings",
+
+  "DEVELOPER_INSTANCE_ALERT": "To operate the chat, the instance will send background requests for journal methods, the use of which is limited in the free plan. Show chats anyway?",
+  "TURNED_OFF_CHATS_ALERT": "Chat display has been disabled for this instance.",
+  "TURN_ON_CHAT": "Turn on chat",
+  "TURN_OFF_CHAT": "Turn off chat",
+  "YES": "Yes",
+  "NO": "No"
 }

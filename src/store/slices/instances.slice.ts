@@ -1,37 +1,54 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { RootState } from 'store';
-import { InstanceInterface, InstancesState } from 'types';
+import { InstancesState, TariffsEnum } from 'types';
 
-const getSelectedInstanceFromStorage = () => {
-  let selectedInstance: InstanceInterface | null = null;
+const getInitialStateFromStorage = () => {
+  let initialState: InstancesState | null = null;
 
   try {
-    const instanceFromStorage = localStorage.getItem('selectedInstance');
+    const initialStateFromStorage = localStorage.getItem('selectedInstance');
 
-    selectedInstance = JSON.parse(instanceFromStorage!) as InstanceInterface;
+    initialState = JSON.parse(initialStateFromStorage!) as InstancesState;
   } catch {
-    selectedInstance = null;
+    initialState = null;
   }
 
-  return selectedInstance;
+  return initialState;
 };
 
-const initialState: InstancesState = {
-  selectedInstance: getSelectedInstanceFromStorage() || {
+const initialState: InstancesState = getInitialStateFromStorage() || {
+  selectedInstance: {
     idInstance: 0,
     apiTokenInstance: '',
     apiUrl: '',
     mediaUrl: '',
   },
+  tariff: TariffsEnum.Developer,
+  isChatWorking: null,
 };
 
 export const instancesSlice = createSlice({
   name: 'instancesSlice',
   initialState,
   reducers: {
-    setSelectedInstance: (state, action: PayloadAction<InstancesState['selectedInstance']>) => {
-      state.selectedInstance = action.payload;
+    setSelectedInstance: (
+      state,
+      action: PayloadAction<
+        InstancesState['selectedInstance'] & { tariff: TariffsEnum; isChatWorking?: boolean | null }
+      >
+    ) => {
+      const { tariff, isChatWorking, ...selectedInstance } = action.payload;
+
+      state.selectedInstance = selectedInstance;
+      state.tariff = tariff;
+
+      if (isChatWorking !== undefined) {
+        state.isChatWorking = isChatWorking;
+      }
+    },
+    setIsChatWorking: (state, action: PayloadAction<InstancesState['isChatWorking']>) => {
+      state.isChatWorking = action.payload;
     },
   },
 });
@@ -40,3 +57,5 @@ export const instancesActions = instancesSlice.actions;
 export default instancesSlice.reducer;
 
 export const selectInstance = (state: RootState) => state.instancesReducer.selectedInstance;
+export const selectInstanceTariff = (state: RootState) => state.instancesReducer.tariff;
+export const selectIsChatWorking = (state: RootState) => state.instancesReducer.isChatWorking;

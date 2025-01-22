@@ -16,6 +16,7 @@ import {
   InstanceInterface,
   SelectInstanceItemInterface,
 } from 'types';
+import { getIsChatWorkingFromStorage } from 'utils';
 
 const SelectInstance: FC = () => {
   const type = useAppSelector(selectType);
@@ -135,6 +136,7 @@ const SelectInstance: FC = () => {
           apiTokenInstance: defaultInstance.apiTokenInstance,
           apiUrl: defaultInstance.apiUrl,
           mediaUrl: defaultInstance.mediaUrl,
+          tariff: defaultInstance.tariff,
         });
 
         return;
@@ -148,6 +150,7 @@ const SelectInstance: FC = () => {
       apiTokenInstance: instances[0].apiTokenInstance,
       apiUrl: instances[0].apiUrl,
       mediaUrl: instances[0].mediaUrl,
+      tariff: instances[0].tariff,
     });
   }, [instances, isSuccessLoadingInstances]);
 
@@ -195,11 +198,15 @@ const SelectInstance: FC = () => {
         value: 'idInstance',
       }}
       onSelect={(_, option: SelectInstanceItemInterface) => {
+        const isChatWorkingFromStorage = getIsChatWorkingFromStorage(option.idInstance);
+
         setSelectedInstance({
           idInstance: option.idInstance,
           apiTokenInstance: option.apiTokenInstance,
           apiUrl: option.apiUrl,
           mediaUrl: option.mediaUrl,
+          tariff: option.tariff,
+          isChatWorking: isChatWorkingFromStorage,
         });
       }}
     />

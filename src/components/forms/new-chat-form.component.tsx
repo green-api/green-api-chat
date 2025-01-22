@@ -9,7 +9,7 @@ import { useAppDispatch, useAppSelector, useFormWithLanguageValidation } from 'h
 import { useCheckWhatsappMutation, useSendMessageMutation } from 'services/green-api/endpoints';
 import { journalsGreenApiEndpoints } from 'services/green-api/endpoints/journals.green-api.endpoints';
 import { selectMiniVersion } from 'store/slices/chat.slice';
-import { selectInstance } from 'store/slices/instances.slice';
+import { selectInstance, selectIsChatWorking } from 'store/slices/instances.slice';
 import { selectUser } from 'store/slices/user.slice';
 import { MessageInterface, NewChatFormValues } from 'types';
 import { getLastChats, isAuth } from 'utils';
@@ -22,6 +22,7 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
   const instanceCredentials = useAppSelector(selectInstance);
   const user = useAppSelector(selectUser);
   const isMiniVersion = useAppSelector(selectMiniVersion);
+  const isChatWorking = useAppSelector(selectIsChatWorking);
 
   const dispatch = useAppDispatch();
 
@@ -34,7 +35,7 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
   const responseTimerReference = useRef<number | null>(null);
 
   const onSendMessage = async (values: NewChatFormValues) => {
-    if (!isAuth(user)) return;
+    if (!isAuth(user) || !isChatWorking) return;
 
     const { message, chatId } = values;
 
@@ -174,7 +175,7 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
           <Col>
             <Form.Item style={{ marginBottom: 0 }}>
               <Button
-                disabled={!isAuth}
+                disabled={!isAuth || !isChatWorking}
                 type="link"
                 htmlType="submit"
                 size="large"

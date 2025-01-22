@@ -1,6 +1,6 @@
 server {
     listen       80;
-    root   /usr/share/nginx/html;
+    root   /usr/share/nginx/html/chat;
     index  index.html;
 
     location /chat {

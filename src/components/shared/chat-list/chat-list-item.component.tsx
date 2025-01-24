@@ -3,7 +3,8 @@ import { FC, useMemo } from 'react';
 import { Flex, List, Skeleton } from 'antd';
 import { useTranslation } from 'react-i18next';
 
-import emptyAvatar from 'assets/emptyAvatar.png';
+import emptyAvatar from 'assets/emptyAvatar.svg';
+import emptyAvatarButAvailable from 'assets/emptyAvatarButAvailable.svg';
 import emptyAvatarGroup from 'assets/emptyAvatarGroup.png';
 import AvatarImage from 'components/UI/avatar-image.component';
 import { useActions, useAppSelector } from 'hooks';
@@ -29,6 +30,7 @@ interface ContactListItemProps {
 
 const ChatListItem: FC<ContactListItemProps> = ({ lastMessage }) => {
   const {
+    t,
     i18n: { resolvedLanguage },
   } = useTranslation();
 
@@ -72,9 +74,7 @@ const ChatListItem: FC<ContactListItemProps> = ({ lastMessage }) => {
       chatId: lastMessage.chatId,
     },
     {
-      skip:
-        !lastMessage.chatId.includes('g.us') ||
-        instanceCredentials.idInstance.toString().startsWith('7835'),
+      skip: instanceCredentials.idInstance.toString().startsWith('7835'),
     }
   );
 
@@ -85,11 +85,17 @@ const ChatListItem: FC<ContactListItemProps> = ({ lastMessage }) => {
       return contactInfo.avatar;
     }
 
-    if (avatarData && avatarData.urlAvatar) {
-      return avatarData.urlAvatar;
+    if (avatarData) {
+      if (avatarData.urlAvatar) {
+        return avatarData.urlAvatar;
+      }
+
+      if (!avatarData.available && !lastMessage.chatId.includes('g.us')) {
+        return emptyAvatar;
+      }
     }
 
-    return lastMessage.chatId.includes('g.us') ? emptyAvatarGroup : emptyAvatar;
+    return lastMessage.chatId.includes('g.us') ? emptyAvatarGroup : emptyAvatarButAvailable;
   }, [contactInfo, avatarData, lastMessage]);
 
   if (groupData && groupData === 'Error: item-not-found') {
@@ -121,6 +127,7 @@ const ChatListItem: FC<ContactListItemProps> = ({ lastMessage }) => {
           contactInfo: info,
         })
       }
+      title={avatar === emptyAvatar ? t('BLOCKED_OR_PRIVATE_CHAT') : undefined}
     >
       <Skeleton avatar title={false} loading={isLoading} active>
         <List.Item.Meta

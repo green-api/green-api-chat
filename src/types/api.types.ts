@@ -193,6 +193,7 @@ export type RequestWithChatIdParameters = InstanceInterface &
 
 export interface GetAvatarResponseInterface {
   existsWhatsapp: boolean;
+  available: boolean;
   urlAvatar: string;
   reason: 'bad request data' | 'get avatar timeout limit exceeded';
 }

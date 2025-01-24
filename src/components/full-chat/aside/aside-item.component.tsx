@@ -2,7 +2,7 @@ import { FC, useMemo } from 'react';
 
 import { useTranslation } from 'react-i18next';
 
-import emptyAvatar from 'assets/emptyAvatar.png';
+import emptyAvatar from 'assets/emptyAvatar-first.png';
 import AvatarImage from 'components/UI/avatar-image.component';
 import { useActions, useAppSelector } from 'hooks';
 import { useGetWaSettingsQuery } from 'services/green-api/endpoints';

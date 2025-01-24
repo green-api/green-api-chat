@@ -2,7 +2,7 @@ import { FC, useMemo } from 'react';
 
 import { List, Skeleton, Tag } from 'antd';
 
-import emptyAvatar from 'assets/emptyAvatar.png';
+import emptyAvatar from 'assets/emptyAvatarButAvailable.svg';
 import AvatarImage from 'components/UI/avatar-image.component';
 import { useAppSelector } from 'hooks';
 import { useGetContactInfoQuery } from 'services/green-api/endpoints';

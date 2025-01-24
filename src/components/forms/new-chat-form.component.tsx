@@ -175,7 +175,7 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
           <Col>
             <Form.Item style={{ marginBottom: 0 }}>
               <Button
-                disabled={!isAuth || !isChatWorking}
+                disabled={!isAuth || isChatWorking === false}
                 type="link"
                 htmlType="submit"
                 size="large"

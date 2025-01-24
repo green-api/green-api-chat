@@ -343,3 +343,19 @@ export function isOutgoingTemplateMessage(
 ): templateMessage is OutgoingTemplateMessage {
   return type === 'outgoing';
 }
+
+export function getIsChatWorkingFromStorage(idInstance: number): boolean | null {
+  let isChatWorking: boolean | null = null;
+
+  try {
+    const isChatWorkingFromStorage = localStorage.getItem(idInstance.toString());
+
+    isChatWorking = JSON.parse(isChatWorkingFromStorage!);
+  } catch {}
+
+  return isChatWorking;
+}
+
+export function setIsChatWorkingFromStorage(idInstance: number, isChatWorking: boolean): void {
+  localStorage.setItem(idInstance.toString(), JSON.stringify(isChatWorking));
+}

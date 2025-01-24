@@ -7,6 +7,7 @@ import {
   GetContactInfoResponseInterface,
   GetGroupDataSuccessResponseInterface,
   MessageInterface,
+  TariffsEnum,
   TypeConnectionMessage,
   UserInterface,
 } from './api.types';
@@ -46,6 +47,8 @@ export interface ActiveChat
 
 export interface InstancesState {
   selectedInstance: InstanceInterface;
+  tariff: TariffsEnum;
+  isChatWorking: boolean | null;
 }
 
 export interface InstanceInterface {
@@ -146,7 +149,7 @@ export interface MessageDataInit {
   payload: InstanceInterface &
     LocaleChangeMessage &
     ThemeChangeMessage &
-    UserInterface & { platform: ChatPlatform };
+    UserInterface & { platform: ChatPlatform; tariff: TariffsEnum };
 }
 
 export interface MessageDataLocaleChange {
@@ -161,7 +164,7 @@ export interface MessageDataSetTheme {
 
 export interface MessageDataSetCredentials {
   type: MessageEventTypeEnum.SET_CREDENTIALS;
-  payload: InstanceInterface;
+  payload: InstanceInterface & { tariff: TariffsEnum };
 }
 
 interface LocaleChangeMessage {

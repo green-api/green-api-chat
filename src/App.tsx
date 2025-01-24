@@ -11,8 +11,8 @@ import { useActions, useAppSelector } from 'hooks';
 import router from 'router';
 import { selectTheme } from 'store/slices/theme.slice';
 import { selectUser } from 'store/slices/user.slice';
-import { MessageData, MessageEventTypeEnum, Themes } from 'types';
-import { isConsoleMessageData, isPageInIframe } from 'utils';
+import { MessageData, MessageEventTypeEnum, TariffsEnum, Themes } from 'types';
+import { getIsChatWorkingFromStorage, isConsoleMessageData, isPageInIframe } from 'utils';
 
 function App() {
   const { idUser, apiTokenUser } = useAppSelector(selectUser);
@@ -69,13 +69,19 @@ function App() {
 
       switch (event.data.type) {
         case MessageEventTypeEnum.INIT:
-          console.log(event);
+          let isChatWorking: boolean | null = null;
+
+          if (event.data.payload.tariff === TariffsEnum.Developer) {
+            isChatWorking = getIsChatWorkingFromStorage(event.data.payload.idInstance);
+          }
 
           setSelectedInstance({
             idInstance: event.data.payload.idInstance,
             apiTokenInstance: event.data.payload.apiTokenInstance,
             apiUrl: event.data.payload.apiUrl,
             mediaUrl: event.data.payload.mediaUrl,
+            tariff: event.data.payload.tariff,
+            isChatWorking: isChatWorking,
           });
 
           login({

@@ -2,7 +2,7 @@ import { createListenerMiddleware, isAnyOf, PayloadAction } from '@reduxjs/toolk
 
 import { actionCreators } from './actions';
 import { RootState } from 'store';
-import { UserInterface } from 'types';
+import { InstancesState, UserInterface } from 'types';
 import { deleteCookie, setCookie } from 'utils';
 
 export const listenerMiddleware = createListenerMiddleware();
@@ -47,9 +47,18 @@ listenerMiddleware.startListening({
   effect: (_, api) => {
     const state = api.getState() as RootState;
 
+    localStorage.setItem('selectedInstance', JSON.stringify(state.instancesReducer));
+  },
+});
+
+listenerMiddleware.startListening({
+  matcher: isAnyOf(actionCreators.setIsChatWorking),
+  effect: (action: PayloadAction<InstancesState['isChatWorking']>, api) => {
+    const state = api.getState() as RootState;
+
     localStorage.setItem(
-      'selectedInstance',
-      JSON.stringify(state.instancesReducer.selectedInstance)
+      state.instancesReducer.selectedInstance.idInstance.toString(),
+      JSON.stringify(action.payload)
     );
   },
 });

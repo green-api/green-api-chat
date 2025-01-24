@@ -1,21 +1,25 @@
 import { FC } from 'react';
 
-import { LeftOutlined } from '@ant-design/icons';
+import { LeftOutlined, PoweroffOutlined } from '@ant-design/icons';
 import { Flex, Space, Typography } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import { CONSOLE_URL } from 'configs';
 import { useActions, useAppSelector } from 'hooks';
 import { selectActiveChat } from 'store/slices/chat.slice';
+import { selectInstanceTariff, selectIsChatWorking } from 'store/slices/instances.slice';
 import { selectPlatform } from 'store/slices/user.slice';
+import { TariffsEnum } from 'types';
 
 const ChatHeader: FC = () => {
   const activeChat = useAppSelector(selectActiveChat);
   const platform = useAppSelector(selectPlatform);
+  const tariff = useAppSelector(selectInstanceTariff);
+  const isChatWorking = useAppSelector(selectIsChatWorking);
 
   const { t } = useTranslation();
 
-  const { setActiveChat } = useActions();
+  const { setActiveChat, setIsChatWorking } = useActions();
 
   if (activeChat) {
     return (
@@ -34,16 +38,23 @@ const ChatHeader: FC = () => {
   return (
     <Flex justify="space-between" align="center">
       <h3 className="text-overflow">{t('CHAT_HEADER')}</h3>
-      {platform === 'web' && (
-        <Typography.Link
-          href={CONSOLE_URL + '/chats'}
-          target="_parent"
-          rel="noreferrer"
-          title={t('FULL_VERSION_TITLE')}
-        >
-          {t('FULL_VERSION')}
-        </Typography.Link>
-      )}
+      <Space style={{ gap: 10 }}>
+        {platform === 'web' && (
+          <Typography.Link
+            href={CONSOLE_URL + '/chats'}
+            target="_parent"
+            rel="noreferrer"
+            title={t('FULL_VERSION_TITLE')}
+          >
+            {t('FULL_VERSION')}
+          </Typography.Link>
+        )}
+        {tariff === TariffsEnum.Developer && isChatWorking && (
+          <Typography.Link title={t('TURN_OFF_CHAT')} onClick={() => setIsChatWorking(false)}>
+            <PoweroffOutlined />
+          </Typography.Link>
+        )}
+      </Space>
     </Flex>
   );
 };

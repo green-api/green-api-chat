@@ -1,11 +1,12 @@
 import { FC, useState } from 'react';
 
 import { LogoutOutlined, UserAddOutlined } from '@ant-design/icons';
-import { Flex, Space, Image } from 'antd';
+import { Flex, Image, Space } from 'antd';
 import { Header } from 'antd/es/layout/layout';
 import { useTranslation } from 'react-i18next';
 
 import AddNewChat from './add-new-chat.component';
+import { TariffsEnum } from '../../../../types';
 import logo from 'assets/header-logo.png';
 import { useActions } from 'hooks';
 
@@ -19,7 +20,13 @@ const ChatsHeader: FC = () => {
 
   const onLogoutClick = () => {
     setActiveChat(null);
-    setSelectedInstance({ idInstance: 0, apiTokenInstance: '', apiUrl: '', mediaUrl: '' });
+    setSelectedInstance({
+      idInstance: 0,
+      apiTokenInstance: '',
+      apiUrl: '',
+      mediaUrl: '',
+      tariff: TariffsEnum.Developer,
+    });
     logout();
   };
 

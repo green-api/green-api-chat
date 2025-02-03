@@ -35,7 +35,7 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
   const responseTimerReference = useRef<number | null>(null);
 
   const onSendMessage = async (values: NewChatFormValues) => {
-    if (!isAuth(user) || !isChatWorking) return;
+    if (!isAuth(user) || isChatWorking === false) return;
 
     const { message, chatId } = values;
 

@@ -22,7 +22,7 @@ const ChatList: FC = () => {
   const { data, isLoading, error } = useLastMessagesQuery(instanceCredentials, {
     skipPollingIfUnfocused: true,
     pollingInterval: isMiniVersion ? 17000 : 15000,
-    skip: !instanceCredentials.idInstance || !instanceCredentials.apiTokenInstance,
+    skip: !instanceCredentials?.idInstance || !instanceCredentials.apiTokenInstance,
   });
 
   const chatListRef = useRef<HTMLDivElement | null>(null);
@@ -78,7 +78,7 @@ const ChatList: FC = () => {
     return () => element.removeEventListener('scroll', handleScrollBottom);
   }, [data, page]);
 
-  if (!instanceCredentials.idInstance || !instanceCredentials.apiTokenInstance) {
+  if (!instanceCredentials?.idInstance || !instanceCredentials.apiTokenInstance) {
     return (
       <Empty
         className={`empty p-10 ${isMiniVersion ? 'min-height-460' : 'height-720'}`}

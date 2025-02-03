@@ -69,33 +69,41 @@ function App() {
 
       switch (event.data.type) {
         case MessageEventTypeEnum.INIT:
-          let isChatWorking: boolean | null = null;
+          if (event.data.payload) {
+            let isChatWorking: boolean | null = null;
 
-          if (event.data.payload.tariff === TariffsEnum.Developer) {
-            isChatWorking = getIsChatWorkingFromStorage(event.data.payload.idInstance);
+            if (
+              event.data.payload &&
+              event.data.payload?.idInstance &&
+              event.data.payload.tariff === TariffsEnum.Developer
+            ) {
+              isChatWorking = getIsChatWorkingFromStorage(event.data.payload?.idInstance);
+            }
+
+            setSelectedInstance({
+              idInstance: event.data.payload.idInstance,
+              apiTokenInstance: event.data.payload.apiTokenInstance,
+              apiUrl: event.data.payload.apiUrl,
+              mediaUrl: event.data.payload.mediaUrl,
+              tariff: event.data.payload.tariff,
+              isChatWorking: isChatWorking,
+            });
+
+            login({
+              login: event.data.payload.login,
+              idUser: event.data.payload.idUser,
+              apiTokenUser: event.data.payload.apiTokenUser,
+              remember: true,
+            });
+
+            setPlatform(event.data.payload.platform);
+
+            setTheme(event.data.payload.theme);
+
+            return i18n.changeLanguage(event.data.payload.locale);
           }
 
-          setSelectedInstance({
-            idInstance: event.data.payload.idInstance,
-            apiTokenInstance: event.data.payload.apiTokenInstance,
-            apiUrl: event.data.payload.apiUrl,
-            mediaUrl: event.data.payload.mediaUrl,
-            tariff: event.data.payload.tariff,
-            isChatWorking: isChatWorking,
-          });
-
-          login({
-            login: event.data.payload.login,
-            idUser: event.data.payload.idUser,
-            apiTokenUser: event.data.payload.apiTokenUser,
-            remember: true,
-          });
-
-          setPlatform(event.data.payload.platform);
-
-          setTheme(event.data.payload.theme);
-
-          return i18n.changeLanguage(event.data.payload.locale);
+          return;
 
         case MessageEventTypeEnum.SET_CREDENTIALS:
           return setSelectedInstance(event.data.payload);

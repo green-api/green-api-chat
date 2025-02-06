@@ -20,7 +20,7 @@ const Chat: FC = () => {
   if (activeChat) {
     return (
       <Card title={<ChatHeader />} className="chat">
-        <ContactChat />;
+        <ContactChat />
       </Card>
     );
   }

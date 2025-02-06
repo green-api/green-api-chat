@@ -29,12 +29,6 @@ const Chats: FC = () => {
 
   const [isVisible, setIsVisible] = useState(false);
 
-  let content = <ChatList key={instanceCredentials.idInstance} />;
-
-  if (instanceTariff === TariffsEnum.Developer && !isChatWorking) {
-    content = <DeveloperInstanceAlert />;
-  }
-
   return (
     <Flex className="chats" vertical>
       {!isMiniVersion && type === 'tab' && <ChatsHeader />}
@@ -50,7 +44,11 @@ const Chats: FC = () => {
           </a>
         )}
       </Flex>
-      {content}
+      {instanceTariff === TariffsEnum.Developer && !isChatWorking ? (
+        <DeveloperInstanceAlert />
+      ) : (
+        <ChatList key={instanceCredentials?.idInstance} />
+      )}
       {!isMiniVersion && type === 'console-page' && (
         <AddNewChat isVisible={isVisible} setIsVisible={setIsVisible} />
       )}

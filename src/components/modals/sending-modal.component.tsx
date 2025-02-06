@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
 
 import { Modal } from 'antd';
 
@@ -9,7 +9,10 @@ import { selectActiveSendingMode } from 'store/slices/chat.slice';
 const SendingModal: FC = () => {
   const activeSendingMode = useAppSelector(selectActiveSendingMode);
 
-  const modalContent = SENDING_METHODS_CONFIG.find((config) => config.name === activeSendingMode);
+  const modalContent = useMemo(
+    () => SENDING_METHODS_CONFIG.find((config) => config.name === activeSendingMode),
+    [activeSendingMode]
+  );
 
   const { setActiveSendingMode, setActiveTemplate } = useActions();
 

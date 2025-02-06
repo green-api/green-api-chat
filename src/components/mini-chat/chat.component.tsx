@@ -17,29 +17,22 @@ const Chat: FC = () => {
   const isChatWorking = useAppSelector(selectIsChatWorking);
   const activeChat = useAppSelector(selectActiveChat);
 
-  let content = (
-    <>
-      <ChatList />
-      <ChatFooter />
-    </>
-  );
-
-  if (instanceTariff === TariffsEnum.Developer && !isChatWorking) {
-    content = (
-      <>
-        <DeveloperInstanceAlert />
-        <ChatFooter />
-      </>
-    );
-  }
-
   if (activeChat) {
-    content = <ContactChat />;
+    return (
+      <Card title={<ChatHeader />} className="chat">
+        <ContactChat />;
+      </Card>
+    );
   }
 
   return (
     <Card title={<ChatHeader />} className="chat">
-      {content}
+      {instanceTariff === TariffsEnum.Developer && !isChatWorking ? (
+        <DeveloperInstanceAlert />
+      ) : (
+        <ChatList />
+      )}
+      <ChatFooter />
     </Card>
   );
 };

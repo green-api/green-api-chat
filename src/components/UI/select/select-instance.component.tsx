@@ -65,7 +65,7 @@ const SelectInstance: FC = () => {
 
         if (
           searchValueInLowerCase &&
-          !`${instance.idInstance}`.includes(searchValueInLowerCase) &&
+          !`${instance?.idInstance}`.includes(searchValueInLowerCase) &&
           !instance.name.toLowerCase().includes(searchValueInLowerCase)
         ) {
           continue;
@@ -105,7 +105,7 @@ const SelectInstance: FC = () => {
 
     const setLabelForDefaultInstance = (defaultInstance: ExpandedInstanceInterface) => {
       const defaultInstanceToRender = {
-        idInstance: defaultInstance.idInstance,
+        idInstance: defaultInstance?.idInstance,
         label: <SelectInstanceLabel {...defaultInstance} />,
       };
       setDefaultInstanceToRender(defaultInstanceToRender);
@@ -113,7 +113,7 @@ const SelectInstance: FC = () => {
       setHasDefaultInstance('yes');
     };
 
-    if (instancesRequestData?.result && selectedInstance.idInstance) {
+    if (instancesRequestData?.result && selectedInstance?.idInstance) {
       const defaultInstance = instancesRequestData.data.find(
         ({ idInstance }) => idInstance === selectedInstance.idInstance
       );

@@ -56,9 +56,11 @@ listenerMiddleware.startListening({
   effect: (action: PayloadAction<InstancesState['isChatWorking']>, api) => {
     const state = api.getState() as RootState;
 
-    localStorage.setItem(
-      state.instancesReducer.selectedInstance.idInstance.toString(),
-      JSON.stringify(action.payload)
-    );
+    if (state.instancesReducer.selectedInstance) {
+      localStorage.setItem(
+        state.instancesReducer.selectedInstance?.idInstance.toString(),
+        JSON.stringify(action.payload)
+      );
+    }
   },
 });

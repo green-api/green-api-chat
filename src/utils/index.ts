@@ -225,7 +225,14 @@ export function getPhoneNumberFromChatId(chatId: string) {
 }
 
 export function getJSONMessage(message: MessageInterface): string {
-  const copyMessage = structuredClone(message);
+  let copyMessage: MessageInterface;
+
+  if ('structuredClone' in window) {
+    copyMessage = structuredClone(message);
+  } else {
+    // TODO: rework
+    copyMessage = { ...message };
+  }
 
   if (copyMessage.jpegThumbnail) {
     copyMessage.jpegThumbnail = copyMessage.jpegThumbnail.slice(0, 50) + '...';

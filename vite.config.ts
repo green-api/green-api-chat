@@ -8,7 +8,6 @@ const hash = Math.floor(Math.random() * 90_000) + 10_000;
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: '/chat',
   build: {
     assetsDir: assetsDirectory,
     rollupOptions: {

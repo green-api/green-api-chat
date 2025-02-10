@@ -13,7 +13,6 @@ listenerMiddleware.startListening({
     const state = api.getState() as RootState;
 
     if (action.payload.remember) {
-      console.log(state.userReducer.user);
       setCookie('login', state.userReducer.user.login);
       setCookie('apiTokenUser', state.userReducer.user.apiTokenUser);
       setCookie('idUser', state.userReducer.user.idUser);

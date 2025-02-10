@@ -8,7 +8,7 @@ import { Link, useNavigate } from 'react-router-dom';
 
 import SelectLanguage from 'components/UI/select/select-language.component';
 import { GreenApiRoutes, Routes } from 'configs';
-import { useActions, useAppDispatch, useFormWithLanguageValidation } from 'hooks';
+import { useActions, useFormWithLanguageValidation } from 'hooks';
 import { useLoginMutation } from 'services/app/endpoints';
 import { AuthFormValues } from 'types';
 
@@ -21,7 +21,6 @@ const AuthForm: FC = () => {
   const needToUpdateModal = useRef(false);
 
   const [login, { isLoading, isError, data, isSuccess }] = useLoginMutation();
-  const dispatch = useAppDispatch();
   const { login: loginUser } = useActions();
 
   const [modalFactory, contextHolder] = useModal();
@@ -60,13 +59,11 @@ const AuthForm: FC = () => {
     }
 
     if (data.result) {
-      dispatch(
-        loginUser({
-          login: form.getFieldValue('login'),
-          ...data.data,
-          remember: form.getFieldValue('remember'),
-        })
-      );
+      loginUser({
+        login: form.getFieldValue('login'),
+        ...data.data,
+        remember: form.getFieldValue('remember'),
+      });
 
       navigator(Routes.main);
       return;

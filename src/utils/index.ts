@@ -302,7 +302,7 @@ export function getCookie(name: string): string | undefined {
 }
 
 export function setCookie(name: string, value: string, options: CookieOptionsInterface = {}): void {
-  options.path = options.path ?? Routes.baseUrl;
+  options.path = options.path ?? Routes.main;
   options['max-age'] = options['max-age'] ?? 31_536_000;
 
   let updatedCookie = encodeURIComponent(name) + '=' + encodeURIComponent(value);

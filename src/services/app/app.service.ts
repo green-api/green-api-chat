@@ -41,7 +41,7 @@ export const appAPI = createApi({
         sessionStorage.clear();
 
         if (!isPageInIframe()) {
-          document.location.href = Routes.baseUrl + Routes.auth;
+          document.location.href = Routes.auth;
         }
       }
 

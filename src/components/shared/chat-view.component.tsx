@@ -237,6 +237,8 @@ const ChatView: FC = () => {
             templateMessage={templateMessage}
             caption={message.caption}
             fileName={message.fileName}
+            isDeleted={message.isDeleted}
+            isEdited={message.isEdited}
           />
         );
       })}

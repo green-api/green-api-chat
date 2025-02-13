@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef } from 'react';
+import { FC, useEffect, useRef, useState } from 'react';
 
 import { Space } from 'antd';
 import { useTranslation } from 'react-i18next';
@@ -38,6 +38,8 @@ export interface MessageProps {
   templateMessage?: ParsedWabaTemplateInterface;
   caption?: string;
   fileName?: string;
+  isDeleted?: boolean;
+  isEdited?: boolean;
 }
 
 const Message: FC<MessageProps> = ({
@@ -57,10 +59,13 @@ const Message: FC<MessageProps> = ({
   id,
   caption,
   fileName,
+  isDeleted,
+  isEdited,
 }) => {
   const isMiniVersion = useAppSelector(selectMiniVersion);
 
   const {
+    t,
     i18n: { resolvedLanguage },
   } = useTranslation();
 
@@ -99,6 +104,8 @@ const Message: FC<MessageProps> = ({
     );
   }
 
+  const [showDeletedMessage, setShowDeletedMessage] = useState(false);
+
   return (
     <div
       ref={messageRef}
@@ -109,14 +116,24 @@ const Message: FC<MessageProps> = ({
       className={`message ${type === 'outgoing' ? `outgoing ${isMiniVersion ? '' : 'full'}` : 'incoming'} p-10`}
     >
       {showSenderName && <MessageSenderInfo senderName={senderName} phone={phone} />}
-      {quotedMessage && <QuotedMessage quotedMessage={quotedMessage} type={type} />}
-      {messageBody}
-      {caption && !isMiniVersion && (
+      {!isDeleted && quotedMessage && <QuotedMessage quotedMessage={quotedMessage} type={type} />}
+      {isDeleted && !showDeletedMessage ? (
+        <i>
+          {t('DELETED_MESSAGE')}{' '}
+          <a style={{ fontStyle: 'normal' }} onClick={() => setShowDeletedMessage(true)}>
+            ({t('SHOW')})
+          </a>
+        </i>
+      ) : (
+        messageBody
+      )}
+      {!isDeleted && caption && !isMiniVersion && (
         <TextMessage textMessage={caption} typeMessage={typeMessage} type={type} isCaption={true} />
       )}
       <Space className="message-date">
         <MessageTooltip jsonMessage={jsonMessage} />
-        <span style={{ fontSize: 14 }}>{messageDate}</span>
+        {isEdited && <i style={{ alignSelf: 'end', fontSize: 13 }}>{t('EDITED')}</i>}
+        <span style={{ fontSize: 13 }}>{messageDate}</span>
         {getOutgoingStatusMessageIcon(statusMessage)}
       </Space>
     </div>

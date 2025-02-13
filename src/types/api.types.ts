@@ -83,6 +83,8 @@ export interface MessageInterface
   downloadUrl?: string;
   location?: LocationInterface;
   fileName?: string;
+  isDeleted?: boolean;
+  isEdited?: boolean;
 }
 
 export interface QuotedMessageInterface extends MessageInterface {

@@ -12,7 +12,7 @@
   "UNKNOWN_ERROR": "Что-то пошло не так, попробуйте еще раз",
   "YOU_SENDER_NAME": "Вы",
   "TEXT_WAS_COPIED": "Скопировано в буфер",
-  "SHOW_ALL_TEXT": "Показать всё",
+  "SHOW_ALL_TEXT": "Далее",
   "QUOTE_EXCEEDED": "Превышена квота тарифа. Сообщение не отправлено",
   "SUCCESS_SENDING_MESSAGE": "Сообщение отправлено",
   "PHONE_DOES_NOT_HAVE_WHATSAPP": "У данного номера отсутствует Whatsapp",

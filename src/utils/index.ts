@@ -160,16 +160,16 @@ export function getMessageDate(
   language: LanguageLiteral = 'en',
   format: 'short' | 'long' = 'short'
 ): string {
-  const messageDate = formatDate(timestamp, language, format);
-  const nowDate = formatDate(Date.now(), language, format);
+  const messageDate = formatDate(timestamp, language, 'short');
+  const nowDate = formatDate(Date.now(), language, 'short');
 
-  if (messageDate === nowDate && format === 'short') {
+  if (messageDate === nowDate) {
     const date = new Date(timestamp);
 
     return `0${date.getHours()}`.slice(-2) + ':' + `0${date.getMinutes()}`.slice(-2);
   }
 
-  return messageDate;
+  return formatDate(timestamp, language, format);
 }
 
 export function isApiError(error: unknown): error is ApiErrorResponse {

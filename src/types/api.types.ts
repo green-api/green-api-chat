@@ -85,6 +85,8 @@ export interface MessageInterface
   fileName?: string;
   isDeleted?: boolean;
   isEdited?: boolean;
+  editedMessageId?: string;
+  deletedMessageId?: string;
 }
 
 export interface QuotedMessageInterface extends MessageInterface {

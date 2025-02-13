@@ -127,6 +127,15 @@ export function getLastChats(
     ) {
       resultMap.set(existingChat.chatId, message);
     }
+
+    if (
+      existingChat &&
+      existingChat.idMessage === message.idMessage &&
+      (existingChat.editedMessageId !== message.editedMessageId ||
+        existingChat.deletedMessageId !== message.deletedMessageId)
+    ) {
+      resultMap.set(existingChat.chatId, message);
+    }
   }
 
   return Array.from(resultMap.values());

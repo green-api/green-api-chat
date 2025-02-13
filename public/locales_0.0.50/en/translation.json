@@ -115,5 +115,10 @@
   "TURN_ON_CHAT": "Turn on chat",
   "TURN_OFF_CHAT": "Turn off chat",
   "YES": "Yes",
-  "NO": "No"
+  "NO": "No",
+
+  "DELETED_MESSAGE": "Message deleted",
+  "DELETED": "Deleted",
+  "EDITED": "Edited",
+  "SHOW": "Show"
 }

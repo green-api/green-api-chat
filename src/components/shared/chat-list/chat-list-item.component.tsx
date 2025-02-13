@@ -3,7 +3,7 @@ import { FC, useMemo } from 'react';
 import { Flex, List, Skeleton } from 'antd';
 import { useTranslation } from 'react-i18next';
 
-import emptyAvatar from 'assets/emptyAvatar.png';
+import emptyAvatar from 'assets/emptyAvatar.svg';
 import emptyAvatarButAvailable from 'assets/emptyAvatarButAvailable.svg';
 import emptyAvatarGroup from 'assets/emptyAvatarGroup.png';
 import AvatarImage from 'components/UI/avatar-image.component';
@@ -145,9 +145,13 @@ const ChatListItem: FC<ContactListItemProps> = ({ lastMessage }) => {
               {lastMessage.statusMessage &&
                 getOutgoingStatusMessageIcon(lastMessage.statusMessage, { width: 20, height: 20 })}
               {getMessageTypeIcon(lastMessage.typeMessage)}
-              <span className="text-overflow" style={{ width: 300 }}>
-                {textMessage}
-              </span>
+              {lastMessage.isDeleted ? (
+                <i>{t('DELETED_MESSAGE')}</i>
+              ) : (
+                <span className="text-overflow" style={{ width: 300 }}>
+                  {textMessage}
+                </span>
+              )}
             </Flex>
           }
         />

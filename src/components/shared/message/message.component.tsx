@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 
 import FileMessage from './file-message.component';
 import MessageSenderInfo from './message-sender-info.component';
-import MessageTooltip from './message-tooltip.component';
+import MessageTooltip from './message-tooltip/message-tooltip.component';
 import QuotedMessage from './quoted-message.component';
 import TemplateMessage from './template-message/template-message.component';
 import TextMessage from './text-message.component';

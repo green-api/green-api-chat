@@ -37,6 +37,8 @@ export interface ResultResponseInterface {
   result: boolean;
 }
 
+export type EditMessageParameters = GetChatInformationParameters & { message: string };
+
 export type TypeConnectionMessage = 'outgoing' | 'incoming';
 export type StatusMessage = 'pending' | 'sent' | 'delivered' | 'read';
 export type TypeMessage =

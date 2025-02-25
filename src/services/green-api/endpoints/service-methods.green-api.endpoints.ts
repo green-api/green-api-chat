@@ -2,9 +2,12 @@ import { greenAPI } from 'services/green-api/green-api.service';
 import {
   CheckWhatsappParametersInterface,
   CheckWhatsappResponseInterface,
+  EditMessageParameters,
   GetAvatarResponseInterface,
+  GetChatInformationParameters,
   GetContactInfoResponseInterface,
   RequestWithChatIdParameters,
+  SendingResponseInterface,
 } from 'types';
 
 export const serviceMethodsGreenApiEndpoints = greenAPI.injectEndpoints({
@@ -34,6 +37,20 @@ export const serviceMethodsGreenApiEndpoints = greenAPI.injectEndpoints({
         body,
       }),
       keepUnusedDataFor: 1000,
+    }),
+    deleteMessage: builder.mutation<void, GetChatInformationParameters>({
+      query: ({ idInstance, apiTokenInstance, apiUrl, mediaUrl: _, ...body }) => ({
+        url: `${apiUrl}waInstance${idInstance}/deleteMessage/${apiTokenInstance}`,
+        method: 'POST',
+        body,
+      }),
+    }),
+    editMessage: builder.mutation<SendingResponseInterface, EditMessageParameters>({
+      query: ({ idInstance, apiTokenInstance, apiUrl, mediaUrl: _, ...body }) => ({
+        url: `${apiUrl}waInstance${idInstance}/editMessage/${apiTokenInstance}`,
+        method: 'POST',
+        body,
+      }),
     }),
   }),
 });

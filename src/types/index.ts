@@ -70,6 +70,11 @@ export interface GreenApiUrlsInterface {
   qrHttpHost: string;
 }
 
+export interface MessageMenuState {
+  activeMode: 'messageInfo' | 'menu';
+  messageData: (MessageInterface & { jsonMessage: string }) | null;
+}
+
 export interface GreenApiRouteInterface extends GreenApiUrlsInterface {
   // string - для одного значения, string[] - для диапазона значений
   instancesCodes: (number | [number, number])[];

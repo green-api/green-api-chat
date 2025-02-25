@@ -1,9 +1,10 @@
 import { FC, PropsWithChildren } from 'react';
 
-import { CopyOutlined, DownOutlined } from '@ant-design/icons';
-import { Flex, Tooltip } from 'antd';
+import { DownOutlined } from '@ant-design/icons';
+import { Tooltip } from 'antd';
 import useMessage from 'antd/es/message/useMessage';
-import { useTranslation } from 'react-i18next';
+
+import MessageInfo from './message-info.component';
 
 interface MessageTooltipProps {
   jsonMessage: string;
@@ -15,9 +16,7 @@ const MessageTooltip: FC<PropsWithChildren<MessageTooltipProps>> = ({
   jsonMessage,
   isQuotedMessage,
 }) => {
-  const { t } = useTranslation();
-
-  const [message, contextMessageHolder] = useMessage();
+  const [_, contextMessageHolder] = useMessage();
 
   return (
     <Tooltip
@@ -25,25 +24,8 @@ const MessageTooltip: FC<PropsWithChildren<MessageTooltipProps>> = ({
         overflow: isQuotedMessage ? '' : 'hidden',
         maxWidth: '100vw',
       }}
-      trigger={window.outerWidth < 769 || 'cordova' in window ? 'focus' : 'hover'}
-      title={
-        <Flex vertical>
-          <pre style={{ textWrap: 'wrap' }}>{jsonMessage}</pre>
-          <div
-            className="copy-massage-code-button"
-            onPointerDown={() => {
-              navigator.clipboard.writeText(jsonMessage).then(() => {
-                message.open({
-                  type: 'success',
-                  content: t('TEXT_WAS_COPIED'),
-                });
-              });
-            }}
-          >
-            <CopyOutlined />
-          </div>
-        </Flex>
-      }
+      trigger={isQuotedMessage ? 'hover' : 'focus'}
+      title={<MessageInfo jsonMessage={jsonMessage} />}
       overlayStyle={{ maxWidth: 450, lineHeight: 'initial', fontSize: 13 }}
     >
       {!isQuotedMessage && (

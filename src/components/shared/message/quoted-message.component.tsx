@@ -3,7 +3,7 @@ import { FC } from 'react';
 import { Space, Typography } from 'antd';
 import { useTranslation } from 'react-i18next';
 
-import MessageTooltip from './message-tooltip.component';
+import MessageTooltip from './message-tooltip/message-tooltip.component';
 import { useAppSelector } from 'hooks';
 import { selectMiniVersion } from 'store/slices/chat.slice';
 import { QuotedMessageInterface, TypeConnectionMessage } from 'types';

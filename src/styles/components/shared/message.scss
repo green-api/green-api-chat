@@ -7,6 +7,7 @@
     transition: .5s all;
     width: 0;
     overflow: hidden;
+    cursor: pointer;
 
     @media screen and (hover: none) {
       width: 15px;

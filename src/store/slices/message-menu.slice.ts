@@ -5,7 +5,7 @@ import { MessageMenuState } from 'types';
 
 const initialState: MessageMenuState = {
   activeMode: 'menu',
-  messageData: null,
+  messageDataForRender: null,
 };
 
 const messageMenuSlice = createSlice({
@@ -15,11 +15,11 @@ const messageMenuSlice = createSlice({
     setMessageMenuActiveMode: (state, action: PayloadAction<MessageMenuState['activeMode']>) => {
       state.activeMode = action.payload;
     },
-    setMessageMenuActiveMessageData: (
+    setMessageDataForRender: (
       state,
-      action: PayloadAction<MessageMenuState['messageData']>
+      action: PayloadAction<MessageMenuState['messageDataForRender']>
     ) => {
-      state.messageData = action.payload;
+      state.messageDataForRender = action.payload;
     },
   },
 });
@@ -29,5 +29,5 @@ export default messageMenuSlice.reducer;
 
 export const selectMessageMenuActiveMode = (state: RootState) =>
   state.messageMenuReducer.activeMode;
-export const selectMessageMenuActiveMessageData = (state: RootState) =>
-  state.messageMenuReducer.messageData;
+export const selectMessageDataForRender = (state: RootState) =>
+  state.messageMenuReducer.messageDataForRender;

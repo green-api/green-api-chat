@@ -222,23 +222,25 @@ const ChatView: FC = () => {
         return (
           <Message
             key={message.idMessage}
-            showSenderName={showSenderName}
-            type={message.type}
-            typeMessage={typeMessage}
-            textMessage={getTextMessage(message)}
-            senderName={message.type === 'outgoing' ? t('YOU_SENDER_NAME') : message.senderName!}
-            phone={message.senderId && getPhoneNumberFromChatId(message.senderId)}
-            isLastMessage={idx === messages?.length - 1}
-            timestamp={message.timestamp}
-            jsonMessage={getJSONMessage(message)}
-            downloadUrl={message.downloadUrl}
-            statusMessage={message.statusMessage}
-            quotedMessage={message.quotedMessage}
-            templateMessage={templateMessage}
-            caption={message.caption}
-            fileName={message.fileName}
-            isDeleted={message.isDeleted}
-            isEdited={message.isEdited}
+            messageDataForRender={{
+              showSenderName: showSenderName,
+              type: message.type,
+              typeMessage: typeMessage,
+              textMessage: getTextMessage(message),
+              senderName: message.type === 'outgoing' ? t('YOU_SENDER_NAME') : message.senderName!,
+              phone: message.senderId && getPhoneNumberFromChatId(message.senderId),
+              isLastMessage: idx === messages?.length - 1,
+              timestamp: message.timestamp,
+              jsonMessage: getJSONMessage(message),
+              downloadUrl: message.downloadUrl,
+              statusMessage: message.statusMessage,
+              quotedMessage: message.quotedMessage,
+              templateMessage: templateMessage,
+              caption: message.caption,
+              fileName: message.fileName,
+              isDeleted: message.isDeleted,
+              isEdited: message.isEdited,
+            }}
           />
         );
       })}

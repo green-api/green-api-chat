@@ -11,57 +11,35 @@ import TemplateMessage from './template-message/template-message.component';
 import TextMessage from './text-message.component';
 import { useAppSelector } from 'hooks';
 import { selectMiniVersion } from 'store/slices/chat.slice';
-import {
-  LanguageLiteral,
-  ParsedWabaTemplateInterface,
-  QuotedMessageInterface,
-  StatusMessage,
-  TypeConnectionMessage,
-  TypeMessage,
-} from 'types';
+import { LanguageLiteral, MessageDataForRender } from 'types';
 import { getMessageDate, getOutgoingStatusMessageIcon, isSafari } from 'utils';
 
 export interface MessageProps {
-  id?: string;
-  type: TypeConnectionMessage;
-  typeMessage: TypeMessage;
-  textMessage: string;
-  senderName: string;
-  isLastMessage: boolean;
-  timestamp: number;
-  jsonMessage: string;
-  statusMessage?: StatusMessage;
-  downloadUrl?: string;
-  showSenderName: boolean;
-  phone?: string;
-  quotedMessage?: QuotedMessageInterface;
-  templateMessage?: ParsedWabaTemplateInterface;
-  caption?: string;
-  fileName?: string;
-  isDeleted?: boolean;
-  isEdited?: boolean;
+  messageDataForRender: MessageDataForRender;
 }
 
-const Message: FC<MessageProps> = ({
-  textMessage,
-  type,
-  senderName,
-  showSenderName,
-  timestamp,
-  jsonMessage,
-  typeMessage,
-  downloadUrl,
-  statusMessage,
-  phone,
-  isLastMessage,
-  quotedMessage,
-  templateMessage,
-  id,
-  caption,
-  fileName,
-  isDeleted,
-  isEdited,
-}) => {
+const Message: FC<MessageProps> = ({ messageDataForRender }) => {
+  const {
+    textMessage,
+    type,
+    senderName,
+    showSenderName,
+    timestamp,
+    jsonMessage,
+    typeMessage,
+    downloadUrl,
+    statusMessage,
+    phone,
+    isLastMessage,
+    quotedMessage,
+    templateMessage,
+    id,
+    caption,
+    fileName,
+    isDeleted,
+    isEdited,
+  } = messageDataForRender;
+
   const isMiniVersion = useAppSelector(selectMiniVersion);
 
   const {
@@ -116,7 +94,13 @@ const Message: FC<MessageProps> = ({
       className={`message ${type === 'outgoing' ? `outgoing ${isMiniVersion ? '' : 'full'}` : 'incoming'} p-10`}
     >
       {showSenderName && <MessageSenderInfo senderName={senderName} phone={phone} />}
-      {!isDeleted && quotedMessage && <QuotedMessage quotedMessage={quotedMessage} type={type} />}
+      {!isDeleted && quotedMessage && (
+        <QuotedMessage
+          messageDataForRender={messageDataForRender}
+          quotedMessage={quotedMessage}
+          type={type}
+        />
+      )}
       {isDeleted && !showDeletedMessage ? (
         <i>
           {t('DELETED_MESSAGE')}{' '}
@@ -131,7 +115,7 @@ const Message: FC<MessageProps> = ({
         <TextMessage textMessage={caption} typeMessage={typeMessage} type={type} isCaption={true} />
       )}
       <Space className="message-date">
-        <MessageTooltip jsonMessage={jsonMessage} />
+        <MessageTooltip messageDataForRender={messageDataForRender} jsonMessage={jsonMessage} />
         {isEdited && <i style={{ alignSelf: 'end', fontSize: 13 }}>{t('EDITED')}</i>}
         <span style={{ fontSize: 13 }}>{messageDate}</span>
         {getOutgoingStatusMessageIcon(statusMessage)}

@@ -7,11 +7,19 @@ import {
   GetContactInfoResponseInterface,
   GetGroupDataSuccessResponseInterface,
   MessageInterface,
+  QuotedMessageInterface,
+  StatusMessage,
   TariffsEnum,
   TypeConnectionMessage,
+  TypeMessage,
   UserInterface,
 } from './api.types';
-import { TemplateButtonInterface, WabaTemplateInterface, WabaTemplateTypeEnum } from './waba.types';
+import {
+  ParsedWabaTemplateInterface,
+  TemplateButtonInterface,
+  WabaTemplateInterface,
+  WabaTemplateTypeEnum,
+} from './waba.types';
 
 export * from './api.types';
 export * from './waba.types';
@@ -72,7 +80,7 @@ export interface GreenApiUrlsInterface {
 
 export interface MessageMenuState {
   activeMode: 'messageInfo' | 'menu';
-  messageData: (MessageInterface & { jsonMessage: string }) | null;
+  messageDataForRender: MessageDataForRender | null;
 }
 
 export interface GreenApiRouteInterface extends GreenApiUrlsInterface {
@@ -248,4 +256,25 @@ export interface GetTemplateMessageLayoutOptions {
   mediaUrl?: string;
   buttons?: TemplateButtonInterface[];
   type?: TypeConnectionMessage;
+}
+
+export interface MessageDataForRender {
+  id?: string;
+  type: TypeConnectionMessage;
+  typeMessage: TypeMessage;
+  textMessage: string;
+  senderName: string;
+  isLastMessage: boolean;
+  timestamp: number;
+  jsonMessage: string;
+  statusMessage?: StatusMessage;
+  downloadUrl?: string;
+  showSenderName: boolean;
+  phone?: string;
+  quotedMessage?: QuotedMessageInterface;
+  templateMessage?: ParsedWabaTemplateInterface;
+  caption?: string;
+  fileName?: string;
+  isDeleted?: boolean;
+  isEdited?: boolean;
 }

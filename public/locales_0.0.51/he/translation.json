@@ -120,5 +120,9 @@
   "DELETED_MESSAGE": "ההודעה נמחקה",
   "DELETED": "נמחק",
   "EDITED": "עָרוּך",
-  "SHOW": "לְהַצִיג"
+  "SHOW": "לְהַצִיג",
+
+  "MESSAGE_INFO": "מידע על הודעה",
+  "EDIT_MESSAGE": "ערוך הודעה",
+  "DELETE_MESSAGE": "מחק הודעה"
 }

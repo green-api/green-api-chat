@@ -120,5 +120,9 @@
   "DELETED_MESSAGE": "Message deleted",
   "DELETED": "Deleted",
   "EDITED": "Edited",
-  "SHOW": "Show"
+  "SHOW": "Show",
+
+  "MESSAGE_INFO": "Message info",
+  "EDIT_MESSAGE": "Edit message",
+  "DELETE_MESSAGE": "Delete message"
 }

@@ -80,6 +80,7 @@ export interface GreenApiUrlsInterface {
 
 export interface MessageMenuState {
   activeMode: 'messageInfo' | 'menu';
+  activeServiceMethod: MessageServiceMethodName | null;
   messageDataForRender: MessageDataForRender | null;
 }
 
@@ -195,10 +196,17 @@ export type SendingMethodName =
   | 'sendPoll'
   | 'sendTemplate';
 
+export type MessageServiceMethodName = 'editMessage' | 'deleteMessage';
+
 export type UserSideActiveMode = 'chats' | 'settings' | 'profile';
 
 export interface SendingMethod {
   name: SendingMethodName;
+  element: ReactElement;
+}
+
+export interface MessageServiceMethod {
+  name: MessageServiceMethodName;
   element: ReactElement;
 }
 
@@ -259,7 +267,7 @@ export interface GetTemplateMessageLayoutOptions {
 }
 
 export interface MessageDataForRender {
-  id?: string;
+  idMessage: string;
   type: TypeConnectionMessage;
   typeMessage: TypeMessage;
   textMessage: string;

@@ -23,6 +23,8 @@
 
 @import "components/alerts/left-group-alert";
 
+@import "components/shared/message-tooltip-menu";
+
 html {
   overflow: hidden;
 }
@@ -262,4 +264,8 @@ Button.ant-btn-primary:hover, Button.ant-btn-primary:focus {
 
 .chat-border {
   border-left: 1px solid var(--chat-border-color);
+}
+
+.edit-message-modal .ant-modal-content {
+  padding: 0;
 }

@@ -223,6 +223,7 @@ const ChatView: FC = () => {
           <Message
             key={message.idMessage}
             messageDataForRender={{
+              idMessage: message.idMessage,
               showSenderName: showSenderName,
               type: message.type,
               typeMessage: typeMessage,

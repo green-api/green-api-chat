@@ -5,6 +5,7 @@ import { MessageMenuState } from 'types';
 
 const initialState: MessageMenuState = {
   activeMode: 'menu',
+  activeServiceMethod: null,
   messageDataForRender: null,
 };
 
@@ -21,6 +22,12 @@ const messageMenuSlice = createSlice({
     ) => {
       state.messageDataForRender = action.payload;
     },
+    setActiveServiceMethod: (
+      state,
+      action: PayloadAction<MessageMenuState['activeServiceMethod']>
+    ) => {
+      state.activeServiceMethod = action.payload;
+    },
   },
 });
 
@@ -31,3 +38,5 @@ export const selectMessageMenuActiveMode = (state: RootState) =>
   state.messageMenuReducer.activeMode;
 export const selectMessageDataForRender = (state: RootState) =>
   state.messageMenuReducer.messageDataForRender;
+export const selectActiveServiceMethod = (state: RootState) =>
+  state.messageMenuReducer.activeServiceMethod;

@@ -15,6 +15,10 @@
       width: 15px;
       opacity: 1;
     }
+
+    &.visible {
+      opacity: 1;
+    }
   }
 
   &-date {

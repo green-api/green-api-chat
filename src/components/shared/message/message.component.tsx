@@ -16,9 +16,10 @@ import { getMessageDate, getOutgoingStatusMessageIcon, isSafari } from 'utils';
 
 export interface MessageProps {
   messageDataForRender: MessageDataForRender;
+  preview?: boolean;
 }
 
-const Message: FC<MessageProps> = ({ messageDataForRender }) => {
+const Message: FC<MessageProps> = ({ messageDataForRender, preview }) => {
   const {
     textMessage,
     type,
@@ -33,7 +34,6 @@ const Message: FC<MessageProps> = ({ messageDataForRender }) => {
     isLastMessage,
     quotedMessage,
     templateMessage,
-    id,
     caption,
     fileName,
     isDeleted,
@@ -87,7 +87,6 @@ const Message: FC<MessageProps> = ({ messageDataForRender }) => {
   return (
     <div
       ref={messageRef}
-      id={id}
       style={{
         maxWidth: isMiniVersion ? 'unset' : 500,
       }}
@@ -115,7 +114,9 @@ const Message: FC<MessageProps> = ({ messageDataForRender }) => {
         <TextMessage textMessage={caption} typeMessage={typeMessage} type={type} isCaption={true} />
       )}
       <Space className="message-date">
-        <MessageTooltip messageDataForRender={messageDataForRender} jsonMessage={jsonMessage} />
+        {!preview && (
+          <MessageTooltip messageDataForRender={messageDataForRender} jsonMessage={jsonMessage} />
+        )}
         {isEdited && <i style={{ alignSelf: 'end', fontSize: 13 }}>{t('EDITED')}</i>}
         <span style={{ fontSize: 13 }}>{messageDate}</span>
         {getOutgoingStatusMessageIcon(statusMessage)}

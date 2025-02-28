@@ -45,7 +45,10 @@ export const serviceMethodsGreenApiEndpoints = greenAPI.injectEndpoints({
         body,
       }),
     }),
-    editMessage: builder.mutation<SendingResponseInterface, EditMessageParameters>({
+    editMessage: builder.mutation<
+      SendingResponseInterface,
+      Omit<EditMessageParameters, 'onlySenderDelete'>
+    >({
       query: ({ idInstance, apiTokenInstance, apiUrl, mediaUrl: _, ...body }) => ({
         url: `${apiUrl}waInstance${idInstance}/editMessage/${apiTokenInstance}`,
         method: 'POST',

@@ -286,3 +286,9 @@ export interface MessageDataForRender {
   isDeleted?: boolean;
   isEdited?: boolean;
 }
+
+export interface MessageTooltipMenuData {
+  key: string;
+  label: string;
+  onClick: () => void;
+}

@@ -1,22 +1,20 @@
 import { FC, useRef } from 'react';
 
-import { SendOutlined } from '@ant-design/icons';
-import { Button, Col, Form, Row } from 'antd';
+import { Button, Form, Switch } from 'antd';
 import { useTranslation } from 'react-i18next';
 
-import TextArea from 'components/UI/text-area.component';
 import { useActions, useAppDispatch, useAppSelector, useFormWithLanguageValidation } from 'hooks';
-import { useEditMessageMutation } from 'services/green-api/endpoints';
+import { useDeleteMessageMutation } from 'services/green-api/endpoints';
 import { journalsGreenApiEndpoints } from 'services/green-api/endpoints/journals.green-api.endpoints';
 import { selectActiveChat, selectMessageCount, selectMiniVersion } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
 import { selectMessageDataForRender } from 'store/slices/message-menu.slice';
-import { ActiveChat, ChatFormValues, MessageDataForRender } from 'types';
+import { ActiveChat, GetChatInformationParameters, MessageDataForRender } from 'types';
 
-const EditMessageForm: FC = () => {
+const DeleteMessageForm: FC = () => {
   const instanceCredentials = useAppSelector(selectInstance);
   const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
-  const editedMessageData = useAppSelector(selectMessageDataForRender) as MessageDataForRender;
+  const deletedMessageData = useAppSelector(selectMessageDataForRender) as MessageDataForRender;
   const isMiniVersion = useAppSelector(selectMiniVersion);
   const messageCount = useAppSelector(selectMessageCount);
 
@@ -25,21 +23,21 @@ const EditMessageForm: FC = () => {
 
   const { t } = useTranslation();
 
-  const [editMessage, { isLoading: isEditMessageLoading }] = useEditMessageMutation();
+  const [deleteMessage, { isLoading: isDeleteMessageLoading }] = useDeleteMessageMutation();
 
-  const [form] = useFormWithLanguageValidation<ChatFormValues>();
+  const [form] = useFormWithLanguageValidation<
+    Pick<GetChatInformationParameters, 'onlySenderDelete'> & { response: string }
+  >();
   const responseTimerReference = useRef<number | null>(null);
 
-  const textAreaRef = useRef<HTMLTextAreaElement>(null);
-
-  const onEditMessage = async (values: ChatFormValues) => {
-    const { message } = values;
-
+  const onDeleteMessage = async (
+    values: Pick<GetChatInformationParameters, 'onlySenderDelete'>
+  ) => {
     const body = {
       ...instanceCredentials,
       chatId: activeChat.chatId,
-      idMessage: editedMessageData.idMessage,
-      message,
+      idMessage: deletedMessageData.idMessage,
+      onlySenderDelete: values.onlySenderDelete ? true : undefined,
     };
 
     if (responseTimerReference.current) {
@@ -50,7 +48,7 @@ const EditMessageForm: FC = () => {
 
     form.setFields([{ name: 'response', errors: [], warnings: [] }]);
 
-    const { data, error } = await editMessage(body);
+    const { data, error } = await deleteMessage(body);
 
     if (error && 'status' in error && error.status === 466) {
       form.setFields([{ name: 'response', errors: [t('QUOTE_EXCEEDED')] }]);
@@ -58,7 +56,7 @@ const EditMessageForm: FC = () => {
       return;
     }
 
-    if (data) {
+    if (data || !error) {
       const updateChatHistoryThunk = journalsGreenApiEndpoints.util?.updateQueryData(
         'getChatHistory',
         {
@@ -68,7 +66,7 @@ const EditMessageForm: FC = () => {
         },
         (draftChatHistory) => {
           const existingMessage = draftChatHistory.find(
-            (msg) => msg.idMessage === editedMessageData.idMessage
+            (msg) => msg.idMessage === deletedMessageData.idMessage
           );
 
           if (!existingMessage) {
@@ -77,15 +75,7 @@ const EditMessageForm: FC = () => {
             return;
           }
 
-          if (existingMessage.extendedTextMessage) {
-            existingMessage.extendedTextMessage.text = message;
-          } else if ('caption' in existingMessage) {
-            existingMessage.caption = message;
-          } else {
-            existingMessage.textMessage = message;
-          }
-
-          existingMessage.isEdited = true;
+          existingMessage.isDeleted = true;
 
           return draftChatHistory;
         }
@@ -96,22 +86,14 @@ const EditMessageForm: FC = () => {
         instanceCredentials,
         (draftChatList) => {
           const existingChat = draftChatList.find(
-            (msg) => msg.idMessage === editedMessageData.idMessage
+            (msg) => msg.idMessage === deletedMessageData.idMessage
           );
 
           if (!existingChat) {
             return;
           }
 
-          if (existingChat.extendedTextMessage) {
-            existingChat.extendedTextMessage.text = message;
-          } else if ('caption' in existingChat) {
-            existingChat.caption = message;
-          } else {
-            existingChat.textMessage = message;
-          }
-
-          existingChat.isEdited = true;
+          existingChat.isDeleted = true;
 
           return draftChatList;
         }
@@ -132,48 +114,45 @@ const EditMessageForm: FC = () => {
 
   return (
     <Form
-      name="edit-message-form"
-      className="chat-form relative bg-color-second"
-      onFinish={onEditMessage}
+      name="delete-message-form"
+      onFinish={onDeleteMessage}
       onSubmitCapture={() => form.setFields([{ name: 'response', errors: [], warnings: [] }])}
       form={form}
       onKeyDown={(e) => !e.ctrlKey && e.key === 'Enter' && form.submit()}
-      disabled={isEditMessageLoading}
+      disabled={isDeleteMessageLoading}
       style={{ borderRadius: 8 }}
     >
-      <Form.Item style={{ marginBottom: 0 }} name="response" className="response-form-item">
-        <Row gutter={[15, 15]} align={'middle'}>
-          <Col flex="auto">
-            <Form.Item
-              style={{ marginBottom: 0 }}
-              name="message"
-              rules={[{ required: true, message: t('EMPTY_FIELD_ERROR') }]}
-              normalize={(value) => {
-                form.setFields([{ name: 'response', warnings: [] }]);
-
-                return value;
-              }}
-            >
-              <TextArea ref={textAreaRef} />
-            </Form.Item>
-          </Col>
-          <Col>
-            <Form.Item style={{ marginBottom: 0 }}>
-              <Button
-                type="link"
-                htmlType="submit"
-                size="large"
-                className="login-form-button"
-                loading={isEditMessageLoading}
-              >
-                <SendOutlined />
-              </Button>
-            </Form.Item>
-          </Col>
-        </Row>
+      <Form.Item name="onlySenderDelete" label="Удалить сообщение только у отправителя">
+        <Switch />
       </Form.Item>
+      <Form.Item
+        style={{ marginBottom: 0 }}
+        wrapperCol={{
+          span: 24,
+          offset: 0,
+          sm: {
+            span: 20,
+            offset: 4,
+          },
+          lg: {
+            span: 16,
+            offset: 9,
+          },
+        }}
+      >
+        <Button
+          disabled={isDeleteMessageLoading}
+          htmlType="submit"
+          size="large"
+          block={true}
+          type="primary"
+        >
+          {t('DELETE_MESSAGE')}
+        </Button>
+      </Form.Item>
+      <Form.Item style={{ marginBottom: 0 }} name="response" className="response-form-item" />
     </Form>
   );
 };
 
-export default EditMessageForm;
+export default DeleteMessageForm;

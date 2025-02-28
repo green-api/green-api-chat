@@ -151,7 +151,10 @@ export interface GetChatHistoryParametersInterface
   count?: number;
 }
 
-export type GetChatInformationParameters = Pick<SendingBaseParametersInterface, 'chatId'> &
+export type GetChatInformationParameters = { onlySenderDelete?: boolean } & Pick<
+  SendingBaseParametersInterface,
+  'chatId'
+> &
   SendingResponseInterface &
   InstanceInterface;
 

@@ -4,6 +4,7 @@ import { Select } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import AttachIcon from 'assets/attach-icon.svg?react';
+import MessageServiceModal from 'components/modals/message-service-modal.component';
 import SendingModal from 'components/modals/sending-modal.component';
 import { useActions } from 'hooks';
 import { SendingMethodName } from 'types';
@@ -43,6 +44,7 @@ const SelectSendingMode: FC<SelectSendingModeProps> = ({ isWaba }) => {
         onSelect={(value) => setActiveSendingMode(value as SendingMethodName)}
       />
       <SendingModal />
+      <MessageServiceModal />
     </>
   );
 };

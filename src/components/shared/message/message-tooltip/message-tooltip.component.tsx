@@ -42,7 +42,6 @@ const MessageTooltip: FC<PropsWithChildren<MessageTooltipProps>> = ({
     }
 
     if (!visible && !activeServiceMethod) {
-      setMessageDataForRender(null);
       setMessageMenuActiveMode('menu');
     }
 
@@ -56,12 +55,13 @@ const MessageTooltip: FC<PropsWithChildren<MessageTooltipProps>> = ({
         isQuotedMessage || tooltipMode === 'messageInfo' || isMiniVersion ? (
           <MessageInfo jsonMessage={jsonMessage} />
         ) : (
-          <MessageTooltipMenu />
+          <MessageTooltipMenu onMenuItemClick={() => setIsVisible(false)} />
         )
       }
       overlayStyle={{ maxWidth: 450, lineHeight: 'initial', fontSize: 13 }}
       onOpenChange={onOpenChange}
       arrow={isQuotedMessage || isMiniVersion}
+      open={visible}
     >
       {!isQuotedMessage && (
         <DownOutlined

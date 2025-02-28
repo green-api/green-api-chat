@@ -13,6 +13,7 @@ import {
   InstanceInterface,
   LanguageLiteral,
   MessageData,
+  MessageDataForRender,
   MessageInterface,
   OutgoingTemplateMessage,
   StatusMessage,
@@ -117,22 +118,12 @@ export function getLastChats(
     }
 
     const existingChat = resultMap.get(message.chatId);
+    if (!existingChat) continue;
 
     // need for update existing chat last message status
     if (
-      existingChat &&
-      existingChat.idMessage === message.idMessage &&
-      existingChat.statusMessage !== message.statusMessage &&
-      isNewStatusMessageForExistingChat(existingChat.statusMessage, message.statusMessage)
-    ) {
-      resultMap.set(existingChat.chatId, message);
-    }
-
-    if (
-      existingChat &&
-      existingChat.idMessage === message.idMessage &&
-      (existingChat.editedMessageId !== message.editedMessageId ||
-        existingChat.deletedMessageId !== message.deletedMessageId)
+      isStatusUpdateNeeded(existingChat, message) ||
+      isEditedOrDeletedMessageUpdateNeeded(existingChat, message)
     ) {
       resultMap.set(existingChat.chatId, message);
     }
@@ -150,6 +141,29 @@ function isNewStatusMessageForExistingChat(
       (newStatus === 'sent' || newStatus === 'delivered' || newStatus === 'read')) ||
     (existingStatus === 'sent' && (newStatus === 'delivered' || newStatus === 'read')) ||
     (existingStatus === 'delivered' && newStatus === 'read')
+  );
+}
+
+function isStatusUpdateNeeded(existingChat: MessageInterface, message: MessageInterface): boolean {
+  return (
+    existingChat.idMessage === message.idMessage &&
+    existingChat.statusMessage !== message.statusMessage &&
+    isNewStatusMessageForExistingChat(existingChat.statusMessage, message.statusMessage)
+  );
+}
+
+function isEditedOrDeletedMessageUpdateNeeded(
+  existingChat: MessageInterface,
+  message: MessageInterface
+): boolean {
+  return (
+    existingChat.idMessage === message.idMessage &&
+    (('editedMessageId' in existingChat &&
+      'editedMessageId' in message &&
+      existingChat.editedMessageId !== message.editedMessageId) ||
+      ('deletedMessageId' in existingChat &&
+        'deletedMessageId' in message &&
+        existingChat.deletedMessageId !== message.deletedMessageId))
   );
 }
 
@@ -179,6 +193,19 @@ export function getMessageDate(
   }
 
   return formatDate(timestamp, language, format);
+}
+
+export function checkIfFifteenMinutesPassed(timestamp: number): boolean {
+  const fifteenMinutesPassedTimestamp = timestamp + 900000;
+
+  return Date.now() >= fifteenMinutesPassedTimestamp;
+}
+
+export function isMessageEditable(messageData: MessageDataForRender): boolean {
+  const isFifteenMinutesPassed = checkIfFifteenMinutesPassed(messageData.timestamp * 1000);
+  const isMessageDeleted = messageData.isDeleted;
+
+  return !isFifteenMinutesPassed && !isMessageDeleted;
 }
 
 export function isApiError(error: unknown): error is ApiErrorResponse {

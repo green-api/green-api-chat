@@ -124,5 +124,6 @@
 
   "MESSAGE_INFO": "Message info",
   "EDIT_MESSAGE": "Edit message",
-  "DELETE_MESSAGE": "Delete message"
+  "DELETE_MESSAGE": "Delete message",
+  "ONLY_SENDER_DELETE_LABEL": "Delete message from sender only"
 }

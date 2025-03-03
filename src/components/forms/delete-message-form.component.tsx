@@ -122,24 +122,10 @@ const DeleteMessageForm: FC = () => {
       disabled={isDeleteMessageLoading}
       style={{ borderRadius: 8 }}
     >
-      <Form.Item name="onlySenderDelete" label="Удалить сообщение только у отправителя">
+      <Form.Item name="onlySenderDelete" label={t('ONLY_SENDER_DELETE_LABEL')}>
         <Switch />
       </Form.Item>
-      <Form.Item
-        style={{ marginBottom: 0 }}
-        wrapperCol={{
-          span: 24,
-          offset: 0,
-          sm: {
-            span: 20,
-            offset: 4,
-          },
-          lg: {
-            span: 16,
-            offset: 9,
-          },
-        }}
-      >
+      <Form.Item style={{ marginBottom: 0 }}>
         <Button
           disabled={isDeleteMessageLoading}
           htmlType="submit"

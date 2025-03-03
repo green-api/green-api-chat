@@ -124,5 +124,6 @@
 
   "MESSAGE_INFO": "מידע על הודעה",
   "EDIT_MESSAGE": "ערוך הודעה",
-  "DELETE_MESSAGE": "מחק הודעה"
+  "DELETE_MESSAGE": "מחק הודעה",
+  "ONLY_SENDER_DELETE_LABEL": "מחק הודעה מהשולח בלבד"
 }

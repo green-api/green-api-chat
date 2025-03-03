@@ -169,16 +169,14 @@ const ChatView: FC = () => {
               (template) => template.templateId === id
             );
 
-            if (!templateData) {
-              return null;
-            }
+            if (templateData) {
+              if (templateData.containerMeta) {
+                templateMessage = JSON.parse(
+                  templateData.containerMeta
+                ) as ParsedWabaTemplateInterface;
 
-            if (templateData.containerMeta) {
-              templateMessage = JSON.parse(
-                templateData.containerMeta
-              ) as ParsedWabaTemplateInterface;
-
-              templateMessage.params = message.templateMessage.params;
+                templateMessage.params = message.templateMessage.params;
+              }
             }
           } else {
             if (message.templateMessage.contentText) {

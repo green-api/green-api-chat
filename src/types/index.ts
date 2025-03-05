@@ -292,3 +292,9 @@ export interface MessageTooltipMenuData {
   label: string;
   onClick: () => void;
 }
+
+export interface MessagesDate {
+  date: string;
+}
+
+export type FormattedMessagesWithDate = (MessageInterface | MessagesDate)[];

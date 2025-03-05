@@ -6,6 +6,7 @@ import {
   ChatType,
   CookieOptionsInterface,
   ExpandedInstanceInterface,
+  FormattedMessagesWithDate,
   GetChatHistoryResponse,
   GetContactInfoResponseInterface,
   GetGroupDataSuccessResponseInterface,
@@ -15,6 +16,7 @@ import {
   MessageData,
   MessageDataForRender,
   MessageInterface,
+  MessagesDate,
   OutgoingTemplateMessage,
   StatusMessage,
   TemplateMessageInterface,
@@ -401,4 +403,33 @@ export function getIsChatWorkingFromStorage(idInstance: number): boolean | null 
 
 export function setIsChatWorkingFromStorage(idInstance: number, isChatWorking: boolean): void {
   localStorage.setItem(idInstance.toString(), JSON.stringify(isChatWorking));
+}
+
+function groupedDays(messages: MessageInterface[]): Record<string, MessageInterface[]> {
+  return messages.reduce<Record<string, MessageInterface[]>>((acc, message) => {
+    const messageDay = getMessageDate(message.timestamp * 1000);
+
+    if (acc[messageDay]) {
+      return { ...acc, [messageDay]: acc[messageDay].concat([message]) };
+    }
+
+    return { ...acc, [messageDay]: [message] };
+  }, {});
+}
+
+export function formatMessages(messages: MessageInterface[]): FormattedMessagesWithDate {
+  const days = groupedDays(messages);
+  const sortedDays = Object.keys(days).sort(
+    (x, y) => new Date(x).getTime() - new Date(y).getTime()
+  );
+  const items = sortedDays.reduce<FormattedMessagesWithDate>((acc, date) => {
+    // const sortedMessages = days[date].sort((x, y) => y.timestamp - x.timestamp);
+    return acc.concat([{ date }, ...days[date]]);
+  }, []);
+
+  return items;
+}
+
+export function isMessagesDate(message: MessageInterface | MessagesDate): message is MessagesDate {
+  return 'date' in message;
 }

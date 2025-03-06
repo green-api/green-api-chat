@@ -19,6 +19,8 @@
 
   &-form {
     padding: 10px;
+    z-index: 1000;
+    //border-top: 1px solid var(--border-color);
   }
 
   &-form-wrapper {
@@ -39,5 +41,6 @@
 
   .ant-card-head {
     background-color: var(--second-background);
+    z-index: 1000;
   }
 }

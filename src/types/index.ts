@@ -71,22 +71,10 @@ export interface ApiErrorResponse<T = unknown> {
   data: T;
 }
 
-export interface GreenApiUrlsInterface {
-  api: string;
-  media: string;
-  qrHost: string;
-  qrHttpHost: string;
-}
-
 export interface MessageMenuState {
   activeMode: 'messageInfo' | 'menu';
   activeServiceMethod: MessageServiceMethodName | null;
   messageDataForRender: MessageDataForRender | null;
-}
-
-export interface GreenApiRouteInterface extends GreenApiUrlsInterface {
-  // string - для одного значения, string[] - для диапазона значений
-  instancesCodes: (number | [number, number])[];
 }
 
 export type LanguageLiteral = 'en' | 'ru' | 'he';

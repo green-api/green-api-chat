@@ -41,6 +41,7 @@ const ChatListItem: FC<ContactListItemProps> = ({ lastMessage }) => {
 
   const messageDate = getMessageDate(
     lastMessage.timestamp * 1000,
+    'chatList',
     resolvedLanguage as LanguageLiteral
   );
 

@@ -11,7 +11,12 @@ import { useGetChatHistoryQuery, useGetTemplatesQuery } from 'services/green-api
 import { selectActiveChat, selectMiniVersion } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
 import { selectUser } from 'store/slices/user.slice';
-import { ActiveChat, ParsedWabaTemplateInterface, TemplateButtonTypesEnum } from 'types';
+import {
+  ActiveChat,
+  LanguageLiteral,
+  ParsedWabaTemplateInterface,
+  TemplateButtonTypesEnum,
+} from 'types';
 import {
   formatMessages,
   getErrorMessage,
@@ -34,7 +39,10 @@ const ChatView: FC = () => {
   let previousMessageAreOutgoing = false;
   let previousSenderName = '';
 
-  const { t } = useTranslation();
+  const {
+    t,
+    i18n: { resolvedLanguage },
+  } = useTranslation();
 
   const chatViewRef = useRef<HTMLDivElement | null>(null);
 
@@ -120,8 +128,8 @@ const ChatView: FC = () => {
   const formattedMessages = useMemo(() => {
     if (!messages) return [];
 
-    return formatMessages(messages);
-  }, [messages]);
+    return formatMessages(messages, resolvedLanguage as LanguageLiteral);
+  }, [messages, resolvedLanguage]);
 
   if (isLoading || templatesLoading) {
     return (
@@ -163,8 +171,8 @@ const ChatView: FC = () => {
       {formattedMessages.map((message, idx) => {
         if (isMessagesDate(message)) {
           return (
-            <div key={message.date} style={{ alignSelf: 'center' }}>
-              {message.date}
+            <div className="message date p-10" key={message.date} style={{ alignSelf: 'center' }}>
+              {message.date.toUpperCase()}
             </div>
           );
         }

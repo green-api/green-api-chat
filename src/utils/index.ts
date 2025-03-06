@@ -1,6 +1,6 @@
 import { i18n } from 'i18next';
 
-import { GREEN_API_INSTANCES_ROUTER, Routes } from 'configs';
+import { Routes } from 'configs';
 import {
   ApiErrorResponse,
   ChatType,
@@ -10,8 +10,6 @@ import {
   GetChatHistoryResponse,
   GetContactInfoResponseInterface,
   GetGroupDataSuccessResponseInterface,
-  GreenApiUrlsInterface,
-  InstanceInterface,
   LanguageLiteral,
   MessageData,
   MessageDataForRender,
@@ -25,45 +23,6 @@ import {
 } from 'types';
 
 export * from './component.utils';
-
-export function getGreenApiUrls(
-  idInstance: InstanceInterface['idInstance']
-): GreenApiUrlsInterface {
-  if (`${idInstance}`.length === 4 && `${idInstance}`.indexOf('57') === 0) {
-    return {
-      api: GREEN_API_INSTANCES_ROUTER[0].api,
-      media: GREEN_API_INSTANCES_ROUTER[0].media,
-      qrHost: GREEN_API_INSTANCES_ROUTER[0].qrHost,
-      qrHttpHost: GREEN_API_INSTANCES_ROUTER[0].qrHttpHost,
-    };
-  }
-
-  const idInstanceCode = +`${idInstance}`.slice(0, 4);
-
-  const route = GREEN_API_INSTANCES_ROUTER.find(({ instancesCodes }) => {
-    const indexCode = instancesCodes.findIndex((value) => {
-      if (Array.isArray(value)) return value[0] <= idInstanceCode && idInstanceCode <= value[1];
-
-      return value === idInstanceCode;
-    });
-
-    return indexCode !== -1;
-  });
-
-  return route
-    ? {
-        api: route.api,
-        media: route.media,
-        qrHost: route.qrHost,
-        qrHttpHost: route.qrHttpHost,
-      }
-    : {
-        api: GREEN_API_INSTANCES_ROUTER[0].api,
-        media: GREEN_API_INSTANCES_ROUTER[0].media,
-        qrHost: GREEN_API_INSTANCES_ROUTER[0].qrHost,
-        qrHttpHost: GREEN_API_INSTANCES_ROUTER[0].qrHttpHost,
-      };
-}
 
 export function formatDate(
   timeCreated: number | string | Date,
@@ -182,13 +141,14 @@ export function updateLastChats(
 
 export function getMessageDate(
   timestamp: number,
+  usage: 'chatList' | 'chat',
   language: LanguageLiteral = 'en',
   format: 'short' | 'long' = 'short'
 ): string {
   const messageDate = formatDate(timestamp, language, 'short');
   const nowDate = formatDate(Date.now(), language, 'short');
 
-  if (messageDate === nowDate) {
+  if (messageDate === nowDate || usage === 'chat') {
     const date = new Date(timestamp);
 
     return `0${date.getHours()}`.slice(-2) + ':' + `0${date.getMinutes()}`.slice(-2);
@@ -405,9 +365,24 @@ export function setIsChatWorkingFromStorage(idInstance: number, isChatWorking: b
   localStorage.setItem(idInstance.toString(), JSON.stringify(isChatWorking));
 }
 
-function groupedDays(messages: MessageInterface[]): Record<string, MessageInterface[]> {
+function groupedDays(
+  messages: MessageInterface[],
+  language: LanguageLiteral = 'en'
+): Record<string, MessageInterface[]> {
   return messages.reduce<Record<string, MessageInterface[]>>((acc, message) => {
-    const messageDay = getMessageDate(message.timestamp * 1000);
+    let messageDay = formatDate(message.timestamp * 1000, language);
+
+    const today = formatDate(Date.now(), language);
+    const yesterday = formatDate(new Date().setDate(new Date().getDate() - 1), language);
+    const rtf = new Intl.RelativeTimeFormat(language, { numeric: 'auto' });
+
+    if (messageDay === today) {
+      messageDay = rtf.format(0, 'day');
+    }
+
+    if (messageDay === yesterday) {
+      messageDay = rtf.format(-1, 'day');
+    }
 
     if (acc[messageDay]) {
       return { ...acc, [messageDay]: acc[messageDay].concat([message]) };
@@ -417,13 +392,15 @@ function groupedDays(messages: MessageInterface[]): Record<string, MessageInterf
   }, {});
 }
 
-export function formatMessages(messages: MessageInterface[]): FormattedMessagesWithDate {
-  const days = groupedDays(messages);
+export function formatMessages(
+  messages: MessageInterface[],
+  language: LanguageLiteral = 'en'
+): FormattedMessagesWithDate {
+  const days = groupedDays(messages, language);
   const sortedDays = Object.keys(days).sort(
     (x, y) => new Date(x).getTime() - new Date(y).getTime()
   );
   const items = sortedDays.reduce<FormattedMessagesWithDate>((acc, date) => {
-    // const sortedMessages = days[date].sort((x, y) => y.timestamp - x.timestamp);
     return acc.concat([{ date }, ...days[date]]);
   }, []);
 

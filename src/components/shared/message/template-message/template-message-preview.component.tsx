@@ -43,7 +43,7 @@ const TemplateMessagePreview: FC<MessagePreviewProps> = ({ template }) => {
   const mediaUrl = parsedTemplateData.mediaUrl;
   const buttons = parsedTemplateData.buttons;
 
-  const time = getMessageDate(Date.now(), resolvedLanguage as LanguageLiteral, 'short');
+  const time = getMessageDate(Date.now(), 'chat', resolvedLanguage as LanguageLiteral, 'short');
 
   return getTemplateMessageLayout({
     containerClassName: 'message outgoing p-10',

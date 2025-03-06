@@ -47,7 +47,7 @@ const Message: FC<MessageProps> = ({ messageDataForRender, preview }) => {
     i18n: { resolvedLanguage },
   } = useTranslation();
 
-  const messageDate = getMessageDate(timestamp * 1000, resolvedLanguage as LanguageLiteral, 'long');
+  const messageDate = getMessageDate(timestamp * 1000, 'chat', resolvedLanguage as LanguageLiteral);
 
   const messageRef = useRef<HTMLDivElement>(null);
 
@@ -101,12 +101,12 @@ const Message: FC<MessageProps> = ({ messageDataForRender, preview }) => {
         />
       )}
       {isDeleted && !showDeletedMessage ? (
-        <i>
-          {t('DELETED_MESSAGE')}{' '}
+        <Space>
+          <i className="deleted-message">{t('DELETED_MESSAGE')}</i>
           <a style={{ fontStyle: 'normal' }} onClick={() => setShowDeletedMessage(true)}>
             ({t('SHOW')})
           </a>
-        </i>
+        </Space>
       ) : (
         messageBody
       )}

@@ -134,7 +134,7 @@ const ChatForm: FC = () => {
   return (
     <Form
       name="chat-form"
-      className="chat-form bg-color-second"
+      className="chat-form bg-color-second relative"
       onFinish={onSendMessage}
       onSubmitCapture={() => form.setFields([{ name: 'response', errors: [], warnings: [] }])}
       form={form}

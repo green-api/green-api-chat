@@ -5,22 +5,17 @@ import {
   DeleteNotificationParameters,
   ResultResponseInterface,
 } from 'types';
-import { getGreenApiUrls } from 'utils';
 
 export const receivingGreenApiEndpoints = greenAPI.injectEndpoints({
   endpoints: (builder) => ({
     receiveNotification: builder.query<ReceiveNotificationResponseInterface, InstanceInterface>({
-      query: ({ idInstance, apiTokenInstance }) => ({
-        url: `${
-          getGreenApiUrls(idInstance).api
-        }/waInstance${idInstance}/receiveNotification/${apiTokenInstance}`,
+      query: ({ idInstance, apiTokenInstance, apiUrl }) => ({
+        url: `${apiUrl}waInstance${idInstance}/receiveNotification/${apiTokenInstance}`,
       }),
     }),
     deleteNotification: builder.mutation<ResultResponseInterface, DeleteNotificationParameters>({
-      query: ({ idInstance, apiTokenInstance, receiptId }) => ({
-        url: `${
-          getGreenApiUrls(idInstance).api
-        }/waInstance${idInstance}/deleteNotification/${apiTokenInstance}/${receiptId}`,
+      query: ({ idInstance, apiTokenInstance, receiptId, apiUrl }) => ({
+        url: `${apiUrl}waInstance${idInstance}/deleteNotification/${apiTokenInstance}/${receiptId}`,
         method: 'DELETE',
       }),
     }),

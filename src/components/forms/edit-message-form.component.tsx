@@ -1,42 +1,44 @@
-import { FC, useEffect, useRef } from 'react';
+import { FC, useRef } from 'react';
 
 import { SendOutlined } from '@ant-design/icons';
 import { Button, Col, Form, Row } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import TextArea from 'components/UI/text-area.component';
-import { useAppDispatch, useAppSelector, useFormWithLanguageValidation } from 'hooks';
-import { useSendMessageMutation } from 'services/green-api/endpoints';
+import { useActions, useAppDispatch, useAppSelector, useFormWithLanguageValidation } from 'hooks';
+import { useEditMessageMutation } from 'services/green-api/endpoints';
 import { journalsGreenApiEndpoints } from 'services/green-api/endpoints/journals.green-api.endpoints';
 import { selectActiveChat, selectMessageCount, selectMiniVersion } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
-import { selectPlatform } from 'store/slices/user.slice';
-import { ActiveChat, ChatFormValues, MessageInterface } from 'types';
-import { getLastChats } from 'utils';
+import { selectMessageDataForRender } from 'store/slices/message-menu.slice';
+import { ActiveChat, ChatFormValues, MessageDataForRender } from 'types';
 
-const ChatForm: FC = () => {
+const EditMessageForm: FC = () => {
   const instanceCredentials = useAppSelector(selectInstance);
   const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
+  const editedMessageData = useAppSelector(selectMessageDataForRender) as MessageDataForRender;
   const isMiniVersion = useAppSelector(selectMiniVersion);
   const messageCount = useAppSelector(selectMessageCount);
-  const platform = useAppSelector(selectPlatform);
 
   const dispatch = useAppDispatch();
+  const { setActiveServiceMethod } = useActions();
 
   const { t } = useTranslation();
 
-  const [sendMessage, { isLoading: isSendMessageLoading }] = useSendMessageMutation();
+  const [editMessage, { isLoading: isEditMessageLoading }] = useEditMessageMutation();
 
   const [form] = useFormWithLanguageValidation<ChatFormValues>();
   const responseTimerReference = useRef<number | null>(null);
 
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
-  const onSendMessage = async (values: ChatFormValues) => {
+  const onEditMessage = async (values: ChatFormValues) => {
     const { message } = values;
+
     const body = {
       ...instanceCredentials,
       chatId: activeChat.chatId,
+      idMessage: editedMessageData.idMessage,
       message,
     };
 
@@ -48,7 +50,7 @@ const ChatForm: FC = () => {
 
     form.setFields([{ name: 'response', errors: [], warnings: [] }]);
 
-    const { data, error } = await sendMessage(body);
+    const { data, error } = await editMessage(body);
 
     if (error && 'status' in error && error.status === 466) {
       form.setFields([{ name: 'response', errors: [t('QUOTE_EXCEEDED')] }]);
@@ -65,24 +67,25 @@ const ChatForm: FC = () => {
           count: isMiniVersion ? 10 : messageCount,
         },
         (draftChatHistory) => {
-          const existingMessage = draftChatHistory.find((msg) => msg.idMessage === data.idMessage);
-          if (existingMessage) {
-            console.log('message already in chat history');
+          const existingMessage = draftChatHistory.find(
+            (msg) => msg.idMessage === editedMessageData.idMessage
+          );
+
+          if (!existingMessage) {
+            console.log('message not found in chat history');
 
             return;
           }
 
-          draftChatHistory.push({
-            type: 'outgoing',
-            typeMessage: 'textMessage',
-            textMessage: message,
-            timestamp: Math.floor(Date.now() / 1000),
-            senderName: activeChat.senderName || '',
-            senderContactName: activeChat.senderContactName || '',
-            idMessage: data.idMessage,
-            chatId: activeChat.chatId,
-            statusMessage: 'sent',
-          });
+          if (existingMessage.extendedTextMessage) {
+            existingMessage.extendedTextMessage.text = message;
+          } else if ('caption' in existingMessage) {
+            existingMessage.caption = message;
+          } else {
+            existingMessage.textMessage = message;
+          }
+
+          existingMessage.isEdited = true;
 
           return draftChatHistory;
         }
@@ -91,20 +94,26 @@ const ChatForm: FC = () => {
       const updateChatListThunk = journalsGreenApiEndpoints.util?.updateQueryData(
         'lastMessages',
         instanceCredentials,
-        (draftChatHistory) => {
-          const newMessage: MessageInterface = {
-            type: 'outgoing',
-            typeMessage: 'textMessage',
-            textMessage: message,
-            timestamp: Math.floor(Date.now() / 1000),
-            senderName: activeChat.senderName || '',
-            senderContactName: activeChat.senderContactName || '',
-            idMessage: data.idMessage,
-            chatId: activeChat.chatId,
-            statusMessage: 'sent',
-          };
+        (draftChatList) => {
+          const existingChat = draftChatList.find(
+            (msg) => msg.idMessage === editedMessageData.idMessage
+          );
 
-          return getLastChats(draftChatHistory, [newMessage], isMiniVersion ? 5 : undefined);
+          if (!existingChat) {
+            return;
+          }
+
+          if (existingChat.extendedTextMessage) {
+            existingChat.extendedTextMessage.text = message;
+          } else if ('caption' in existingChat) {
+            existingChat.caption = message;
+          } else {
+            existingChat.textMessage = message;
+          }
+
+          existingChat.isEdited = true;
+
+          return draftChatList;
         }
       );
 
@@ -113,36 +122,27 @@ const ChatForm: FC = () => {
 
       form.resetFields();
 
-      setTimeout(() => textAreaRef.current?.focus(), 100);
-
       responseTimerReference.current = setTimeout(() => {
         form.setFields([{ name: 'response', errors: [], warnings: [] }]);
       }, 5000);
+
+      setActiveServiceMethod(null);
     }
   };
 
-  useEffect(() => {
-    form.setFields([{ name: 'message', errors: [] }]);
-  }, [activeChat.chatId, form]);
-
-  useEffect(() => {
-    if (platform === 'web') {
-      textAreaRef.current?.focus();
-    }
-  });
-
   return (
     <Form
-      name="chat-form"
-      className="chat-form bg-color-second relative"
-      onFinish={onSendMessage}
+      name="edit-message-form"
+      className="chat-form relative bg-color-second"
+      onFinish={onEditMessage}
       onSubmitCapture={() => form.setFields([{ name: 'response', errors: [], warnings: [] }])}
       form={form}
       onKeyDown={(e) => !e.ctrlKey && e.key === 'Enter' && form.submit()}
-      disabled={isSendMessageLoading}
+      disabled={isEditMessageLoading}
+      style={{ borderRadius: 8 }}
     >
       <Form.Item style={{ marginBottom: 0 }} name="response" className="response-form-item">
-        <Row gutter={[15, 15]} align={isMiniVersion ? 'bottom' : 'middle'}>
+        <Row gutter={[15, 15]} align={'middle'}>
           <Col flex="auto">
             <Form.Item
               style={{ marginBottom: 0 }}
@@ -157,25 +157,23 @@ const ChatForm: FC = () => {
               <TextArea ref={textAreaRef} />
             </Form.Item>
           </Col>
-          {isMiniVersion && (
-            <Col>
-              <Form.Item style={{ marginBottom: 0 }}>
-                <Button
-                  type="link"
-                  htmlType="submit"
-                  size="large"
-                  className="login-form-button"
-                  loading={isSendMessageLoading}
-                >
-                  <SendOutlined />
-                </Button>
-              </Form.Item>
-            </Col>
-          )}
+          <Col>
+            <Form.Item style={{ marginBottom: 0 }}>
+              <Button
+                type="link"
+                htmlType="submit"
+                size="large"
+                className="login-form-button"
+                loading={isEditMessageLoading}
+              >
+                <SendOutlined />
+              </Button>
+            </Form.Item>
+          </Col>
         </Row>
       </Form.Item>
     </Form>
   );
 };
 
-export default ChatForm;
+export default EditMessageForm;

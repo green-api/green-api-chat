@@ -1,0 +1,12 @@
+.message-tooltip-menu {
+  .ant-list-items &__item {
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    padding: 5px 12px;
+    border-radius: 4px;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.04);
+    }
+  }
+}

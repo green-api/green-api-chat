@@ -11,7 +11,8 @@ const ContactChat: FC = () => {
   const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
 
   return (
-    <div className="chat-form-wrapper">
+    <div className="chat-form-wrapper relative">
+      <div className="chat-bg" />
       <ChatView />
       {activeChat.contactInfo === 'Error: forbidden' ? <CantSendInGroupAlert /> : <ChatForm />}
     </div>

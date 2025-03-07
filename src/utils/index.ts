@@ -1,19 +1,20 @@
 import { i18n } from 'i18next';
 
-import { GREEN_API_INSTANCES_ROUTER, Routes } from 'configs';
+import { Routes } from 'configs';
 import {
   ApiErrorResponse,
   ChatType,
   CookieOptionsInterface,
   ExpandedInstanceInterface,
+  FormattedMessagesWithDate,
   GetChatHistoryResponse,
   GetContactInfoResponseInterface,
   GetGroupDataSuccessResponseInterface,
-  GreenApiUrlsInterface,
-  InstanceInterface,
   LanguageLiteral,
   MessageData,
+  MessageDataForRender,
   MessageInterface,
+  MessagesDate,
   OutgoingTemplateMessage,
   StatusMessage,
   TemplateMessageInterface,
@@ -22,45 +23,6 @@ import {
 } from 'types';
 
 export * from './component.utils';
-
-export function getGreenApiUrls(
-  idInstance: InstanceInterface['idInstance']
-): GreenApiUrlsInterface {
-  if (`${idInstance}`.length === 4 && `${idInstance}`.indexOf('57') === 0) {
-    return {
-      api: GREEN_API_INSTANCES_ROUTER[0].api,
-      media: GREEN_API_INSTANCES_ROUTER[0].media,
-      qrHost: GREEN_API_INSTANCES_ROUTER[0].qrHost,
-      qrHttpHost: GREEN_API_INSTANCES_ROUTER[0].qrHttpHost,
-    };
-  }
-
-  const idInstanceCode = +`${idInstance}`.slice(0, 4);
-
-  const route = GREEN_API_INSTANCES_ROUTER.find(({ instancesCodes }) => {
-    const indexCode = instancesCodes.findIndex((value) => {
-      if (Array.isArray(value)) return value[0] <= idInstanceCode && idInstanceCode <= value[1];
-
-      return value === idInstanceCode;
-    });
-
-    return indexCode !== -1;
-  });
-
-  return route
-    ? {
-        api: route.api,
-        media: route.media,
-        qrHost: route.qrHost,
-        qrHttpHost: route.qrHttpHost,
-      }
-    : {
-        api: GREEN_API_INSTANCES_ROUTER[0].api,
-        media: GREEN_API_INSTANCES_ROUTER[0].media,
-        qrHost: GREEN_API_INSTANCES_ROUTER[0].qrHost,
-        qrHttpHost: GREEN_API_INSTANCES_ROUTER[0].qrHttpHost,
-      };
-}
 
 export function formatDate(
   timeCreated: number | string | Date,
@@ -117,22 +79,12 @@ export function getLastChats(
     }
 
     const existingChat = resultMap.get(message.chatId);
+    if (!existingChat) continue;
 
     // need for update existing chat last message status
     if (
-      existingChat &&
-      existingChat.idMessage === message.idMessage &&
-      existingChat.statusMessage !== message.statusMessage &&
-      isNewStatusMessageForExistingChat(existingChat.statusMessage, message.statusMessage)
-    ) {
-      resultMap.set(existingChat.chatId, message);
-    }
-
-    if (
-      existingChat &&
-      existingChat.idMessage === message.idMessage &&
-      (existingChat.editedMessageId !== message.editedMessageId ||
-        existingChat.deletedMessageId !== message.deletedMessageId)
+      isStatusUpdateNeeded(existingChat, message) ||
+      isEditedOrDeletedMessageUpdateNeeded(existingChat, message)
     ) {
       resultMap.set(existingChat.chatId, message);
     }
@@ -153,6 +105,29 @@ function isNewStatusMessageForExistingChat(
   );
 }
 
+function isStatusUpdateNeeded(existingChat: MessageInterface, message: MessageInterface): boolean {
+  return (
+    existingChat.idMessage === message.idMessage &&
+    existingChat.statusMessage !== message.statusMessage &&
+    isNewStatusMessageForExistingChat(existingChat.statusMessage, message.statusMessage)
+  );
+}
+
+function isEditedOrDeletedMessageUpdateNeeded(
+  existingChat: MessageInterface,
+  message: MessageInterface
+): boolean {
+  return (
+    existingChat.idMessage === message.idMessage &&
+    (('editedMessageId' in existingChat &&
+      'editedMessageId' in message &&
+      existingChat.editedMessageId !== message.editedMessageId) ||
+      ('deletedMessageId' in existingChat &&
+        'deletedMessageId' in message &&
+        existingChat.deletedMessageId !== message.deletedMessageId))
+  );
+}
+
 export function updateLastChats(
   currentChats: MessageInterface[],
   lastIncomingMessages: GetChatHistoryResponse,
@@ -166,19 +141,33 @@ export function updateLastChats(
 
 export function getMessageDate(
   timestamp: number,
+  usage: 'chatList' | 'chat',
   language: LanguageLiteral = 'en',
   format: 'short' | 'long' = 'short'
 ): string {
   const messageDate = formatDate(timestamp, language, 'short');
   const nowDate = formatDate(Date.now(), language, 'short');
 
-  if (messageDate === nowDate) {
+  if (messageDate === nowDate || usage === 'chat') {
     const date = new Date(timestamp);
 
     return `0${date.getHours()}`.slice(-2) + ':' + `0${date.getMinutes()}`.slice(-2);
   }
 
   return formatDate(timestamp, language, format);
+}
+
+export function checkIfFifteenMinutesPassed(timestamp: number): boolean {
+  const fifteenMinutesPassedTimestamp = timestamp + 900000;
+
+  return Date.now() >= fifteenMinutesPassedTimestamp;
+}
+
+export function isMessageEditable(messageData: MessageDataForRender): boolean {
+  const isFifteenMinutesPassed = checkIfFifteenMinutesPassed(messageData.timestamp * 1000);
+  const isMessageDeleted = messageData.isDeleted;
+
+  return !isFifteenMinutesPassed && !isMessageDeleted;
 }
 
 export function isApiError(error: unknown): error is ApiErrorResponse {
@@ -374,4 +363,50 @@ export function getIsChatWorkingFromStorage(idInstance: number): boolean | null 
 
 export function setIsChatWorkingFromStorage(idInstance: number, isChatWorking: boolean): void {
   localStorage.setItem(idInstance.toString(), JSON.stringify(isChatWorking));
+}
+
+function groupedDays(
+  messages: MessageInterface[],
+  language: LanguageLiteral = 'en'
+): Record<string, MessageInterface[]> {
+  return messages.reduce<Record<string, MessageInterface[]>>((acc, message) => {
+    let messageDay = formatDate(message.timestamp * 1000, language);
+
+    const today = formatDate(Date.now(), language);
+    const yesterday = formatDate(new Date().setDate(new Date().getDate() - 1), language);
+    const rtf = new Intl.RelativeTimeFormat(language, { numeric: 'auto' });
+
+    if (messageDay === today) {
+      messageDay = rtf.format(0, 'day');
+    }
+
+    if (messageDay === yesterday) {
+      messageDay = rtf.format(-1, 'day');
+    }
+
+    if (acc[messageDay]) {
+      return { ...acc, [messageDay]: acc[messageDay].concat([message]) };
+    }
+
+    return { ...acc, [messageDay]: [message] };
+  }, {});
+}
+
+export function formatMessages(
+  messages: MessageInterface[],
+  language: LanguageLiteral = 'en'
+): FormattedMessagesWithDate {
+  const days = groupedDays(messages, language);
+  const sortedDays = Object.keys(days).sort(
+    (x, y) => new Date(x).getTime() - new Date(y).getTime()
+  );
+  const items = sortedDays.reduce<FormattedMessagesWithDate>((acc, date) => {
+    return acc.concat([{ date }, ...days[date]]);
+  }, []);
+
+  return items;
+}
+
+export function isMessagesDate(message: MessageInterface | MessagesDate): message is MessagesDate {
+  return 'date' in message;
 }

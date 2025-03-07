@@ -3,10 +3,10 @@ import { FC } from 'react';
 import { Space, Typography } from 'antd';
 import { useTranslation } from 'react-i18next';
 
-import MessageTooltip from './message-tooltip.component';
+import MessageTooltip from './message-tooltip/message-tooltip.component';
 import { useAppSelector } from 'hooks';
 import { selectMiniVersion } from 'store/slices/chat.slice';
-import { QuotedMessageInterface, TypeConnectionMessage } from 'types';
+import { MessageDataForRender, QuotedMessageInterface, TypeConnectionMessage } from 'types';
 import {
   getFormattedMessage,
   getJSONMessage,
@@ -16,11 +16,12 @@ import {
 } from 'utils';
 
 interface QuotedMessageProps {
+  messageDataForRender: MessageDataForRender;
   quotedMessage: QuotedMessageInterface;
   type: TypeConnectionMessage;
 }
 
-const QuotedMessage: FC<QuotedMessageProps> = ({ quotedMessage, type }) => {
+const QuotedMessage: FC<QuotedMessageProps> = ({ quotedMessage, type, messageDataForRender }) => {
   const { typeMessage, downloadUrl } = quotedMessage;
 
   const { i18n } = useTranslation();
@@ -37,7 +38,11 @@ const QuotedMessage: FC<QuotedMessageProps> = ({ quotedMessage, type }) => {
   const dir = i18n.dir();
 
   return (
-    <MessageTooltip jsonMessage={jsonMessage} isQuotedMessage>
+    <MessageTooltip
+      messageDataForRender={messageDataForRender}
+      jsonMessage={jsonMessage}
+      isQuotedMessage
+    >
       <Space
         direction="vertical"
         className={`quoted-message ${isMiniVersion ? '' : 'full'} ${type === 'outgoing' ? 'outgoing' : 'incoming'} ${dir === 'rtl' ? 'rtl' : ''}`}

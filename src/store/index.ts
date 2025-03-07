@@ -1,11 +1,12 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 
 import { listenerMiddleware } from './auth-middleware';
-import { appAPI } from '../services/app/app.service';
+import { appAPI } from 'services/app/app.service';
 import { greenAPI } from 'services/green-api/green-api.service';
 import chatReducer from 'store/slices/chat.slice';
-import themeReducer from 'store/slices/theme.slice';
 import instancesReducer from 'store/slices/instances.slice';
+import messageMenuReducer from 'store/slices/message-menu.slice';
+import themeReducer from 'store/slices/theme.slice';
 import userReducer from 'store/slices/user.slice';
 
 const rootReducer = combineReducers({
@@ -13,6 +14,7 @@ const rootReducer = combineReducers({
   chatReducer,
   themeReducer,
   instancesReducer,
+  messageMenuReducer,
   [appAPI.reducerPath]: appAPI.reducer,
   [greenAPI.reducerPath]: greenAPI.reducer,
 });

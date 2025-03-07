@@ -19,7 +19,7 @@ const Chat: FC = () => {
 
   if (activeChat) {
     return (
-      <Card title={<ChatHeader />} className="chat">
+      <Card title={<ChatHeader />} classNames={{ header: 'relative' }} className="chat">
         <ContactChat />
       </Card>
     );

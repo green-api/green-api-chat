@@ -5,63 +5,41 @@ import { useTranslation } from 'react-i18next';
 
 import FileMessage from './file-message.component';
 import MessageSenderInfo from './message-sender-info.component';
-import MessageTooltip from './message-tooltip.component';
+import MessageTooltip from './message-tooltip/message-tooltip.component';
 import QuotedMessage from './quoted-message.component';
 import TemplateMessage from './template-message/template-message.component';
 import TextMessage from './text-message.component';
 import { useAppSelector } from 'hooks';
 import { selectMiniVersion } from 'store/slices/chat.slice';
-import {
-  LanguageLiteral,
-  ParsedWabaTemplateInterface,
-  QuotedMessageInterface,
-  StatusMessage,
-  TypeConnectionMessage,
-  TypeMessage,
-} from 'types';
+import { LanguageLiteral, MessageDataForRender } from 'types';
 import { getMessageDate, getOutgoingStatusMessageIcon, isSafari } from 'utils';
 
 export interface MessageProps {
-  id?: string;
-  type: TypeConnectionMessage;
-  typeMessage: TypeMessage;
-  textMessage: string;
-  senderName: string;
-  isLastMessage: boolean;
-  timestamp: number;
-  jsonMessage: string;
-  statusMessage?: StatusMessage;
-  downloadUrl?: string;
-  showSenderName: boolean;
-  phone?: string;
-  quotedMessage?: QuotedMessageInterface;
-  templateMessage?: ParsedWabaTemplateInterface;
-  caption?: string;
-  fileName?: string;
-  isDeleted?: boolean;
-  isEdited?: boolean;
+  messageDataForRender: MessageDataForRender;
+  preview?: boolean;
 }
 
-const Message: FC<MessageProps> = ({
-  textMessage,
-  type,
-  senderName,
-  showSenderName,
-  timestamp,
-  jsonMessage,
-  typeMessage,
-  downloadUrl,
-  statusMessage,
-  phone,
-  isLastMessage,
-  quotedMessage,
-  templateMessage,
-  id,
-  caption,
-  fileName,
-  isDeleted,
-  isEdited,
-}) => {
+const Message: FC<MessageProps> = ({ messageDataForRender, preview }) => {
+  const {
+    textMessage,
+    type,
+    senderName,
+    showSenderName,
+    timestamp,
+    jsonMessage,
+    typeMessage,
+    downloadUrl,
+    statusMessage,
+    phone,
+    isLastMessage,
+    quotedMessage,
+    templateMessage,
+    caption,
+    fileName,
+    isDeleted,
+    isEdited,
+  } = messageDataForRender;
+
   const isMiniVersion = useAppSelector(selectMiniVersion);
 
   const {
@@ -69,7 +47,7 @@ const Message: FC<MessageProps> = ({
     i18n: { resolvedLanguage },
   } = useTranslation();
 
-  const messageDate = getMessageDate(timestamp * 1000, resolvedLanguage as LanguageLiteral, 'long');
+  const messageDate = getMessageDate(timestamp * 1000, 'chat', resolvedLanguage as LanguageLiteral);
 
   const messageRef = useRef<HTMLDivElement>(null);
 
@@ -109,21 +87,26 @@ const Message: FC<MessageProps> = ({
   return (
     <div
       ref={messageRef}
-      id={id}
       style={{
         maxWidth: isMiniVersion ? 'unset' : 500,
       }}
       className={`message ${type === 'outgoing' ? `outgoing ${isMiniVersion ? '' : 'full'}` : 'incoming'} p-10`}
     >
       {showSenderName && <MessageSenderInfo senderName={senderName} phone={phone} />}
-      {!isDeleted && quotedMessage && <QuotedMessage quotedMessage={quotedMessage} type={type} />}
+      {!isDeleted && quotedMessage && (
+        <QuotedMessage
+          messageDataForRender={messageDataForRender}
+          quotedMessage={quotedMessage}
+          type={type}
+        />
+      )}
       {isDeleted && !showDeletedMessage ? (
-        <i>
-          {t('DELETED_MESSAGE')}{' '}
+        <Space>
+          <i className="deleted-message">{t('DELETED_MESSAGE')}</i>
           <a style={{ fontStyle: 'normal' }} onClick={() => setShowDeletedMessage(true)}>
             ({t('SHOW')})
           </a>
-        </i>
+        </Space>
       ) : (
         messageBody
       )}
@@ -131,7 +114,9 @@ const Message: FC<MessageProps> = ({
         <TextMessage textMessage={caption} typeMessage={typeMessage} type={type} isCaption={true} />
       )}
       <Space className="message-date">
-        <MessageTooltip jsonMessage={jsonMessage} />
+        {!preview && (
+          <MessageTooltip messageDataForRender={messageDataForRender} jsonMessage={jsonMessage} />
+        )}
         {isEdited && <i style={{ alignSelf: 'end', fontSize: 13 }}>{t('EDITED')}</i>}
         <span style={{ fontSize: 13 }}>{messageDate}</span>
         {getOutgoingStatusMessageIcon(statusMessage)}

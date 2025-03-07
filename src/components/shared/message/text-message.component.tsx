@@ -9,7 +9,10 @@ import { selectMiniVersion } from 'store/slices/chat.slice';
 import { getFormattedMessage, getMessageTypeIcon } from 'utils';
 
 const TextMessage: FC<
-  Pick<MessageProps, 'textMessage' | 'typeMessage' | 'downloadUrl' | 'type'> & {
+  Pick<
+    MessageProps['messageDataForRender'],
+    'textMessage' | 'typeMessage' | 'downloadUrl' | 'type'
+  > & {
     isCaption?: boolean;
   }
 > = ({ textMessage, typeMessage, downloadUrl, type, isCaption }) => {

@@ -1,4 +1,4 @@
-import { FC, SyntheticEvent, useEffect, useRef, useState } from 'react';
+import { FC, SyntheticEvent, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Empty, Spin } from 'antd';
 import { useTranslation } from 'react-i18next';
@@ -11,12 +11,19 @@ import { useGetChatHistoryQuery, useGetTemplatesQuery } from 'services/green-api
 import { selectActiveChat, selectMiniVersion } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
 import { selectUser } from 'store/slices/user.slice';
-import { ActiveChat, ParsedWabaTemplateInterface, TemplateButtonTypesEnum } from 'types';
 import {
+  ActiveChat,
+  LanguageLiteral,
+  ParsedWabaTemplateInterface,
+  TemplateButtonTypesEnum,
+} from 'types';
+import {
+  formatMessages,
   getErrorMessage,
   getJSONMessage,
   getPhoneNumberFromChatId,
   getTextMessage,
+  isMessagesDate,
   isOutgoingTemplateMessage,
 } from 'utils';
 
@@ -32,7 +39,10 @@ const ChatView: FC = () => {
   let previousMessageAreOutgoing = false;
   let previousSenderName = '';
 
-  const { t } = useTranslation();
+  const {
+    t,
+    i18n: { resolvedLanguage },
+  } = useTranslation();
 
   const chatViewRef = useRef<HTMLDivElement | null>(null);
 
@@ -62,7 +72,10 @@ const ChatView: FC = () => {
       chatId: activeChat.chatId,
       count: isMiniVersion ? 10 : count,
     },
-    { skipPollingIfUnfocused: true, pollingInterval: 15000 }
+    {
+      skipPollingIfUnfocused: true,
+      pollingInterval: 15000,
+    }
   );
 
   const [scrollHeight, setScrollHeight] = useState(0);
@@ -81,9 +94,10 @@ const ChatView: FC = () => {
       setPageTimerReference.current = setTimeout(() => {
         setMessageCount(count + 10);
         setCount((count) => count + 10);
+
         scrollTimerReference.current = setTimeout(
           () => target.scrollTo({ top: target.scrollHeight - scrollHeight }),
-          350
+          300
         );
       }, 500);
     }
@@ -110,6 +124,12 @@ const ChatView: FC = () => {
     isFetching &&
     chatViewRef.current?.scrollTop === 0 &&
     chatViewRef.current?.scrollHeight > chatViewRef.current?.clientHeight;
+
+  const formattedMessages = useMemo(() => {
+    if (!messages) return [];
+
+    return formatMessages(messages, resolvedLanguage as LanguageLiteral);
+  }, [messages, resolvedLanguage]);
 
   if (isLoading || templatesLoading) {
     return (
@@ -148,7 +168,15 @@ const ChatView: FC = () => {
       onScroll={handleScrollTop}
     >
       <Spin size="large" style={{ visibility: loaderVisible ? 'initial' : 'hidden' }} />
-      {messages?.map((message, idx) => {
+      {formattedMessages.map((message, idx) => {
+        if (isMessagesDate(message)) {
+          return (
+            <div className="message date p-10" key={message.date} style={{ alignSelf: 'center' }}>
+              {message.date.toUpperCase()}
+            </div>
+          );
+        }
+
         const typeMessage = message.typeMessage;
         const showSenderName =
           (previousSenderName !== message.senderName &&
@@ -169,16 +197,14 @@ const ChatView: FC = () => {
               (template) => template.templateId === id
             );
 
-            if (!templateData) {
-              return null;
-            }
+            if (templateData) {
+              if (templateData.containerMeta) {
+                templateMessage = JSON.parse(
+                  templateData.containerMeta
+                ) as ParsedWabaTemplateInterface;
 
-            if (templateData.containerMeta) {
-              templateMessage = JSON.parse(
-                templateData.containerMeta
-              ) as ParsedWabaTemplateInterface;
-
-              templateMessage.params = message.templateMessage.params;
+                templateMessage.params = message.templateMessage.params;
+              }
             }
           } else {
             if (message.templateMessage.contentText) {
@@ -222,23 +248,26 @@ const ChatView: FC = () => {
         return (
           <Message
             key={message.idMessage}
-            showSenderName={showSenderName}
-            type={message.type}
-            typeMessage={typeMessage}
-            textMessage={getTextMessage(message)}
-            senderName={message.type === 'outgoing' ? t('YOU_SENDER_NAME') : message.senderName!}
-            phone={message.senderId && getPhoneNumberFromChatId(message.senderId)}
-            isLastMessage={idx === messages?.length - 1}
-            timestamp={message.timestamp}
-            jsonMessage={getJSONMessage(message)}
-            downloadUrl={message.downloadUrl}
-            statusMessage={message.statusMessage}
-            quotedMessage={message.quotedMessage}
-            templateMessage={templateMessage}
-            caption={message.caption}
-            fileName={message.fileName}
-            isDeleted={message.isDeleted}
-            isEdited={message.isEdited}
+            messageDataForRender={{
+              idMessage: message.idMessage,
+              showSenderName: showSenderName,
+              type: message.type,
+              typeMessage: typeMessage,
+              textMessage: getTextMessage(message),
+              senderName: message.type === 'outgoing' ? t('YOU_SENDER_NAME') : message.senderName!,
+              phone: message.senderId && getPhoneNumberFromChatId(message.senderId),
+              isLastMessage: idx === formattedMessages.length - 1,
+              timestamp: message.timestamp,
+              jsonMessage: getJSONMessage(message),
+              downloadUrl: message.downloadUrl,
+              statusMessage: message.statusMessage,
+              quotedMessage: message.quotedMessage,
+              templateMessage: templateMessage,
+              caption: message.caption,
+              fileName: message.fileName,
+              isDeleted: message.isDeleted,
+              isEdited: message.isEdited,
+            }}
           />
         );
       })}

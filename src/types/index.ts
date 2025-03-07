@@ -7,11 +7,19 @@ import {
   GetContactInfoResponseInterface,
   GetGroupDataSuccessResponseInterface,
   MessageInterface,
+  QuotedMessageInterface,
+  StatusMessage,
   TariffsEnum,
   TypeConnectionMessage,
+  TypeMessage,
   UserInterface,
 } from './api.types';
-import { TemplateButtonInterface, WabaTemplateInterface, WabaTemplateTypeEnum } from './waba.types';
+import {
+  ParsedWabaTemplateInterface,
+  TemplateButtonInterface,
+  WabaTemplateInterface,
+  WabaTemplateTypeEnum,
+} from './waba.types';
 
 export * from './api.types';
 export * from './waba.types';
@@ -63,16 +71,10 @@ export interface ApiErrorResponse<T = unknown> {
   data: T;
 }
 
-export interface GreenApiUrlsInterface {
-  api: string;
-  media: string;
-  qrHost: string;
-  qrHttpHost: string;
-}
-
-export interface GreenApiRouteInterface extends GreenApiUrlsInterface {
-  // string - для одного значения, string[] - для диапазона значений
-  instancesCodes: (number | [number, number])[];
+export interface MessageMenuState {
+  activeMode: 'messageInfo' | 'menu';
+  activeServiceMethod: MessageServiceMethodName | null;
+  messageDataForRender: MessageDataForRender | null;
 }
 
 export type LanguageLiteral = 'en' | 'ru' | 'he';
@@ -182,10 +184,17 @@ export type SendingMethodName =
   | 'sendPoll'
   | 'sendTemplate';
 
+export type MessageServiceMethodName = 'editMessage' | 'deleteMessage';
+
 export type UserSideActiveMode = 'chats' | 'settings' | 'profile';
 
 export interface SendingMethod {
   name: SendingMethodName;
+  element: ReactElement;
+}
+
+export interface MessageServiceMethod {
+  name: MessageServiceMethodName;
   element: ReactElement;
 }
 
@@ -244,3 +253,36 @@ export interface GetTemplateMessageLayoutOptions {
   buttons?: TemplateButtonInterface[];
   type?: TypeConnectionMessage;
 }
+
+export interface MessageDataForRender {
+  idMessage: string;
+  type: TypeConnectionMessage;
+  typeMessage: TypeMessage;
+  textMessage: string;
+  senderName: string;
+  isLastMessage: boolean;
+  timestamp: number;
+  jsonMessage: string;
+  statusMessage?: StatusMessage;
+  downloadUrl?: string;
+  showSenderName: boolean;
+  phone?: string;
+  quotedMessage?: QuotedMessageInterface;
+  templateMessage?: ParsedWabaTemplateInterface;
+  caption?: string;
+  fileName?: string;
+  isDeleted?: boolean;
+  isEdited?: boolean;
+}
+
+export interface MessageTooltipMenuData {
+  key: string;
+  label: string;
+  onClick: () => void;
+}
+
+export interface MessagesDate {
+  date: string;
+}
+
+export type FormattedMessagesWithDate = (MessageInterface | MessagesDate)[];

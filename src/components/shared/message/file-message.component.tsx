@@ -5,12 +5,9 @@ import { Image, Space, Typography } from 'antd';
 import { MessageProps } from './message.component';
 import { getMessageTypeIcon } from 'utils';
 
-const FileMessage: FC<Pick<MessageProps, 'downloadUrl' | 'typeMessage' | 'fileName' | 'type'>> = ({
-  downloadUrl,
-  typeMessage,
-  fileName,
-  type,
-}) => {
+const FileMessage: FC<
+  Pick<MessageProps['messageDataForRender'], 'downloadUrl' | 'typeMessage' | 'fileName' | 'type'>
+> = ({ downloadUrl, typeMessage, fileName, type }) => {
   if (typeMessage === 'imageMessage') {
     return (
       <Image

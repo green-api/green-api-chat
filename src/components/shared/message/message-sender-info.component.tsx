@@ -4,7 +4,7 @@ import { Space } from 'antd';
 
 import { MessageProps } from './message.component';
 
-const MessageSenderInfo: FC<Pick<MessageProps, 'phone' | 'senderName'>> = ({
+const MessageSenderInfo: FC<Pick<MessageProps['messageDataForRender'], 'phone' | 'senderName'>> = ({
   senderName,
   phone,
 }) => {

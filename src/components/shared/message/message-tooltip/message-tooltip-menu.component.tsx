@@ -60,17 +60,15 @@ const MessageTooltipMenu: FC<MessageTooltipMenuProps> = ({ onMenuItemClick }) =>
   };
 
   return (
-    <>
-      <List
-        className="message-tooltip-menu"
-        dataSource={getMenuData()}
-        renderItem={(item) => (
-          <List.Item className="message-tooltip-menu__item" onClick={item.onClick}>
-            {item.label}
-          </List.Item>
-        )}
-      />
-    </>
+    <List
+      className="message-tooltip-menu"
+      dataSource={getMenuData()}
+      renderItem={(item) => (
+        <List.Item className="message-tooltip-menu__item" onClick={item.onClick}>
+          {item.label}
+        </List.Item>
+      )}
+    />
   );
 };
 

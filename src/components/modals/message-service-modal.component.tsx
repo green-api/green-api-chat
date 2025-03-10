@@ -14,10 +14,9 @@ const MessageServiceModal: FC = () => {
     [activeServiceMethodName]
   );
 
-  const { setActiveServiceMethod, setMessageDataForRender } = useActions();
+  const { setActiveServiceMethod } = useActions();
 
   const reset = () => {
-    // setMessageDataForRender(null);
     setActiveServiceMethod(null);
   };
 

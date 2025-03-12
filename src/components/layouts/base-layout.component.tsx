@@ -9,8 +9,8 @@ import { Routes } from 'configs';
 import { useActions, useAppSelector } from 'hooks';
 import { selectMiniVersion } from 'store/slices/chat.slice';
 import { selectUser } from 'store/slices/user.slice';
-import { ChatType } from 'types';
-import { isAuth } from 'utils';
+import { TariffsEnum } from 'types';
+import { isAuth, isPartnerChat, isValidChatType } from 'utils';
 
 const BaseLayout: FC = () => {
   const isMiniVersion = useAppSelector(selectMiniVersion);
@@ -18,15 +18,37 @@ const BaseLayout: FC = () => {
 
   const navigate = useNavigate();
 
-  const [params] = useSearchParams();
+  const [searchParams] = useSearchParams();
 
-  const { setType } = useActions();
+  const { setType, setSelectedInstance } = useActions();
 
   useLayoutEffect(() => {
-    if (params.has('type')) {
-      setType(params.get('type') as ChatType);
+    if (searchParams.has('type')) {
+      const chatType = searchParams.get('type');
+
+      if (chatType && isValidChatType(chatType)) {
+        setType(chatType);
+      }
     }
-  }, [params]);
+
+    if (isPartnerChat(searchParams)) {
+      const idInstance = searchParams.get('idInstance');
+      const apiTokenInstance = searchParams.get('apiTokenInstance');
+      const apiUrl = searchParams.get('apiUrl');
+      const mediaUrl = searchParams.get('mediaUrl');
+
+      if (idInstance && apiTokenInstance && apiUrl && mediaUrl) {
+        setType('partner-iframe');
+        setSelectedInstance({
+          idInstance: +idInstance,
+          apiTokenInstance: apiTokenInstance,
+          apiUrl: apiUrl + '/',
+          mediaUrl: mediaUrl + '/',
+          tariff: TariffsEnum.Business,
+        });
+      }
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     if (!isAuth(user) && !isMiniVersion) {

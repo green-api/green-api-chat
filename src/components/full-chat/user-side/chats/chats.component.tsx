@@ -33,9 +33,9 @@ const Chats: FC = () => {
     <Flex className="chats" vertical>
       {!isMiniVersion && type === 'tab' && <ChatsHeader />}
       <Flex align="center" gap={8} style={{ padding: '0 5px' }} justify="space-around">
-        <SelectInstance />
-        {!isMiniVersion && type === 'console-page' && (
-          <a>
+        {type !== 'partner-iframe' && <SelectInstance />}
+        {!isMiniVersion && (type === 'console-page' || type === 'partner-iframe') && (
+          <a className="p-10">
             <UserAddOutlined
               style={{ fontSize: 20 }}
               onClick={() => setIsVisible(true)}
@@ -49,7 +49,7 @@ const Chats: FC = () => {
       ) : (
         <ChatList key={instanceCredentials?.idInstance} />
       )}
-      {!isMiniVersion && type === 'console-page' && (
+      {!isMiniVersion && (type === 'console-page' || type === 'partner-iframe') && (
         <AddNewChat isVisible={isVisible} setIsVisible={setIsVisible} />
       )}
     </Flex>

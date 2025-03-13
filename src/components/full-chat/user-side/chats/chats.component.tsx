@@ -32,10 +32,15 @@ const Chats: FC = () => {
   return (
     <Flex className="chats" vertical>
       {!isMiniVersion && type === 'tab' && <ChatsHeader />}
-      <Flex align="center" gap={8} style={{ padding: '0 5px' }} justify="space-around">
+      <Flex
+        align="center"
+        gap={8}
+        style={{ padding: '0 5px' }}
+        justify={type === 'partner-iframe' ? 'end' : 'space-around'}
+      >
         {type !== 'partner-iframe' && <SelectInstance />}
         {!isMiniVersion && (type === 'console-page' || type === 'partner-iframe') && (
-          <a className="p-10">
+          <a className={type === 'partner-iframe' ? 'p-10' : undefined}>
             <UserAddOutlined
               style={{ fontSize: 20 }}
               onClick={() => setIsVisible(true)}

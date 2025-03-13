@@ -51,10 +51,10 @@ const BaseLayout: FC = () => {
   }, [searchParams]);
 
   useEffect(() => {
-    if (!isAuth(user) && !isMiniVersion) {
+    if (!isAuth(user) && !isMiniVersion && !isPartnerChat(searchParams)) {
       navigate(Routes.auth);
     }
-  }, [user, navigate, isMiniVersion]);
+  }, [user, navigate, isMiniVersion, searchParams]);
 
   return (
     <Layout className={`app ${!isMiniVersion ? 'bg' : ''}`}>

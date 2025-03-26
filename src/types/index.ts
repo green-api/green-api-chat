@@ -41,7 +41,7 @@ export interface ChatState {
   templateMessagesLoading: boolean;
 }
 
-export type ChatType = 'tab' | 'console-page' | 'instance-view-page';
+export type ChatType = 'tab' | 'console-page' | 'instance-view-page' | 'partner-iframe';
 export type ChatPlatform = 'web' | 'ios' | 'android';
 
 export interface ActiveChat

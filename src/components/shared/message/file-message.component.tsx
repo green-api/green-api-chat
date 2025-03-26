@@ -27,7 +27,7 @@ const FileMessage: FC<
         style={{ fontSize: 14, margin: 0, maxWidth: 300, fontWeight: 600 }}
         ellipsis={{ rows: 1 }}
       >
-        {fileName || typeMessage}
+        {typeMessage}
       </Typography.Paragraph>
     </Space>
   );

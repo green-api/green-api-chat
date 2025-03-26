@@ -157,7 +157,7 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
         />
       </Form.Item>
       <Form.Item style={{ marginBottom: 0 }} name="response" className="response-form-item">
-        <Row gutter={[15, 15]} align="bottom">
+        <Row gutter={[15, 15]} align={isMiniVersion ? 'bottom' : 'middle'}>
           <Col flex="auto">
             <Form.Item
               style={{ marginBottom: 0 }}

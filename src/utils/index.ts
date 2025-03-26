@@ -1,187 +1,15 @@
 import { i18n } from 'i18next';
 
+import { getUTCDate } from './date.utils';
+import { isApiError } from './type-guard.utils';
 import { Routes } from 'configs';
-import {
-  ApiErrorResponse,
-  ChatType,
-  CookieOptionsInterface,
-  ExpandedInstanceInterface,
-  FormattedMessagesWithDate,
-  GetChatHistoryResponse,
-  GetContactInfoResponseInterface,
-  GetGroupDataSuccessResponseInterface,
-  LanguageLiteral,
-  MessageData,
-  MessageDataForRender,
-  MessageInterface,
-  MessagesDate,
-  OutgoingTemplateMessage,
-  StatusMessage,
-  TemplateMessageInterface,
-  TypeConnectionMessage,
-  UserInterface,
-} from 'types';
+import { ChatType, CookieOptionsInterface, ExpandedInstanceInterface, UserInterface } from 'types';
 
 export * from './component.utils';
-
-export function formatDate(
-  timeCreated: number | string | Date,
-  language: LanguageLiteral = 'en',
-  format: 'short' | 'long' = 'short'
-) {
-  const options: Intl.DateTimeFormatOptions =
-    format === 'short'
-      ? {
-          day: '2-digit',
-          month: '2-digit',
-          year: 'numeric',
-        }
-      : {
-          weekday: 'short',
-          day: '2-digit',
-          month: 'short',
-          year: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit',
-        };
-
-  return new Date(timeCreated).toLocaleDateString(language, options);
-}
-
-export function getLastChats(
-  lastIncomingMessages: GetChatHistoryResponse,
-  lastOutgoingMessages: GetChatHistoryResponse,
-  count?: number
-): GetChatHistoryResponse {
-  if (!lastIncomingMessages.length && !lastOutgoingMessages.length) {
-    return [];
-  }
-
-  const allMessagesFilteredAndSorted = [...lastIncomingMessages, ...lastOutgoingMessages]
-    .filter(
-      (message) =>
-        message.typeMessage !== 'reactionMessage' &&
-        message.typeMessage !== 'deletedMessage' &&
-        message.typeMessage !== 'editedMessage'
-    )
-    .sort((a, b) => b.timestamp - a.timestamp);
-
-  const resultMap = new Map<string, MessageInterface>();
-
-  for (const message of allMessagesFilteredAndSorted) {
-    if (count && resultMap.size === count) {
-      break;
-    }
-
-    if (!resultMap.has(message.chatId)) {
-      resultMap.set(message.chatId, message);
-      continue;
-    }
-
-    const existingChat = resultMap.get(message.chatId);
-    if (!existingChat) continue;
-
-    // need for update existing chat last message status
-    if (
-      isStatusUpdateNeeded(existingChat, message) ||
-      isEditedOrDeletedMessageUpdateNeeded(existingChat, message)
-    ) {
-      resultMap.set(existingChat.chatId, message);
-    }
-  }
-
-  return Array.from(resultMap.values());
-}
-
-function isNewStatusMessageForExistingChat(
-  existingStatus: StatusMessage | undefined,
-  newStatus: StatusMessage | undefined
-): boolean {
-  return (
-    (existingStatus === 'pending' &&
-      (newStatus === 'sent' || newStatus === 'delivered' || newStatus === 'read')) ||
-    (existingStatus === 'sent' && (newStatus === 'delivered' || newStatus === 'read')) ||
-    (existingStatus === 'delivered' && newStatus === 'read')
-  );
-}
-
-function isStatusUpdateNeeded(existingChat: MessageInterface, message: MessageInterface): boolean {
-  return (
-    existingChat.idMessage === message.idMessage &&
-    existingChat.statusMessage !== message.statusMessage &&
-    isNewStatusMessageForExistingChat(existingChat.statusMessage, message.statusMessage)
-  );
-}
-
-function isEditedOrDeletedMessageUpdateNeeded(
-  existingChat: MessageInterface,
-  message: MessageInterface
-): boolean {
-  return (
-    existingChat.idMessage === message.idMessage &&
-    (('editedMessageId' in existingChat &&
-      'editedMessageId' in message &&
-      existingChat.editedMessageId !== message.editedMessageId) ||
-      ('deletedMessageId' in existingChat &&
-        'deletedMessageId' in message &&
-        existingChat.deletedMessageId !== message.deletedMessageId))
-  );
-}
-
-export function updateLastChats(
-  currentChats: MessageInterface[],
-  lastIncomingMessages: GetChatHistoryResponse,
-  lastOutgoingMessages: GetChatHistoryResponse,
-  count?: number
-): GetChatHistoryResponse {
-  const updates = [...lastIncomingMessages, ...lastOutgoingMessages];
-
-  return getLastChats(currentChats, updates, count);
-}
-
-export function getMessageDate(
-  timestamp: number,
-  usage: 'chatList' | 'chat',
-  language: LanguageLiteral = 'en',
-  format: 'short' | 'long' = 'short'
-): string {
-  const messageDate = formatDate(timestamp, language, 'short');
-  const nowDate = formatDate(Date.now(), language, 'short');
-
-  if (messageDate === nowDate || usage === 'chat') {
-    const date = new Date(timestamp);
-
-    return `0${date.getHours()}`.slice(-2) + ':' + `0${date.getMinutes()}`.slice(-2);
-  }
-
-  return formatDate(timestamp, language, format);
-}
-
-export function checkIfFifteenMinutesPassed(timestamp: number): boolean {
-  const fifteenMinutesPassedTimestamp = timestamp + 900000;
-
-  return Date.now() >= fifteenMinutesPassedTimestamp;
-}
-
-export function isMessageEditable(messageData: MessageDataForRender): boolean {
-  const isFifteenMinutesPassed = checkIfFifteenMinutesPassed(messageData.timestamp * 1000);
-  const isMessageDeleted = messageData.isDeleted;
-
-  return !isFifteenMinutesPassed && !isMessageDeleted;
-}
-
-export function isApiError(error: unknown): error is ApiErrorResponse {
-  return (
-    typeof error === 'object' &&
-    error !== null &&
-    ('data' in error || 'error' in error) &&
-    'status' in error
-  );
-}
-
-export function isConsoleMessageData(data: unknown): data is MessageData {
-  return typeof data === 'object' && data !== null && 'type' in data && 'payload' in data;
-}
+export * from './date.utils';
+export * from './chat-list.utils';
+export * from './type-guard.utils';
+export * from './message.utils';
 
 export function getErrorMessage(error: unknown, t: i18n['t']): string | null {
   let errorMessage = '';
@@ -207,62 +35,6 @@ export function getErrorMessage(error: unknown, t: i18n['t']): string | null {
   }
 
   return errorMessage;
-}
-
-export function getTextMessage(message: MessageInterface) {
-  return (
-    message.extendedTextMessage?.text ||
-    message.textMessage ||
-    message.templateButtonReplyMessage?.selectedDisplayText ||
-    message.typeMessage
-  );
-}
-
-export function getPhoneNumberFromChatId(chatId: string) {
-  return chatId?.replace(/\@.*$/, '');
-}
-
-export function getJSONMessage(message: MessageInterface): string {
-  let copyMessage: MessageInterface;
-
-  if ('structuredClone' in window) {
-    copyMessage = structuredClone(message);
-  } else {
-    // TODO: rework
-    copyMessage = { ...message };
-  }
-
-  if (copyMessage.jpegThumbnail) {
-    copyMessage.jpegThumbnail = copyMessage.jpegThumbnail.slice(0, 50) + '...';
-  }
-
-  if (copyMessage.extendedTextMessage && copyMessage.extendedTextMessage.jpegThumbnail) {
-    copyMessage.extendedTextMessage.jpegThumbnail =
-      copyMessage.extendedTextMessage.jpegThumbnail.slice(0, 50) + '...';
-  }
-
-  if (copyMessage.extendedTextMessage && copyMessage.extendedTextMessage.text.length > 250) {
-    copyMessage.extendedTextMessage.text =
-      copyMessage.extendedTextMessage.text.slice(0, 250) + '...';
-  }
-
-  if (copyMessage.textMessage && copyMessage.textMessage.length > 250) {
-    copyMessage.textMessage = copyMessage.textMessage.slice(0, 250) + '...';
-  }
-
-  if (copyMessage.caption && copyMessage.caption.length > 150) {
-    copyMessage.caption = copyMessage.caption.slice(0, 150) + '...';
-  }
-
-  if (copyMessage.location && copyMessage.location.jpegThumbnail.length > 50) {
-    copyMessage.location.jpegThumbnail = copyMessage.location.jpegThumbnail.slice(0, 50) + '...';
-  }
-
-  if (copyMessage.quotedMessage) {
-    copyMessage.quotedMessage = JSON.parse(getJSONMessage(copyMessage.quotedMessage));
-  }
-
-  return JSON.stringify(copyMessage, null, 2);
 }
 
 export function isPageInIframe() {
@@ -330,25 +102,6 @@ export function isNewInstance(timeCreated: ExpandedInstanceInterface['timeCreate
   return (getUTCDate(new Date()).getTime() - new Date(timeCreated).getTime()) / 1000 < 121;
 }
 
-export function getUTCDate(date: Date, utc = 3) {
-  const offset = date.getTimezoneOffset() / 60 + utc;
-
-  return new Date(date.getTime() + offset * 3600 * 1000);
-}
-
-export function isContactInfo(
-  info: GetContactInfoResponseInterface | GetGroupDataSuccessResponseInterface
-): info is GetContactInfoResponseInterface {
-  return 'chatId' in info;
-}
-
-export function isOutgoingTemplateMessage(
-  templateMessage: TemplateMessageInterface,
-  type: TypeConnectionMessage
-): templateMessage is OutgoingTemplateMessage {
-  return type === 'outgoing';
-}
-
 export function getIsChatWorkingFromStorage(idInstance: number): boolean | null {
   let isChatWorking: boolean | null = null;
 
@@ -365,48 +118,11 @@ export function setIsChatWorkingFromStorage(idInstance: number, isChatWorking: b
   localStorage.setItem(idInstance.toString(), JSON.stringify(isChatWorking));
 }
 
-function groupedDays(
-  messages: MessageInterface[],
-  language: LanguageLiteral = 'en'
-): Record<string, MessageInterface[]> {
-  return messages.reduce<Record<string, MessageInterface[]>>((acc, message) => {
-    let messageDay = formatDate(message.timestamp * 1000, language);
-
-    const today = formatDate(Date.now(), language);
-    const yesterday = formatDate(new Date().setDate(new Date().getDate() - 1), language);
-    const rtf = new Intl.RelativeTimeFormat(language, { numeric: 'auto' });
-
-    if (messageDay === today) {
-      messageDay = rtf.format(0, 'day');
-    }
-
-    if (messageDay === yesterday) {
-      messageDay = rtf.format(-1, 'day');
-    }
-
-    if (acc[messageDay]) {
-      return { ...acc, [messageDay]: acc[messageDay].concat([message]) };
-    }
-
-    return { ...acc, [messageDay]: [message] };
-  }, {});
-}
-
-export function formatMessages(
-  messages: MessageInterface[],
-  language: LanguageLiteral = 'en'
-): FormattedMessagesWithDate {
-  const days = groupedDays(messages, language);
-  const sortedDays = Object.keys(days).sort(
-    (x, y) => new Date(x).getTime() - new Date(y).getTime()
+export function isPartnerChat(searchParams: URLSearchParams): boolean {
+  return (
+    searchParams.has('idInstance') &&
+    searchParams.has('apiTokenInstance') &&
+    searchParams.has('apiUrl') &&
+    searchParams.has('mediaUrl')
   );
-  const items = sortedDays.reduce<FormattedMessagesWithDate>((acc, date) => {
-    return acc.concat([{ date }, ...days[date]]);
-  }, []);
-
-  return items;
-}
-
-export function isMessagesDate(message: MessageInterface | MessagesDate): message is MessagesDate {
-  return 'date' in message;
 }

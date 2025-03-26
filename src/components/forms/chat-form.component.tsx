@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef } from 'react';
+import { FC, useCallback, useEffect, useRef, useState } from 'react';
 
 import { SendOutlined } from '@ant-design/icons';
 import { Button, Col, Form, Row } from 'antd';
@@ -32,8 +32,15 @@ const ChatForm: FC = () => {
 
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
+  const [inputValue, setInputValue] = useState('');
+
   const onSendMessage = async (values: ChatFormValues) => {
     const { message } = values;
+
+    if (!message) {
+      return;
+    }
+
     const body = {
       ...instanceCredentials,
       chatId: activeChat.chatId,
@@ -121,6 +128,10 @@ const ChatForm: FC = () => {
     }
   };
 
+  const onInputChange = useCallback((value: string) => {
+    setInputValue(value);
+  }, []);
+
   useEffect(() => {
     form.setFields([{ name: 'message', errors: [] }]);
   }, [activeChat.chatId, form]);
@@ -147,31 +158,28 @@ const ChatForm: FC = () => {
             <Form.Item
               style={{ marginBottom: 0 }}
               name="message"
-              rules={[{ required: true, message: t('EMPTY_FIELD_ERROR') }]}
               normalize={(value) => {
                 form.setFields([{ name: 'response', warnings: [] }]);
 
                 return value;
               }}
             >
-              <TextArea ref={textAreaRef} />
+              <TextArea ref={textAreaRef} onChange={onInputChange} />
             </Form.Item>
           </Col>
-          {isMiniVersion && (
-            <Col>
-              <Form.Item style={{ marginBottom: 0 }}>
-                <Button
-                  type="link"
-                  htmlType="submit"
-                  size="large"
-                  className="login-form-button"
-                  loading={isSendMessageLoading}
-                >
-                  <SendOutlined />
-                </Button>
-              </Form.Item>
-            </Col>
-          )}
+          <Col style={{ visibility: inputValue || isMiniVersion ? 'initial' : 'hidden' }}>
+            <Form.Item style={{ marginBottom: 0 }}>
+              <Button
+                type="link"
+                htmlType="submit"
+                size="large"
+                className="login-form-button"
+                loading={isSendMessageLoading}
+              >
+                <SendOutlined />
+              </Button>
+            </Form.Item>
+          </Col>
         </Row>
       </Form.Item>
     </Form>

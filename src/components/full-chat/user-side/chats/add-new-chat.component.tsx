@@ -15,7 +15,7 @@ const AddNewChat: FC<GlobalModalPropertiesInterface> = ({ isVisible, setIsVisibl
 
   return (
     <div className={`add-new-chat-menu ${dir === 'rtl' ? 'rtl' : ''} ${isVisible ? 'active' : ''}`}>
-      <Row justify="space-between" style={{ padding: '0 20px' }}>
+      <Row justify="space-between" className="p-10">
         <h3>{t('ADD_NEW_CHAT_HEADER')}</h3>
         <a>
           <CloseOutlined onClick={() => setIsVisible(false)} />

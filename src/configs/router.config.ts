@@ -9,8 +9,6 @@ export enum GreenApiRoutes {
   recoverPassword = 'https://console.green-api.com/auth/restore',
 }
 
-export const consoleUrl = 'https://console.green-api.com/';
-
 export const EXTERNAL_LINKS = {
   telegram: {
     ru: 'https://t.me/green_api',
@@ -40,4 +38,5 @@ export const EXTERNAL_LINKS = {
   website_he: 'https://green-api.org.il/',
 };
 
-export const CONSOLE_URL = import.meta.env.VITE_CONSOLE_APP_HOST ?? 'https://console.green-api.com';
+export const CONSOLE_URL =
+  import.meta.env.VITE_CONSOLE_APP_HOST ?? 'https://test.console.green-api.com';

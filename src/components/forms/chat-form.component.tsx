@@ -120,6 +120,8 @@ const ChatForm: FC = () => {
 
       form.resetFields();
 
+      setInputValue('');
+
       setTimeout(() => textAreaRef.current?.focus(), 100);
 
       responseTimerReference.current = setTimeout(() => {

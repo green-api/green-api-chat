@@ -43,7 +43,7 @@
 }
 
 .ant-list-items .list-item {
-  border-block-end: 1px solid var(--border-list);
+  border-block-end: 1px solid var(--chat-border-color);
 
   & .group-admin-tag {
     color: var(--group-tag-text-color);
@@ -62,4 +62,8 @@
 
 .group-contact-list {
   @include scrollBar();
+}
+
+.ant-list.group-contact-list .ant-list-items .ant-list-item.list-item:last-child {
+  border-block-end: none;
 }

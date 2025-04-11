@@ -63,6 +63,7 @@ const AuthForm: FC = () => {
         login: form.getFieldValue('login'),
         ...data.data,
         remember: form.getFieldValue('remember'),
+        projectId: '',
       });
 
       navigator(Routes.main);

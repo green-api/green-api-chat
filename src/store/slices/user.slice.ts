@@ -18,6 +18,7 @@ const initialState: UserState = {
       getCookie('idUser') ??
       localStorage.getItem('idUser') ??
       '',
+    projectId: sessionStorage.getItem('projectId') ?? '',
   },
   platform: 'web',
 };

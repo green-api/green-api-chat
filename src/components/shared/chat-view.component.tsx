@@ -28,7 +28,7 @@ import {
 } from 'utils';
 
 const ChatView: FC = () => {
-  const { idUser, apiTokenUser } = useAppSelector(selectUser);
+  const { idUser, apiTokenUser, projectId } = useAppSelector(selectUser);
   const instanceCredentials = useAppSelector(selectInstance);
   const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
   const isMiniVersion = useAppSelector(selectMiniVersion);
@@ -50,7 +50,7 @@ const ChatView: FC = () => {
   const scrollTimerReference = useRef<ReturnType<typeof setTimeout>>();
 
   const { data: profileSettings } = useGetProfileSettingsQuery(
-    { idUser, apiTokenUser },
+    { idUser, apiTokenUser, projectId },
     { skip: !idUser || !apiTokenUser }
   );
 

@@ -12,13 +12,13 @@ import { selectUser } from 'store/slices/user.slice';
 import { ActiveChat } from 'types';
 
 const ContactChatFooter: FC = () => {
-  const { idUser, apiTokenUser } = useAppSelector(selectUser);
+  const { idUser, apiTokenUser, projectId } = useAppSelector(selectUser);
   const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
 
   const { t } = useTranslation();
 
   const { data: profileSettings } = useGetProfileSettingsQuery(
-    { idUser, apiTokenUser },
+    { idUser, apiTokenUser, projectId },
     { skip: !idUser || !apiTokenUser }
   );
 

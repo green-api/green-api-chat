@@ -4,6 +4,7 @@ export interface UserInterface {
   idUser: string;
   apiTokenUser: string;
   login: string;
+  projectId: string;
 }
 
 export interface SendingResponseInterface {

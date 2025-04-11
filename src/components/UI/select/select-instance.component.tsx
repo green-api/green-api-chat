@@ -20,7 +20,7 @@ import { getIsChatWorkingFromStorage } from 'utils';
 
 const SelectInstance: FC = () => {
   const type = useAppSelector(selectType);
-  const { idUser, apiTokenUser } = useAppSelector(selectUser);
+  const { idUser, apiTokenUser, projectId } = useAppSelector(selectUser);
 
   const { t } = useTranslation();
 
@@ -28,7 +28,7 @@ const SelectInstance: FC = () => {
     isLoading: isLoadingInstances,
     data: instancesRequestData,
     isSuccess: isSuccessLoadingInstances,
-  } = useGetInstancesQuery({ idUser, apiTokenUser }, { skip: !idUser || !apiTokenUser });
+  } = useGetInstancesQuery({ idUser, apiTokenUser, projectId }, { skip: !idUser || !apiTokenUser });
 
   const selectedInstance = useAppSelector(selectInstance);
 

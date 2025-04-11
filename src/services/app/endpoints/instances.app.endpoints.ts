@@ -5,13 +5,14 @@ import { isNewInstance } from 'utils';
 export const instancesAppApiEndpoints = appAPI.injectEndpoints({
   endpoints: (builder) => ({
     getInstances: builder.query<GetInstancesResponse, Omit<UserInterface, 'login'>>({
-      query: ({ idUser, apiTokenUser }) => ({
+      query: ({ idUser, apiTokenUser, projectId }) => ({
         url: '',
         method: 'POST',
         headers: {
           'x-ga-method': AppMethodsEnum.GetInstances,
           'x-ga-user-id': idUser,
           'x-ga-user-token': apiTokenUser,
+            'x-ga-project-id': projectId,
         },
       }),
       transformResponse: (response: GetInstancesResponse) => {

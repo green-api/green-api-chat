@@ -15,12 +15,15 @@ import { MessageData, MessageEventTypeEnum, TariffsEnum, Themes } from 'types';
 import { getIsChatWorkingFromStorage, isConsoleMessageData, isPageInIframe } from 'utils';
 
 function App() {
-  const { idUser, apiTokenUser } = useAppSelector(selectUser);
+  const { idUser, apiTokenUser, projectId } = useAppSelector(selectUser);
 
   const { i18n } = useTranslation();
   const { setSelectedInstance, setTheme, login, setPlatform } = useActions();
 
-  useGetProfileSettingsQuery({ idUser, apiTokenUser }, { skip: !idUser || !apiTokenUser });
+  useGetProfileSettingsQuery(
+    { idUser, apiTokenUser, projectId },
+    { skip: !idUser || !apiTokenUser }
+  );
 
   const currentTheme = useAppSelector(selectTheme);
   const themesList = {
@@ -94,6 +97,7 @@ function App() {
               idUser: event.data.payload.idUser,
               apiTokenUser: event.data.payload.apiTokenUser,
               remember: true,
+              projectId: event.data.payload.projectId,
             });
 
             setPlatform(event.data.payload.platform);

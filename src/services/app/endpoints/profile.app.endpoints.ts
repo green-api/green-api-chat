@@ -7,13 +7,14 @@ export const profileAppApiEndpoints = appAPI.injectEndpoints({
       AppApiResponse<GetProfileSettingsResponse>,
       Omit<UserInterface, 'login'>
     >({
-      query: ({ idUser, apiTokenUser }) => ({
+      query: ({ idUser, apiTokenUser, projectId}) => ({
         url: '',
         method: 'POST',
         headers: {
           'x-ga-method': AppMethodsEnum.GetProfileSettings,
           'x-ga-user-id': idUser,
           'x-ga-user-token': apiTokenUser,
+          'x-ga-project-id': projectId,
         },
       }),
       providesTags: ['profileSettings'],

@@ -8,7 +8,7 @@ import {
 
 import { RootState } from 'store';
 import { InstanceInterface, MessageInterface } from 'types';
-import { getIsMiniVersion, getLastChats, updateLastChats } from 'utils';
+import { getIsMiniVersion, getLastChats, updateLastChats, getAllChats } from 'utils';
 
 const baseQuery = fetchBaseQuery({
   baseUrl: '',
@@ -28,8 +28,8 @@ const customQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError>
 
   const state = api.getState() as RootState;
   const type = state.chatReducer.type;
-  const { idInstance, apiTokenInstance, apiUrl, mediaUrl } = (args as FetchArgs)
-    .params as InstanceInterface;
+  const { idInstance, apiTokenInstance, apiUrl, mediaUrl, allMessages } = (args as FetchArgs)
+    .params as InstanceInterface & { allMessages?: boolean };
 
   const cacheKey = `lastMessages(${JSON.stringify({ apiTokenInstance, apiUrl, idInstance, mediaUrl })})`;
   const currentChats = state.greenAPI.queries[cacheKey]?.data;
@@ -65,18 +65,25 @@ const customQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError>
   ]);
 
   if (lastIncomingMessages.data && lastOutgoingMessages.data) {
-    lastIncomingMessages.data = !currentChats
-      ? getLastChats(
-          lastIncomingMessages.data as MessageInterface[],
-          lastOutgoingMessages.data as MessageInterface[],
-          getIsMiniVersion(type) ? 5 : undefined
-        )
-      : updateLastChats(
-          currentChats as MessageInterface[],
-          lastIncomingMessages.data as MessageInterface[],
-          lastOutgoingMessages.data as MessageInterface[],
-          getIsMiniVersion(type) ? 5 : undefined
-        );
+    if (allMessages) {
+      lastIncomingMessages.data = getAllChats(
+        lastIncomingMessages.data as MessageInterface[],
+        lastOutgoingMessages.data as MessageInterface[]
+      );
+    } else {
+      lastIncomingMessages.data = !currentChats
+        ? getLastChats(
+            lastIncomingMessages.data as MessageInterface[],
+            lastOutgoingMessages.data as MessageInterface[],
+            getIsMiniVersion(type) ? 5 : undefined
+          )
+        : updateLastChats(
+            currentChats as MessageInterface[],
+            lastIncomingMessages.data as MessageInterface[],
+            lastOutgoingMessages.data as MessageInterface[],
+            getIsMiniVersion(type) ? 5 : undefined
+          );
+    }
   }
 
   if (lastIncomingMessages.error || lastOutgoingMessages.error) {

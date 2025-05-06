@@ -32,7 +32,7 @@
   "PREVIEW": "Превью",
 
   "SELECT_FILE": "Выберите файл",
-  "FILE_LABEL":  "Файл",
+  "FILE_LABEL": "Файл",
   "FILENAME_LABEL": "Название файла",
   "DESCRIPTION": "Описание",
 
@@ -74,7 +74,7 @@
 
   "RUSSIAN": "Русский",
   "ENGLISH": "English",
-  "HEBREW":  "עִבְרִית",
+  "HEBREW": "עִבְרִית",
 
   "FULL_VERSION": "Открыть чаты",
   "FULL_VERSION_TITLE": "Открыть в отдельном окне",
@@ -97,7 +97,7 @@
   "PROFILE_TITLE": "Профиль",
 
   "INSTANCE": "Инстанс",
-  "SELECT_INSTANCE_PLACEHOLDER":  "Выберите инстанс",
+  "SELECT_INSTANCE_PLACEHOLDER": "Выберите инстанс",
 
   "CONTACT_INFO": "Информация о контакте",
   "GROUP_INFO": "Информация о группе",
@@ -126,5 +126,8 @@
   "MESSAGE_INFO": "Информация о сообщении",
   "EDIT_MESSAGE": "Редактировать сообщение",
   "DELETE_MESSAGE": "Удалить сообщение",
-  "ONLY_SENDER_DELETE_LABEL": "Удалить сообщение только у отправителя"
+  "ONLY_SENDER_DELETE_LABEL": "Удалить сообщение только у отправителя",
+  "SEARCH_PLACEHOLDER": "Поиск",
+  "CONTACTS": "Контакты",
+  "MESSAGES": "Сообщения"
 }

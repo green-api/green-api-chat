@@ -90,3 +90,20 @@ export function updateLastChats(
 
   return getLastChats(currentChats, updates, count);
 }
+
+
+export function getAllChats(
+  lastIncomingMessages: GetChatHistoryResponse,
+  lastOutgoingMessages: GetChatHistoryResponse
+): GetChatHistoryResponse {
+  const allMessagesFilteredAndSorted = [...lastIncomingMessages, ...lastOutgoingMessages]
+    .filter(
+      (message) =>
+        message.typeMessage !== 'reactionMessage' &&
+        message.typeMessage !== 'deletedMessage' &&
+        message.typeMessage !== 'editedMessage'
+    )
+    .sort((a, b) => b.timestamp - a.timestamp); 
+
+  return allMessagesFilteredAndSorted;
+}

@@ -366,3 +366,15 @@ export interface GetProfileBaseSettingsResponseInterface<T extends boolean> {
 export type GetProfileSettingsResponse =
   | GetProfileBaseSettingsResponseInterface<false>
   | (GetProfileBaseSettingsResponseInterface<true> & { partnerToken: string });
+
+export interface UploadFileParametersInterface extends InstanceInterface {
+  file: File;
+}
+
+export interface SendFileByUrlParametersInterface
+  extends InstanceInterface,
+    Omit<SendingBaseParametersInterface, 'message'>,
+    Required<Pick<SendingBaseFileParametersInterface, 'fileName'>>,
+    Omit<SendingBaseFileParametersInterface, 'fileName'> {
+  urlFile: string;
+}

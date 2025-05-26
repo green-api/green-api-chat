@@ -1,0 +1,85 @@
+.messagePreview {
+  display: flex;
+  flex-direction: column;
+  border-radius: 10px;
+  padding: 10px;
+
+  &.incoming {
+    background-color: var(--primary-transparent-color);
+    border: 1px solid var(--primary-color);
+    color: var(--text-color);
+    align-self: flex-start;
+  }
+
+  &-date {
+    margin-left: auto;
+  }
+
+  &__image {
+    width: 100%;
+    object-fit: cover;
+    max-height: 400px;
+  }
+
+  &__button {
+    text-align: center;
+    padding: 5px;
+    border-bottom: 1px solid var(--text-color);
+
+    &:nth-child(odd) {
+      border-top: 1px solid var(--text-color);
+    }
+  }
+}
+
+.sendMessagePreviewContainer {
+  background-color: var(--message-preview-bg);
+  position: relative;
+  min-width: 200px;
+  flex: 1 1 100% !important;
+  max-width: 100%;
+  align-self: center;
+
+  height: 500px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 6px;
+  border: 1px solid var(--message-queue-border);
+  box-sizing: content-box;
+
+  &__header {
+    background-color: var(--message-queue-bg);
+    padding: 8px;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    z-index: 1;
+    width: 100%;
+  }
+
+  &__code-example {
+    background-color: var(--code-example-bg);
+
+    pre {
+      width: 100%;
+    }
+  }
+}
+
+@media (min-width: 1100px) {
+  .sendMessagePreviewContainer {
+    flex: 1 1 360px;
+    max-width: 360px;
+  }
+}
+
+.sendMessagePreviewCard {
+  background-color: var(--message-card-bg);
+  position: relative;
+  min-width: 180px;
+  max-width: 340px;
+  z-index: 999;
+  border-radius: 8px;
+  padding: 6px;
+  margin-top: 10%;
+}

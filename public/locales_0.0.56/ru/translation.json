@@ -32,7 +32,16 @@
   "PREVIEW": "Превью",
 
   "SELECT_FILE": "Выберите файл",
-  "FILE_LABEL":  "Файл",
+  "FILE_LABEL": "Файл",
+  "MESSAGE": "Сообщение",
+  "QUOTED_MESSAGE_ID": "Идентификатор цитируемого сообщения",
+  "TYPE_PREVIEW": "Размер превью",
+  "TITLE": "Заголовок",
+  "CUSTOM_PREVIEW": "Пользовательское превью",
+  "PREVIEW_IMAGE": "Изображение превью",
+  "UPLOAD_FILE": "Загрузить файл",
+  "MESSAGE_PREVIEW": "Предварительный просмотр",
+  "CUSTOM_PREVIEW_TOOLTIP": "Используйте файл или ссылку на файл для формирования пользовательского превью.",
   "FILENAME_LABEL": "Название файла",
   "DESCRIPTION": "Описание",
 
@@ -74,7 +83,7 @@
 
   "RUSSIAN": "Русский",
   "ENGLISH": "English",
-  "HEBREW":  "עִבְרִית",
+  "HEBREW": "עִבְרִית",
 
   "FULL_VERSION": "Открыть чаты",
   "FULL_VERSION_TITLE": "Открыть в отдельном окне",
@@ -97,7 +106,7 @@
   "PROFILE_TITLE": "Профиль",
 
   "INSTANCE": "Инстанс",
-  "SELECT_INSTANCE_PLACEHOLDER":  "Выберите инстанс",
+  "SELECT_INSTANCE_PLACEHOLDER": "Выберите инстанс",
 
   "CONTACT_INFO": "Информация о контакте",
   "GROUP_INFO": "Информация о группе",
@@ -126,5 +135,9 @@
   "MESSAGE_INFO": "Информация о сообщении",
   "EDIT_MESSAGE": "Редактировать сообщение",
   "DELETE_MESSAGE": "Удалить сообщение",
-  "ONLY_SENDER_DELETE_LABEL": "Удалить сообщение только у отправителя"
+  "ONLY_SENDER_DELETE_LABEL": "Удалить сообщение только у отправителя",
+  "PREVIEW_SIZE_SMALL": "Маленькое",
+  "PREVIEW_SIZE_LARGE": "Большое",
+  "FILE_TOO_LARGE": "Размер файл превышает 100 килобайт",
+  "ENTER_IMAGE_URL": "Введите ссылку на изображение"
 }

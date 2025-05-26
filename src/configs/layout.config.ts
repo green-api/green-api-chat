@@ -16,3 +16,14 @@ export const formItemMethodApiLayout = {
     },
   },
 };
+
+export const formDefaultLayout = {
+  labelCol: {
+    xs: { span: 15 },
+    sm: { span: 10 },
+  },
+  wrapperCol: {
+    xs: { span: 204 },
+    sm: { span: 30 },
+  },
+};

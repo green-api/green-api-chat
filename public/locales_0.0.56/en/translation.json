@@ -73,7 +73,7 @@
 
   "RUSSIAN": "Русский",
   "ENGLISH": "English",
-  "HEBREW":  "עִבְרִית",
+  "HEBREW": "עִבְרִית",
 
   "FULL_VERSION": "Open chats",
   "FULL_VERSION_TITLE": "Open in a separate window",
@@ -125,5 +125,6 @@
   "MESSAGE_INFO": "Message info",
   "EDIT_MESSAGE": "Edit message",
   "DELETE_MESSAGE": "Delete message",
-  "ONLY_SENDER_DELETE_LABEL": "Delete message from sender only"
+  "ONLY_SENDER_DELETE_LABEL": "Delete message from sender only",
+  "ENTER_IMAGE_URL": "Enter image URL"
 }

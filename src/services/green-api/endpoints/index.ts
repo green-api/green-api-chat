@@ -24,6 +24,7 @@ export const {
   useGetTemplateByIdQuery,
   useEditMessageMutation,
   useDeleteMessageMutation,
+  useUploadFileMutation,
 } = {
   ...accountGreenApiEndpoints,
   ...sendingGreenApiEndpoints,

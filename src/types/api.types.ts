@@ -167,6 +167,47 @@ export interface GroupBaseParametersInterface extends InstanceInterface {
   groupId: string;
 }
 
+export interface UpdateGroupNameInterface extends GroupBaseParametersInterface {
+  groupName: string;
+}
+
+export interface UpdateGroupNameResponseInterface {
+  updateGroupName: boolean;
+}
+
+export interface GroupParticipantApiInterface extends GroupBaseParametersInterface {
+  participantChatId: string;
+}
+export type SetGroupAdminInterface = GroupParticipantApiInterface;
+export interface AddGroupParticipantResponseInterface {
+  addParticipant: boolean;
+}
+export interface RemoveGroupParticipantResponseInterface {
+  removeParticipant: boolean;
+}
+
+export interface SetGroupAdminResponseInterface {
+  setGroupAdmin: boolean;
+}
+export interface RemoveGroupAdminResponseInterface {
+  setGroupAdmin: boolean;
+}
+
+export interface SetGroupPictureInterface extends GroupBaseParametersInterface {
+  file: File;
+}
+
+export interface SetGroupPictureResponseInterface {
+  setGroupPicture: boolean;
+  urlAvatar: string;
+  reason: string;
+}
+
+export interface LeaveGroupResponseInterface {
+  leaveGroup: boolean;
+  removeAdmin?: boolean;
+}
+
 export type GetGroupDataResponseInterface =
   | GetGroupDataSuccessResponseInterface
   | GetGroupDataErrorResponse;

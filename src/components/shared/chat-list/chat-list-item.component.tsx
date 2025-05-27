@@ -1,4 +1,4 @@
-import { FC, useMemo } from 'react';
+import { FC, useEffect, useMemo } from 'react';
 
 import { Flex, List, Skeleton } from 'antd';
 import { useTranslation } from 'react-i18next';
@@ -57,6 +57,36 @@ const ChatListItem: FC<ContactListItemProps> = ({ lastMessage }) => {
     }
   );
 
+  useEffect(() => {
+    if (
+      groupData &&
+      groupData !== 'Error: item-not-found' &&
+      lastMessage.chatId === activeChat?.chatId
+    ) {
+      const updatedChatName =
+        (typeof groupData === 'object' &&
+          groupData !== null &&
+          'subject' in groupData &&
+          groupData.subject) ||
+        contactInfo?.contactName ||
+        contactInfo?.name ||
+        lastMessage.senderContactName ||
+        lastMessage.senderName ||
+        getPhoneNumberFromChatId(lastMessage.chatId);
+
+      const info = contactInfo || groupData;
+
+      setActiveChat({
+        chatId: lastMessage.chatId,
+        senderName: updatedChatName,
+        senderContactName: lastMessage.senderContactName,
+        avatar: avatar,
+        contactInfo: info,
+        ...(typeof groupData === 'object' && groupData !== null ? groupData : {}),
+      });
+    }
+  }, [groupData]);
+
   const { data: contactInfo, isLoading: isContactInfoLoading } = useGetContactInfoQuery(
     {
       ...instanceCredentials,
@@ -104,7 +134,10 @@ const ChatListItem: FC<ContactListItemProps> = ({ lastMessage }) => {
   }
 
   const chatName =
-    (groupData && groupData !== 'Error: forbidden' && groupData.subject) ||
+    (typeof groupData === 'object' &&
+      groupData !== null &&
+      'subject' in groupData &&
+      groupData.subject) ||
     contactInfo?.contactName ||
     contactInfo?.name ||
     lastMessage.senderContactName ||

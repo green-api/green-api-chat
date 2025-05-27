@@ -73,7 +73,7 @@
 
   "RUSSIAN": "Русский",
   "ENGLISH": "English",
-  "HEBREW":  "עִבְרִית",
+  "HEBREW": "עִבְרִית",
 
   "FULL_VERSION": "Open chats",
   "FULL_VERSION_TITLE": "Open in a separate window",
@@ -125,5 +125,28 @@
   "MESSAGE_INFO": "Message info",
   "EDIT_MESSAGE": "Edit message",
   "DELETE_MESSAGE": "Delete message",
-  "ONLY_SENDER_DELETE_LABEL": "Delete message from sender only"
+  "ONLY_SENDER_DELETE_LABEL": "Delete message from sender only",
+  "CHAT_MESSAGE_LIMIT_REACHED_TITLE": "Chat message limit reached",
+  "LOAD_MORE_MESSAGES": "Load more messages",
+  "UPDATE_AVATAR": "Update group avatar",
+  "LEAVE_GROUP": "Leave group",
+  "ADD_PARTICIPANT": "Add participant",
+  "ADD_PARTICIPANT_PLACEHOLDER": "Enter phone number (digits only)",
+  "CANCEL": "Cancel",
+  "ENTER_VALID_PHONE": "Enter a valid phone number",
+  "AVATAR_UPDATED": "Avatar updated",
+  "ERROR_UPDATING_GROUP_NAME": "Error updating group name",
+  "ERROR_UPDATING_AVATAR": "Error updating group avatar",
+  "DELETE_PARTICIPANT": "Remove participant",
+  "ASSIGN_ADMIN": "Make admin",
+  "REMOVE_ADMIN": "Remove admin",
+  "PARTICIPANT_ADDED": "Participant added",
+  "PARTICIPANT_DELETED": "Participant removed",
+  "ADMIN_ASSIGNED": "Administrator rights assigned",
+  "ADMIN_REMOVED": "Administrator rights revoked",
+  "ENTER_VALID_PHONE_NUMBER": "Enter a valid phone number",
+  "ERROR_ADDING_PARTICIPANT": "Error adding participant",
+  "ERROR_DELETING_PARTICIPANT": "Error removing participant",
+  "ERROR_ASSIGNING_ADMIN": "Error assigning administrator",
+  "ERROR_REMOVING_ADMIN": "Error removing administrator"
 }

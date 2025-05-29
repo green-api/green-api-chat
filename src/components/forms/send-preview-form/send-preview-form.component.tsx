@@ -235,7 +235,6 @@ const PreviewedMessageForm: FC = () => {
               type="primary"
               htmlType="submit"
               size="large"
-              // className="login-form-button"
               className="w-100"
               loading={isSendMessageLoading}
             >

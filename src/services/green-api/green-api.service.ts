@@ -12,7 +12,7 @@ import { getIsMiniVersion, getLastChats, updateLastChats, getAllChats } from 'ut
 
 const baseQuery = fetchBaseQuery({
   baseUrl: '',
-  timeout: 10000,
+  timeout: 70000,
 });
 
 let attemptIdToGetChats = 1;
@@ -38,6 +38,10 @@ const customQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError>
 
   if (!currentChats) {
     minutes = getIsMiniVersion(type) ? 1440 : 20160;
+
+    if (type === 'partner-iframe') {
+      minutes = 12080;
+    }
   }
 
   if (!currentChats && getIsMiniVersion(type) && attemptIdToGetChats < 6) {

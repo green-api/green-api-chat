@@ -73,7 +73,8 @@
 
   "RUSSIAN": "Русский",
   "ENGLISH": "English",
-  "HEBREW": "עִבְרִית",
+
+  "HEBREW":  "עִבְרִית",
 
   "FULL_VERSION": "פתח צ'אטים",
   "FULL_VERSION_TITLE": "פתח בחלון נפרד",
@@ -128,3 +129,4 @@
   "ONLY_SENDER_DELETE_LABEL": "מחק הודעה מהשולח בלבד",
   "SEARCH_PLACEHOLDER": "חיפוש"
 }
+

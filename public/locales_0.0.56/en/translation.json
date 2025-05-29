@@ -73,7 +73,8 @@
 
   "RUSSIAN": "Русский",
   "ENGLISH": "English",
-  "HEBREW": "עִבְרִית",
+
+  "HEBREW":  "עִבְרִית",
 
   "FULL_VERSION": "Open chats",
   "FULL_VERSION_TITLE": "Open in a separate window",
@@ -129,4 +130,5 @@
   "SEARCH_PLACEHOLDER": "Search",
   "CONTACTS": "Contacts",
   "MESSAGES": "Messages"
+
 }

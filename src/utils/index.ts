@@ -14,7 +14,7 @@ export * from './message.utils';
 export function getErrorMessage(error: unknown, t: i18n['t']): string | null {
   let errorMessage = '';
   if (!error || !isApiError(error)) {
-    return null;
+    return t('UNKNOWN_ERROR');
   }
 
   switch (error.status) {

@@ -26,6 +26,7 @@ const GroupContactList: FC = () => {
       pagination={{
         pageSize: 4,
         showLessItems: true,
+        showSizeChanger: false,
       }}
       renderItem={(participant) => <GroupContactListItem participant={participant} />}
     />

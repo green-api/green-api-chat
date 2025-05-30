@@ -30,9 +30,11 @@ import { fillJsxString, isContactInfo, numWord } from 'utils';
 
 const ContactInfoHeader: FC = () => {
   const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
+
   const [updateGroupName] = useUpdateGroupNameMutation();
   const [setGroupPicture, { isLoading: isUpdatingPicture }] = useSetGroupPictureMutation();
   const [leaveGroup] = useLeaveGroupMutation();
+
   const [isEditing, setIsEditing] = useState(false);
   const [newGroupName, setNewGroupName] = useState('');
 
@@ -67,7 +69,8 @@ const ContactInfoHeader: FC = () => {
         groupId: activeChat.chatId,
         groupName: newGroupName,
         ...instanceCredentials,
-      }).unwrap();
+      });
+
       setActiveChat({
         ...activeChat,
         senderName: newGroupName,
@@ -81,6 +84,7 @@ const ContactInfoHeader: FC = () => {
               }
             : activeChat.contactInfo,
       });
+
       setIsEditing(false);
     } catch (error) {
       message.error(t('ERROR_UPDATING_GROUP_NAME'));
@@ -122,7 +126,9 @@ const ContactInfoHeader: FC = () => {
         groupId: activeChat.chatId,
         ...instanceCredentials,
       }).unwrap();
+
       message.success(t('LEFT_GROUP_SUCCESS'));
+
       setContactInfoOpen(false);
     } catch (error) {
       message.error(t('ERROR_LEAVING_GROUP'));

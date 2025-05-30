@@ -57,36 +57,6 @@ const ChatListItem: FC<ContactListItemProps> = ({ lastMessage }) => {
     }
   );
 
-  useEffect(() => {
-    if (
-      groupData &&
-      groupData !== 'Error: item-not-found' &&
-      lastMessage.chatId === activeChat?.chatId
-    ) {
-      const updatedChatName =
-        (typeof groupData === 'object' &&
-          groupData !== null &&
-          'subject' in groupData &&
-          groupData.subject) ||
-        contactInfo?.contactName ||
-        contactInfo?.name ||
-        lastMessage.senderContactName ||
-        lastMessage.senderName ||
-        getPhoneNumberFromChatId(lastMessage.chatId);
-
-      const info = contactInfo || groupData;
-
-      setActiveChat({
-        chatId: lastMessage.chatId,
-        senderName: updatedChatName,
-        senderContactName: lastMessage.senderContactName,
-        avatar: avatar,
-        contactInfo: info,
-        ...(typeof groupData === 'object' && groupData !== null ? groupData : {}),
-      });
-    }
-  }, [groupData]);
-
   const { data: contactInfo, isLoading: isContactInfoLoading } = useGetContactInfoQuery(
     {
       ...instanceCredentials,

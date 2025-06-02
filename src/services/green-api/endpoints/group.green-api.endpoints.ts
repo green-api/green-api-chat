@@ -22,7 +22,9 @@ export const groupGreenApiEndpoints = greenAPI.injectEndpoints({
         body,
       }),
       keepUnusedDataFor: 1000,
-      providesTags: [{ type: 'groupData' }],
+      providesTags: (result, error, { groupId }) => {
+        return [{ type: 'groupData', id: groupId }];
+      },
     }),
     updateGroupName: builder.mutation<UpdateGroupNameResponseInterface, UpdateGroupNameInterface>({
       query: ({ idInstance, apiTokenInstance, apiUrl, mediaUrl: _, ...body }) => ({
@@ -30,7 +32,9 @@ export const groupGreenApiEndpoints = greenAPI.injectEndpoints({
         method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: 'groupData' }, { type: 'chatHistory' }],
+      invalidatesTags: (result, error, { groupId }) => {
+        return [{ type: 'groupData', id: groupId }, { type: 'chatHistory' }];
+      },
     }),
     addGroupParticipant: builder.mutation<
       AddGroupParticipantResponseInterface,
@@ -41,7 +45,9 @@ export const groupGreenApiEndpoints = greenAPI.injectEndpoints({
         method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: 'groupData' }],
+      invalidatesTags: (result, error, { groupId }) => {
+        return [{ type: 'groupData', id: groupId }];
+      },
     }),
     removeParticipant: builder.mutation<
       RemoveGroupParticipantResponseInterface,
@@ -52,7 +58,9 @@ export const groupGreenApiEndpoints = greenAPI.injectEndpoints({
         method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: 'groupData' }],
+      invalidatesTags: (result, error, { groupId }) => {
+        return [{ type: 'groupData', id: groupId }];
+      },
     }),
     setGroupAdmin: builder.mutation<SetGroupAdminResponseInterface, SetGroupAdminInterface>({
       query: ({ idInstance, apiTokenInstance, apiUrl, mediaUrl: _, ...body }) => ({
@@ -60,7 +68,9 @@ export const groupGreenApiEndpoints = greenAPI.injectEndpoints({
         method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: 'groupData' }],
+      invalidatesTags: (result, error, { groupId }) => {
+        return [{ type: 'groupData', id: groupId }];
+      },
     }),
     removeAdmin: builder.mutation<RemoveGroupAdminResponseInterface, SetGroupAdminInterface>({
       query: ({ idInstance, apiTokenInstance, apiUrl, mediaUrl: _, ...body }) => ({
@@ -68,7 +78,9 @@ export const groupGreenApiEndpoints = greenAPI.injectEndpoints({
         method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: 'groupData' }],
+      invalidatesTags: (result, error, { groupId }) => {
+        return [{ type: 'groupData', id: groupId }];
+      },
     }),
     setGroupPicture: builder.mutation<
       SetGroupPictureResponseInterface,
@@ -84,7 +96,13 @@ export const groupGreenApiEndpoints = greenAPI.injectEndpoints({
         method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: 'groupData' }],
+      invalidatesTags: (result, error, { body }) => {
+        const groupId = body.get('groupId');
+        return [
+          { type: 'avatar', id: typeof groupId === 'string' ? groupId : undefined },
+          { type: 'groupData' },
+        ];
+      },
     }),
     leaveGroup: builder.mutation<RemoveGroupAdminResponseInterface, GroupBaseParametersInterface>({
       query: ({ idInstance, apiTokenInstance, apiUrl, mediaUrl: _, ...body }) => ({
@@ -92,7 +110,9 @@ export const groupGreenApiEndpoints = greenAPI.injectEndpoints({
         method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: 'groupData' }],
+      invalidatesTags: (result, error, { groupId }) => {
+        return [{ type: 'groupData', id: groupId }];
+      },
     }),
   }),
 });

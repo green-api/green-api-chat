@@ -1,21 +1,26 @@
 import { FC, useEffect, useRef, useState } from 'react';
-import { Empty, Flex, Input, List, Spin, Typography } from 'antd';
+
+import { Empty, Flex, List, Spin, Typography } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import ChatListItem from './chat-list-item.component';
+import ChatSearchInput from './chat-search-input.component';
 import { useAppSelector, useMediaQuery } from 'hooks';
 import { useLastMessagesQuery } from 'services/green-api/endpoints';
-import { selectMiniVersion } from 'store/slices/chat.slice';
+import { selectMiniVersion, selectSearchQuery } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
 import { MessageInterface } from 'types';
-import { getErrorMessage, getLastChats } from 'utils';
+import { filterContacts, filterMessagesByText, getErrorMessage, getLastChats } from 'utils';
 
 const { Title } = Typography;
 
 const ChatList: FC = () => {
   const instanceCredentials = useAppSelector(selectInstance);
   const isMiniVersion = useAppSelector(selectMiniVersion);
+  const searchQuery = useAppSelector(selectSearchQuery);
+
   const matchMedia = useMediaQuery('(min-height: 1200px)');
+
   const { t } = useTranslation();
 
   const { data, isLoading, error } = useLastMessagesQuery(
@@ -30,8 +35,9 @@ const ChatList: FC = () => {
   const chatListRef = useRef<HTMLDivElement | null>(null);
 
   const [contactNames, setContactNames] = useState<Record<string, string>>({});
-  const [searchQuery, setSearchQuery] = useState('');
   const [page, setPage] = useState(1);
+  const [contactsPage, setContactsPage] = useState(1);
+  const [messagesPage, setMessagesPage] = useState(1);
 
   const limit = isMiniVersion ? 5 : matchMedia ? 16 : 12;
 
@@ -42,60 +48,59 @@ const ChatList: FC = () => {
     }));
   };
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value.toLowerCase());
-    setPage(1);
-  };
-
   const allMessages: MessageInterface[] = data ?? [];
 
   const lastMessages = getLastChats(allMessages, [], isMiniVersion ? limit : undefined);
-
-  const filteredContacts = Array.from(
-    allMessages.reduce((acc, msg) => {
-      const name = contactNames[msg.chatId] || '';
-      if (name.includes(searchQuery) && !acc.has(msg.chatId)) {
-        acc.set(msg.chatId, msg);
-      }
-      return acc;
-    }, new Map<string, MessageInterface>())
-  ).map(([, message]) => message);
-
-  const filteredMessages =
-    allMessages.filter((msg) => {
-      let text = '';
-      if (msg.typeMessage === 'extendedTextMessage') {
-        text = msg.extendedTextMessage?.text || '';
-      } else if (msg.typeMessage === 'textMessage') {
-        text = msg.textMessage || '';
-      }
-
-      return text.toLowerCase().includes(searchQuery);
-    }) ?? [];
+  const filteredContacts = filterContacts(allMessages, contactNames, searchQuery);
+  const filteredMessages = filterMessagesByText(allMessages, searchQuery);
 
   const showResults = searchQuery.trim() !== '';
+
+  const pagedFilteredContacts = filteredContacts.slice(0, contactsPage * limit);
+  const pagedFilteredMessages = filteredMessages.slice(0, messagesPage * limit);
 
   useEffect(() => {
     const element = chatListRef.current;
     if (!element) return;
 
-    let setPageTimer: number;
+    let scrollTimer: number;
 
     const handleScrollBottom = () => {
-      if (
-        element.scrollTop + element.offsetHeight + 50 >= element.scrollHeight &&
-        lastMessages.length > page * limit
-      ) {
-        clearTimeout(setPageTimer);
-        setPageTimer = setTimeout(() => {
-          setPage((prev) => prev + 1);
-        }, 500);
+      const bottomReached = element.scrollTop + element.offsetHeight + 50 >= element.scrollHeight;
+
+      if (bottomReached) {
+        clearTimeout(scrollTimer);
+
+        if (showResults) {
+          let updated = false;
+
+          if (filteredContacts.length > contactsPage * limit) {
+            scrollTimer = setTimeout(() => setContactsPage((prev) => prev + 1), 500);
+            updated = true;
+          }
+
+          if (filteredMessages.length > messagesPage * limit && !updated) {
+            scrollTimer = setTimeout(() => setMessagesPage((prev) => prev + 1), 500);
+          }
+        } else {
+          if (lastMessages.length > page * limit) {
+            scrollTimer = setTimeout(() => setPage((prev) => prev + 1), 500);
+          }
+        }
       }
     };
 
     element.addEventListener('scroll', handleScrollBottom);
     return () => element.removeEventListener('scroll', handleScrollBottom);
-  }, [lastMessages, page]);
+  }, [
+    filteredContacts,
+    filteredMessages,
+    lastMessages,
+    contactsPage,
+    messagesPage,
+    page,
+    showResults,
+  ]);
 
   if (!instanceCredentials?.idInstance || !instanceCredentials.apiTokenInstance) {
     return (
@@ -129,15 +134,7 @@ const ChatList: FC = () => {
 
   return (
     <>
-      <div style={{ margin: 8 }}>
-        <Input
-          placeholder={t('SEARCH_PLACEHOLDER')}
-          value={searchQuery}
-          onChange={handleSearch}
-          className="chat-list-search p-2"
-          allowClear
-        />
-      </div>
+      <ChatSearchInput setPage={setPage} />
 
       <div
         ref={chatListRef}
@@ -145,13 +142,13 @@ const ChatList: FC = () => {
       >
         {showResults ? (
           <>
-            {filteredContacts.length > 0 && (
+            {pagedFilteredContacts.length > 0 && (
               <>
                 <Title level={5} style={{ padding: '10px 0 0 10px' }}>
                   {t('CONTACTS')}
                 </Title>
                 <List
-                  dataSource={filteredContacts}
+                  dataSource={pagedFilteredContacts}
                   renderItem={(msg) => (
                     <ChatListItem
                       key={msg.chatId}
@@ -165,13 +162,13 @@ const ChatList: FC = () => {
               </>
             )}
 
-            {filteredMessages.length > 0 && (
+            {pagedFilteredMessages.length > 0 && (
               <>
                 <Title level={5} style={{ padding: '10px 0 0 10px' }}>
                   {t('MESSAGES')}
                 </Title>
                 <List
-                  dataSource={filteredMessages}
+                  dataSource={pagedFilteredMessages}
                   renderItem={(msg) => (
                     <ChatListItem
                       key={`${msg.chatId}-${msg.idMessage}`}
@@ -184,7 +181,7 @@ const ChatList: FC = () => {
               </>
             )}
 
-            {filteredContacts.length === 0 && filteredMessages.length === 0 && (
+            {pagedFilteredContacts.length === 0 && pagedFilteredMessages.length === 0 && (
               <Empty
                 className="empty mt-10"
                 description={t('NOTHING_FOUND') || 'Ничего не найдено'}

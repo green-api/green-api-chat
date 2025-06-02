@@ -42,7 +42,7 @@ const ChatListItem: FC<ContactListItemProps> = ({
 
   const instanceCredentials = useAppSelector(selectInstance);
   const activeChat = useAppSelector(selectActiveChat);
-  const { setActiveChat } = useActions();
+  const { setActiveChat, setSearchQuery } = useActions();
 
   const messageDate = getMessageDate(
     lastMessage.timestamp * 1000,
@@ -119,18 +119,22 @@ const ChatListItem: FC<ContactListItemProps> = ({
   const textMessage = getTextMessage(lastMessage);
   const info = contactInfo || groupData;
 
+  const handleSelectChat = () => {
+    setActiveChat({
+      chatId: lastMessage.chatId,
+      senderName: chatName,
+      senderContactName: lastMessage.senderContactName,
+      avatar,
+      contactInfo: info,
+    });
+
+    setSearchQuery('');
+  };
+
   return (
     <List.Item
       className={`list-item contact-list__item ${activeChat?.chatId === lastMessage.chatId ? 'active' : ''}`}
-      onClick={() =>
-        setActiveChat({
-          chatId: lastMessage.chatId,
-          senderName: chatName,
-          senderContactName: lastMessage.senderContactName,
-          avatar,
-          contactInfo: info,
-        })
-      }
+      onClick={handleSelectChat}
       title={avatar === emptyAvatar ? t('BLOCKED_OR_PRIVATE_CHAT') : undefined}
     >
       <Skeleton avatar title={false} loading={isLoading} active>

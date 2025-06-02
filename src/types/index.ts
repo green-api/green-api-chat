@@ -39,6 +39,7 @@ export interface ChatState {
   isContactInfoOpen: boolean;
   activeTemplate: WabaTemplateInterface | null;
   templateMessagesLoading: boolean;
+  searchQuery: string;
 }
 
 export type ChatType = 'tab' | 'console-page' | 'instance-view-page' | 'partner-iframe';

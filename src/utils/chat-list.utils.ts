@@ -91,7 +91,6 @@ export function updateLastChats(
   return getLastChats(currentChats, updates, count);
 }
 
-
 export function getAllChats(
   lastIncomingMessages: GetChatHistoryResponse,
   lastOutgoingMessages: GetChatHistoryResponse
@@ -103,7 +102,39 @@ export function getAllChats(
         message.typeMessage !== 'deletedMessage' &&
         message.typeMessage !== 'editedMessage'
     )
-    .sort((a, b) => b.timestamp - a.timestamp); 
+    .sort((a, b) => b.timestamp - a.timestamp);
 
   return allMessagesFilteredAndSorted;
 }
+
+export const extractTextFromMessage = (msg: MessageInterface): string => {
+  if (msg.typeMessage === 'extendedTextMessage') {
+    return msg.extendedTextMessage?.text?.toLowerCase() || '';
+  } else if (msg.typeMessage === 'textMessage') {
+    return msg.textMessage?.toLowerCase() || '';
+  }
+  return '';
+};
+
+export const filterContacts = (
+  allMessages: MessageInterface[],
+  contactNames: Record<string, string>,
+  searchQuery: string
+): MessageInterface[] => {
+  return Array.from(
+    allMessages.reduce((acc, msg) => {
+      const name = contactNames[msg.chatId] || '';
+      if (name.includes(searchQuery) && !acc.has(msg.chatId)) {
+        acc.set(msg.chatId, msg);
+      }
+      return acc;
+    }, new Map<string, MessageInterface>())
+  ).map(([, message]) => message);
+};
+
+export const filterMessagesByText = (
+  allMessages: MessageInterface[],
+  searchQuery: string
+): MessageInterface[] => {
+  return allMessages.filter((msg) => extractTextFromMessage(msg).includes(searchQuery));
+};

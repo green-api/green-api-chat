@@ -14,6 +14,7 @@ const initialState: ChatState = {
   isContactInfoOpen: false,
   activeTemplate: null,
   templateMessagesLoading: false,
+  searchQuery: '',
 };
 
 const chatSlice = createSlice({
@@ -56,6 +57,9 @@ const chatSlice = createSlice({
     ) => {
       state.templateMessagesLoading = action.payload;
     },
+    setSearchQuery: (state, action: PayloadAction<string>) => {
+      state.searchQuery = action.payload;
+    },
   },
 });
 
@@ -72,3 +76,4 @@ export const selectIsContactInfoOpen = (state: RootState) => state.chatReducer.i
 export const selectActiveTemplate = (state: RootState) => state.chatReducer.activeTemplate;
 export const selectTemplateMessagesLoading = (state: RootState) =>
   state.chatReducer.templateMessagesLoading;
+export const selectSearchQuery = (state: RootState) => state.chatReducer.searchQuery;

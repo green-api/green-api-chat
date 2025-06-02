@@ -1,16 +1,22 @@
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
 
 import { Flex } from 'antd';
 
 import ContactInfoDescription from './contact-info-description.component';
 import ContactInfoHeader from './contact-info-header.component';
 import GroupContactList from 'components/shared/group-contact-list/group-contact-list.component';
-import { useAppSelector } from 'hooks';
+import { useActions, useAppSelector } from 'hooks';
 import { selectActiveChat, selectIsContactInfoOpen } from 'store/slices/chat.slice';
 
 const ContactInfo: FC = () => {
   const activeChat = useAppSelector(selectActiveChat);
   const isContactInfoOpen = useAppSelector(selectIsContactInfoOpen);
+
+  const { setContactInfoOpen } = useActions();
+
+  useEffect(() => {
+    setContactInfoOpen(false);
+  }, [activeChat?.chatId]);
 
   if (!isContactInfoOpen || !activeChat) {
     return null;

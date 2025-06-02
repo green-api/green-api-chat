@@ -6,12 +6,7 @@ import { useTranslation } from 'react-i18next';
 
 import GroupContactListItem from './group-contact-list-item.component';
 import { useAppSelector } from 'hooks';
-import {
-  useAddGroupParticipantMutation,
-  useRemoveAdminMutation,
-  useRemoveParticipantMutation,
-  useSetGroupAdminMutation,
-} from 'services/green-api/endpoints';
+import { useAddGroupParticipantMutation } from 'services/green-api/endpoints';
 import { selectActiveChat } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
 import { ActiveChat } from 'types';
@@ -23,9 +18,6 @@ const GroupContactList: FC = () => {
   const { t } = useTranslation();
 
   const [addParticipant] = useAddGroupParticipantMutation();
-  const [removeParticipant] = useRemoveParticipantMutation();
-  const [setGroupAdmin] = useSetGroupAdminMutation();
-  const [removeAdmin] = useRemoveAdminMutation();
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -55,7 +47,7 @@ const GroupContactList: FC = () => {
         groupId: activeChat.chatId,
         participantChatId,
         ...instanceCredentials,
-      }).unwrap();
+      });
 
       message.success(t('PARTICIPANT_ADDED'));
       setIsModalVisible(false);
@@ -70,48 +62,6 @@ const GroupContactList: FC = () => {
     setPhoneNumber('');
   };
 
-  const handleRemoveParticipant = async (participantChatId: string) => {
-    try {
-      await removeParticipant({
-        groupId: activeChat.chatId,
-        participantChatId,
-        ...instanceCredentials,
-      }).unwrap();
-
-      message.success(t('PARTICIPANT_DELETED'));
-    } catch {
-      message.error(t('ERROR_DELETING_PARTICIPANT'));
-    }
-  };
-
-  const handleSetAdmin = async (participantChatId: string) => {
-    try {
-      await setGroupAdmin({
-        groupId: activeChat.chatId,
-        participantChatId,
-        ...instanceCredentials,
-      }).unwrap();
-
-      message.success(t('ADMIN_ASSIGNED'));
-    } catch {
-      message.error(t('ERROR_ASSIGNING_ADMIN'));
-    }
-  };
-
-  const handleRemoveAdmin = async (participantChatId: string) => {
-    try {
-      await removeAdmin({
-        groupId: activeChat.chatId,
-        participantChatId,
-        ...instanceCredentials,
-      }).unwrap();
-
-      message.success(t('ADMIN_REMOVED'));
-    } catch {
-      message.error(t('ERROR_REMOVING_ADMIN'));
-    }
-  };
-
   return (
     <>
       <List
@@ -122,14 +72,7 @@ const GroupContactList: FC = () => {
           showLessItems: true,
           showSizeChanger: false,
         }}
-        renderItem={(participant) => (
-          <GroupContactListItem
-            participant={participant}
-            onRemove={handleRemoveParticipant}
-            onSetAdmin={handleSetAdmin}
-            onRemoveAdmin={handleRemoveAdmin}
-          />
-        )}
+        renderItem={(participant) => <GroupContactListItem participant={participant} />}
         footer={
           <Flex justify="space-between" align="center">
             <Button icon={<UserAddOutlined />} type="primary" onClick={showModal}>

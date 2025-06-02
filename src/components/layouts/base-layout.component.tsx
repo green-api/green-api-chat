@@ -1,6 +1,7 @@
 import { FC, useEffect, useLayoutEffect } from 'react';
 
 import { Layout } from 'antd';
+import i18n from 'i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import FullChat from 'components/full-chat/chat.component';
@@ -20,7 +21,7 @@ const BaseLayout: FC = () => {
 
   const [searchParams] = useSearchParams();
 
-  const { setType, setSelectedInstance } = useActions();
+  const { setType, setSelectedInstance, setBrandData } = useActions();
 
   useLayoutEffect(() => {
     if (searchParams.has('type')) {
@@ -37,6 +38,11 @@ const BaseLayout: FC = () => {
       const apiUrl = searchParams.get('apiUrl');
       const mediaUrl = searchParams.get('mediaUrl');
 
+      const language = searchParams.get('lng');
+
+      const brandDescription = searchParams.get('dsc');
+      const brandImageUrl = searchParams.get('logo');
+
       if (idInstance && apiTokenInstance && apiUrl && mediaUrl) {
         setType('partner-iframe');
         setSelectedInstance({
@@ -47,6 +53,11 @@ const BaseLayout: FC = () => {
           tariff: TariffsEnum.Business,
         });
       }
+
+      language && i18n.changeLanguage(language);
+
+      brandDescription && setBrandData({ description: brandDescription });
+      brandImageUrl && setBrandData({ brandImageUrl });
     }
   }, [searchParams]);
 

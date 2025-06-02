@@ -50,11 +50,15 @@ const chatSlice = createSlice({
       state.activeTemplate = action.payload;
     },
 
-    setTemplateMessagesLoading: (
+    setBrandData: (
       state,
-      action: PayloadAction<ChatState['templateMessagesLoading']>
+      action: PayloadAction<{
+        description?: ChatState['description'];
+        brandImageUrl?: ChatState['brandImgUrl'];
+      }>
     ) => {
-      state.templateMessagesLoading = action.payload;
+      action.payload.description && (state.description = action.payload.description);
+      action.payload.brandImageUrl && (state.brandImgUrl = action.payload.brandImageUrl);
     },
   },
 });
@@ -70,5 +74,5 @@ export const selectMessageCount = (state: RootState) => state.chatReducer.messag
 export const selectType = (state: RootState) => state.chatReducer.type;
 export const selectIsContactInfoOpen = (state: RootState) => state.chatReducer.isContactInfoOpen;
 export const selectActiveTemplate = (state: RootState) => state.chatReducer.activeTemplate;
-export const selectTemplateMessagesLoading = (state: RootState) =>
-  state.chatReducer.templateMessagesLoading;
+export const selectDescription = (state: RootState) => state.chatReducer.description;
+export const selectBrandImgUrl = (state: RootState) => state.chatReducer.brandImgUrl;

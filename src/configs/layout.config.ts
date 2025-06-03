@@ -19,11 +19,18 @@ export const formItemMethodApiLayout = {
 
 export const formDefaultLayout = {
   labelCol: {
-    xs: { span: 15 },
-    sm: { span: 10 },
+    xs: { span: 24 },
+    sm: { span: 15 },
   },
   wrapperCol: {
-    xs: { span: 204 },
-    sm: { span: 30 },
+    xs: { span: 24 },
+    sm: { span: 40 },
   },
+};
+
+export const formItemDefaultLayout = {
+  // labelCol: {
+  //   xs: { style: { width: 200 } },
+  //   sm: { style: { width: 300 } },
+  // },
 };

@@ -8,20 +8,24 @@ import { PreviewImageInput } from './preview-image-input.component';
 import { PreviewSizeSelect } from './preview-size-select.component';
 import { Preview } from './preview.component';
 import TextArea from 'components/UI/text-area.component';
-import { formDefaultLayout } from 'configs';
-import { useAppDispatch, useAppSelector, useFormWithLanguageValidation } from 'hooks';
+import { formDefaultLayout, formItemDefaultLayout } from 'configs';
+import { useActions, useAppDispatch, useAppSelector, useFormWithLanguageValidation } from 'hooks';
 import { useSendMessageMutation } from 'services/green-api/endpoints';
 import { journalsGreenApiEndpoints } from 'services/green-api/endpoints/journals.green-api.endpoints';
 import { selectActiveChat, selectMessageCount, selectMiniVersion } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
 import { ActiveChat, ChatFormValues, MessageInterface } from 'types';
 import { getLastChats } from 'utils';
+import CustomPreviewSwitch from './custom-preview-switch.component';
+import CustomPreviewFields from './custom-preview-form-fields.component';
 
 const PreviewedMessageForm: FC = () => {
   const instanceCredentials = useAppSelector(selectInstance);
   const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
   const isMiniVersion = useAppSelector(selectMiniVersion);
   const messageCount = useAppSelector(selectMessageCount);
+
+  const { setActiveSendingMode } = useActions();
 
   const dispatch = useAppDispatch();
 
@@ -35,6 +39,7 @@ const PreviewedMessageForm: FC = () => {
   const isCustomPreview = Form.useWatch('isCustomPreview', form);
   const isBigPreview = Form.useWatch('typePreview', form) === 'large';
   const messageFormValuesRaw = Form.useWatch([], form);
+
   const messageFormValues = {
     ...messageFormValuesRaw,
     typePreview: messageFormValuesRaw?.typePreview ?? '',
@@ -129,6 +134,7 @@ const PreviewedMessageForm: FC = () => {
 
       dispatch(updateChatHistoryThunk);
       dispatch(updateChatListThunk);
+      dispatch(setActiveSendingMode(null));
 
       form.resetFields();
 
@@ -146,101 +152,58 @@ const PreviewedMessageForm: FC = () => {
     <Flex wrap gap={32}>
       <Form
         name="chat-form"
-        className="chat-form relative"
-        labelCol={{ style: { width: 200 } }}
         onFinish={onSendMessage}
         onSubmitCapture={() => form.setFields([{ name: 'response', errors: [], warnings: [] }])}
         form={form}
         onKeyDown={(e) => !e.ctrlKey && e.key === 'Enter' && form.submit()}
         disabled={isSendMessageLoading}
         style={{ flexGrow: 1 }}
+        labelCol={{ style: { width: 300 } }}
       >
         <Form.Item
-          {...formDefaultLayout}
-          style={{ marginBottom: 0 }}
-          name="response"
-          className="response-form-item"
+          name="message"
+          label={t('MESSAGE')}
+          key="message"
+          required
+          normalize={(value) => {
+            form.setFields([{ name: 'response', warnings: [] }]);
+
+            return value;
+          }}
         >
-          <Form.Item
-            {...formDefaultLayout}
-            name="message"
-            label={t('MESSAGE')}
-            key="message"
-            required
-            normalize={(value) => {
-              form.setFields([{ name: 'response', warnings: [] }]);
+          <TextArea minRows={5} />
+        </Form.Item>
 
-              return value;
-            }}
-          >
-            <TextArea minRows={5} />
-          </Form.Item>
-          <Form.Item
-            {...formDefaultLayout}
-            name="quotedMessageId"
-            key="quotedMessageId"
-            label={t('QUOTED_MESSAGE_ID')}
-            normalize={(value) => {
-              form.setFields([{ name: 'response', warnings: [] }]);
+        <Form.Item
+          {...formItemDefaultLayout}
+          name="quotedMessageId"
+          key="quotedMessageId"
+          label={t('QUOTED_MESSAGE_ID')}
+          normalize={(value) => {
+            form.setFields([{ name: 'response', warnings: [] }]);
 
-              return value;
-            }}
+            return value;
+          }}
+        >
+          <TextArea />
+        </Form.Item>
+
+        <PreviewSizeSelect />
+
+        <CustomPreviewSwitch />
+
+        {isCustomPreview && <CustomPreviewFields form={form} isBigPreview={isBigPreview} />}
+
+        <Form.Item style={{ marginBottom: 0 }} {...formItemDefaultLayout}>
+          <Button
+            type="primary"
+            htmlType="submit"
+            size="large"
+            className="w-100"
+            loading={isSendMessageLoading}
           >
-            <TextArea />
-          </Form.Item>
-          <PreviewSizeSelect />
-          <Form.Item {...formDefaultLayout} name="isCustomPreview" label={t('CUSTOM_PREVIEW')}>
-            <Flex gap={8}>
-              <Form.Item name="isCustomPreview" noStyle valuePropName="checked">
-                <Switch />
-              </Form.Item>
-              <Tooltip
-                title={t('CUSTOM_PREVIEW_TOOLTIP')}
-                placement="right"
-                overlayStyle={{ maxWidth: 250 }}
-              >
-                <InfoCircleOutlined style={{ cursor: 'pointer' }} />
-              </Tooltip>
-            </Flex>
-          </Form.Item>
-          {isCustomPreview && (
-            <>
-              <Form.Item
-                {...formDefaultLayout}
-                name={['customPreview', 'title']}
-                key="customPreviewTitle"
-                label={t('TITLE')}
-                required
-              >
-                <TextArea />
-              </Form.Item>
-              <Form.Item
-                {...formDefaultLayout}
-                name={['customPreview', 'description']}
-                key="customPreviewDescription"
-                label={t('DESCRIPTION')}
-                required
-              >
-                <TextArea />
-              </Form.Item>
-              <PreviewImageInput
-                namePrefix={['customPreview']}
-                form={form}
-                isBigPreview={isBigPreview}
-              />
-            </>
-          )}
-          <Form.Item style={{ marginBottom: 0 }} {...formDefaultLayout}>
-            <Button
-              type="primary"
-              htmlType="submit"
-              size="large"
-              className="w-100"
-              loading={isSendMessageLoading}
-            >
-              {t('SEND_MESSAGE')}
-            </Button>
-          </Form.Item>
+            {t('SEND_MESSAGE')}
+          </Button>
         </Form.Item>
       </Form>
       <Preview messageFormValues={messageFormValues} />

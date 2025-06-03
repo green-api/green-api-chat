@@ -16,7 +16,6 @@ interface PreviewCardProps {
 }
 
 export const PreviewCard = ({ messageFormValues }: PreviewCardProps) => {
-  console.log(messageFormValues);
   const isLarge = messageFormValues?.typePreview === 'large';
   const message = messageFormValues?.message as string;
   const firstUrl = message?.match(/https?:\/\/\S+/)?.[0];
@@ -36,8 +35,6 @@ export const PreviewCard = ({ messageFormValues }: PreviewCardProps) => {
   if (!message) {
     return null;
   }
-
-  console.log(imageThumbnail, 'imageThumbnail', imageUrl, 'imageUrl');
 
   return (
     <div className="sendMessagePreviewCard">
@@ -68,7 +65,7 @@ export const PreviewCard = ({ messageFormValues }: PreviewCardProps) => {
           </div>
         </div>
       )}
-      <div style={{ wordBreak: 'break-all', fontSize: 14, overflow: 'scroll', maxHeight: 250 }}>
+      <div style={{ wordBreak: 'break-all', fontSize: 14, overflow: 'hidden', maxHeight: 250 }}>
         {messageFormValues.message as string}
       </div>
     </div>

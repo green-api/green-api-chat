@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { useAppSelector } from 'hooks';
 import { useUploadFileMutation } from 'services/green-api/endpoints';
 import { selectInstance } from 'store/slices/instances.slice';
-import { formDefaultLayout } from 'configs';
+import { formDefaultLayout, formItemDefaultLayout } from 'configs';
 
 interface FileOrUrlInputProps {
   namePrefix: (string | number)[];
@@ -104,7 +104,7 @@ export const PreviewImageInput: FC<FileOrUrlInputProps> = ({ namePrefix, form, i
 
   return (
     <>
-      <Form.Item label={t('PREVIEW_IMAGE')} {...formDefaultLayout}>
+      <Form.Item label={t('PREVIEW_IMAGE')}>
         <Tabs
           activeKey={isFileMode ? 'file' : 'url'}
           type="card"

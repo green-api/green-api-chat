@@ -33,7 +33,7 @@ export const PreviewSizeSelect = () => {
           const selectedSize = getFieldValue('typePreview');
 
           return (
-            <Form.Item {...formDefaultLayout} label={t('TYPE_PREVIEW')}>
+            <Form.Item labelCol={{ style: { width: 300 } }} label={t('TYPE_PREVIEW')}>
               <Flex gap={8} align="center">
                 {VALUES.map((item) => (
                   <Button

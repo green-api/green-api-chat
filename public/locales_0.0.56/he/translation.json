@@ -126,5 +126,6 @@
   "EDIT_MESSAGE": "ערוך הודעה",
   "DELETE_MESSAGE": "מחק הודעה",
   "ONLY_SENDER_DELETE_LABEL": "מחק הודעה מהשולח בלבד",
-  "ENTER_IMAGE_URL": "הכנס כתובת URL של תמונה"
+  "ENTER_IMAGE_URL": "הכנס כתובת URL של תמונה",
+  "MESSAGE_PREVIEW": "תצוגה מקדימה:"
 }

@@ -76,9 +76,12 @@
 .sendMessagePreviewCard {
   background-color: var(--message-card-bg);
   position: relative;
+  overflow: hidden;
+  text-overflow: ellipsis;
   min-width: 180px;
   max-width: 340px;
-  z-index: 999;
+  margin: 0 10px;
+  z-index: 2;
   border-radius: 8px;
   padding: 6px;
   margin-top: 10%;

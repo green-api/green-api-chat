@@ -126,5 +126,6 @@
   "EDIT_MESSAGE": "Edit message",
   "DELETE_MESSAGE": "Delete message",
   "ONLY_SENDER_DELETE_LABEL": "Delete message from sender only",
-  "ENTER_IMAGE_URL": "Enter image URL"
+  "ENTER_IMAGE_URL": "Enter image URL",
+  "MESSAGE_PREVIEW": "Preview:"
 }

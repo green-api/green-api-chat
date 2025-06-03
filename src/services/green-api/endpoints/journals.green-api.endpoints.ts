@@ -22,6 +22,7 @@ export const journalsGreenApiEndpoints = greenAPI.injectEndpoints({
               msg.typeMessage !== 'editedMessage'
           )
           .reverse(),
+      providesTags: ['chatHistory'],
     }),
     lastIncomingMessages: builder.query<GetChatHistoryResponse, LastMessagesParametersInterface>({
       query: ({ idInstance, apiTokenInstance, apiUrl, minutes }) => ({

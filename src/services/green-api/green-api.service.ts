@@ -94,5 +94,5 @@ export const greenAPI = createApi({
   reducerPath: 'greenAPI',
   baseQuery: customQuery,
   endpoints: () => ({}),
-  tagTypes: ['lastMessages', 'wabaTemplates', 'waSettings'],
+  tagTypes: ['lastMessages', 'wabaTemplates', 'waSettings', 'groupData', 'chatHistory', 'avatar'],
 });

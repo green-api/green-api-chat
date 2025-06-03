@@ -121,10 +121,12 @@ export const filterContacts = (
   contactNames: Record<string, string>,
   searchQuery: string
 ): MessageInterface[] => {
+  const query = searchQuery.toLowerCase();
+
   return Array.from(
     allMessages.reduce((acc, msg) => {
-      const name = contactNames[msg.chatId] || '';
-      if (name.includes(searchQuery) && !acc.has(msg.chatId)) {
+      const name = (contactNames[msg.chatId] || '').toLowerCase();
+      if (name.includes(query) && !acc.has(msg.chatId)) {
         acc.set(msg.chatId, msg);
       }
       return acc;
@@ -136,5 +138,7 @@ export const filterMessagesByText = (
   allMessages: MessageInterface[],
   searchQuery: string
 ): MessageInterface[] => {
-  return allMessages.filter((msg) => extractTextFromMessage(msg).includes(searchQuery));
+  const query = searchQuery.toLowerCase();
+
+  return allMessages.filter((msg) => extractTextFromMessage(msg).toLowerCase().includes(query));
 };

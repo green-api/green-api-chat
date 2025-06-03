@@ -4,7 +4,7 @@ import { Input } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import { useActions, useAppSelector } from 'hooks';
-import { selectSearchQuery } from 'store/slices/chat.slice';
+import { selectMiniVersion, selectSearchQuery } from 'store/slices/chat.slice';
 
 interface ChatSearchInputProps {
   setPage: (page: number) => void;
@@ -14,6 +14,8 @@ const ChatSearchInput: React.FC<ChatSearchInputProps> = ({ setPage }) => {
   const { t } = useTranslation();
 
   const searchQuery = useAppSelector(selectSearchQuery);
+
+  const isMiniVersion = useAppSelector(selectMiniVersion);
 
   const { setSearchQuery } = useActions();
 
@@ -25,6 +27,10 @@ const ChatSearchInput: React.FC<ChatSearchInputProps> = ({ setPage }) => {
     },
     [setPage]
   );
+
+  if (isMiniVersion) {
+    return null;
+  }
 
   return (
     <div style={{ margin: 8 }}>

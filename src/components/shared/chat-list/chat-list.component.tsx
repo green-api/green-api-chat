@@ -1,82 +1,106 @@
 import { FC, useEffect, useRef, useState } from 'react';
 
-import { Empty, Flex, List, Spin } from 'antd';
+import { Empty, Flex, List, Spin, Typography } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import ChatListItem from './chat-list-item.component';
+import ChatSearchInput from './chat-search-input.component';
 import { useAppSelector, useMediaQuery } from 'hooks';
 import { useLastMessagesQuery } from 'services/green-api/endpoints';
-import { selectMiniVersion } from 'store/slices/chat.slice';
+import { selectMiniVersion, selectSearchQuery } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
 import { MessageInterface } from 'types';
-import { getErrorMessage } from 'utils';
+import { filterContacts, filterMessagesByText, getErrorMessage, getLastChats } from 'utils';
+
+const { Title } = Typography;
 
 const ChatList: FC = () => {
   const instanceCredentials = useAppSelector(selectInstance);
   const isMiniVersion = useAppSelector(selectMiniVersion);
+  const searchQuery = useAppSelector(selectSearchQuery);
 
   const matchMedia = useMediaQuery('(min-height: 1200px)');
 
   const { t } = useTranslation();
 
-  const { data, isLoading, error } = useLastMessagesQuery(instanceCredentials, {
-    skipPollingIfUnfocused: true,
-    pollingInterval: isMiniVersion ? 17000 : 15000,
-    skip: !instanceCredentials?.idInstance || !instanceCredentials.apiTokenInstance,
-  });
+  const { data, isLoading, error } = useLastMessagesQuery(
+    { ...instanceCredentials, allMessages: true },
+    {
+      skipPollingIfUnfocused: true,
+      pollingInterval: isMiniVersion ? 17000 : 15000,
+      skip: !instanceCredentials?.idInstance || !instanceCredentials.apiTokenInstance,
+    }
+  );
 
   const chatListRef = useRef<HTMLDivElement | null>(null);
 
-  const [chatList, setChatList] = useState<MessageInterface[]>([]);
+  const [contactNames, setContactNames] = useState<Record<string, string>>({});
+  const [page, setPage] = useState(1);
+  const [contactsPage, setContactsPage] = useState(1);
+  const [messagesPage, setMessagesPage] = useState(1);
 
   const limit = isMiniVersion ? 5 : matchMedia ? 16 : 12;
-  const [page, setPage] = useState(1);
 
-  useEffect(() => {
-    if (isLoading) return;
+  const handleNameExtracted = (chatId: string, name: string) => {
+    setContactNames((prev) => ({
+      ...prev,
+      [chatId]: name.toLowerCase(),
+    }));
+  };
 
-    if (data) {
-      const bufferChats: MessageInterface[] = [];
+  const allMessages: MessageInterface[] = data ?? [];
 
-      for (let i = 0; i < data.length; i++) {
-        if (i === page * limit) {
-          break;
-        }
+  const lastMessages = getLastChats(allMessages, [], isMiniVersion ? limit : undefined);
+  const filteredContacts = filterContacts(allMessages, contactNames, searchQuery);
+  const filteredMessages = filterMessagesByText(allMessages, searchQuery);
 
-        bufferChats.push(data[i]);
-      }
+  const showResults = searchQuery.trim() !== '';
 
-      setChatList(bufferChats);
-    }
-  }, [data, page]);
+  const pagedFilteredContacts = filteredContacts.slice(0, contactsPage * limit);
+  const pagedFilteredMessages = filteredMessages.slice(0, messagesPage * limit);
 
-  // scroll bottom handler
   useEffect(() => {
     const element = chatListRef.current;
-    if (!element) {
-      return;
-    }
+    if (!element) return;
 
-    let setPageTimer: number;
+    let scrollTimer: number;
 
     const handleScrollBottom = () => {
-      if (
-        element.scrollTop + element.offsetHeight + 50 >= element.scrollHeight &&
-        data &&
-        data.length > page * limit
-      ) {
-        clearTimeout(setPageTimer);
+      const bottomReached = element.scrollTop + element.offsetHeight + 50 >= element.scrollHeight;
 
-        setPageTimer = setTimeout(() => {
-          setPage((prev) => prev + 1);
-        }, 500);
+      if (bottomReached) {
+        clearTimeout(scrollTimer);
+
+        if (showResults) {
+          let updated = false;
+
+          if (filteredContacts.length > contactsPage * limit) {
+            scrollTimer = setTimeout(() => setContactsPage((prev) => prev + 1), 500);
+            updated = true;
+          }
+
+          if (filteredMessages.length > messagesPage * limit && !updated) {
+            scrollTimer = setTimeout(() => setMessagesPage((prev) => prev + 1), 500);
+          }
+        } else {
+          if (lastMessages.length > page * limit) {
+            scrollTimer = setTimeout(() => setPage((prev) => prev + 1), 500);
+          }
+        }
       }
     };
 
     element.addEventListener('scroll', handleScrollBottom);
-
     return () => element.removeEventListener('scroll', handleScrollBottom);
-  }, [data, page]);
+  }, [
+    filteredContacts,
+    filteredMessages,
+    lastMessages,
+    contactsPage,
+    messagesPage,
+    page,
+    showResults,
+  ]);
 
   if (!instanceCredentials?.idInstance || !instanceCredentials.apiTokenInstance) {
     return (
@@ -109,21 +133,83 @@ const ChatList: FC = () => {
   }
 
   return (
-    <List
-      ref={chatListRef}
-      itemLayout="horizontal"
-      className={`contact-list ${isMiniVersion ? 'min-height-460' : 'height-720'}`}
-      dataSource={chatList}
-      renderItem={(message) => <ChatListItem key={message.chatId} lastMessage={message} />}
-      loading={{
-        spinning: isLoading,
-        className: `${isMiniVersion ? 'min-height-460' : 'height-720'}`,
-        size: 'large',
-      }}
-      locale={{
-        emptyText: <Empty className="empty p-10" description={t('EMPTY_CHAT_LIST')} />,
-      }}
-    />
+    <>
+      <ChatSearchInput setPage={setPage} />
+
+      <div
+        ref={chatListRef}
+        className={`contact-list px-2 overflow-auto ${isMiniVersion ? 'min-height-460' : 'height-720'}`}
+      >
+        {showResults ? (
+          <>
+            {pagedFilteredContacts.length > 0 && (
+              <>
+                <Title level={5} style={{ padding: '10px 0 0 10px' }}>
+                  {t('CONTACTS')}
+                </Title>
+                <List
+                  dataSource={pagedFilteredContacts}
+                  renderItem={(msg) => (
+                    <ChatListItem
+                      key={msg.chatId}
+                      lastMessage={msg}
+                      onNameExtracted={handleNameExtracted}
+                      showDescription={false}
+                    />
+                  )}
+                  split={false}
+                />
+              </>
+            )}
+
+            {pagedFilteredMessages.length > 0 && (
+              <>
+                <Title level={5} style={{ padding: '10px 0 0 10px' }}>
+                  {t('MESSAGES')}
+                </Title>
+                <List
+                  dataSource={pagedFilteredMessages}
+                  renderItem={(msg) => (
+                    <ChatListItem
+                      key={`${msg.chatId}-${msg.idMessage}`}
+                      lastMessage={msg}
+                      onNameExtracted={handleNameExtracted}
+                    />
+                  )}
+                  split={false}
+                />
+              </>
+            )}
+
+            {pagedFilteredContacts.length === 0 && pagedFilteredMessages.length === 0 && (
+              <Empty
+                className="empty mt-10"
+                description={t('NOTHING_FOUND') || 'Ничего не найдено'}
+              />
+            )}
+          </>
+        ) : (
+          <List
+            dataSource={lastMessages.slice(0, page * limit)}
+            renderItem={(message) => (
+              <ChatListItem
+                key={message.chatId}
+                lastMessage={message}
+                onNameExtracted={handleNameExtracted}
+              />
+            )}
+            loading={{
+              spinning: isLoading,
+              className: `${isMiniVersion ? 'min-height-460' : 'height-720'}`,
+              size: 'large',
+            }}
+            locale={{
+              emptyText: <Empty className="empty p-10" description={t('EMPTY_CHAT_LIST')} />,
+            }}
+          />
+        )}
+      </div>
+    </>
   );
 };
 

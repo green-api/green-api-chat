@@ -73,6 +73,7 @@
 
   "RUSSIAN": "Русский",
   "ENGLISH": "English",
+
   "HEBREW": "עִבְרִית",
 
   "FULL_VERSION": "פתח צ'אטים",
@@ -126,8 +127,10 @@
   "EDIT_MESSAGE": "ערוך הודעה",
   "DELETE_MESSAGE": "מחק הודעה",
   "ONLY_SENDER_DELETE_LABEL": "מחק הודעה מהשולח בלבד",
+  "SEARCH_PLACEHOLDER": "חיפוש",
+  "NOTHING_FOUND": "לא נמצא דבר",
   "ENTER_IMAGE_URL": "הכנס כתובת URL של תמונה",
-  "MESSAGE_PREVIEW": "תצוגה מקדימה:"
+  "MESSAGE_PREVIEW": "תצוגה מקדימה:",
   "CHAT_MESSAGE_LIMIT_REACHED_TITLE": "הגעת למגבלת ההודעות בצ'אט",
   "LOAD_MORE_MESSAGES": "טען עוד הודעות",
   "UPDATE_AVATAR": "עדכן תמונת קבוצה",

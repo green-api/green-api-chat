@@ -73,6 +73,7 @@
 
   "RUSSIAN": "Русский",
   "ENGLISH": "English",
+
   "HEBREW": "עִבְרִית",
 
   "FULL_VERSION": "Open chats",
@@ -126,8 +127,12 @@
   "EDIT_MESSAGE": "Edit message",
   "DELETE_MESSAGE": "Delete message",
   "ONLY_SENDER_DELETE_LABEL": "Delete message from sender only",
+  "SEARCH_PLACEHOLDER": "Search",
+  "CONTACTS": "Contacts",
+  "MESSAGES": "Messages",
+  "NOTHING_FOUND": "Nothing was found",
   "ENTER_IMAGE_URL": "Enter image URL",
-  "MESSAGE_PREVIEW": "Preview:"
+  "MESSAGE_PREVIEW": "Preview:",
   "CHAT_MESSAGE_LIMIT_REACHED_TITLE": "Chat message limit reached",
   "LOAD_MORE_MESSAGES": "Load more messages",
   "UPDATE_AVATAR": "Update group avatar",

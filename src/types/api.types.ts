@@ -161,6 +161,7 @@ export type GetChatInformationParameters = { onlySenderDelete?: boolean } & Pick
 
 export interface LastMessagesParametersInterface extends InstanceInterface {
   minutes?: number;
+   allMessages?: boolean;
 }
 
 export interface GroupBaseParametersInterface extends InstanceInterface {

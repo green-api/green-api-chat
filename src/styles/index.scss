@@ -19,6 +19,8 @@
 @import 'components/UI/select-sending-mode';
 @import 'components/UI/status-circle';
 
+@import 'components/UI/message-preview.scss';
+
 @import 'components/forms/auth-form';
 
 @import 'components/alerts/left-group-alert';
@@ -272,6 +274,7 @@ Button.ant-btn-primary:focus {
 .edit-message-modal .ant-modal-content {
   padding: 0;
 }
+
 
 .delete-button {
   color: #d1242f !important;

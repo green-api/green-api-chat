@@ -33,6 +33,15 @@
 
   "SELECT_FILE": "Выберите файл",
   "FILE_LABEL": "Файл",
+  "MESSAGE": "Сообщение",
+  "QUOTED_MESSAGE_ID": "Идентификатор цитируемого сообщения",
+  "TYPE_PREVIEW": "Размер превью",
+  "TITLE": "Заголовок",
+  "CUSTOM_PREVIEW": "Пользовательское превью",
+  "PREVIEW_IMAGE": "Изображение превью",
+  "UPLOAD_FILE": "Загрузить файл",
+  "MESSAGE_PREVIEW": "Предварительный просмотр:",
+  "CUSTOM_PREVIEW_TOOLTIP": "Используйте файл или ссылку на файл для формирования пользовательского превью.",
   "FILENAME_LABEL": "Название файла",
   "DESCRIPTION": "Описание",
 
@@ -127,6 +136,10 @@
   "EDIT_MESSAGE": "Редактировать сообщение",
   "DELETE_MESSAGE": "Удалить сообщение",
   "ONLY_SENDER_DELETE_LABEL": "Удалить сообщение только у отправителя",
+  "PREVIEW_SIZE_SMALL": "Маленькое",
+  "PREVIEW_SIZE_LARGE": "Большое",
+  "FILE_TOO_LARGE": "Размер файл превышает 100 килобайт",
+  "ENTER_IMAGE_URL": "Введите ссылку на изображение"
   "CHAT_MESSAGE_LIMIT_REACHED_TITLE": "Достигнут лимит сообщений чата",
   "LOAD_MORE_MESSAGES": "Загрузить еще сообщения",
   "UPDATE_AVATAR": "Обновить изображение группы",

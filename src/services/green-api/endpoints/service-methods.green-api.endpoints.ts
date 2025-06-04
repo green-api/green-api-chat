@@ -7,7 +7,9 @@ import {
   GetChatInformationParameters,
   GetContactInfoResponseInterface,
   RequestWithChatIdParameters,
+  SendFileByUrlParametersInterface,
   SendingResponseInterface,
+  UploadFileParametersInterface,
 } from 'types';
 
 export const serviceMethodsGreenApiEndpoints = greenAPI.injectEndpoints({
@@ -30,6 +32,19 @@ export const serviceMethodsGreenApiEndpoints = greenAPI.injectEndpoints({
       }),
       keepUnusedDataFor: 1000,
       providesTags: (result, error, { chatId }) => [{ type: 'avatar', id: chatId }],
+    }),
+    uploadFile: builder.mutation<
+      Pick<SendFileByUrlParametersInterface, 'urlFile'>,
+      UploadFileParametersInterface
+    >({
+      query: ({ idInstance, apiTokenInstance, apiUrl, mediaUrl: _, ...body }) => ({
+        url: `${apiUrl}waInstance${idInstance}/UploadFile/${apiTokenInstance}`,
+        method: 'POST',
+        headers: {
+          'content-type': body.file.type,
+        },
+        body: body.file,
+      }),
     }),
     getContactInfo: builder.query<GetContactInfoResponseInterface, RequestWithChatIdParameters>({
       query: ({ idInstance, apiTokenInstance, apiUrl, mediaUrl: _, ...body }) => ({

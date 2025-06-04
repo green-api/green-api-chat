@@ -89,6 +89,16 @@ export interface ChatFormValues {
   message: string;
   response: string;
   quotedMessageId?: string;
+  typePreview?: 'small' | 'large';
+  linkPreview?: boolean;
+  isCustomPreview?: boolean;
+  customPreview?: {
+    title: string;
+    description: string;
+    link?: string;
+    urlFile?: string;
+    jpegThumbnail?: string;
+  };
 }
 
 export interface NewChatFormValues extends ChatFormValues {
@@ -182,7 +192,8 @@ export type SendingMethodName =
   | 'sendContact'
   | 'sendLocation'
   | 'sendPoll'
-  | 'sendTemplate';
+  | 'sendTemplate'
+  | 'sendPreview';
 
 export type MessageServiceMethodName = 'editMessage' | 'deleteMessage';
 

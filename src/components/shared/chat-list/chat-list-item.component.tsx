@@ -98,9 +98,9 @@ const ChatListItem: FC<ContactListItemProps> = ({
   }, [contactInfo, avatarData, lastMessage]);
 
   const chatName =
-    (groupData &&
-      groupData !== 'Error: forbidden' &&
-      typeof groupData !== 'string' &&
+    (typeof groupData === 'object' &&
+      groupData !== null &&
+      'subject' in groupData &&
       groupData.subject) ||
     contactInfo?.contactName ||
     contactInfo?.name ||

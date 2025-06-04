@@ -2,6 +2,7 @@ import { FC, useMemo } from 'react';
 
 import { List, Skeleton, Tag } from 'antd';
 
+import ParticipantMenu from './participant-menu.component';
 import emptyAvatar from 'assets/emptyAvatarButAvailable.svg';
 import AvatarImage from 'components/UI/avatar-image.component';
 import { useAppSelector } from 'hooks';
@@ -34,15 +35,17 @@ const GroupContactListItem: FC<GroupContactListItemProps> = ({ participant }) =>
   const phoneNumber = getPhoneNumberFromChatId(participant.id);
 
   const avatar = useMemo<string>(() => {
-    if (contactInfo && contactInfo.avatar) {
+    if (contactInfo?.avatar) {
       return contactInfo.avatar;
     }
-
     return emptyAvatar;
   }, [contactInfo]);
 
   return (
-    <List.Item className="list-item">
+    <List.Item
+      className="list-item"
+      actions={[<ParticipantMenu key="participantMenu" participant={participant} />]}
+    >
       <Skeleton avatar title={false} loading={isLoading || isFetching} active>
         <List.Item.Meta
           avatar={<AvatarImage src={avatar} size="large" />}

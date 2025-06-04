@@ -13,14 +13,7 @@ import { getFormData } from 'utils';
 export const sendingGreenApiEndpoints = greenAPI.injectEndpoints({
   endpoints: (builder) => ({
     sendMessage: builder.mutation<SendingResponseInterface, SendMessageParametersInterface>({
-      query: ({
-        idInstance,
-        apiTokenInstance,
-        refetchLastMessages,
-        apiUrl,
-        mediaUrl: _,
-        ...body
-      }) => ({
+      query: ({ idInstance, apiTokenInstance, apiUrl, mediaUrl: _, ...body }) => ({
         url: `${apiUrl}waInstance${idInstance}/sendMessage/${apiTokenInstance}`,
         method: 'POST',
         body,

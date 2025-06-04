@@ -73,7 +73,6 @@
 
   "RUSSIAN": "Русский",
   "ENGLISH": "English",
-
   "HEBREW": "עִבְרִית",
 
   "FULL_VERSION": "Open chats",
@@ -126,9 +125,5 @@
   "MESSAGE_INFO": "Message info",
   "EDIT_MESSAGE": "Edit message",
   "DELETE_MESSAGE": "Delete message",
-  "ONLY_SENDER_DELETE_LABEL": "Delete message from sender only",
-  "SEARCH_PLACEHOLDER": "Search",
-  "CONTACTS": "Contacts",
-  "MESSAGES": "Messages",
-  "NOTHING_FOUND": "Nothing was found"
+  "ONLY_SENDER_DELETE_LABEL": "Delete message from sender only"
 }

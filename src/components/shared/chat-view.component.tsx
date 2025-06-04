@@ -1,6 +1,6 @@
-import { FC, SyntheticEvent, useEffect, useMemo, useRef, useState } from 'react';
+import { FC, useEffect, useMemo, useRef, useState } from 'react';
 
-import { Empty, Spin } from 'antd';
+import { Alert, Button, Empty, Spin } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import Message from './message/message.component';
@@ -33,7 +33,7 @@ const ChatView: FC = () => {
   const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
   const isMiniVersion = useAppSelector(selectMiniVersion);
 
-  const [count, setCount] = useState(30);
+  const [count, setCount] = useState(50);
   const { setMessageCount } = useActions();
 
   let previousMessageAreOutgoing = false;
@@ -45,9 +45,7 @@ const ChatView: FC = () => {
   } = useTranslation();
 
   const chatViewRef = useRef<HTMLDivElement | null>(null);
-
-  const setPageTimerReference = useRef<ReturnType<typeof setTimeout>>();
-  const scrollTimerReference = useRef<ReturnType<typeof setTimeout>>();
+  const scrollPositionRef = useRef<{ top: number; height: number } | null>(null);
 
   const { data: profileSettings } = useGetProfileSettingsQuery(
     { idUser, apiTokenUser, projectId },
@@ -78,56 +76,52 @@ const ChatView: FC = () => {
     }
   );
 
-  const [scrollHeight, setScrollHeight] = useState(0);
-
-  const handleScrollTop = (event: SyntheticEvent<HTMLDivElement>) => {
-    const target = event.target as HTMLDivElement;
-
-    if (!target || isMiniVersion) {
-      return;
-    }
-
-    if (target.scrollTop === 0 && target.scrollHeight > target.clientHeight && count < 180) {
-      clearTimeout(setPageTimerReference.current);
-      clearTimeout(scrollTimerReference.current);
-
-      setPageTimerReference.current = setTimeout(() => {
-        setMessageCount(count + 10);
-        setCount((count) => count + 10);
-
-        scrollTimerReference.current = setTimeout(
-          () => target.scrollTo({ top: target.scrollHeight - scrollHeight }),
-          300
-        );
-      }, 500);
-    }
-  };
-
-  // reset global message count
   useEffect(() => {
-    setMessageCount(30);
+    setMessageCount(50);
   }, [activeChat]);
 
-  // scroll to bottom when open chat
+  const handleLoadMore = () => {
+    if (count >= 200) return;
+
+    const element = chatViewRef.current;
+    if (!element) return;
+
+    scrollPositionRef.current = {
+      top: element.scrollTop,
+      height: element.scrollHeight,
+    };
+
+    setCount((prev) => {
+      const next = Math.min(prev + 20, 200);
+      setMessageCount(next);
+      return next;
+    });
+  };
+
   useEffect(() => {
     const element = chatViewRef.current;
-    if (element && count === 30) {
+    if (!element || !scrollPositionRef.current) return;
+
+    const heightDiff = element.scrollHeight - scrollPositionRef.current.height;
+
+    element.scrollTop = scrollPositionRef.current.top + heightDiff;
+
+    scrollPositionRef.current = null;
+  }, [messages]);
+
+  useEffect(() => {
+    const element = chatViewRef.current;
+    if (element && count === 50 && !scrollPositionRef.current) {
       setTimeout(() => {
-        element.scrollTo({ top: element.scrollHeight });
+        element.scrollTo({ top: element.scrollHeight, behavior: 'smooth' });
       }, 10);
     }
   }, [messages, templates]);
 
-  const loaderVisible =
-    !isMiniVersion &&
-    count < 180 &&
-    isFetching &&
-    chatViewRef.current?.scrollTop === 0 &&
-    chatViewRef.current?.scrollHeight > chatViewRef.current?.clientHeight;
+  const loaderVisible = !isMiniVersion && isFetching;
 
   const formattedMessages = useMemo(() => {
     if (!messages) return [];
-
     return formatMessages(messages, resolvedLanguage as LanguageLiteral);
   }, [messages, resolvedLanguage]);
 
@@ -147,7 +141,6 @@ const ChatView: FC = () => {
         </div>
       );
     }
-
     return (
       <div className={`chat-view flex-center ${isMiniVersion ? '' : 'full'}`}>
         <Empty description={getErrorMessage(error, t)} />
@@ -156,22 +149,30 @@ const ChatView: FC = () => {
   }
 
   return (
-    <div
-      className={`chat-view ${isMiniVersion ? '' : 'full'}`}
-      ref={(node) => {
-        chatViewRef.current = node;
+    <div className={`chat-view ${isMiniVersion ? '' : 'full'}`} ref={chatViewRef}>
+      {count < 200 ? (
+        <div style={{ textAlign: 'center', padding: '12px 0' }}>
+          <Button onClick={handleLoadMore}>{t('LOAD_MORE_MESSAGES')}</Button>
+        </div>
+      ) : (
+        <Alert
+          style={{ textAlign: 'center' }}
+          message={t('CHAT_MESSAGE_LIMIT_REACHED_TITLE')}
+          type="warning"
+        />
+      )}
 
-        if (node) {
-          setScrollHeight(node.scrollHeight);
-        }
-      }}
-      onScroll={handleScrollTop}
-    >
       <Spin size="large" style={{ visibility: loaderVisible ? 'initial' : 'hidden' }} />
+
       {formattedMessages.map((message, idx) => {
         if (isMessagesDate(message)) {
           return (
-            <div className="message date p-10" key={message.date} style={{ alignSelf: 'center' }}>
+            <div
+              className="message date p-10"
+              key={message.date}
+              style={{ alignSelf: 'center' }}
+              data-message-id={`date-${message.date}`}
+            >
               {message.date.toUpperCase()}
             </div>
           );
@@ -192,19 +193,14 @@ const ChatView: FC = () => {
         if (message.templateMessage && !isMiniVersion) {
           if (isOutgoingTemplateMessage(message.templateMessage, message.type)) {
             const id = message.templateMessage.templateId;
-
             const templateData = templates?.templates.find(
               (template) => template.templateId === id
             );
-
-            if (templateData) {
-              if (templateData.containerMeta) {
-                templateMessage = JSON.parse(
-                  templateData.containerMeta
-                ) as ParsedWabaTemplateInterface;
-
-                templateMessage.params = message.templateMessage.params;
-              }
+            if (templateData && templateData.containerMeta) {
+              templateMessage = JSON.parse(
+                templateData.containerMeta
+              ) as ParsedWabaTemplateInterface;
+              templateMessage.params = message.templateMessage.params;
             }
           } else {
             if (message.templateMessage.contentText) {
@@ -213,32 +209,27 @@ const ChatView: FC = () => {
                 data: message.templateMessage.contentText,
                 footer: message.templateMessage.footerText,
                 mediaUrl: message.templateMessage.mediaUrl,
-                buttons: message.templateMessage.buttons?.map((incomingBtn) => {
-                  if (incomingBtn.callButton) {
+                buttons: message.templateMessage.buttons?.map((button) => {
+                  if (button.callButton) {
                     return {
-                      text: incomingBtn.callButton.displayText,
-                      value: incomingBtn.callButton.displayText,
+                      text: button.callButton.displayText,
+                      value: button.callButton.displayText,
                       type: TemplateButtonTypesEnum.PhoneNumber,
                     };
-                  } else if (incomingBtn.urlButton) {
+                  } else if (button.urlButton) {
                     return {
-                      text: incomingBtn.urlButton.displayText,
-                      value: incomingBtn.urlButton.displayText,
+                      text: button.urlButton.displayText,
+                      value: button.urlButton.displayText,
                       type: TemplateButtonTypesEnum.Url,
                     };
-                  } else if (incomingBtn.quickReplyButton) {
+                  } else if (button.quickReplyButton) {
                     return {
-                      text: incomingBtn.quickReplyButton.displayText,
-                      value: incomingBtn.quickReplyButton.displayText,
+                      text: button.quickReplyButton.displayText,
+                      value: button.quickReplyButton.displayText,
                       type: TemplateButtonTypesEnum.Url,
                     };
                   }
-
-                  return {
-                    text: '',
-                    value: '',
-                    type: TemplateButtonTypesEnum.Url,
-                  };
+                  return { text: '', value: '', type: TemplateButtonTypesEnum.Url };
                 }),
               };
             }
@@ -250,9 +241,9 @@ const ChatView: FC = () => {
             key={message.idMessage}
             messageDataForRender={{
               idMessage: message.idMessage,
-              showSenderName: showSenderName,
+              showSenderName,
               type: message.type,
-              typeMessage: typeMessage,
+              typeMessage,
               textMessage: getTextMessage(message),
               senderName: message.type === 'outgoing' ? t('YOU_SENDER_NAME') : message.senderName!,
               phone: message.senderId && getPhoneNumberFromChatId(message.senderId),
@@ -262,7 +253,7 @@ const ChatView: FC = () => {
               downloadUrl: message.downloadUrl,
               statusMessage: message.statusMessage,
               quotedMessage: message.quotedMessage,
-              templateMessage: templateMessage,
+              templateMessage,
               caption: message.caption,
               fileName: message.fileName,
               isDeleted: message.isDeleted,
@@ -271,6 +262,7 @@ const ChatView: FC = () => {
           />
         );
       })}
+
       {activeChat.contactInfo === 'Error: forbidden' && <LeftGroupAlert />}
     </div>
   );

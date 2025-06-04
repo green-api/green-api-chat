@@ -32,7 +32,6 @@
   "PREVIEW": "Превью",
 
   "SELECT_FILE": "Выберите файл",
-
   "FILE_LABEL": "Файл",
   "FILENAME_LABEL": "Название файла",
   "DESCRIPTION": "Описание",
@@ -75,7 +74,6 @@
 
   "RUSSIAN": "Русский",
   "ENGLISH": "English",
-
   "HEBREW": "עִבְרִית",
 
   "FULL_VERSION": "Открыть чаты",
@@ -128,9 +126,5 @@
   "MESSAGE_INFO": "Информация о сообщении",
   "EDIT_MESSAGE": "Редактировать сообщение",
   "DELETE_MESSAGE": "Удалить сообщение",
-  "ONLY_SENDER_DELETE_LABEL": "Удалить сообщение только у отправителя",
-  "SEARCH_PLACEHOLDER": "Поиск",
-  "CONTACTS": "Контакты",
-  "MESSAGES": "Сообщения",
-  "NOTHING_FOUND": "Ничего не найдено"
+  "ONLY_SENDER_DELETE_LABEL": "Удалить сообщение только у отправителя"
 }

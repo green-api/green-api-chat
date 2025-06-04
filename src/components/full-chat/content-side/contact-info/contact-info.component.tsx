@@ -16,7 +16,7 @@ const ContactInfo: FC = () => {
 
   useEffect(() => {
     setContactInfoOpen(false);
-  }, [activeChat]);
+  }, [activeChat?.chatId]);
 
   if (!isContactInfoOpen || !activeChat) {
     return null;

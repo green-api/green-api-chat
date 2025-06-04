@@ -104,7 +104,10 @@ const ChatListItem: FC<ContactListItemProps> = ({ lastMessage }) => {
   }
 
   const chatName =
-    (groupData && groupData !== 'Error: forbidden' && groupData.subject) ||
+    (typeof groupData === 'object' &&
+      groupData !== null &&
+      'subject' in groupData &&
+      groupData.subject) ||
     contactInfo?.contactName ||
     contactInfo?.name ||
     lastMessage.senderContactName ||

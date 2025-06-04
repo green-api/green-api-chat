@@ -31,6 +31,7 @@ export const serviceMethodsGreenApiEndpoints = greenAPI.injectEndpoints({
         body,
       }),
       keepUnusedDataFor: 1000,
+      providesTags: (result, error, { chatId }) => [{ type: 'avatar', id: chatId }],
     }),
     uploadFile: builder.mutation<
       Pick<SendFileByUrlParametersInterface, 'urlFile'>,

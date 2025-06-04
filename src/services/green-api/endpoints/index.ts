@@ -25,6 +25,13 @@ export const {
   useEditMessageMutation,
   useDeleteMessageMutation,
   useUploadFileMutation,
+  useUpdateGroupNameMutation,
+  useAddGroupParticipantMutation,
+  useRemoveParticipantMutation,
+  useSetGroupAdminMutation,
+  useRemoveAdminMutation,
+  useSetGroupPictureMutation,
+  useLeaveGroupMutation,
 } = {
   ...accountGreenApiEndpoints,
   ...sendingGreenApiEndpoints,

@@ -27,7 +27,7 @@ const SendingModal: FC = () => {
       open={!!activeSendingMode}
       onCancel={reset}
       footer={null}
-      width={780}
+      width={1150}
       destroyOnClose
     >
       {modalContent?.element}

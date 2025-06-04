@@ -97,7 +97,7 @@ const ChatListItem: FC<ContactListItemProps> = ({
     return lastMessage.chatId.includes('g.us') ? emptyAvatarGroup : emptyAvatarButAvailable;
   }, [contactInfo, avatarData, lastMessage]);
 
-  const chatName =
+const chatName =
     (groupData &&
       groupData !== 'Error: forbidden' &&
       typeof groupData !== 'string' &&

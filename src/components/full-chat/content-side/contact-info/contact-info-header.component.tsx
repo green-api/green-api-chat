@@ -1,26 +1,31 @@
 import { FC } from 'react';
 
 import { CloseOutlined } from '@ant-design/icons';
-import { Divider, Flex, Image, Space, Typography } from 'antd';
+import { Divider, Flex, Image, Typography } from 'antd';
 import { Header } from 'antd/es/layout/layout';
 import { useTranslation } from 'react-i18next';
 
+import EditGroupName from 'components/shared/chat-header/edit-group-name.component';
+import GroupAvatarUpload from 'components/shared/chat-header/group-avatar-upload.component';
+import LeaveGroupButton from 'components/shared/chat-header/leave-group.component';
 import { useActions, useAppSelector } from 'hooks';
+import { useIsGroupAdmin } from 'hooks/use-is-group-admin.hook';
 import { selectActiveChat } from 'store/slices/chat.slice';
 import { ActiveChat, LanguageLiteral } from 'types';
 import { fillJsxString, isContactInfo, numWord } from 'utils';
 
 const ContactInfoHeader: FC = () => {
-  const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
-
+  const { setContactInfoOpen } = useActions();
   const {
     t,
     i18n: { resolvedLanguage },
   } = useTranslation();
 
-  const { setContactInfoOpen } = useActions();
-
+  const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
+  const isGroup = activeChat.chatId.includes('@g.us');
   const info = activeChat.chatId.includes('@c.us') ? t('CONTACT_INFO') : t('GROUP_INFO');
+
+  const isAdmin = useIsGroupAdmin(activeChat);
 
   const getHeaderBody = () => {
     if (!activeChat.contactInfo || activeChat.contactInfo === 'Error: forbidden') {
@@ -69,14 +74,13 @@ const ContactInfoHeader: FC = () => {
         ]);
 
     const category = isContactInfo(activeChat.contactInfo) && activeChat.contactInfo.category;
-
     const isBusiness = isContactInfo(activeChat.contactInfo) && activeChat.contactInfo.isBusiness;
 
     return (
       <Flex vertical gap={2} justify="center" align="center" className="w-100">
-        <Typography.Title level={2} style={{ marginBottom: 'unset' }} className="contact-info-name">
-          {contactName}
-        </Typography.Title>
+        <Flex gap={6} align="center">
+          {isGroup && <EditGroupName />}
+        </Flex>
         {!isContactInfo(activeChat.contactInfo) && (
           <Typography.Text style={{ fontSize: 15 }}>
             id: {activeChat.chatId?.replace(/\@.*$/, '')}
@@ -103,17 +107,24 @@ const ContactInfoHeader: FC = () => {
   return (
     <Flex vertical className="contact-info-header">
       <Header className="p-10">
-        <Space>
-          <a>
-            <CloseOutlined style={{ width: 13 }} onClick={() => setContactInfoOpen(false)} />
-          </a>
-          <span>{info}</span>
-        </Space>
+        <Flex align="center" justify="space-between" style={{ flexGrow: 1 }}>
+          <Flex align="center" gap={10}>
+            <a>
+              <CloseOutlined style={{ width: 13 }} onClick={() => setContactInfoOpen(false)} />
+            </a>
+            <div style={{ textWrap: 'nowrap' }}>{info}</div>
+          </Flex>
+          {isGroup && <LeaveGroupButton activeChat={activeChat} />}
+        </Flex>
       </Header>
       <Flex vertical justify="center" align="center" gap={10} className="p-10 text-center">
-        <div style={{ borderRadius: '50%', overflow: 'hidden' }}>
-          <Image className="contact-info-avatar" src={activeChat.avatar} />
-        </div>
+        <Flex vertical align="center" gap={8}>
+          <div style={{ borderRadius: '50%', overflow: 'hidden' }}>
+            <Image preview={false} className="contact-info-avatar" src={activeChat.avatar} />
+          </div>
+          {isGroup && isAdmin && <GroupAvatarUpload activeChat={activeChat} />}
+        </Flex>
+
         {getHeaderBody()}
       </Flex>
     </Flex>

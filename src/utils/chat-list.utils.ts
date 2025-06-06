@@ -90,3 +90,55 @@ export function updateLastChats(
 
   return getLastChats(currentChats, updates, count);
 }
+
+export function getAllChats(
+  lastIncomingMessages: GetChatHistoryResponse,
+  lastOutgoingMessages: GetChatHistoryResponse
+): GetChatHistoryResponse {
+  const allMessagesFilteredAndSorted = [...lastIncomingMessages, ...lastOutgoingMessages]
+    .filter(
+      (message) =>
+        message.typeMessage !== 'reactionMessage' &&
+        message.typeMessage !== 'deletedMessage' &&
+        message.typeMessage !== 'editedMessage'
+    )
+    .sort((a, b) => b.timestamp - a.timestamp);
+
+  return allMessagesFilteredAndSorted;
+}
+
+export const extractTextFromMessage = (msg: MessageInterface): string => {
+  if (msg.typeMessage === 'extendedTextMessage') {
+    return msg.extendedTextMessage?.text?.toLowerCase() || '';
+  } else if (msg.typeMessage === 'textMessage') {
+    return msg.textMessage?.toLowerCase() || '';
+  }
+  return '';
+};
+
+export const filterContacts = (
+  allMessages: MessageInterface[],
+  contactNames: Record<string, string>,
+  searchQuery: string
+): MessageInterface[] => {
+  const query = searchQuery.toLowerCase();
+
+  return Array.from(
+    allMessages.reduce((acc, msg) => {
+      const name = (contactNames[msg.chatId] || '').toLowerCase();
+      if (name.includes(query) && !acc.has(msg.chatId)) {
+        acc.set(msg.chatId, msg);
+      }
+      return acc;
+    }, new Map<string, MessageInterface>())
+  ).map(([, message]) => message);
+};
+
+export const filterMessagesByText = (
+  allMessages: MessageInterface[],
+  searchQuery: string
+): MessageInterface[] => {
+  const query = searchQuery.toLowerCase();
+
+  return allMessages.filter((msg) => extractTextFromMessage(msg).toLowerCase().includes(query));
+};

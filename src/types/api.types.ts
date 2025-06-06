@@ -161,10 +161,52 @@ export type GetChatInformationParameters = { onlySenderDelete?: boolean } & Pick
 
 export interface LastMessagesParametersInterface extends InstanceInterface {
   minutes?: number;
+   allMessages?: boolean;
 }
 
 export interface GroupBaseParametersInterface extends InstanceInterface {
   groupId: string;
+}
+
+export interface UpdateGroupNameInterface extends GroupBaseParametersInterface {
+  groupName: string;
+}
+
+export interface UpdateGroupNameResponseInterface {
+  updateGroupName: boolean;
+}
+
+export interface GroupParticipantApiInterface extends GroupBaseParametersInterface {
+  participantChatId: string;
+}
+export type SetGroupAdminInterface = GroupParticipantApiInterface;
+export interface AddGroupParticipantResponseInterface {
+  addParticipant: boolean;
+}
+export interface RemoveGroupParticipantResponseInterface {
+  removeParticipant: boolean;
+}
+
+export interface SetGroupAdminResponseInterface {
+  setGroupAdmin: boolean;
+}
+export interface RemoveGroupAdminResponseInterface {
+  setGroupAdmin: boolean;
+}
+
+export interface SetGroupPictureInterface extends GroupBaseParametersInterface {
+  file: File;
+}
+
+export interface SetGroupPictureResponseInterface {
+  setGroupPicture: boolean;
+  urlAvatar: string;
+  reason: string;
+}
+
+export interface LeaveGroupResponseInterface {
+  leaveGroup: boolean;
+  removeAdmin?: boolean;
 }
 
 export type GetGroupDataResponseInterface =
@@ -366,3 +408,15 @@ export interface GetProfileBaseSettingsResponseInterface<T extends boolean> {
 export type GetProfileSettingsResponse =
   | GetProfileBaseSettingsResponseInterface<false>
   | (GetProfileBaseSettingsResponseInterface<true> & { partnerToken: string });
+
+export interface UploadFileParametersInterface extends InstanceInterface {
+  file: File;
+}
+
+export interface SendFileByUrlParametersInterface
+  extends InstanceInterface,
+    Omit<SendingBaseParametersInterface, 'message'>,
+    Required<Pick<SendingBaseFileParametersInterface, 'fileName'>>,
+    Omit<SendingBaseFileParametersInterface, 'fileName'> {
+  urlFile: string;
+}

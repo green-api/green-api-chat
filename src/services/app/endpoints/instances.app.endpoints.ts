@@ -12,7 +12,7 @@ export const instancesAppApiEndpoints = appAPI.injectEndpoints({
           'x-ga-method': AppMethodsEnum.GetInstances,
           'x-ga-user-id': idUser,
           'x-ga-user-token': apiTokenUser,
-            'x-ga-project-id': projectId,
+          'x-ga-project-id': projectId,
         },
       }),
       transformResponse: (response: GetInstancesResponse) => {

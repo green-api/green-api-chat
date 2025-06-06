@@ -73,7 +73,8 @@
 
   "RUSSIAN": "Русский",
   "ENGLISH": "English",
-  "HEBREW":  "עִבְרִית",
+
+  "HEBREW": "עִבְרִית",
 
   "FULL_VERSION": "פתח צ'אטים",
   "FULL_VERSION_TITLE": "פתח בחלון נפרד",
@@ -125,5 +126,32 @@
   "MESSAGE_INFO": "מידע על הודעה",
   "EDIT_MESSAGE": "ערוך הודעה",
   "DELETE_MESSAGE": "מחק הודעה",
-  "ONLY_SENDER_DELETE_LABEL": "מחק הודעה מהשולח בלבד"
+  "ONLY_SENDER_DELETE_LABEL": "מחק הודעה מהשולח בלבד",
+  "SEARCH_PLACEHOLDER": "חיפוש",
+  "NOTHING_FOUND": "לא נמצא דבר",
+  "ENTER_IMAGE_URL": "הכנס כתובת URL של תמונה",
+  "MESSAGE_PREVIEW": "תצוגה מקדימה:",
+  "CHAT_MESSAGE_LIMIT_REACHED_TITLE": "הגעת למגבלת ההודעות בצ'אט",
+  "LOAD_MORE_MESSAGES": "טען עוד הודעות",
+  "UPDATE_AVATAR": "עדכן תמונת קבוצה",
+  "LEAVE_GROUP": "צא מהקבוצה",
+  "ADD_PARTICIPANT": "הוסף משתתף",
+  "ADD_PARTICIPANT_PLACEHOLDER": "הזן מספר טלפון (ספרות בלבד)",
+  "CANCEL": "ביטול",
+  "ENTER_VALID_PHONE": "הזן מספר טלפון תקני",
+  "AVATAR_UPDATED": "התמונה עודכנה",
+  "ERROR_UPDATING_GROUP_NAME": "שגיאה בעדכון שם הקבוצה",
+  "ERROR_UPDATING_AVATAR": "שגיאה בעדכון תמונת הקבוצה",
+  "DELETE_PARTICIPANT": "הסר משתתף",
+  "ASSIGN_ADMIN": "הפוך למנהל",
+  "REMOVE_ADMIN": "הסר מנהל",
+  "PARTICIPANT_ADDED": "המשתתף נוסף",
+  "PARTICIPANT_DELETED": "המשתתף הוסר",
+  "ADMIN_ASSIGNED": "הוקצו זכויות מנהל",
+  "ADMIN_REMOVED": "זכויות המנהל בוטלו",
+  "ENTER_VALID_PHONE_NUMBER": "הזן מספר טלפון חוקי",
+  "ERROR_ADDING_PARTICIPANT": "שגיאה בהוספת משתתף",
+  "ERROR_DELETING_PARTICIPANT": "שגיאה במחיקת משתתף",
+  "ERROR_ASSIGNING_ADMIN": "שגיאה בהקצאת זכויות מנהל",
+  "ERROR_REMOVING_ADMIN": "שגיאה בהסרת זכויות מנהל"
 }

@@ -1,5 +1,4 @@
 .default-theme {
-
   --main-background: #fff;
   --second-background: #f0f2f5;
   --sidebar-trigger-background: #001529;
@@ -16,7 +15,7 @@
   --link-color: mediumseagreen;
   --link-hover-color: #009805;
 
-  --authorized-status-color: #4CAE4FFF;
+  --authorized-status-color: #4cae4fff;
   --not-authorized-status-color: rgb(255, 39, 39);
   --starting-status-color: #1890ff;
   --warning-status-color: #ff9100;
@@ -37,13 +36,27 @@
   --chat-border-color: #d1d7db;
 
   --primary-transparent-color: #b8daa3;
-  --text-color: #000000E0;
+  --text-color: #000000e0;
 
   --incoming-message-bg: #fff;
-  --outgoing-message-bg: #D2FED6;
+  --outgoing-message-bg: #d2fed6;
   --system-message-text-color: #54656f;
   --qouted-message-border-color: #06cf9c;
   --qouted-message-outgoing-bg-color: #d1f4cc;
   --qouted-message-incoming-bg-color: #f5f6f6;
   --deleted-message-text-color: #8696a0;
+
+  --message-queue-bg: #fafafa;
+
+  --message-queue-border: #d9d9d9;
+
+  --message-preview-bg: #f0eae3;
+
+  --message-card-bg: rgb(210, 254, 214);
+
+  --message-card-description-bg: rgb(0, 0, 0, 0.04);
+
+  --code-example-bg: #f0f0f0;
+
+  --chat-bg-opacity: 1;
 }

@@ -19,7 +19,7 @@ const UserSide: FC = () => {
       className={`user-side relative ${matchMedia && activeChat ? 'display-none' : ''} ${type === 'tab' ? 'chat-border' : ''}`}
     >
       {content?.element}
-      {(type === 'tab' || type === 'partner-iframe') && <UserSideFooter />}
+      {type === 'tab' && <UserSideFooter />}
     </div>
   );
 };

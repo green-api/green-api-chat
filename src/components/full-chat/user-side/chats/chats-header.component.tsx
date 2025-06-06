@@ -6,9 +6,9 @@ import { Header } from 'antd/es/layout/layout';
 import { useTranslation } from 'react-i18next';
 
 import AddNewChat from './add-new-chat.component';
-import { TariffsEnum } from '../../../../types';
 import logo from 'assets/header-logo.png';
 import { useActions } from 'hooks';
+import { TariffsEnum } from 'types';
 
 const ChatsHeader: FC = () => {
   const { t, i18n } = useTranslation();

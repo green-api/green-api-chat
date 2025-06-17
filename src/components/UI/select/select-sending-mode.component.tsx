@@ -26,6 +26,7 @@ const SelectSendingMode: FC<SelectSendingModeProps> = ({ isWaba }) => {
     { value: 'sendLocation', label: t('LOCATION') },
     { value: 'sendPoll', label: t('POLL') },
     { value: 'sendPreview', label: t('PREVIEW') },
+    { value: 'sendButtons', label: t('BUTTONS') },
   ];
 
   if (isWaba) {

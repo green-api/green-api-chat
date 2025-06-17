@@ -1,3 +1,4 @@
+import ButtonsForm from 'components/forms/buttons-form/buttons-form.component';
 import SendContactForm from 'components/forms/send-contact-form.component';
 import SendFileForm from 'components/forms/send-file-form.component';
 import SendLocationForm from 'components/forms/send-location-form.component';
@@ -13,4 +14,5 @@ export const SENDING_METHODS_CONFIG: SendingMethod[] = [
   { name: 'sendPoll', element: <SendPollForm /> },
   { name: 'sendTemplate', element: <SendTemplateForm /> },
   { name: 'sendPreview', element: <PreviewedMessageForm /> },
+  { name: 'sendButtons', element: <ButtonsForm /> },
 ];

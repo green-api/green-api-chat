@@ -57,14 +57,33 @@ export type TypeMessage =
   | 'reactionMessage'
   | 'stickerMessage'
   | 'templateMessage'
-  | 'templateButtonsReplyMessage';
+  | 'templateButtonsReplyMessage'
+  | 'interactiveButtons';
 
 export type Contact = {
   displayName: string;
   vcard: string;
 };
 
+export interface InteractiveButton {
+  type: 'call' | 'url' | 'copy' | 'reply';
+  buttonId: string;
+  buttonText: string;
+  copyCode?: string;
+  phoneNumber?: string;
+  url?: string;
+}
+
+interface InteractiveButtons {
+  titleText?: string;
+  contentText: string;
+  footerText?: string;
+  headerText?: string;
+  buttons: InteractiveButton[];
+}
+
 // Todo rewrite interface
+
 export interface MessageInterface
   extends SendingResponseInterface,
     Partial<LocationInterface>,
@@ -83,6 +102,7 @@ export interface MessageInterface
   quotedMessage?: QuotedMessageInterface;
   templateMessage?: TemplateMessageInterface;
   templateButtonReplyMessage?: TemplateButtonReplyMessage;
+  interactiveButtons?: InteractiveButtons;
   downloadUrl?: string;
   location?: LocationInterface;
   fileName?: string;
@@ -161,7 +181,7 @@ export type GetChatInformationParameters = { onlySenderDelete?: boolean } & Pick
 
 export interface LastMessagesParametersInterface extends InstanceInterface {
   minutes?: number;
-   allMessages?: boolean;
+  allMessages?: boolean;
 }
 
 export interface GroupBaseParametersInterface extends InstanceInterface {
@@ -419,4 +439,40 @@ export interface SendFileByUrlParametersInterface
     Required<Pick<SendingBaseFileParametersInterface, 'fileName'>>,
     Omit<SendingBaseFileParametersInterface, 'fileName'> {
   urlFile: string;
+}
+
+interface BaseButton {
+  buttonId: string;
+  buttonText: string;
+  type: string;
+}
+
+interface CopyButton extends BaseButton {
+  type: 'copy';
+  copyCode: string;
+}
+
+interface CallButton extends BaseButton {
+  type: 'call';
+  phoneNumber: string;
+}
+
+interface UrlButton extends BaseButton {
+  type: 'url';
+  url: string;
+}
+
+interface ReplyButton extends BaseButton {
+  type: 'reply';
+  url: string;
+}
+
+export type Button = CopyButton | CallButton | UrlButton | ReplyButton;
+export interface SendInteractiveButtonsInterface
+  extends InstanceInterface,
+    Pick<SendingBaseParametersInterface, 'chatId'> {
+  header: string;
+  footer: string;
+  body: string;
+  buttons: Button[];
 }

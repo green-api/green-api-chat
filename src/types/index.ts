@@ -3,11 +3,13 @@ import { Dispatch, ReactElement, SetStateAction } from 'react';
 import { FormItemProps } from 'antd';
 
 import {
+  Button,
   ExpandedInstanceInterface,
   GetContactInfoResponseInterface,
   GetGroupDataSuccessResponseInterface,
   MessageInterface,
   QuotedMessageInterface,
+  SendInteractiveButtonsInterface,
   StatusMessage,
   TariffsEnum,
   TypeConnectionMessage,
@@ -104,6 +106,13 @@ export interface ChatFormValues {
   };
 }
 
+export interface ButtonsFormValues {
+  body: string;
+  header: string;
+  footer: string;
+  buttons: Button[];
+}
+
 export interface NewChatFormValues extends ChatFormValues {
   chatId: string;
 }
@@ -196,7 +205,8 @@ export type SendingMethodName =
   | 'sendLocation'
   | 'sendPoll'
   | 'sendTemplate'
-  | 'sendPreview';
+  | 'sendPreview'
+  | 'sendButtons';
 
 export type MessageServiceMethodName = 'editMessage' | 'deleteMessage';
 

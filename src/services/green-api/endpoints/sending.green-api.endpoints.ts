@@ -7,6 +7,7 @@ import {
   SendContactParametersInterface,
   SendLocationParametersInterface,
   SendPollParametersInterface,
+  SendInteractiveButtonsInterface,
 } from 'types';
 import { getFormData } from 'utils';
 
@@ -55,6 +56,46 @@ export const sendingGreenApiEndpoints = greenAPI.injectEndpoints({
         body: getFormData(body),
         formData: true,
       }),
+    }),
+    sendInteractiveButtons: builder.mutation<
+      SendingResponseInterface,
+      SendInteractiveButtonsInterface
+    >({
+      query: ({ idInstance, apiTokenInstance, apiUrl, mediaUrl: _, ...body }) => {
+        const buttonsWithId = body.buttons.map((button, index) => ({
+          ...button,
+          buttonId: (index + 1).toString(),
+        }));
+
+        return {
+          url: `${apiUrl}waInstance${idInstance}/sendInteractiveButtons/${apiTokenInstance}`,
+          method: 'POST',
+          body: {
+            ...body,
+            buttons: buttonsWithId,
+          },
+        };
+      },
+    }),
+    sendInteractiveButtonsReply: builder.mutation<
+      SendingResponseInterface,
+      SendInteractiveButtonsInterface
+    >({
+      query: ({ idInstance, apiTokenInstance, apiUrl, mediaUrl: _, ...body }) => {
+        const buttonsWithId = body.buttons.map((button, index) => ({
+          ...button,
+          buttonId: (index + 1).toString(),
+        }));
+
+        return {
+          url: `${apiUrl}waInstance${idInstance}/sendInteractiveButtonsReply/${apiTokenInstance}`,
+          method: 'POST',
+          body: {
+            ...body,
+            buttons: buttonsWithId,
+          },
+        };
+      },
     }),
   }),
 });

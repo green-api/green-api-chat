@@ -32,6 +32,8 @@ export const {
   useRemoveAdminMutation,
   useSetGroupPictureMutation,
   useLeaveGroupMutation,
+  useSendInteractiveButtonsMutation,
+  useSendInteractiveButtonsReplyMutation,
 } = {
   ...accountGreenApiEndpoints,
   ...sendingGreenApiEndpoints,

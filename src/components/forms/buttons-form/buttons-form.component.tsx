@@ -4,6 +4,7 @@ import { Button, Flex, Form, Tabs } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import { TemplateButtonsField } from './buttons-field.component';
+import { mapButtonsToInteractive } from './utils';
 import TextArea from 'components/UI/text-area.component';
 import { formItemDefaultLayout } from 'configs';
 import { useActions, useAppDispatch, useAppSelector, useFormWithLanguageValidation } from 'hooks';
@@ -16,7 +17,6 @@ import { selectActiveChat, selectMessageCount, selectMiniVersion } from 'store/s
 import { selectInstance } from 'store/slices/instances.slice';
 import { ActiveChat, ButtonsFormValues, MessageInterface } from 'types';
 import { getLastChats } from 'utils';
-import { mapButtonsToInteractive } from './utils';
 
 const ButtonsForm: FC = () => {
   const instanceCredentials = useAppSelector(selectInstance);

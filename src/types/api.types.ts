@@ -476,3 +476,24 @@ export interface SendInteractiveButtonsInterface
   body: string;
   buttons: Button[];
 }
+
+export type FontType =
+  | 'SERIF'
+  | 'SANS_SERIF'
+  | 'NORICAN_REGULAR'
+  | 'BRYNDAN_WRITE'
+  | 'OSWALD_HEAVY';
+
+export interface SendTextStatusInterface extends InstanceInterface {
+  message: string;
+  backgroundColor?: string;
+  font?: FontType;
+  participants?: string[];
+}
+
+export interface SendVoiceStatusInterface extends InstanceInterface {
+  urlFile: string;
+  backgroundColor?: string;
+  fileName: string;
+  participants?: string[];
+}

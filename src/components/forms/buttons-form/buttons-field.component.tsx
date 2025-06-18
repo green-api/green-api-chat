@@ -3,7 +3,7 @@ import { Form, Button, Flex } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import { DynamicButtonFields } from './dynamic-button-fields.component';
-import { formDefaultLayout, formItemDefaultLayout, formItemMethodApiLayout } from 'configs';
+import { formItemDefaultLayout } from 'configs';
 import { WabaTemplateCategoryEnum } from 'types/waba.types';
 
 interface TemplateButtonsFieldProperties {
@@ -16,7 +16,7 @@ export const TemplateButtonsField = ({ category, isReply }: TemplateButtonsField
   const { t } = useTranslation();
 
   return (
-    <Form.Item label="buttons" {...formItemDefaultLayout}>
+    <Form.Item label={t('BUTTONS')} {...formItemDefaultLayout}>
       <Form.List name="buttons" initialValue={[{}]}>
         {(fields, { add, remove }) => (
           <>

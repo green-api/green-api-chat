@@ -52,6 +52,7 @@ const ChatHeader: FC = () => {
         {tariff === TariffsEnum.Developer && isChatWorking && (
           <Typography.Link title={t('TURN_OFF_CHAT')} onClick={() => setIsChatWorking(false)}>
             <PoweroffOutlined />
+            <SelectStatusMode />
           </Typography.Link>
         )}
       </Space>

@@ -1,15 +1,16 @@
 import { Dispatch, ReactElement, SetStateAction } from 'react';
 
 import { FormItemProps } from 'antd';
+import { Color } from 'antd/es/color-picker';
 
 import {
   Button,
   ExpandedInstanceInterface,
+  FontType,
   GetContactInfoResponseInterface,
   GetGroupDataSuccessResponseInterface,
   MessageInterface,
   QuotedMessageInterface,
-  SendInteractiveButtonsInterface,
   StatusMessage,
   TariffsEnum,
   TypeConnectionMessage,
@@ -143,6 +144,20 @@ export interface SendPollFormValues extends ChatFormValues {
   multipleAnswers?: boolean;
 }
 
+export interface SendTextStatusFormValues extends ChatFormValues {
+  message: string;
+  backgroundColor?: Color;
+  font: FontType;
+  participants?: string[];
+}
+
+export interface SendVoiceStatusFormValues extends ChatFormValues {
+  urlFile: string;
+  backgroundColor?: Color;
+  fileName: FontType;
+  participants?: string[];
+}
+
 export interface SendTemplateValues extends ChatFormValues {
   params?: { param: string }[];
   templateId: string;
@@ -206,7 +221,10 @@ export type SendingMethodName =
   | 'sendPoll'
   | 'sendTemplate'
   | 'sendPreview'
-  | 'sendButtons';
+  | 'sendButtons'
+  | 'sendTextStatus'
+  | 'sendVoiceStatus'
+  | 'sendMediaStatus';
 
 export type MessageServiceMethodName = 'editMessage' | 'deleteMessage';
 

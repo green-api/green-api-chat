@@ -9,6 +9,7 @@ import AddNewChat from './add-new-chat.component';
 import logo from 'assets/header-logo.png';
 import { useActions } from 'hooks';
 import { TariffsEnum } from 'types';
+import SelectStatusMode from 'components/UI/select/select-status.component';
 
 const ChatsHeader: FC = () => {
   const { t, i18n } = useTranslation();
@@ -31,25 +32,22 @@ const ChatsHeader: FC = () => {
   };
 
   return (
-    <Header style={{ padding: '5px 37px' }}>
-      <Flex justify="space-between">
+    <Header style={{ padding: '5px 37px', flex: '0 1 30%' }}>
+      <Flex justify="space-between" align="center">
         <Image src={logo} preview={false} width={60} height={60} />
-        <Space>
-          <a>
-            <UserAddOutlined
-              style={{ fontSize: 20 }}
-              onClick={() => setIsVisible(true)}
-              title={t('ADD_NEW_CHAT_HEADER')}
-            />
-          </a>
-          <a>
-            <LogoutOutlined
-              style={{ fontSize: 20, transform: dir === 'rtl' ? 'rotateY(180deg)' : 'unset' }}
-              onClick={onLogoutClick}
-              title={t('LOGOUT')}
-            />
-          </a>
-        </Space>
+        <Flex align="center" justify="center" gap={10}>
+          <UserAddOutlined
+            style={{ fontSize: 20 }}
+            onClick={() => setIsVisible(true)}
+            title={t('ADD_NEW_CHAT_HEADER')}
+          />
+          <SelectStatusMode />
+          <LogoutOutlined
+            style={{ fontSize: 20, transform: dir === 'rtl' ? 'rotateY(180deg)' : 'unset' }}
+            onClick={onLogoutClick}
+            title={t('LOGOUT')}
+          />
+        </Flex>
       </Flex>
       <AddNewChat isVisible={isVisible} setIsVisible={setIsVisible} />
     </Header>

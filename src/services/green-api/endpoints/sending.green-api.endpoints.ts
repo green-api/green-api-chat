@@ -19,8 +19,8 @@ export const sendingGreenApiEndpoints = greenAPI.injectEndpoints({
         method: 'POST',
         body,
       }),
-      invalidatesTags: (result, error, arg) => {
-        if (!result || !arg.refetchLastMessages) return [];
+      invalidatesTags: (result) => {
+        if (!result) return [];
 
         return ['lastMessages'];
       },

@@ -75,7 +75,6 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
     const body = {
       ...instanceCredentials,
       chatId: fullChatId,
-      refetchLastMessages: !addNewChatInList,
       message,
     };
 

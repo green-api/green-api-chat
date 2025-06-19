@@ -9,6 +9,7 @@ import ChatsHeader from './chats-header.component';
 import DeveloperInstanceAlert from 'components/alerts/developer-instance-alert.component';
 import ChatList from 'components/shared/chat-list/chat-list.component';
 import SelectInstance from 'components/UI/select/select-instance.component';
+import SelectStatusMode from 'components/UI/select/select-status.component';
 import { useAppSelector } from 'hooks';
 import { selectMiniVersion, selectType } from 'store/slices/chat.slice';
 import {
@@ -32,6 +33,7 @@ const Chats: FC = () => {
   return (
     <Flex className="chats" vertical>
       {!isMiniVersion && type === 'tab' && <ChatsHeader />}
+
       <Flex
         align="center"
         gap={8}
@@ -48,6 +50,7 @@ const Chats: FC = () => {
             />
           </a>
         )}
+        <SelectStatusMode />
       </Flex>
       {instanceTariff === TariffsEnum.Developer && !isChatWorking ? (
         <DeveloperInstanceAlert />

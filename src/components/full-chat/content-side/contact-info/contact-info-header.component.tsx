@@ -22,8 +22,8 @@ const ContactInfoHeader: FC = () => {
   } = useTranslation();
 
   const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
-  const isGroup = activeChat.chatId.includes('@g.us');
-  const info = activeChat.chatId.includes('@c.us') ? t('CONTACT_INFO') : t('GROUP_INFO');
+  const isGroup = activeChat.chatId?.includes('@g.us');
+  const info = activeChat.chatId?.includes('@c.us') ? t('CONTACT_INFO') : t('GROUP_INFO');
 
   const isAdmin = useIsGroupAdmin(activeChat);
 
@@ -31,7 +31,7 @@ const ContactInfoHeader: FC = () => {
     if (!activeChat.contactInfo || activeChat.contactInfo === 'Error: forbidden') {
       const contactName = activeChat.chatId?.replace(/\@.*$/, '');
 
-      const contactCredentials = activeChat.chatId.includes('@c.us')
+      const contactCredentials = activeChat.chatId?.includes('@c.us')
         ? activeChat.chatId?.replace(/\@.*$/, '')
         : 'Group';
 

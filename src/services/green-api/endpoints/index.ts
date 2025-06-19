@@ -4,6 +4,7 @@ import { journalsGreenApiEndpoints } from './journals.green-api.endpoints';
 import { receivingGreenApiEndpoints } from './receiving.green-api.endpoints';
 import { sendingGreenApiEndpoints } from './sending.green-api.endpoints';
 import { serviceMethodsGreenApiEndpoints } from './service-methods.green-api.endpoints';
+import { statusesGreenApiEndpoints } from './statuses.green-api.endpoint';
 import { wabaGreenApiEndpoints } from './waba.green-api.endpoints';
 
 export const {
@@ -32,6 +33,11 @@ export const {
   useRemoveAdminMutation,
   useSetGroupPictureMutation,
   useLeaveGroupMutation,
+  useSendInteractiveButtonsMutation,
+  useSendInteractiveButtonsReplyMutation,
+  useSendTextStatusMutation,
+  useSendVoiceStatusMutation,
+  useSendMediaStatusMutation,
 } = {
   ...accountGreenApiEndpoints,
   ...sendingGreenApiEndpoints,
@@ -40,4 +46,5 @@ export const {
   ...groupGreenApiEndpoints,
   ...serviceMethodsGreenApiEndpoints,
   ...wabaGreenApiEndpoints,
+  ...statusesGreenApiEndpoints,
 };

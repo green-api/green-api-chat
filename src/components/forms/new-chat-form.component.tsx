@@ -108,7 +108,6 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
             return getLastChats(draftChatHistory, [newMessage], isMiniVersion ? 5 : undefined);
           }
         );
-
         dispatch(updateChatListThunk);
       }
 

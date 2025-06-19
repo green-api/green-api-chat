@@ -189,6 +189,7 @@ const ChatView: FC = () => {
         previousSenderName = message.senderName || message.senderId || '';
 
         let templateMessage: ParsedWabaTemplateInterface | undefined;
+        let interactiveButtonsMessage: ParsedWabaTemplateInterface | undefined;
 
         if (message.templateMessage && !isMiniVersion) {
           if (isOutgoingTemplateMessage(message.templateMessage, message.type)) {
@@ -236,6 +237,42 @@ const ChatView: FC = () => {
           }
         }
 
+        if (message.interactiveButtons && !isMiniVersion) {
+          interactiveButtonsMessage = {
+            header: message.interactiveButtons.titleText,
+            data: message.interactiveButtons.contentText,
+            footer: message.interactiveButtons.footerText,
+            buttons: message.interactiveButtons.buttons?.map((button) => {
+              if (button.type === 'call') {
+                return {
+                  text: button.buttonText,
+                  value: button.phoneNumber ?? '',
+                  type: TemplateButtonTypesEnum.PhoneNumber,
+                };
+              } else if (button.type === 'url') {
+                return {
+                  text: button.buttonText,
+                  value: button.url ?? '',
+                  type: TemplateButtonTypesEnum.Url,
+                };
+              } else if (button.type === 'reply') {
+                return {
+                  text: button.buttonText,
+                  value: button.buttonId ?? '',
+                  type: TemplateButtonTypesEnum.QuickReply,
+                };
+              } else if (button.type === 'copy') {
+                return {
+                  text: button.buttonText,
+                  value: button.copyCode ?? '',
+                  type: TemplateButtonTypesEnum.CopyCode,
+                };
+              }
+              return { text: '', value: '', type: TemplateButtonTypesEnum.Url };
+            }),
+          };
+        }
+
         return (
           <Message
             key={message.idMessage}
@@ -253,7 +290,7 @@ const ChatView: FC = () => {
               downloadUrl: message.downloadUrl,
               statusMessage: message.statusMessage,
               quotedMessage: message.quotedMessage,
-              templateMessage,
+              templateMessage: templateMessage || interactiveButtonsMessage,
               caption: message.caption,
               fileName: message.fileName,
               isDeleted: message.isDeleted,

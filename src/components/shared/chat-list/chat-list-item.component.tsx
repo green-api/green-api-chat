@@ -53,11 +53,11 @@ const ChatListItem: FC<ContactListItemProps> = ({
   const { data: groupData, isLoading: isGroupDataLoading } = useGetGroupDataQuery(
     {
       ...instanceCredentials,
-      groupId: lastMessage.chatId,
+      groupId: lastMessage?.chatId,
     },
     {
       skip:
-        !lastMessage.chatId.includes('g.us') ||
+        !lastMessage.chatId?.includes('g.us') ||
         instanceCredentials?.idInstance.toString().startsWith('7835'),
     }
   );
@@ -69,7 +69,7 @@ const ChatListItem: FC<ContactListItemProps> = ({
     },
     {
       skip:
-        lastMessage.chatId.includes('g.us') ||
+        lastMessage.chatId?.includes('g.us') ||
         instanceCredentials?.idInstance.toString().startsWith('7835'),
     }
   );
@@ -90,11 +90,11 @@ const ChatListItem: FC<ContactListItemProps> = ({
     if (contactInfo?.avatar) return contactInfo.avatar;
     if (avatarData?.urlAvatar) return avatarData.urlAvatar;
 
-    if (!avatarData?.available && !lastMessage.chatId.includes('g.us')) {
+    if (!avatarData?.available && !lastMessage.chatId?.includes('g.us')) {
       return emptyAvatar;
     }
 
-    return lastMessage.chatId.includes('g.us') ? emptyAvatarGroup : emptyAvatarButAvailable;
+    return lastMessage.chatId?.includes('g.us') ? emptyAvatarGroup : emptyAvatarButAvailable;
   }, [contactInfo, avatarData, lastMessage]);
 
   const chatName =

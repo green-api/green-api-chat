@@ -27,6 +27,9 @@ export interface TemplateButtonInterface {
 export enum TemplateButtonTypesEnum {
   PhoneNumber = 'PHONE_NUMBER',
   Url = 'URL',
+  QuickReply = 'QUICK_REPLY',
+  OTP = 'OTP',
+  CopyCode = 'COPY_CODE',
 }
 
 export type CreateTemplateParameters = CreateTemplateParametersArgumentInterface &

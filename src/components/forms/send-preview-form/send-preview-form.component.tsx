@@ -1,14 +1,14 @@
 import { FC, useEffect, useRef } from 'react';
 
-import { InfoCircleOutlined } from '@ant-design/icons';
-import { Button, Flex, Form, Switch, Tooltip } from 'antd';
+import { Button, Flex, Form } from 'antd';
 import { useTranslation } from 'react-i18next';
 
-import { PreviewImageInput } from './preview-image-input.component';
+import CustomPreviewFields from './custom-preview-form-fields.component';
+import CustomPreviewSwitch from './custom-preview-switch.component';
 import { PreviewSizeSelect } from './preview-size-select.component';
 import { Preview } from './preview.component';
 import TextArea from 'components/UI/text-area.component';
-import { formDefaultLayout, formItemDefaultLayout } from 'configs';
+import { formItemDefaultLayout } from 'configs';
 import { useActions, useAppDispatch, useAppSelector, useFormWithLanguageValidation } from 'hooks';
 import { useSendMessageMutation } from 'services/green-api/endpoints';
 import { journalsGreenApiEndpoints } from 'services/green-api/endpoints/journals.green-api.endpoints';
@@ -16,8 +16,6 @@ import { selectActiveChat, selectMessageCount, selectMiniVersion } from 'store/s
 import { selectInstance } from 'store/slices/instances.slice';
 import { ActiveChat, ChatFormValues, MessageInterface } from 'types';
 import { getLastChats } from 'utils';
-import CustomPreviewSwitch from './custom-preview-switch.component';
-import CustomPreviewFields from './custom-preview-form-fields.component';
 
 const PreviewedMessageForm: FC = () => {
   const instanceCredentials = useAppSelector(selectInstance);

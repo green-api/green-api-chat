@@ -172,8 +172,8 @@
   "FOOTER": "כותרת תחתונה",
   "BUTTON_TYPE_PLACEHOLDER": "בחר סוג כפתור",
   "BUTTON_TEXT_PLACEHOLDER": "הזן טקסט לכפתור",
-  "MIXED_BUTTONS": "כפתורים מעורבים",
-  "REPLY_BUTTONS": "כפתורי \"Reply\"",
+  "MIXED_BUTTONS": "כפתורים אינטראקטיביים",
+  "REPLY_BUTTONS": "תגובות מהירות",
   "URL_FILE_PLACEHOLDER": "קישור לקובץ",
   "FILE_NAME_PLACEHOLDER": "שם הקובץ",
   "CHAT_ID_PHONE_PLACEHOLDER": "מספר טלפון"

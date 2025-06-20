@@ -174,8 +174,8 @@
   "FOOTER": "Footer",
   "BUTTON_TYPE_PLACEHOLDER": "Select button type",
   "BUTTON_TEXT_PLACEHOLDER": "Enter button text",
-  "MIXED_BUTTONS": "Mixed Buttons",
-  "REPLY_BUTTONS": "\"Reply\" Buttons",
+  "MIXED_BUTTONS": "Interactive Buttons",
+  "REPLY_BUTTONS": "Quick Replies",
   "URL_FILE_PLACEHOLDER": "File URL",
   "FILE_NAME_PLACEHOLDER": "File Name",
   "CHAT_ID_PHONE_PLACEHOLDER": "Phone number"

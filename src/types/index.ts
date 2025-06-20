@@ -296,6 +296,19 @@ export interface GetTemplateMessageLayoutOptions {
   type?: TypeConnectionMessage;
 }
 
+export interface PollMessageData {
+  name: string;
+  options?: {
+    optionName: string;
+  }[];
+  votes?: {
+    optionName: string;
+    optionVoters: string[];
+  }[];
+  multipleAnswers: boolean;
+  stanzaId?: string;
+}
+
 export interface MessageDataForRender {
   idMessage: string;
   type: TypeConnectionMessage;
@@ -315,6 +328,7 @@ export interface MessageDataForRender {
   fileName?: string;
   isDeleted?: boolean;
   isEdited?: boolean;
+  pollMessageData?: PollMessageData;
 }
 
 export interface MessageTooltipMenuData {

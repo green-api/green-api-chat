@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import FileMessage from './file-message.component';
 import MessageSenderInfo from './message-sender-info.component';
 import MessageTooltip from './message-tooltip/message-tooltip.component';
+import PollMessage from './poll-message.component';
 import QuotedMessage from './quoted-message.component';
 import TemplateMessage from './template-message/template-message.component';
 import TextMessage from './text-message.component';
@@ -38,6 +39,7 @@ const Message: FC<MessageProps> = ({ messageDataForRender, preview }) => {
     fileName,
     isDeleted,
     isEdited,
+    pollMessageData,
   } = messageDataForRender;
 
   const isMiniVersion = useAppSelector(selectMiniVersion);
@@ -58,6 +60,8 @@ const Message: FC<MessageProps> = ({ messageDataForRender, preview }) => {
     }
   }, [isLastMessage]);
 
+  const [showDeletedMessage, setShowDeletedMessage] = useState(false);
+
   let messageBody = (
     <TextMessage
       textMessage={textMessage}
@@ -67,11 +71,18 @@ const Message: FC<MessageProps> = ({ messageDataForRender, preview }) => {
     />
   );
 
-  if (templateMessage) {
+  if (typeMessage === 'pollMessage' && pollMessageData) {
+    messageBody = (
+      <PollMessage
+        data={pollMessageData}
+        type={type}
+        senderName={senderName}
+        isMiniVersion={isMiniVersion}
+      />
+    );
+  } else if (templateMessage) {
     messageBody = <TemplateMessage templateMessage={templateMessage} type={type} />;
-  }
-
-  if (downloadUrl && typeMessage !== 'stickerMessage' && !isMiniVersion) {
+  } else if (downloadUrl && typeMessage !== 'stickerMessage' && !isMiniVersion) {
     messageBody = (
       <FileMessage
         fileName={fileName}
@@ -82,8 +93,6 @@ const Message: FC<MessageProps> = ({ messageDataForRender, preview }) => {
     );
   }
 
-  const [showDeletedMessage, setShowDeletedMessage] = useState(false);
-
   return (
     <div
       ref={messageRef}
@@ -93,6 +102,7 @@ const Message: FC<MessageProps> = ({ messageDataForRender, preview }) => {
       className={`message ${type === 'outgoing' ? `outgoing ${isMiniVersion ? '' : 'full'}` : 'incoming'} p-10`}
     >
       {showSenderName && <MessageSenderInfo senderName={senderName} phone={phone} />}
+
       {!isDeleted && quotedMessage && (
         <QuotedMessage
           messageDataForRender={messageDataForRender}
@@ -100,6 +110,7 @@ const Message: FC<MessageProps> = ({ messageDataForRender, preview }) => {
           type={type}
         />
       )}
+
       {isDeleted && !showDeletedMessage ? (
         <Space>
           <i className="deleted-message">{t('DELETED_MESSAGE')}</i>
@@ -110,9 +121,11 @@ const Message: FC<MessageProps> = ({ messageDataForRender, preview }) => {
       ) : (
         messageBody
       )}
+
       {!isDeleted && caption && !isMiniVersion && (
         <TextMessage textMessage={caption} typeMessage={typeMessage} type={type} isCaption={true} />
       )}
+
       <Space className="message-date">
         {!preview && (
           <MessageTooltip messageDataForRender={messageDataForRender} jsonMessage={jsonMessage} />

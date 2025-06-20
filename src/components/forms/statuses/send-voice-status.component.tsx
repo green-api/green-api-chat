@@ -33,9 +33,16 @@ const SendVoiceStatus: FC<SendVoiceStatusProperties> = ({ isMedia }) => {
 
   const onFinish = async (values: SendVoiceStatusFormValues) => {
     const color = values.backgroundColor?.toHexString();
+
+    const participants = values.participants?.map((participant) => {
+      const cleaned = participant.trim();
+      return cleaned.endsWith('@c.us') ? cleaned : `${cleaned}@c.us`;
+    });
+
     const body = {
       ...instanceCredentials,
       ...values,
+      participants,
       backgroundColor: color,
     };
 
@@ -73,9 +80,11 @@ const SendVoiceStatus: FC<SendVoiceStatusProperties> = ({ isMedia }) => {
         <Input placeholder={t('FILE_NAME_PLACEHOLDER')} />
       </Form.Item>
 
-      <Form.Item name="backgroundColor" label={t('BACKGROUND_COLOR_LABEL')}>
-        <ColorPicker disabledAlpha />
-      </Form.Item>
+      {!isMedia && (
+        <Form.Item name="backgroundColor" label={t('BACKGROUND_COLOR_LABEL')}>
+          <ColorPicker disabledAlpha defaultValue="#000" />
+        </Form.Item>
+      )}
 
       <Participants />
 

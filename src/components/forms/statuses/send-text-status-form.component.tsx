@@ -27,9 +27,15 @@ const SendTextStatusForm: FC = () => {
   const onFinish = async (values: SendTextStatusFormValues) => {
     const color = values.backgroundColor?.toHexString?.().toUpperCase();
 
+    const participants = values.participants?.map((participant) => {
+      const cleaned = participant.trim();
+      return cleaned.endsWith('@c.us') ? cleaned : `${cleaned}@c.us`;
+    });
+
     const body = {
       ...instanceCredentials,
       ...values,
+      participants,
       backgroundColor: color,
     };
 
@@ -62,7 +68,7 @@ const SendTextStatusForm: FC = () => {
       </Form.Item>
 
       <Form.Item name="backgroundColor" label={t('BACKGROUND_COLOR_LABEL')}>
-        <ColorPicker disabledAlpha />
+        <ColorPicker disabledAlpha defaultValue="#000" />
       </Form.Item>
 
       <SelectStatusFont />

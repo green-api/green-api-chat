@@ -187,8 +187,8 @@
   "FOOTER": "Подвал",
   "BUTTON_TYPE_PLACEHOLDER": "Выберите тип кнопки",
   "BUTTON_TEXT_PLACEHOLDER": "Введите текст кнопки",
-  "MIXED_BUTTONS": "Смешанные кнопки",
-  "REPLY_BUTTONS": "\"Reply\" кнопки",
+  "MIXED_BUTTONS": "Интерактивные кнопки",
+  "REPLY_BUTTONS": "Быстрые ответы",
   "URL_FILE_PLACEHOLDER": "Ссылка на файл",
   "FILE_NAME_PLACEHOLDER": "Имя файла",
   "CHAT_ID_PHONE_PLACEHOLDER": "Номер телефона"

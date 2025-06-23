@@ -179,7 +179,11 @@ export function getTemplateMessageLayout(options: GetTemplateMessageLayoutOption
         {buttons && buttons.length > 0 && (
           <Space direction="vertical">
             {buttons.map((button, idx) => (
-              <Button key={`${button.value}-${idx}`} className="w-100">
+              <Button
+                key={`${button.value}-${idx}`}
+                className="w-100"
+                style={{ textWrap: 'wrap', padding: 4, height: 'auto' }}
+              >
                 {button.text}
               </Button>
             ))}
@@ -228,7 +232,7 @@ export function getTemplateMessageLayout(options: GetTemplateMessageLayoutOption
         <Space direction="vertical">
           {buttons.map((button, idx) => (
             <Button key={`${button.value}-${idx}`} className="w-100">
-              {button.text}
+              <div>{button.text}</div>
             </Button>
           ))}
         </Space>

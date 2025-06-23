@@ -4,6 +4,8 @@ export function mapButtonsToInteractive(buttons: Button[]): InteractiveButton[] 
   return buttons.map((button) => {
     const { type, buttonId, buttonText } = button;
 
+    console.log(type);
+
     switch (type) {
       case 'copy':
         return {
@@ -20,7 +22,6 @@ export function mapButtonsToInteractive(buttons: Button[]): InteractiveButton[] 
           phoneNumber: button.phoneNumber,
         };
       case 'url':
-      case 'reply':
         return {
           type,
           buttonId,
@@ -28,7 +29,11 @@ export function mapButtonsToInteractive(buttons: Button[]): InteractiveButton[] 
           url: button.url,
         };
       default:
-        throw new Error('Unsupported button type');
+        return {
+          type: 'copy',
+          buttonId,
+          buttonText,
+        };
     }
   });
 }

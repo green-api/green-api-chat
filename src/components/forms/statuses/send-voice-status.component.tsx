@@ -12,7 +12,7 @@ import {
 } from 'services/green-api/endpoints';
 import { selectInstance } from 'store/slices/instances.slice';
 import { SendVoiceStatusFormValues } from 'types';
-import { getErrorMessage, isApiError } from 'utils';
+import { isApiError } from 'utils';
 
 interface SendVoiceStatusProperties {
   isMedia?: boolean;
@@ -47,15 +47,14 @@ const SendVoiceStatus: FC<SendVoiceStatusProperties> = ({ isMedia }) => {
     };
 
     const { error } = isMedia ? await setMediaStatus(body) : await sendStatus(body);
+    console.log(error);
 
     if (isApiError(error)) {
       switch (error.status) {
         case 466:
           return form.setFields([{ name: 'response', errors: [t('QUOTE_EXCEEDED')] }]);
         default:
-          return form.setFields([
-            { name: 'response', errors: [getErrorMessage(error, t) || t('UNKNOWN_ERROR')] },
-          ]);
+          return form.setFields([{ name: 'response', errors: [error.data.message] }]);
       }
     }
 

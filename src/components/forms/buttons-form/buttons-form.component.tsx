@@ -121,7 +121,10 @@ const ButtonsForm: FC = () => {
     <>
       <Tabs
         activeKey={isReply ? 'reply' : 'mixed'}
-        onChange={(key) => setIsReply(key === 'reply')}
+        onChange={(key) => {
+          setIsReply(key === 'reply');
+          form.resetFields(['buttons']);
+        }}
         items={[
           {
             key: 'mixed',

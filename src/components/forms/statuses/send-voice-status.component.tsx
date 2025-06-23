@@ -54,7 +54,12 @@ const SendVoiceStatus: FC<SendVoiceStatusProperties> = ({ isMedia }) => {
         case 466:
           return form.setFields([{ name: 'response', errors: [t('QUOTE_EXCEEDED')] }]);
         default:
-          return form.setFields([{ name: 'response', errors: [error.data.message] }]);
+          const errorData = error.data;
+          const errorMessage =
+            typeof errorData === 'object' && errorData !== null && 'message' in errorData
+              ? (errorData as { message: string }).message
+              : 'Unknown error';
+          return form.setFields([{ name: 'response', errors: [errorMessage] }]);
       }
     }
 

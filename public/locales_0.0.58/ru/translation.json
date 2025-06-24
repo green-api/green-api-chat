@@ -191,5 +191,6 @@
   "REPLY_BUTTONS": "Быстрые ответы",
   "URL_FILE_PLACEHOLDER": "Ссылка на файл",
   "FILE_NAME_PLACEHOLDER": "Имя файла",
-  "CHAT_ID_PHONE_PLACEHOLDER": "Номер телефона"
+  "CHAT_ID_PHONE_PLACEHOLDER": "Номер телефона",
+  "STATUSES_HEADER": "Отправить статус"
 }

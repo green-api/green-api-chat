@@ -1,0 +1,10 @@
+.status-icon {
+  fill: var(--text-color);
+  width: 24px;
+  height: 24px;
+  transition: fill 0.2s ease;
+}
+
+.status-icon-wrapper:hover .status-icon {
+  fill: var(--primary-color);
+}

@@ -178,5 +178,6 @@
   "REPLY_BUTTONS": "Quick Replies",
   "URL_FILE_PLACEHOLDER": "File URL",
   "FILE_NAME_PLACEHOLDER": "File Name",
-  "CHAT_ID_PHONE_PLACEHOLDER": "Phone number"
+  "CHAT_ID_PHONE_PLACEHOLDER": "Phone number",
+  "STATUSES_HEADER": "Send Status"
 }

@@ -1,7 +1,6 @@
 import { FC, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Alert, Button, Empty, Spin } from 'antd';
-import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
 
 import Message from './message/message.component';
@@ -36,6 +35,9 @@ const ChatView: FC = () => {
 
   const [count, setCount] = useState(50);
   const { setMessageCount } = useActions();
+
+  let previousMessageAreOutgoing = false;
+  let previousSenderName = '';
 
   const {
     t,
@@ -101,6 +103,7 @@ const ChatView: FC = () => {
     if (!element || !scrollPositionRef.current) return;
 
     const heightDiff = element.scrollHeight - scrollPositionRef.current.height;
+
     element.scrollTop = scrollPositionRef.current.top + heightDiff;
 
     scrollPositionRef.current = null;
@@ -145,9 +148,6 @@ const ChatView: FC = () => {
     );
   }
 
-  let previousMessageAreOutgoing = false;
-  let previousSenderName = '';
-
   return (
     <div className={`chat-view ${isMiniVersion ? '' : 'full'}`} ref={chatViewRef}>
       {count < 200 ? (
@@ -165,13 +165,10 @@ const ChatView: FC = () => {
       <Spin size="large" style={{ visibility: loaderVisible ? 'initial' : 'hidden' }} />
 
       {formattedMessages.map((message, idx) => {
-        let templateMessage: ParsedWabaTemplateInterface | undefined;
-        let interactiveButtonsMessage: ParsedWabaTemplateInterface | undefined;
-
         if (isMessagesDate(message)) {
           return (
             <div
-              className={clsx('message date', !interactiveButtonsMessage && 'p-10')}
+              className="message date p-10"
               key={message.date}
               style={{ alignSelf: 'center' }}
               data-message-id={`date-${message.date}`}
@@ -191,47 +188,52 @@ const ChatView: FC = () => {
         previousMessageAreOutgoing = message.type === 'outgoing';
         previousSenderName = message.senderName || message.senderId || '';
 
+        let templateMessage: ParsedWabaTemplateInterface | undefined;
+        let interactiveButtonsMessage: ParsedWabaTemplateInterface | undefined;
+
         if (message.templateMessage && !isMiniVersion) {
           if (isOutgoingTemplateMessage(message.templateMessage, message.type)) {
             const id = message.templateMessage.templateId;
             const templateData = templates?.templates.find(
               (template) => template.templateId === id
             );
-            if (templateData?.containerMeta) {
+            if (templateData && templateData.containerMeta) {
+              templateMessage = JSON.parse(
+                templateData.containerMeta
+              ) as ParsedWabaTemplateInterface;
+              templateMessage.params = message.templateMessage.params;
+            }
+          } else {
+            if (message.templateMessage.contentText) {
               templateMessage = {
-                ...(JSON.parse(templateData.containerMeta) as ParsedWabaTemplateInterface),
-                params: message.templateMessage.params,
+                header: message.templateMessage.titleText,
+                data: message.templateMessage.contentText,
+                footer: message.templateMessage.footerText,
+                mediaUrl: message.templateMessage.mediaUrl,
+                buttons: message.templateMessage.buttons?.map((button) => {
+                  if (button.callButton) {
+                    return {
+                      text: button.callButton.displayText,
+                      value: button.callButton.displayText,
+                      type: TemplateButtonTypesEnum.PhoneNumber,
+                    };
+                  } else if (button.urlButton) {
+                    return {
+                      text: button.urlButton.displayText,
+                      value: button.urlButton.displayText,
+                      type: TemplateButtonTypesEnum.Url,
+                    };
+                  } else if (button.quickReplyButton) {
+                    return {
+                      text: button.quickReplyButton.displayText,
+                      value: button.quickReplyButton.displayText,
+                      type: TemplateButtonTypesEnum.Url,
+                    };
+                  }
+                  return { text: '', value: '', type: TemplateButtonTypesEnum.Url };
+                }),
               };
             }
-          } else if (message.templateMessage.contentText) {
-            templateMessage = {
-              header: message.templateMessage.titleText,
-              data: message.templateMessage.contentText,
-              footer: message.templateMessage.footerText,
-              mediaUrl: message.templateMessage.mediaUrl,
-              buttons: message.templateMessage.buttons?.map((button) => {
-                if (button.callButton) {
-                  return {
-                    text: button.callButton.displayText,
-                    value: button.callButton.displayText,
-                    type: TemplateButtonTypesEnum.PhoneNumber,
-                  };
-                } else if (button.urlButton) {
-                  return {
-                    text: button.urlButton.displayText,
-                    value: button.urlButton.displayText,
-                    type: TemplateButtonTypesEnum.Url,
-                  };
-                } else if (button.quickReplyButton) {
-                  return {
-                    text: button.quickReplyButton.displayText,
-                    value: button.quickReplyButton.displayText,
-                    type: TemplateButtonTypesEnum.Url,
-                  };
-                }
-                return { text: '', value: '', type: TemplateButtonTypesEnum.Url };
-              }),
-            };
           }
         }
 
@@ -288,8 +290,7 @@ const ChatView: FC = () => {
               downloadUrl: message.downloadUrl,
               statusMessage: message.statusMessage,
               quotedMessage: message.quotedMessage,
-              templateMessage,
-              interactiveButtonsMessage,
+              templateMessage: templateMessage || interactiveButtonsMessage,
               caption: message.caption,
               fileName: message.fileName,
               isDeleted: message.isDeleted,

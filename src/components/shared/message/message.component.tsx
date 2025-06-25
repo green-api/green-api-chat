@@ -1,6 +1,7 @@
 import { FC, useEffect, useRef, useState } from 'react';
 
 import { Space } from 'antd';
+import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
 
 import FileMessage from './file-message.component';
@@ -13,7 +14,6 @@ import { useAppSelector } from 'hooks';
 import { selectMiniVersion } from 'store/slices/chat.slice';
 import { LanguageLiteral, MessageDataForRender } from 'types';
 import { getMessageDate, getOutgoingStatusMessageIcon, isSafari } from 'utils';
-import clsx from 'clsx';
 
 export interface MessageProps {
   messageDataForRender: MessageDataForRender;

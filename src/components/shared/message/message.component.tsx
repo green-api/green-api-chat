@@ -13,6 +13,7 @@ import { useAppSelector } from 'hooks';
 import { selectMiniVersion } from 'store/slices/chat.slice';
 import { LanguageLiteral, MessageDataForRender } from 'types';
 import { getMessageDate, getOutgoingStatusMessageIcon, isSafari } from 'utils';
+import clsx from 'clsx';
 
 export interface MessageProps {
   messageDataForRender: MessageDataForRender;
@@ -34,6 +35,7 @@ const Message: FC<MessageProps> = ({ messageDataForRender, preview }) => {
     isLastMessage,
     quotedMessage,
     templateMessage,
+    interactiveButtonsMessage,
     caption,
     fileName,
     isDeleted,
@@ -67,6 +69,12 @@ const Message: FC<MessageProps> = ({ messageDataForRender, preview }) => {
     />
   );
 
+  if (interactiveButtonsMessage) {
+    messageBody = (
+      <TemplateMessage interactiveButtonsMessage={interactiveButtonsMessage} type={type} />
+    );
+  }
+
   if (templateMessage) {
     messageBody = <TemplateMessage templateMessage={templateMessage} type={type} />;
   }
@@ -90,7 +98,12 @@ const Message: FC<MessageProps> = ({ messageDataForRender, preview }) => {
       style={{
         maxWidth: isMiniVersion ? 'unset' : 500,
       }}
-      className={`message ${type === 'outgoing' ? `outgoing ${isMiniVersion ? '' : 'full'}` : 'incoming'} p-10`}
+      className={clsx(
+        'message',
+        type === 'outgoing' ? 'outgoing' : 'incoming',
+        type === 'outgoing' && !isMiniVersion && 'full',
+        !interactiveButtonsMessage && 'p-10'
+      )}
     >
       {showSenderName && <MessageSenderInfo senderName={senderName} phone={phone} />}
       {!isDeleted && quotedMessage && (

@@ -1,13 +1,17 @@
 import { CSSProperties } from 'react';
 
 import {
+  ArrowLeftOutlined,
   AudioOutlined,
   FileImageOutlined,
   FileOutlined,
+  GlobalOutlined,
+  PhoneOutlined,
   UserOutlined,
   VideoCameraOutlined,
 } from '@ant-design/icons';
 import { Button, Col, Row, Space, Typography, Image } from 'antd';
+import OTP from 'antd/es/input/OTP';
 import parse from 'html-react-parser';
 
 import { TextFormatter } from './text-formatter';
@@ -20,6 +24,14 @@ import {
   StatusMessage,
   TypeMessage,
 } from 'types';
+
+const INTERACTIVE_BUTTON_ICONS = {
+  PHONE_NUMBER: <PhoneOutlined style={{ fontSize: 24 }} />,
+  COPY_CODE: <FileOutlined style={{ fontSize: 24 }} />,
+  URL: <GlobalOutlined style={{ fontSize: 24 }} />,
+  QUICK_REPLY: <ArrowLeftOutlined style={{ fontSize: 24 }} />,
+  OTP: <OTP style={{ fontSize: 24 }} />,
+} as const;
 
 export function getOutgoingStatusMessageIcon(
   statusMessage?: StatusMessage,
@@ -185,6 +197,121 @@ export function getTemplateMessageLayout(options: GetTemplateMessageLayoutOption
                 style={{ textWrap: 'wrap', padding: 4, height: 'auto' }}
               >
                 {button.text}
+              </Button>
+            ))}
+          </Space>
+        )}
+      </>
+    );
+  }
+
+  return (
+    <div
+      style={{
+        maxWidth: 500,
+      }}
+      className={containerClassName}
+    >
+      <Space direction="vertical">
+        {header && (
+          <Typography.Paragraph style={{ fontSize: 16, margin: 0 }}>{header}</Typography.Paragraph>
+        )}
+        {mediaUrl && <Image src={mediaUrl} loading="lazy" alt="media" />}
+        <Typography.Paragraph
+          style={{ fontSize: 14, margin: 0 }}
+          ellipsis={{ rows: 6, expandable: true, symbol: symbol }}
+        >
+          {content}
+        </Typography.Paragraph>
+      </Space>
+      <Row wrap={false} gutter={[15, 15]} className="margin-top">
+        {footer && (
+          <Col>
+            <Typography.Paragraph style={{ fontSize: 13, margin: 0, fontStyle: 'italic' }}>
+              {footer}
+            </Typography.Paragraph>
+          </Col>
+        )}
+        {time && (
+          <Col className="margin-left-auto margin-top-auto">
+            <Space>
+              <span style={{ fontSize: 12 }}>{time}</span>
+            </Space>
+          </Col>
+        )}
+      </Row>
+      {buttons && buttons.length > 0 && (
+        <Space direction="vertical">
+          {buttons.map((button, idx) => (
+            <Button key={`${button.value}-${idx}`} className="w-100">
+              <div>{button.text}</div>
+            </Button>
+          ))}
+        </Space>
+      )}
+    </div>
+  );
+}
+
+export function getInteractiveBunttonsMessageLayout(options: GetTemplateMessageLayoutOptions) {
+  const { containerClassName, header, content, footer, mediaUrl, buttons, symbol, type, time } =
+    options;
+
+  if (!containerClassName) {
+    return (
+      <>
+        <Space direction="vertical" className="p-10">
+          {header && (
+            <Typography.Paragraph
+              style={{ fontSize: 16, margin: 0 }}
+              className={`${type === 'outgoing' ? 'outgoing' : 'incoming'} full`}
+            >
+              {header}
+            </Typography.Paragraph>
+          )}
+          {mediaUrl && <Image width={300} loading="lazy" src={mediaUrl} alt="media" />}
+          <Typography.Paragraph
+            style={{ fontSize: 14, margin: 0 }}
+            ellipsis={{ rows: 6, expandable: true, symbol: symbol }}
+            className={`${type === 'outgoing' ? 'outgoing' : 'incoming'} full`}
+          >
+            {content}
+          </Typography.Paragraph>
+        </Space>
+        <Row wrap={false} gutter={[15, 15]} className="p-10">
+          {footer && (
+            <Col>
+              <Typography.Paragraph
+                className={`${type === 'outgoing' ? 'outgoing' : 'incoming'} full`}
+                style={{ fontSize: 13, margin: 0, fontStyle: 'italic' }}
+              >
+                {footer}
+              </Typography.Paragraph>
+            </Col>
+          )}
+        </Row>
+
+        {buttons && buttons.length > 0 && (
+          <Space direction="vertical">
+            {buttons.map((button, idx) => (
+              <Button
+                variant="outlined"
+                key={`${button.value}-${idx}`}
+                className="w-100"
+                style={{
+                  padding: 14,
+                  borderRadius: 0,
+                  height: 50,
+                  whiteSpace: 'nowrap',
+                  backgroundColor: 'transparent',
+                  borderRight: '0px',
+                  borderLeft: '0px',
+                }}
+              >
+                {INTERACTIVE_BUTTON_ICONS[button.type] || null}
+                <div style={{ width: '100%', textOverflow: 'ellipsis', overflow: 'hidden' }}>
+                  {button.text}
+                </div>
               </Button>
             ))}
           </Space>

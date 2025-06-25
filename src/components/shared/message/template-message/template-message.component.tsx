@@ -10,12 +10,20 @@ import {
   getTemplateMessageLayout,
 } from 'utils';
 
-interface TemplateMessageProps {
-  templateMessage: ParsedWabaTemplateInterface;
+interface BaseProps {
   type: TypeConnectionMessage;
   params?: string[];
-  interactiveButtonsMessage?: ParsedWabaTemplateInterface;
 }
+
+type TemplateMessageProps =
+  | ({
+      templateMessage: ParsedWabaTemplateInterface;
+      interactiveButtonsMessage?: never;
+    } & BaseProps)
+  | ({
+      templateMessage?: never;
+      interactiveButtonsMessage: ParsedWabaTemplateInterface;
+    } & BaseProps);
 
 const TemplateMessage: FC<TemplateMessageProps> = ({
   templateMessage,

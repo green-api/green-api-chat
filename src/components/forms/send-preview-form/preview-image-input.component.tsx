@@ -56,7 +56,6 @@ export const PreviewImageInput: FC<FileOrUrlInputProps> = ({ namePrefix, form, i
         });
 
         setUploadedFile(file);
-        message.success(t('FILE_UPLOAD_SUCCESS'));
       } catch (error) {
         message.error(t('FILE_UPLOAD_ERROR'));
       } finally {

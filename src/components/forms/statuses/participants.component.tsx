@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next';
 
 import SelectParticipants from './select-participants.component';
 import FormListFields from '../form-list-feilds.component';
-import { formItemMethodApiLayout } from 'configs';
 
 const Participants = () => {
   const { t } = useTranslation();
@@ -35,10 +34,7 @@ const Participants = () => {
   };
 
   return (
-    <Form.Item
-      label={<span title={t('PARTICIPANTS_LABEL')}>{t('PARTICIPANTS_LABEL')}</span>}
-      {...formItemMethodApiLayout}
-    >
+    <Form.Item label={<span title={t('PARTICIPANTS_LABEL')}>{t('PARTICIPANTS_LABEL')}</span>}>
       <SelectParticipants onChange={() => setShowListParticipants((prev) => !prev)} />
 
       {showListParticipants && (

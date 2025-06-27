@@ -71,7 +71,7 @@ export const DynamicButtonFields = ({
             return value;
           }}
         >
-          <Input placeholder={t('BUTTON_TEXT_PLACEHOLDER')} />
+          <Input maxLength={100} placeholder={t('BUTTON_TEXT_PLACEHOLDER')} />
         </Form.Item>
       </Flex>
     );
@@ -99,7 +99,7 @@ export const DynamicButtonFields = ({
             return value;
           }}
         >
-          <Input placeholder={t('BUTTON_OTP_TYPE_PLACEHOLDER')} />
+          <Input maxLength={100} placeholder={t('BUTTON_OTP_TYPE_PLACEHOLDER')} />
         </Form.Item>
       )}
 
@@ -112,7 +112,7 @@ export const DynamicButtonFields = ({
             return value;
           }}
         >
-          <Input placeholder={t('BUTTON_TEXT_PLACEHOLDER')} />
+          <Input maxLength={100} placeholder={t('BUTTON_TEXT_PLACEHOLDER')} />
         </Form.Item>
       )}
 
@@ -131,7 +131,7 @@ export const DynamicButtonFields = ({
               return value;
             }}
           >
-            <Input placeholder={t('BUTTON_VALUE_PLACEHOLDER')} />
+            <Input maxLength={100} placeholder={t('BUTTON_VALUE_PLACEHOLDER')} />
           </Form.Item>
         )}
 
@@ -144,7 +144,7 @@ export const DynamicButtonFields = ({
             return value;
           }}
         >
-          <Input placeholder="Enter copy code" />
+          <Input maxLength={100} placeholder="Enter copy code" />
         </Form.Item>
       )}
 
@@ -157,7 +157,7 @@ export const DynamicButtonFields = ({
             return value;
           }}
         >
-          <Input placeholder="Enter phone number" />
+          <Input maxLength={100} placeholder="Enter phone number" />
         </Form.Item>
       )}
 

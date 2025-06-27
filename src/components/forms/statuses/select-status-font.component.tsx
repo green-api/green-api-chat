@@ -6,8 +6,6 @@ import useFormInstance from 'antd/es/form/hooks/useFormInstance';
 import { useTranslation } from 'react-i18next';
 import { load as loadFont } from 'webfontloader';
 
-import { formItemMethodApiLayout } from 'configs';
-
 const SelectStatusFont = () => {
   const { t } = useTranslation();
   const form = useFormInstance();
@@ -38,7 +36,6 @@ const SelectStatusFont = () => {
   return (
     <Form.Item
       label={<span title={t('FONT_PLACEHOLDER')}>{t('FONT_PLACEHOLDER')}</span>}
-      {...formItemMethodApiLayout}
       className="selectFont"
     >
       <Space rootClassName="selectFont__space" size="large" align="baseline">

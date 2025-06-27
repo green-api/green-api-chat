@@ -4,7 +4,7 @@ import { Button, ColorPicker, Form, Input } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import Participants from './participants.component';
-import { formItemMethodApiLayout } from 'configs';
+import { statusFormLayout } from 'configs';
 import { useActions, useAppDispatch, useAppSelector, useFormWithLanguageValidation } from 'hooks';
 import {
   useSendMediaStatusMutation,
@@ -67,7 +67,7 @@ const SendVoiceStatus: FC<SendVoiceStatusProperties> = ({ isMedia }) => {
   };
 
   return (
-    <Form form={form} {...formItemMethodApiLayout} onFinish={onFinish}>
+    <Form form={form} {...statusFormLayout} onFinish={onFinish}>
       <Form.Item
         name="urlFile"
         rules={[{ required: true, message: t('EMPTY_FIELD_ERROR') }]}
@@ -92,31 +92,15 @@ const SendVoiceStatus: FC<SendVoiceStatusProperties> = ({ isMedia }) => {
 
       <Participants />
 
-      <Form.Item
-        style={{ marginBottom: 0 }}
-        wrapperCol={{
-          span: 20,
-          offset: 0,
-          sm: {
-            span: 20,
-            offset: 4,
-          },
-          lg: {
-            span: 16,
-            offset: 9,
-          },
-        }}
+      <Button
+        disabled={isLoading || isMediaStatusLoading}
+        htmlType="submit"
+        size="large"
+        block
+        type="primary"
       >
-        <Button
-          disabled={isLoading || isMediaStatusLoading}
-          htmlType="submit"
-          size="large"
-          block
-          type="primary"
-        >
-          {t('SEND_MESSAGE')}
-        </Button>
-      </Form.Item>
+        {t('SEND_MESSAGE')}
+      </Button>
 
       <Form.Item style={{ marginBottom: 0 }} name="response" className="response-form-item" />
     </Form>

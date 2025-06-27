@@ -54,7 +54,6 @@ const FormListFields: FC<FormListFieldsProperties> = ({
                     return value;
                   }}
                 >
-                  {/* @ts-ignore */}
                   {children}
                 </Form.Item>
               ))}

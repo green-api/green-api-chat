@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 
 import Participants from './participants.component';
 import SelectStatusFont from './select-status-font.component';
-import { formItemMethodApiLayout } from 'configs';
+import { statusFormLayout } from 'configs';
 import { useActions, useAppDispatch, useAppSelector, useFormWithLanguageValidation } from 'hooks';
 import { useSendTextStatusMutation } from 'services/green-api/endpoints';
 import { selectInstance } from 'store/slices/instances.slice';
@@ -58,7 +58,7 @@ const SendTextStatusForm: FC = () => {
   };
 
   return (
-    <Form form={form} {...formItemMethodApiLayout} onFinish={onFinish}>
+    <Form form={form} {...statusFormLayout} onFinish={onFinish}>
       <Form.Item
         name="message"
         rules={[{ required: true, message: t('EMPTY_FIELD_ERROR') }]}
@@ -75,25 +75,9 @@ const SendTextStatusForm: FC = () => {
 
       <Participants />
 
-      <Form.Item
-        style={{ marginBottom: 0 }}
-        wrapperCol={{
-          span: 20,
-          offset: 0,
-          sm: {
-            span: 20,
-            offset: 4,
-          },
-          lg: {
-            span: 16,
-            offset: 9,
-          },
-        }}
-      >
-        <Button disabled={isLoading} htmlType="submit" size="large" block type="primary">
-          {t('SEND_MESSAGE')}
-        </Button>
-      </Form.Item>
+      <Button disabled={isLoading} htmlType="submit" size="large" block type="primary">
+        {t('SEND_MESSAGE')}
+      </Button>
 
       <Form.Item style={{ marginBottom: 0 }} name="response" className="response-form-item" />
     </Form>

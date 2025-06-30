@@ -7,6 +7,9 @@ import { MessageProps } from './message.component';
 import { useAppSelector } from 'hooks';
 import { selectMiniVersion } from 'store/slices/chat.slice';
 import { getFormattedMessage, getMessageTypeIcon } from 'utils';
+import { use } from 'i18next';
+import { selectInstance } from 'store/slices/instances.slice';
+import { useDownloadFileMutation } from 'services/green-api/endpoints';
 
 const TextMessage: FC<
   Pick<
@@ -20,7 +23,9 @@ const TextMessage: FC<
 
   const { t } = useTranslation();
 
+  const instanceCredentials = useAppSelector(selectInstance);
   const formattedMessage = getFormattedMessage(textMessage);
+  const [downloadFile] = useDownloadFileMutation({ instanceCredentials, textMessage });
 
   if (isCaption) {
     return (

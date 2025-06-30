@@ -497,3 +497,7 @@ export interface SendVoiceStatusInterface extends InstanceInterface {
   fileName: string;
   participants?: string[];
 }
+
+export interface DownloadFileResponseInterface {
+  downloadUrl: string;
+}

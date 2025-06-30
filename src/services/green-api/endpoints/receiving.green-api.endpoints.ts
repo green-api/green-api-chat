@@ -4,6 +4,8 @@ import {
   ReceiveNotificationResponseInterface,
   DeleteNotificationParameters,
   ResultResponseInterface,
+  GetChatInformationParameters,
+  DownloadFileResponseInterface,
 } from 'types';
 
 export const receivingGreenApiEndpoints = greenAPI.injectEndpoints({
@@ -17,6 +19,13 @@ export const receivingGreenApiEndpoints = greenAPI.injectEndpoints({
       query: ({ idInstance, apiTokenInstance, receiptId, apiUrl }) => ({
         url: `${apiUrl}waInstance${idInstance}/deleteNotification/${apiTokenInstance}/${receiptId}`,
         method: 'DELETE',
+      }),
+    }),
+    downloadFile: builder.mutation<DownloadFileResponseInterface, GetChatInformationParameters>({
+      query: ({ idInstance, apiTokenInstance, apiUrl, mediaUrl: _, ...body }) => ({
+        url: `${apiUrl}waInstance${idInstance}/downloadFile/${apiTokenInstance}`,
+        method: 'POST',
+        body,
       }),
     }),
   }),

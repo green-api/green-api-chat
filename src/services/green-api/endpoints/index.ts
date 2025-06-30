@@ -38,6 +38,7 @@ export const {
   useSendTextStatusMutation,
   useSendVoiceStatusMutation,
   useSendMediaStatusMutation,
+  useDownloadFileMutation,
 } = {
   ...accountGreenApiEndpoints,
   ...sendingGreenApiEndpoints,

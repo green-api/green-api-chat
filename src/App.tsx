@@ -70,6 +70,8 @@ function App() {
         return;
       }
 
+      console.log(event, 'event');
+
       switch (event.data.type) {
         case MessageEventTypeEnum.INIT:
           if (event.data.payload) {

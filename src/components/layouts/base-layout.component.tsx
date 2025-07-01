@@ -9,8 +9,14 @@ import MiniChat from 'components/mini-chat/chat.component';
 import { useActions, useAppSelector } from 'hooks';
 import { selectMiniVersion } from 'store/slices/chat.slice';
 import { selectUser } from 'store/slices/user.slice';
-import { TariffsEnum } from 'types';
-import { isAuth, isPartnerChat, isValidChatType } from 'utils';
+import { MessageData, MessageEventTypeEnum, TariffsEnum } from 'types';
+import {
+  isAuth,
+  isPartnerChat,
+  isValidChatType,
+  isConsoleMessageData,
+  getIsChatWorkingFromStorage,
+} from 'utils';
 
 const BaseLayout: FC = () => {
   const isMiniVersion = useAppSelector(selectMiniVersion);
@@ -18,9 +24,77 @@ const BaseLayout: FC = () => {
 
   const [searchParams] = useSearchParams();
 
-  const { setType, setSelectedInstance, setBrandData } = useActions();
+  const { setType, setSelectedInstance, setBrandData, setTheme, login, setPlatform } = useActions();
 
-  console.log(user);
+  console.log(1, 'user');
+
+  useEffect(() => {
+    console.log('------');
+    function handleMessage(event: MessageEvent<MessageData>) {
+      console.log(event, 'event');
+
+      if (!isConsoleMessageData(event.data)) {
+        console.log('unknown event');
+        return;
+      }
+
+      switch (event.data.type) {
+        case MessageEventTypeEnum.INIT:
+          if (event.data.payload) {
+            let isChatWorking: boolean | null = null;
+
+            if (
+              event.data.payload &&
+              event.data.payload?.idInstance &&
+              event.data.payload.tariff === TariffsEnum.Developer
+            ) {
+              isChatWorking = getIsChatWorkingFromStorage(event.data.payload?.idInstance);
+            }
+
+            setSelectedInstance({
+              idInstance: event.data.payload.idInstance,
+              apiTokenInstance: event.data.payload.apiTokenInstance,
+              apiUrl: event.data.payload.apiUrl,
+              mediaUrl: event.data.payload.mediaUrl,
+              tariff: event.data.payload.tariff,
+              isChatWorking: isChatWorking,
+            });
+
+            login({
+              login: event.data.payload.login,
+              idUser: event.data.payload.idUser,
+              apiTokenUser: event.data.payload.apiTokenUser,
+              remember: true,
+              projectId: event.data.payload.projectId,
+            });
+
+            setPlatform(event.data.payload.platform);
+
+            setTheme(event.data.payload.theme);
+
+            return i18n.changeLanguage(event.data.payload.locale);
+          }
+
+          return;
+
+        case MessageEventTypeEnum.SET_CREDENTIALS:
+          return setSelectedInstance(event.data.payload);
+
+        case MessageEventTypeEnum.LOCALE_CHANGE:
+          return i18n.changeLanguage(event.data.payload.locale);
+
+        case MessageEventTypeEnum.SET_THEME:
+          return setTheme(event.data.payload.theme);
+
+        default:
+          return;
+      }
+    }
+
+    window.addEventListener('message', handleMessage);
+
+    return () => window.removeEventListener('message', handleMessage);
+  }, []);
 
   useLayoutEffect(() => {
     if (searchParams.has('type')) {
@@ -61,6 +135,7 @@ const BaseLayout: FC = () => {
   }, [searchParams]);
 
   useEffect(() => {
+    console.log('2 user ', user);
     if (!isAuth(user) && !isMiniVersion && !isPartnerChat(searchParams)) {
       throw new Error('NO_INSTANCE_CREDENTIALS');
     }

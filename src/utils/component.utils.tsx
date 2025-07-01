@@ -208,7 +208,7 @@ export function getTemplateMessageLayout(options: GetTemplateMessageLayoutOption
   return (
     <div
       style={{
-        maxWidth: 500,
+        maxWidth: 300,
       }}
       className={containerClassName}
     >
@@ -259,7 +259,11 @@ export function getInteractiveButtonsMessageLayout(options: GetTemplateMessageLa
 
   if (!containerClassName) {
     return (
-      <>
+      <div
+        style={{
+          maxWidth: 300,
+        }}
+      >
         <>
           {header && (
             <Typography.Paragraph
@@ -302,6 +306,7 @@ export function getInteractiveButtonsMessageLayout(options: GetTemplateMessageLa
                   padding: 14,
                   borderRadius: 0,
                   height: 50,
+                  width: '300px',
                   whiteSpace: 'nowrap',
                   backgroundColor: 'transparent',
                   borderRight: '0px',
@@ -317,14 +322,14 @@ export function getInteractiveButtonsMessageLayout(options: GetTemplateMessageLa
             ))}
           </Flex>
         )}
-      </>
+      </div>
     );
   }
 
   return (
     <div
       style={{
-        maxWidth: 500,
+        maxWidth: 300,
       }}
       className={containerClassName}
     >

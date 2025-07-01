@@ -253,7 +253,7 @@ export function getTemplateMessageLayout(options: GetTemplateMessageLayoutOption
   );
 }
 
-export function getInteractiveBunttonsMessageLayout(options: GetTemplateMessageLayoutOptions) {
+export function getInteractiveButtonsMessageLayout(options: GetTemplateMessageLayoutOptions) {
   const { containerClassName, header, content, footer, mediaUrl, buttons, symbol, type, time } =
     options;
 

@@ -63,9 +63,9 @@ const BaseLayout: FC = () => {
 
   useEffect(() => {
     if (!isAuth(user) && !isMiniVersion && !isPartnerChat(searchParams)) {
-      navigate(Routes.auth);
+      throw new Error('NO_INSTANCE_CREDENTIALS');
     }
-  }, [user, navigate, isMiniVersion, searchParams]);
+  }, [user, isMiniVersion, searchParams]);
 
   return (
     <Layout className={`app ${!isMiniVersion ? 'bg' : ''}`}>

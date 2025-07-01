@@ -31,7 +31,7 @@ const ChatsHeader: FC = () => {
   };
 
   return (
-    <Header style={{ padding: '5px 37px', flex: '0 1 30%' }}>
+    <Header style={{ padding: '5px 37px' }}>
       <Flex justify="space-between" align="center">
         <Image src={logo} preview={false} width={60} height={60} />
         <Flex align="center" justify="center" gap={10}>

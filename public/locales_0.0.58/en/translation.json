@@ -179,5 +179,7 @@
   "URL_FILE_PLACEHOLDER": "File URL",
   "FILE_NAME_PLACEHOLDER": "File Name",
   "CHAT_ID_PHONE_PLACEHOLDER": "Phone number",
-  "STATUSES_HEADER": "Send Status"
+  "STATUSES_HEADER": "Send Status",
+  "NO_INSTANCE_CREDENTIALS": "Instance authorization credentials not provided",
+  "REFRESH_PAGE": "Refresh the page"
 }

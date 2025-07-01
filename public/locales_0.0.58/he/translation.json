@@ -177,5 +177,7 @@
   "URL_FILE_PLACEHOLDER": "קישור לקובץ",
   "FILE_NAME_PLACEHOLDER": "שם הקובץ",
   "CHAT_ID_PHONE_PLACEHOLDER": "מספר טלפון",
-  "STATUSES_HEADER": "שלח סטטוס"
+  "STATUSES_HEADER": "שלח סטטוס",
+  "NO_INSTANCE_CREDENTIALS": "לא סופקו אישורי אימות של האינסטנס",
+  "REFRESH_PAGE": "רענן את הדף"
 }

@@ -2,11 +2,10 @@ import { FC, useEffect, useLayoutEffect } from 'react';
 
 import { Layout } from 'antd';
 import i18n from 'i18next';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 
 import FullChat from 'components/full-chat/chat.component';
 import MiniChat from 'components/mini-chat/chat.component';
-import { Routes } from 'configs';
 import { useActions, useAppSelector } from 'hooks';
 import { selectMiniVersion } from 'store/slices/chat.slice';
 import { selectUser } from 'store/slices/user.slice';
@@ -17,11 +16,11 @@ const BaseLayout: FC = () => {
   const isMiniVersion = useAppSelector(selectMiniVersion);
   const user = useAppSelector(selectUser);
 
-  const navigate = useNavigate();
-
   const [searchParams] = useSearchParams();
 
   const { setType, setSelectedInstance, setBrandData } = useActions();
+
+  console.log(user);
 
   useLayoutEffect(() => {
     if (searchParams.has('type')) {

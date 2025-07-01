@@ -21,19 +21,14 @@ import {
 const BaseLayout: FC = () => {
   const isMiniVersion = useAppSelector(selectMiniVersion);
   const user = useAppSelector(selectUser);
-  const [state, setState] = useState(false);
+  const [isEventAdded, setIsEventAdded] = useState(false);
 
   const [searchParams] = useSearchParams();
 
   const { setType, setSelectedInstance, setBrandData, setTheme, login, setPlatform } = useActions();
 
-  console.log(1, 'user');
-
   useEffect(() => {
-    console.log('------');
     function handleMessage(event: MessageEvent<MessageData>) {
-      console.log(event, 'event');
-
       if (!isConsoleMessageData(event.data)) {
         console.log('unknown event');
         return;
@@ -60,7 +55,7 @@ const BaseLayout: FC = () => {
               tariff: event.data.payload.tariff,
               isChatWorking: isChatWorking,
             });
-            setState(true);
+            setIsEventAdded(true);
             login({
               login: event.data.payload.login,
               idUser: event.data.payload.idUser,
@@ -137,10 +132,10 @@ const BaseLayout: FC = () => {
 
   useEffect(() => {
     console.log('2 user ', user);
-    if (!isAuth(user) && !isMiniVersion && !isPartnerChat(searchParams) && !state) {
+    if (!isAuth(user) && !isMiniVersion && !isPartnerChat(searchParams) && isEventAdded) {
       throw new Error('NO_INSTANCE_CREDENTIALS');
     }
-  }, [user, isMiniVersion, searchParams, state]);
+  }, [user, isMiniVersion, searchParams, isEventAdded]);
 
   return (
     <Layout className={`app ${!isMiniVersion ? 'bg' : ''}`}>

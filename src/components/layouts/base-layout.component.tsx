@@ -1,4 +1,4 @@
-import { FC, useEffect, useLayoutEffect } from 'react';
+import { FC, useEffect, useLayoutEffect, useState } from 'react';
 
 import { Layout } from 'antd';
 import i18n from 'i18next';
@@ -21,6 +21,7 @@ import {
 const BaseLayout: FC = () => {
   const isMiniVersion = useAppSelector(selectMiniVersion);
   const user = useAppSelector(selectUser);
+  const [state, setState] = useState(false);
 
   const [searchParams] = useSearchParams();
 
@@ -59,7 +60,7 @@ const BaseLayout: FC = () => {
               tariff: event.data.payload.tariff,
               isChatWorking: isChatWorking,
             });
-
+            setState(true);
             login({
               login: event.data.payload.login,
               idUser: event.data.payload.idUser,
@@ -136,10 +137,10 @@ const BaseLayout: FC = () => {
 
   useEffect(() => {
     console.log('2 user ', user);
-    if (!isAuth(user) && !isMiniVersion && !isPartnerChat(searchParams)) {
+    if (!isAuth(user) && !isMiniVersion && !isPartnerChat(searchParams) && !state) {
       throw new Error('NO_INSTANCE_CREDENTIALS');
     }
-  }, [user, isMiniVersion, searchParams]);
+  }, [user, isMiniVersion, searchParams, state]);
 
   return (
     <Layout className={`app ${!isMiniVersion ? 'bg' : ''}`}>

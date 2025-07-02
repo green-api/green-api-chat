@@ -10,12 +10,7 @@ import { useGetInstancesQuery } from 'services/app/endpoints';
 import { selectType } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
 import { selectUser } from 'store/slices/user.slice';
-import {
-  ExpandedInstanceInterface,
-  HasDefaultInstance,
-  InstanceInterface,
-  SelectInstanceItemInterface,
-} from 'types';
+import { SelectInstanceItemInterface } from 'types';
 import { getIsChatWorkingFromStorage } from 'utils';
 
 const SelectInstance: FC = () => {
@@ -36,11 +31,6 @@ const SelectInstance: FC = () => {
 
   const [instances, setInstances] = useState<SelectInstanceItemInterface[] | undefined>();
 
-  const [defaultInstanceToRender, setDefaultInstanceToRender] = useState<
-    undefined | { label: JSX.Element; idInstance: InstanceInterface['idInstance'] }
-  >();
-  const [hasDefaultInstance, setHasDefaultInstance] = useState<HasDefaultInstance>('unknown');
-
   const limit = 10;
   const [page, setPage] = useState(1);
   const [searchValue, setSearchValue] = useState('');
@@ -53,6 +43,7 @@ const SelectInstance: FC = () => {
   useEffect(() => {
     if (isLoadingInstances) return;
 
+    /// 1
     if (instancesRequestData?.result && Array.isArray(instancesRequestData?.data)) {
       let countInstances = 0;
 
@@ -90,47 +81,20 @@ const SelectInstance: FC = () => {
     }
 
     setInstances([]);
-  }, [instancesRequestData, page, searchValue]);
+  }, [instancesRequestData, page, searchValue, isLoadingInstances]);
 
   // useEffect - для установки инстанса в списке в качестве значения по умолчанию
   useEffect(() => {
-    if (isLoadingInstances || !instances) {
+    if (isLoadingInstances || !instances?.length) {
       return;
     }
-
-    if (instances.length === 0) {
-      setHasDefaultInstance('no');
-      return;
-    }
-
-    const setLabelForDefaultInstance = (defaultInstance: ExpandedInstanceInterface) => {
-      const defaultInstanceToRender = {
-        idInstance: defaultInstance?.idInstance,
-        label: <SelectInstanceLabel {...defaultInstance} />,
-      };
-      setDefaultInstanceToRender(defaultInstanceToRender);
-
-      setHasDefaultInstance('yes');
-    };
 
     if (instancesRequestData?.result && selectedInstance?.idInstance) {
       const defaultInstance = instancesRequestData.data.find(
         ({ idInstance }) => idInstance === selectedInstance.idInstance
       );
 
-      if (defaultInstance) setLabelForDefaultInstance(defaultInstance);
-
-      return;
-    }
-
-    if (instancesRequestData?.result) {
-      const defaultInstance = instancesRequestData.data.find(
-        ({ idInstance }) => idInstance === selectedInstance.idInstance
-      );
-
       if (defaultInstance) {
-        setLabelForDefaultInstance(defaultInstance);
-
         setSelectedInstance({
           idInstance: defaultInstance.idInstance,
           apiTokenInstance: defaultInstance.apiTokenInstance,
@@ -138,12 +102,10 @@ const SelectInstance: FC = () => {
           mediaUrl: defaultInstance.mediaUrl,
           tariff: defaultInstance.tariff,
         });
-
-        return;
       }
-    }
 
-    setHasDefaultInstance('no');
+      return;
+    }
 
     setSelectedInstance({
       idInstance: instances[0].idInstance,
@@ -152,9 +114,9 @@ const SelectInstance: FC = () => {
       mediaUrl: instances[0].mediaUrl,
       tariff: instances[0].tariff,
     });
-  }, [instances, isSuccessLoadingInstances]);
+  }, [instances, isSuccessLoadingInstances, isLoadingInstances]);
 
-  if (isLoadingInstances || !instances || hasDefaultInstance === 'unknown') {
+  if (isLoadingInstances || !instances) {
     return <Spin />;
   }
 
@@ -168,7 +130,7 @@ const SelectInstance: FC = () => {
         width: type === 'console-page' ? '80%' : '100%',
       }}
       placeholder={t('SELECT_INSTANCE_PLACEHOLDER')}
-      defaultValue={defaultInstanceToRender ?? instances[0]?.idInstance}
+      value={selectedInstance?.idInstance}
       options={instances}
       ref={selectReference}
       filterOption={(inputValue, option) =>

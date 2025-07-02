@@ -131,7 +131,6 @@ const BaseLayout: FC = () => {
   }, [searchParams]);
 
   useEffect(() => {
-    console.log('2 user ', user);
     if (!isAuth(user) && !isMiniVersion && !isPartnerChat(searchParams) && isEventAdded) {
       throw new Error('NO_INSTANCE_CREDENTIALS');
     }

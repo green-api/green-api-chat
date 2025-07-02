@@ -43,7 +43,6 @@ const SelectInstance: FC = () => {
   useEffect(() => {
     if (isLoadingInstances) return;
 
-    /// 1
     if (instancesRequestData?.result && Array.isArray(instancesRequestData?.data)) {
       let countInstances = 0;
 

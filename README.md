@@ -2,7 +2,7 @@
 
 Chat module for personal accounts using [GREEN-API](https://green-api.com/en).
 
-### Installation
+## 📥 Installation
 
 To install dependencies:
 
@@ -10,7 +10,7 @@ To install dependencies:
 npm install
 ```
 
-### Development Mode
+## 🚀 Development Mode
 
 Start the development server:
 
@@ -18,7 +18,7 @@ Start the development server:
 npm run dev
 ```
 
-### Production Build
+## 📦 Production Build
 
 Build the app for production:
 
@@ -59,6 +59,10 @@ iframeReference.current?.contentWindow?.postMessage(
       theme: currentTheme,
       platform: platform,
       projectId: projectId,
+
+      // customization
+      brandDescription: 'Welcome to our support chat!',
+      logo: 'https://example.com/logo.png',
     },
   },
   CHAT_APP_URL // Replace with the actual iframe URL
@@ -81,6 +85,8 @@ iframeReference.current?.contentWindow?.postMessage(
 | `theme`            | `ThemesEnum`          | Theme mode (see below)                      |
 | `platform`         | `string`              | Platform ID (e.g., `web`, `android`, `ios`) |
 | `projectId`        | `string`              | Project identifier                          |
+| `brandDescription` | `string`              | Welcome message when no chat is selected    |
+| `logo`             | `string`              | Image/logo URL above the description        |
 
 #### TariffsEnum
 
@@ -106,10 +112,10 @@ export const enum ThemesEnum {
 
 ### 2. Authorization via URL Query Parameters
 
-Alternatively, you can pass authorization data through the URL when loading the app:
+You can also pass authorization and customization data via the URL:
 
 ```
-http://localhost:5173/?idInstance=YOUR_ID&apiTokenInstance=YOUR_API_TOKEN&apiUrl=https://api.green-api.com/&mediaUrl=https://media.green-api.com/
+http://localhost:5173/?idInstance=YOUR_ID&apiTokenInstance=YOUR_API_TOKEN&apiUrl=https://api.green-api.com/&mediaUrl=https://media.green-api.com/&lng=ru&dsc=Добро%20пожаловать%20в%20чат&logo=https://example.com/logo.png
 ```
 
 #### Required Query Parameters
@@ -121,15 +127,25 @@ http://localhost:5173/?idInstance=YOUR_ID&apiTokenInstance=YOUR_API_TOKEN&apiUrl
 | `apiUrl`           | Base API URL               |
 | `mediaUrl`         | Media API URL              |
 
+#### Optional Customization Parameters
+
+| Parameter | Description                                              |
+| --------- | -------------------------------------------------------- |
+| `lng`     | Language (`ru`, `en`, `he`)                              |
+| `dsc`     | Description text on home screen when no chat is selected |
+| `logo`    | Image/logo URL shown above the description               |
+
 ## 📄 License
 
 MIT License
+
+---
 
 # 📦 sw-console-chat
 
 Модуль чата с использованием [GREEN-API](https://green-api.com/).
 
-### Установка
+## 📥 Установка
 
 Для установки зависимостей:
 
@@ -137,7 +153,7 @@ MIT License
 npm install
 ```
 
-### Режим разработки
+## 🚀 Режим разработки
 
 Запуск сервера разработки:
 
@@ -145,7 +161,7 @@ npm install
 npm run dev
 ```
 
-### Сборка для продакшена
+## 📦 Сборка для продакшена
 
 Сборка приложения для продакшена:
 
@@ -186,6 +202,10 @@ iframeReference.current?.contentWindow?.postMessage(
       theme: currentTheme,
       platform: platform,
       projectId: projectId,
+
+      // кастомизация
+      brandDescription: 'Добро пожаловать в наш чат поддержки!',
+      logo: 'https://example.com/logo.png',
     },
   },
   CHAT_APP_URL // Замените на фактический URL iframe
@@ -194,20 +214,22 @@ iframeReference.current?.contentWindow?.postMessage(
 
 #### Поля payload
 
-| Поле               | Тип                   | Описание                                      |
-| ------------------ | --------------------- | --------------------------------------------- |
-| `login`            | `string`              | Логин пользователя                            |
-| `apiTokenUser`     | `string`              | API токен пользователя                        |
-| `idUser`           | `string`              | ID пользователя                               |
-| `idInstance`       | `number`              | ID инстанса                                   |
-| `apiTokenInstance` | `string`              | API токен инстанса                            |
-| `apiUrl`           | `string`              | Базовый URL API                               |
-| `mediaUrl`         | `string`              | URL для загрузки медиа                        |
-| `tariff`           | `TariffsEnum`         | Тарифный план (см. ниже)                      |
-| `locale`           | `string \| undefined` | Необязательный код языка (например, `en`)     |
-| `theme`            | `ThemesEnum`          | Режим темы (см. ниже)                         |
-| `platform`         | `string`              | Платформа (например, `web`, `android`, `ios`) |
-| `projectId`        | `string`              | Идентификатор проекта                         |
+| Поле               | Тип                   | Описание                                              |
+| ------------------ | --------------------- | ----------------------------------------------------- |
+| `login`            | `string`              | Логин пользователя                                    |
+| `apiTokenUser`     | `string`              | API токен пользователя                                |
+| `idUser`           | `string`              | ID пользователя                                       |
+| `idInstance`       | `number`              | ID инстанса                                           |
+| `apiTokenInstance` | `string`              | API токен инстанса                                    |
+| `apiUrl`           | `string`              | Базовый URL API                                       |
+| `mediaUrl`         | `string`              | URL для загрузки медиа                                |
+| `tariff`           | `TariffsEnum`         | Тарифный план (см. ниже)                              |
+| `locale`           | `string \| undefined` | Необязательный код языка (например, `en`, `ru`, `he`) |
+| `theme`            | `ThemesEnum`          | Тема интерфейса (см. ниже)                            |
+| `platform`         | `string`              | Платформа (`web`, `android`, `ios`)                   |
+| `projectId`        | `string`              | Идентификатор проекта                                 |
+| `brandDescription` | `string`              | Текст приветствия, когда чат не выбран                |
+| `logo`             | `string`              | Ссылка на логотип, отображаемый над описанием         |
 
 #### TariffsEnum
 
@@ -233,20 +255,28 @@ export const enum ThemesEnum {
 
 ### 2. Авторизация через параметры URL
 
-Вы также можете передать данные авторизации через URL при загрузке приложения:
+Вы также можете передать данные авторизации и кастомизации через параметры URL при загрузке приложения:
 
 ```
-http://localhost:5173/?idInstance=YOUR_ID&apiTokenInstance=YOUR_API_TOKEN&apiUrl=https://api.green-api.com/&mediaUrl=https://media.green-api.com/
+http://localhost:5173/?idInstance=YOUR_ID&apiTokenInstance=YOUR_API_TOKEN&apiUrl=https://api.green-api.com/&mediaUrl=https://media.green-api.com/&lng=ru&dsc=Добро%20пожаловать%20в%20чат&logo=https://example.com/logo.png
 ```
 
-#### Обязательные параметры URL
+#### Обязательные параметры
 
-| Параметр           | Описание                      |
-| ------------------ | ----------------------------- |
-| `idInstance`       | ID инстанса                   |
-| `apiTokenInstance` | API токен инстанса            |
-| `apiUrl`           | Базовый URL API               |
-| `mediaUrl`         | URL для работы с медиафайлами |
+| Параметр           | Описание                     |
+| ------------------ | ---------------------------- |
+| `idInstance`       | ID инстанса                  |
+| `apiTokenInstance` | API токен инстанса           |
+| `apiUrl`           | Базовый URL API              |
+| `mediaUrl`         | URL для загрузки медиафайлов |
+
+#### Необязательные параметры кастомизации
+
+| Параметр | Описание                                                        |
+| -------- | --------------------------------------------------------------- |
+| `lng`    | Язык интерфейса (`ru`, `en`, `he`)                              |
+| `dsc`    | Описание, отображаемое на главной странице, когда чат не выбран |
+| `logo`   | Ссылка на изображение/логотип, отображаемое над описанием       |
 
 ## 📄 Лицензия
 

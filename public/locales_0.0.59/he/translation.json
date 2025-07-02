@@ -179,5 +179,6 @@
   "CHAT_ID_PHONE_PLACEHOLDER": "מספר טלפון",
   "STATUSES_HEADER": "שלח סטטוס",
   "NO_INSTANCE_CREDENTIALS": "לא סופקו אישורי אימות של האינסטנס",
-  "REFRESH_PAGE": "רענן את הדף"
+  "REFRESH_PAGE": "רענן את הדף",
+  "UNEXPECTED_ERROR": "אירעה שגיאה בלתי צפויה. אנא פנה לתמיכה הטכנית."
 }

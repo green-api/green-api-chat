@@ -71,7 +71,7 @@ export const DynamicButtonFields = ({
             return value;
           }}
         >
-          <Input maxLength={100} placeholder={t('BUTTON_TEXT_PLACEHOLDER')} />
+          <Input autoComplete="off" maxLength={100} placeholder={t('BUTTON_TEXT_PLACEHOLDER')} />
         </Form.Item>
       </Flex>
     );
@@ -99,7 +99,11 @@ export const DynamicButtonFields = ({
             return value;
           }}
         >
-          <Input maxLength={100} placeholder={t('BUTTON_OTP_TYPE_PLACEHOLDER')} />
+          <Input
+            autoComplete="off"
+            maxLength={100}
+            placeholder={t('BUTTON_OTP_TYPE_PLACEHOLDER')}
+          />
         </Form.Item>
       )}
 
@@ -112,7 +116,7 @@ export const DynamicButtonFields = ({
             return value;
           }}
         >
-          <Input maxLength={100} placeholder={t('BUTTON_TEXT_PLACEHOLDER')} />
+          <Input autoComplete="off" maxLength={100} placeholder={t('BUTTON_TEXT_PLACEHOLDER')} />
         </Form.Item>
       )}
 
@@ -131,7 +135,7 @@ export const DynamicButtonFields = ({
               return value;
             }}
           >
-            <Input maxLength={100} placeholder={t('BUTTON_VALUE_PLACEHOLDER')} />
+            <Input maxLength={100} autoComplete="off" placeholder={t('BUTTON_VALUE_PLACEHOLDER')} />
           </Form.Item>
         )}
 
@@ -144,7 +148,7 @@ export const DynamicButtonFields = ({
             return value;
           }}
         >
-          <Input maxLength={100} placeholder="Enter copy code" />
+          <Input maxLength={100} autoComplete="off" placeholder="Enter copy code" />
         </Form.Item>
       )}
 
@@ -157,7 +161,7 @@ export const DynamicButtonFields = ({
             return value;
           }}
         >
-          <Input maxLength={100} placeholder="Enter phone number" />
+          <Input maxLength={100} autoComplete="off" placeholder="Enter phone number" />
         </Form.Item>
       )}
 
@@ -170,7 +174,7 @@ export const DynamicButtonFields = ({
             return value;
           }}
         >
-          <Input placeholder="Enter URL" />
+          <Input autoComplete="off" placeholder="Enter URL" />
         </Form.Item>
       )}
     </Flex>

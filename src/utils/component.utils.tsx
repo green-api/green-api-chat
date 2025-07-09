@@ -26,11 +26,11 @@ import {
 } from 'types';
 
 const INTERACTIVE_BUTTON_ICONS = {
-  PHONE_NUMBER: <PhoneOutlined style={{ fontSize: 24 }} />,
-  COPY_CODE: <FileOutlined style={{ fontSize: 24 }} />,
-  URL: <GlobalOutlined style={{ fontSize: 24 }} />,
-  QUICK_REPLY: <ArrowLeftOutlined style={{ fontSize: 24 }} />,
-  OTP: <OTP style={{ fontSize: 24 }} />,
+  PHONE_NUMBER: <PhoneOutlined style={{ fontSize: 18 }} />,
+  COPY_CODE: <FileOutlined style={{ fontSize: 18 }} />,
+  URL: <GlobalOutlined style={{ fontSize: 18 }} />,
+  QUICK_REPLY: <ArrowLeftOutlined style={{ fontSize: 18 }} />,
+  OTP: <OTP style={{ fontSize: 18 }} />,
 } as const;
 
 export function getOutgoingStatusMessageIcon(
@@ -339,7 +339,7 @@ export function getInteractiveButtonsMessageLayout(options: GetTemplateMessageLa
         )}
         {mediaUrl && <Image src={mediaUrl} loading="lazy" alt="media" />}
         <Typography.Paragraph
-          style={{ fontSize: 14, margin: 0 }}
+          style={{ fontSize: 18, margin: 0 }}
           ellipsis={{ rows: 6, expandable: true, symbol: symbol }}
         >
           {content}

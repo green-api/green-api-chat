@@ -105,7 +105,16 @@ const Message: FC<MessageProps> = ({ messageDataForRender, preview }) => {
         !interactiveButtonsMessage && 'p-10'
       )}
     >
-      {showSenderName && <MessageSenderInfo senderName={senderName} phone={phone} />}
+      {showSenderName && (
+        <MessageSenderInfo
+          style={{
+            marginLeft: interactiveButtonsMessage ? 10 : 0,
+            marginTop: interactiveButtonsMessage ? 10 : 0,
+          }}
+          senderName={senderName}
+          phone={phone}
+        />
+      )}
       {!isDeleted && quotedMessage && (
         <QuotedMessage
           messageDataForRender={messageDataForRender}

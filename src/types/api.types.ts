@@ -1,4 +1,4 @@
-import { InstanceInterface } from 'types';
+import { InstanceInterface, PollMessageData } from 'types';
 
 export interface UserInterface {
   idUser: string;
@@ -58,7 +58,8 @@ export type TypeMessage =
   | 'stickerMessage'
   | 'templateMessage'
   | 'templateButtonsReplyMessage'
-  | 'interactiveButtons';
+  | 'interactiveButtons'
+  | 'pollUpdateMessage';
 
 export type Contact = {
   displayName: string;
@@ -110,6 +111,7 @@ export interface MessageInterface
   isEdited?: boolean;
   editedMessageId?: string;
   deletedMessageId?: string;
+  pollMessageData?: PollMessageData;
 }
 
 export interface QuotedMessageInterface extends MessageInterface {

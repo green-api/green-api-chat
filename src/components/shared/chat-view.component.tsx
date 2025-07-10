@@ -122,7 +122,45 @@ const ChatView: FC = () => {
 
   const formattedMessages = useMemo(() => {
     if (!messages) return [];
-    return formatMessages(messages, resolvedLanguage as LanguageLiteral);
+
+    const allFormatted = formatMessages(messages, resolvedLanguage as LanguageLiteral);
+
+    const pollUpdateMap = new Map<string, (typeof messages)[number]>();
+
+    for (const msg of allFormatted) {
+      if ('typeMessage' in msg && msg.typeMessage === 'pollUpdateMessage') {
+        const stanzaId = msg.pollMessageData?.stanzaId;
+        if (!stanzaId) continue;
+        const existing = pollUpdateMap.get(stanzaId);
+        if (!existing || msg.timestamp > existing.timestamp) {
+          pollUpdateMap.set(stanzaId, msg);
+        }
+      }
+    }
+
+    const processedMessages = allFormatted
+      .filter((msg) => {
+        return !('typeMessage' in msg) || msg.typeMessage !== 'pollUpdateMessage';
+      })
+      .map((msg) => {
+        if ('typeMessage' in msg && msg.typeMessage === 'pollMessage') {
+          const update = pollUpdateMap.get(msg.idMessage);
+          if (update) {
+            return {
+              ...msg,
+              pollMessageData: {
+                name: msg.pollMessageData?.name ?? '',
+                options: msg.pollMessageData?.options ?? [],
+                multipleAnswers: msg.pollMessageData?.multipleAnswers ?? false,
+                votes: update.pollMessageData?.votes || [],
+              },
+            };
+          }
+        }
+        return msg;
+      });
+
+    return processedMessages;
   }, [messages, resolvedLanguage]);
 
   if (isLoading || templatesLoading) {
@@ -296,6 +334,7 @@ const ChatView: FC = () => {
               fileName: message.fileName,
               isDeleted: message.isDeleted,
               isEdited: message.isEdited,
+              pollMessageData: message.pollMessageData,
             }}
           />
         );

@@ -73,6 +73,11 @@ const SendPollForm: FC = () => {
             senderName: '',
             senderContactName: '',
             idMessage: data.idMessage,
+            pollMessageData: {
+              name: values.message,
+              options: values.options,
+              multipleAnswers: values.multipleAnswers ?? false,
+            },
             chatId: activeChat.chatId,
             statusMessage: 'sent',
           });

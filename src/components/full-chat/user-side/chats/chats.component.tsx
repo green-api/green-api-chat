@@ -6,22 +6,14 @@ import { useTranslation } from 'react-i18next';
 
 import AddNewChat from './add-new-chat.component';
 import ChatsHeader from './chats-header.component';
-import DeveloperInstanceAlert from 'components/alerts/developer-instance-alert.component';
 import ChatList from 'components/shared/chat-list/chat-list.component';
 import SelectInstance from 'components/UI/select/select-instance.component';
 import SelectStatusMode from 'components/UI/select/select-status.component';
 import { useAppSelector } from 'hooks';
 import { selectMiniVersion, selectType } from 'store/slices/chat.slice';
-import {
-  selectInstance,
-  selectInstanceTariff,
-  selectIsChatWorking,
-} from 'store/slices/instances.slice';
-import { TariffsEnum } from 'types';
+import { selectInstance } from 'store/slices/instances.slice';
 
 const Chats: FC = () => {
-  const instanceTariff = useAppSelector(selectInstanceTariff);
-  const isChatWorking = useAppSelector(selectIsChatWorking);
   const isMiniVersion = useAppSelector(selectMiniVersion);
   const type = useAppSelector(selectType);
   const instanceCredentials = useAppSelector(selectInstance);
@@ -52,11 +44,8 @@ const Chats: FC = () => {
         )}
         <SelectStatusMode />
       </Flex>
-      {instanceTariff === TariffsEnum.Developer && !isChatWorking ? (
-        <DeveloperInstanceAlert />
-      ) : (
-        <ChatList key={instanceCredentials?.idInstance} />
-      )}
+
+      <ChatList key={instanceCredentials?.idInstance} />
       {!isMiniVersion && (type === 'console-page' || type === 'partner-iframe') && (
         <AddNewChat isVisible={isVisible} setIsVisible={setIsVisible} />
       )}

@@ -1,14 +1,13 @@
 import { FC, useEffect, useState } from 'react';
 
 import { DeleteOutlined } from '@ant-design/icons';
-import { Button, Form, Input, Tabs, Upload, message, Space, Flex } from 'antd';
+import { Button, Form, Input, Tabs, Upload, message, Flex } from 'antd';
 import { FormInstance, useWatch } from 'antd/es/form/Form';
 import { useTranslation } from 'react-i18next';
 
 import { useAppSelector } from 'hooks';
 import { useUploadFileMutation } from 'services/green-api/endpoints';
 import { selectInstance } from 'store/slices/instances.slice';
-import { formDefaultLayout, formItemDefaultLayout } from 'configs';
 
 interface FileOrUrlInputProps {
   namePrefix: (string | number)[];
@@ -56,7 +55,6 @@ export const PreviewImageInput: FC<FileOrUrlInputProps> = ({ namePrefix, form, i
         });
 
         setUploadedFile(file);
-        message.success(t('FILE_UPLOAD_SUCCESS'));
       } catch (error) {
         message.error(t('FILE_UPLOAD_ERROR'));
       } finally {

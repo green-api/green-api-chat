@@ -18,6 +18,7 @@
 @import 'components/UI/select-language';
 @import 'components/UI/select-sending-mode';
 @import 'components/UI/status-circle';
+@import 'components/UI/select-status.scss';
 
 @import 'components/UI/message-preview.scss';
 
@@ -169,6 +170,10 @@ html {
   padding: 10px;
 }
 
+.p-5 {
+  padding: 5px;
+}
+
 .bg-color-second {
   background-color: var(--second-background);
 }
@@ -274,7 +279,6 @@ Button.ant-btn-primary:focus {
 .edit-message-modal .ant-modal-content {
   padding: 0;
 }
-
 
 .delete-button {
   color: #d1242f !important;

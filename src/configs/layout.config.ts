@@ -17,6 +17,19 @@ export const formItemMethodApiLayout = {
   },
 };
 
+export const statusFormLayout = {
+  labelCol: {
+    xs: { span: 24 },
+    lg: { span: 3 },
+    md: { span: 3 },
+  },
+  wrapperCol: {
+    xs: { span: 24 },
+    lg: { span: 21 },
+    md: { span: 21 },
+  },
+};
+
 export const formDefaultLayout = {
   labelCol: {
     xs: { span: 24 },

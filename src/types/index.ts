@@ -324,6 +324,7 @@ export interface MessageDataForRender {
   phone?: string;
   quotedMessage?: QuotedMessageInterface;
   templateMessage?: ParsedWabaTemplateInterface;
+  interactiveButtonsMessage?: ParsedWabaTemplateInterface;
   caption?: string;
   fileName?: string;
   isDeleted?: boolean;

@@ -3,36 +3,70 @@ import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { ParsedWabaTemplateInterface, TypeConnectionMessage } from 'types';
-import { fillTemplateString, getFormattedMessage, getTemplateMessageLayout } from 'utils';
+import {
+  fillTemplateString,
+  getFormattedMessage,
+  getInteractiveButtonsMessageLayout,
+  getTemplateMessageLayout,
+} from 'utils';
 
-interface TemplateMessageProps {
-  templateMessage: ParsedWabaTemplateInterface;
+interface BaseProps {
   type: TypeConnectionMessage;
   params?: string[];
 }
 
-const TemplateMessage: FC<TemplateMessageProps> = ({ templateMessage, type }) => {
+type TemplateMessageProps =
+  | ({
+      templateMessage: ParsedWabaTemplateInterface;
+      interactiveButtonsMessage?: never;
+    } & BaseProps)
+  | ({
+      templateMessage?: never;
+      interactiveButtonsMessage: ParsedWabaTemplateInterface;
+    } & BaseProps);
+
+const TemplateMessage: FC<TemplateMessageProps> = ({
+  templateMessage,
+  type,
+  interactiveButtonsMessage,
+}) => {
   const { t } = useTranslation();
 
-  const header = templateMessage.header
-    ? templateMessage.params
-      ? getFormattedMessage(fillTemplateString(templateMessage.header, templateMessage.params))
-      : getFormattedMessage(templateMessage.header)
+  const message = interactiveButtonsMessage || templateMessage;
+
+  const header = message.header
+    ? message.params
+      ? getFormattedMessage(fillTemplateString(message.header, message.params))
+      : getFormattedMessage(message.header)
     : null;
-  const content = templateMessage.params
-    ? getFormattedMessage(fillTemplateString(templateMessage.data, templateMessage.params))
-    : getFormattedMessage(templateMessage.data);
-  const footer = templateMessage.footer ? getFormattedMessage(templateMessage.footer) : null;
-  const mediaUrl = templateMessage.mediaUrl;
-  const buttons = templateMessage.buttons;
+
+  const content = message.params
+    ? getFormattedMessage(fillTemplateString(message.data, message.params))
+    : getFormattedMessage(message.data);
+
+  const footer = message.footer ? getFormattedMessage(message.footer) : null;
+  const mediaUrl = message.mediaUrl;
+  const buttons = message.buttons;
+
+  if (interactiveButtonsMessage) {
+    return getInteractiveButtonsMessageLayout({
+      header,
+      content,
+      footer,
+      mediaUrl,
+      buttons,
+      type,
+      symbol: t('SHOW_ALL_TEXT'),
+    });
+  }
 
   return getTemplateMessageLayout({
-    header: header,
-    content: content,
-    footer: footer,
-    mediaUrl: mediaUrl,
-    buttons: buttons,
-    type: type,
+    header,
+    content,
+    footer,
+    mediaUrl,
+    buttons,
+    type,
     symbol: t('SHOW_ALL_TEXT'),
   });
 };

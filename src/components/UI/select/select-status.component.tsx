@@ -41,13 +41,9 @@ const SelectStatusMode: FC = () => {
             justifyContent: 'center',
           }}
         >
-          <StatusIcon
-            style={{
-              fill: 'var(--text-color)',
-              width: 24,
-              height: 24,
-            }}
-          />
+          <span className="status-icon-wrapper" title={t('STATUSES_HEADER')}>
+            <StatusIcon className="status-icon" />
+          </span>
         </div>
       </Dropdown>
 

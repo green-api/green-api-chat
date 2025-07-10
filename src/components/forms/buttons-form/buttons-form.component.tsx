@@ -121,7 +121,10 @@ const ButtonsForm: FC = () => {
     <>
       <Tabs
         activeKey={isReply ? 'reply' : 'mixed'}
-        onChange={(key) => setIsReply(key === 'reply')}
+        onChange={(key) => {
+          setIsReply(key === 'reply');
+          form.resetFields(['buttons']);
+        }}
         items={[
           {
             key: 'mixed',
@@ -145,7 +148,13 @@ const ButtonsForm: FC = () => {
           style={{ flexGrow: 1 }}
           labelCol={{ style: { width: 300 } }}
         >
-          <Form.Item required {...formItemDefaultLayout} name="body" key="body" label={t('BODY')}>
+          <Form.Item
+            rules={[{ required: true, message: t('EMPTY_FIELD_ERROR') }]}
+            {...formItemDefaultLayout}
+            name="body"
+            key="body"
+            label={t('BODY')}
+          >
             <TextArea />
           </Form.Item>
 

@@ -1,6 +1,7 @@
 import { FC, useEffect, useRef, useState } from 'react';
 
 import { Space } from 'antd';
+import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
 
 import FileMessage from './file-message.component';
@@ -35,6 +36,7 @@ const Message: FC<MessageProps> = ({ messageDataForRender, preview }) => {
     isLastMessage,
     quotedMessage,
     templateMessage,
+    interactiveButtonsMessage,
     caption,
     fileName,
     isDeleted,
@@ -50,7 +52,6 @@ const Message: FC<MessageProps> = ({ messageDataForRender, preview }) => {
   } = useTranslation();
 
   const messageDate = getMessageDate(timestamp * 1000, 'chat', resolvedLanguage as LanguageLiteral);
-
   const messageRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -58,7 +59,7 @@ const Message: FC<MessageProps> = ({ messageDataForRender, preview }) => {
     if (isLastMessage && element && !isMiniVersion && !isSafari()) {
       element.scrollIntoView();
     }
-  }, [isLastMessage]);
+  }, [isLastMessage, isMiniVersion]);
 
   const [showDeletedMessage, setShowDeletedMessage] = useState(false);
 
@@ -80,6 +81,10 @@ const Message: FC<MessageProps> = ({ messageDataForRender, preview }) => {
         isMiniVersion={isMiniVersion}
       />
     );
+  } else if (interactiveButtonsMessage) {
+    messageBody = (
+      <TemplateMessage interactiveButtonsMessage={interactiveButtonsMessage} type={type} />
+    );
   } else if (templateMessage) {
     messageBody = <TemplateMessage templateMessage={templateMessage} type={type} />;
   } else if (downloadUrl && typeMessage !== 'stickerMessage' && !isMiniVersion) {
@@ -96,12 +101,24 @@ const Message: FC<MessageProps> = ({ messageDataForRender, preview }) => {
   return (
     <div
       ref={messageRef}
-      style={{
-        maxWidth: isMiniVersion ? 'unset' : 500,
-      }}
-      className={`message ${type === 'outgoing' ? `outgoing ${isMiniVersion ? '' : 'full'}` : 'incoming'} p-10`}
+      style={{ maxWidth: isMiniVersion ? 'unset' : 500 }}
+      className={clsx(
+        'message',
+        type === 'outgoing' ? 'outgoing' : 'incoming',
+        type === 'outgoing' && !isMiniVersion && 'full',
+        !interactiveButtonsMessage && 'p-10'
+      )}
     >
-      {showSenderName && <MessageSenderInfo senderName={senderName} phone={phone} />}
+      {showSenderName && (
+        <MessageSenderInfo
+          style={{
+            marginLeft: interactiveButtonsMessage ? 10 : 0,
+            marginTop: interactiveButtonsMessage ? 10 : 0,
+          }}
+          senderName={senderName}
+          phone={phone}
+        />
+      )}
 
       {!isDeleted && quotedMessage && (
         <QuotedMessage

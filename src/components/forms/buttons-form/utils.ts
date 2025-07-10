@@ -20,7 +20,6 @@ export function mapButtonsToInteractive(buttons: Button[]): InteractiveButton[] 
           phoneNumber: button.phoneNumber,
         };
       case 'url':
-      case 'reply':
         return {
           type,
           buttonId,
@@ -28,7 +27,11 @@ export function mapButtonsToInteractive(buttons: Button[]): InteractiveButton[] 
           url: button.url,
         };
       default:
-        throw new Error('Unsupported button type');
+        return {
+          type: 'reply',
+          buttonId,
+          buttonText,
+        };
     }
   });
 }

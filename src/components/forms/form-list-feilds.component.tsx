@@ -26,64 +26,53 @@ const FormListFields: FC<FormListFieldsProperties> = ({
 }) => {
   const { t } = useTranslation();
 
-  const initialValue = [];
+  const initialValue = Array.from({ length: minFields }, () => '');
 
-  for (let index = 0; index < minFields; index++) {
-    initialValue.push('');
-  }
+  const isSimpleStringList = items.length === 1 && !items[0].name;
 
   return (
     <Form.List {...listProperties} initialValue={initialValue}>
-      {(fields, { add, remove }) => {
-        return (
-          <>
-            {fields.map(({ key, name: subGroupIndex, ...restField }) => (
-              <Space
-                key={key}
-                style={{ display: 'flex', marginBottom: 8, ...containerStyles }}
-                className={containerClassNames}
-                align="baseline"
-              >
-                {items.map(({ children, key: groupKey, name = '', ...properties }) => (
-                  <Form.Item
-                    {...restField}
-                    {...properties}
-                    name={[subGroupIndex, name as string]}
-                    key={groupKey + key}
-                    normalize={(value, previousValue, allValues) => {
-                      if (typeof properties.normalize === 'function') {
-                        value = properties.normalize(value, previousValue, allValues);
-                      }
+      {(fields, { add, remove }) => (
+        <>
+          {fields.map(({ key, name: subGroupIndex, ...restField }) => (
+            <Space
+              key={key}
+              style={{ display: 'flex', marginBottom: 8, ...containerStyles }}
+              className={containerClassNames}
+              align="baseline"
+            >
+              {items.map(({ children, key: groupKey, name = '', ...properties }) => (
+                <Form.Item
+                  {...restField}
+                  {...properties}
+                  key={groupKey + key}
+                  name={isSimpleStringList ? subGroupIndex : [subGroupIndex, name as string]}
+                  normalize={(value, previousValue, allValues) => {
+                    if (typeof properties.normalize === 'function') {
+                      return properties.normalize(value, previousValue, allValues);
+                    }
+                    return value;
+                  }}
+                >
+                  {children}
+                </Form.Item>
+              ))}
 
-                      return value;
-                    }}
-                  >
-                    <div>
-                      {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
-                      {/* @ts-ignore */}
-                      {children}
-                    </div>
-                  </Form.Item>
-                ))}
-                {fields.length > minFields && (
-                  <MinusCircleOutlined
-                    onClick={() => {
-                      remove(subGroupIndex);
-                    }}
-                  />
-                )}
-              </Space>
-            ))}
-            {(!maxFields || fields.length < maxFields) && (
-              <Form.Item>
-                <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
-                  {t('ADD')}
-                </Button>
-              </Form.Item>
-            )}
-          </>
-        );
-      }}
+              {fields.length > minFields && (
+                <MinusCircleOutlined onClick={() => remove(subGroupIndex)} />
+              )}
+            </Space>
+          ))}
+
+          {(!maxFields || fields.length < maxFields) && (
+            <Form.Item>
+              <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                {t('ADD')}
+              </Button>
+            </Form.Item>
+          )}
+        </>
+      )}
     </Form.List>
   );
 };

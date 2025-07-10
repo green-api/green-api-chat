@@ -31,7 +31,7 @@ const customQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError>
   const { idInstance, apiTokenInstance, apiUrl, mediaUrl, allMessages } = (args as FetchArgs)
     .params as InstanceInterface & { allMessages?: boolean };
 
-  const cacheKey = `lastMessages(${JSON.stringify({ apiTokenInstance, apiUrl, idInstance, mediaUrl })})`;
+  const cacheKey = `lastMessages(${JSON.stringify({ allMessages, apiTokenInstance, apiUrl, idInstance, mediaUrl })})`;
   const currentChats = state.greenAPI.queries[cacheKey]?.data;
 
   let minutes = 3;
@@ -70,10 +70,17 @@ const customQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError>
 
   if (lastIncomingMessages.data && lastOutgoingMessages.data) {
     if (allMessages) {
-      lastIncomingMessages.data = getAllChats(
-        lastIncomingMessages.data as MessageInterface[],
-        lastOutgoingMessages.data as MessageInterface[]
-      );
+      !currentChats
+        ? (lastIncomingMessages.data = getAllChats(
+            lastIncomingMessages.data as MessageInterface[],
+            lastOutgoingMessages.data as MessageInterface[]
+          ))
+        : (lastIncomingMessages.data = updateLastChats(
+            currentChats as MessageInterface[],
+            lastIncomingMessages.data as MessageInterface[],
+            lastOutgoingMessages.data as MessageInterface[],
+            getIsMiniVersion(type) ? 5 : undefined
+          ));
     } else {
       lastIncomingMessages.data = !currentChats
         ? getLastChats(

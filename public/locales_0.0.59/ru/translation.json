@@ -191,5 +191,9 @@
   "REPLY_BUTTONS": "Быстрые ответы",
   "URL_FILE_PLACEHOLDER": "Ссылка на файл",
   "FILE_NAME_PLACEHOLDER": "Имя файла",
-  "CHAT_ID_PHONE_PLACEHOLDER": "Номер телефона"
+  "CHAT_ID_PHONE_PLACEHOLDER": "Номер телефона",
+  "STATUSES_HEADER": "Отправить статус",
+  "NO_INSTANCE_CREDENTIALS": "Не переданы авторизационные данные инстанса",
+  "REFRESH_PAGE": "Обновить страницу",
+  "UNEXPECTED_ERROR": "Произошла непредвиденная ошибка, обратитесь в службу технической поддержки"
 }

@@ -21,9 +21,6 @@ const SendTextStatusForm: FC = () => {
 
   const [form] = useFormWithLanguageValidation<SendTextStatusFormValues>();
 
-  // const dispatch = useAppDispatch();x
-  // const { setActiveSendingMode } = useActions();
-
   const onFinish = async (values: SendTextStatusFormValues) => {
     const color = values.backgroundColor?.toHexString?.().toUpperCase();
 
@@ -57,8 +54,6 @@ const SendTextStatusForm: FC = () => {
     form.setFields([
       { name: 'response', warnings: [`${t('SENT_STATUS_WARNING')} ${data?.idMessage}`] },
     ]);
-
-    // dispatch(setActiveSendingMode(null));
   };
 
   return (

@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import Participants from './participants.component';
 import SelectStatusFont from './select-status-font.component';
 import { statusFormLayout } from 'configs';
-import { useActions, useAppDispatch, useAppSelector, useFormWithLanguageValidation } from 'hooks';
+import { useAppSelector, useFormWithLanguageValidation } from 'hooks';
 import { useSendTextStatusMutation } from 'services/green-api/endpoints';
 import { selectInstance } from 'store/slices/instances.slice';
 import { SendTextStatusFormValues } from 'types';
@@ -21,9 +21,6 @@ const SendTextStatusForm: FC = () => {
 
   const [form] = useFormWithLanguageValidation<SendTextStatusFormValues>();
 
-  const dispatch = useAppDispatch();
-  const { setActiveSendingMode } = useActions();
-
   const onFinish = async (values: SendTextStatusFormValues) => {
     const color = values.backgroundColor?.toHexString?.().toUpperCase();
 
@@ -36,12 +33,12 @@ const SendTextStatusForm: FC = () => {
       ...instanceCredentials,
       ...values,
       participants,
-      backgroundColor: color,
+      backgroundColor: color ?? '#000000',
     };
 
     form.setFields([{ name: 'response', errors: [], warnings: [] }]);
 
-    const { error } = await sendStatus(body);
+    const { error, data } = await sendStatus(body);
 
     if (isApiError(error)) {
       switch (error.status) {
@@ -54,7 +51,9 @@ const SendTextStatusForm: FC = () => {
       }
     }
 
-    dispatch(setActiveSendingMode(null));
+    form.setFields([
+      { name: 'response', warnings: [`${t('SENT_STATUS_WARNING')} ${data?.idMessage}`] },
+    ]);
   };
 
   return (
@@ -67,8 +66,8 @@ const SendTextStatusForm: FC = () => {
         <Input placeholder={t('MESSAGE_PLACEHOLDER')} />
       </Form.Item>
 
-      <Form.Item name="backgroundColor" label={t('BACKGROUND_COLOR_LABEL')}>
-        <ColorPicker disabledAlpha defaultValue="#000" />
+      <Form.Item name="backgroundColor" initialValue="#000000" label={t('BACKGROUND_COLOR_LABEL')}>
+        <ColorPicker disabledAlpha defaultValue="#000000" />
       </Form.Item>
 
       <SelectStatusFont />

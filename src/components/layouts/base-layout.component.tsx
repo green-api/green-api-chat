@@ -16,6 +16,7 @@ import {
   isValidChatType,
   isConsoleMessageData,
   getIsChatWorkingFromStorage,
+  isPageInIframe,
 } from 'utils';
 
 const BaseLayout: FC = () => {
@@ -28,6 +29,8 @@ const BaseLayout: FC = () => {
   const [searchParams] = useSearchParams();
 
   const { setType, setSelectedInstance, setBrandData, setTheme, login, setPlatform } = useActions();
+
+  // console.log(isMiniVersion, type);
 
   useEffect(() => {
     function handleMessage(event: MessageEvent<MessageData>) {
@@ -133,16 +136,17 @@ const BaseLayout: FC = () => {
   }, [searchParams]);
 
   useEffect(() => {
-    if (!isAuth(user) && !isMiniVersion && !isPartnerChat(searchParams) && isEventAdded) {
+    const isNotAuthorized = !isAuth(user);
+    const isNotPartner = !isPartnerChat(searchParams);
+    const isNotIframe = !isPageInIframe();
+
+    const shouldThrowOnMini = isNotAuthorized && !isMiniVersion && isNotPartner && isEventAdded;
+    const shouldThrowOnTab = isNotAuthorized && isNotPartner && isNotIframe && type === 'tab';
+
+    if (shouldThrowOnMini || shouldThrowOnTab) {
       throw new Error('NO_INSTANCE_CREDENTIALS');
     }
   }, [user, isMiniVersion, searchParams, isEventAdded, type]);
-
-  useEffect(() => {
-    if (!isAuth(user) && !isMiniVersion && !isPartnerChat(searchParams) && type === 'tab') {
-      throw new Error('NO_INSTANCE_CREDENTIALS');
-    }
-  }, [type, isAuth, searchParams, user]);
 
   return (
     <Layout className={`app ${!isMiniVersion ? 'bg' : ''}`}>

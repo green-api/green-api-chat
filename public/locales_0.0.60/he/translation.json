@@ -181,5 +181,6 @@
   "NO_INSTANCE_CREDENTIALS": "לא סופקו אישורי אימות של האינסטנס",
   "REFRESH_PAGE": "רענן את הדף",
   "UNEXPECTED_ERROR": "אירעה שגיאה בלתי צפויה. אנא פנה לתמיכה הטכנית.",
-  "SENT_STATUS_WARNING": "מזהה הסטטוס שנשלח:"
+  "SENT_STATUS_WARNING": "מזהה הסטטוס שנשלח:",
+  "DUPLICATED_FIELD_ERROR": "אפשרות זו כבר קיימת"
 }

@@ -131,10 +131,10 @@ const BaseLayout: FC = () => {
   }, [searchParams]);
 
   useEffect(() => {
-    if (!isAuth(user) && !isMiniVersion && !isPartnerChat(searchParams) && isEventAdded) {
+    if (!isAuth(user) && !isPartnerChat(searchParams)) {
       throw new Error('NO_INSTANCE_CREDENTIALS');
     }
-  }, [user, isMiniVersion, searchParams, isEventAdded]);
+  }, [user, isMiniVersion, searchParams]);
 
   return (
     <Layout className={`app ${!isMiniVersion ? 'bg' : ''}`}>

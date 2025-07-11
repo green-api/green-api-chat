@@ -15,7 +15,11 @@ const PollMessage: FC<Props> = ({ data, senderName }) => {
   const totalVotes = data.votes?.reduce((acc, v) => acc + v.optionVoters.length, 0) || 0;
 
   return (
-    <Card size="small" title={`${data.name} (${senderName})`} style={{ marginBottom: 8 }}>
+    <Card
+      size="small"
+      title={`${data.name} (${senderName})`}
+      style={{ marginBottom: 8, width: 300 }}
+    >
       {data.options?.map((option, idx) => {
         const vote = data.votes?.find((v) => v.optionName === option.optionName);
         const count = vote?.optionVoters.length || 0;

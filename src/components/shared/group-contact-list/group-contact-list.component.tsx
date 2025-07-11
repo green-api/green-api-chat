@@ -22,7 +22,7 @@ const GroupContactList: FC = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState('');
 
-  if (!activeChat.contactInfo || activeChat.contactInfo === 'Error: forbidden') {
+  if (!activeChat.contactInfo || typeof activeChat.contactInfo === 'string') {
     return null;
   }
 

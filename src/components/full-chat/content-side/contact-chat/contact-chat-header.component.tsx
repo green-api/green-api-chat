@@ -14,6 +14,8 @@ const ContactChatHeader: FC = () => {
 
   const { setActiveChat, setContactInfoOpen } = useActions();
 
+  console.log('activeChat', activeChat);
+
   return (
     <Header className="contact-chat-header">
       <Space className="chatHeader-space" onClick={() => setContactInfoOpen(true)}>

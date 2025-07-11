@@ -28,7 +28,7 @@ const ContactInfoHeader: FC = () => {
   const isAdmin = useIsGroupAdmin(activeChat);
 
   const getHeaderBody = () => {
-    if (!activeChat.contactInfo || activeChat.contactInfo === 'Error: forbidden') {
+    if (!activeChat.contactInfo || typeof activeChat.contactInfo === 'string') {
       const contactName = activeChat.chatId?.replace(/\@.*$/, '');
 
       const contactCredentials = activeChat.chatId?.includes('@c.us')

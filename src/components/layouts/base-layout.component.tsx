@@ -7,7 +7,7 @@ import { useSearchParams } from 'react-router-dom';
 import FullChat from 'components/full-chat/chat.component';
 import MiniChat from 'components/mini-chat/chat.component';
 import { useActions, useAppSelector } from 'hooks';
-import { selectMiniVersion } from 'store/slices/chat.slice';
+import { selectMiniVersion, selectType } from 'store/slices/chat.slice';
 import { selectUser } from 'store/slices/user.slice';
 import { MessageData, MessageEventTypeEnum, TariffsEnum } from 'types';
 import {
@@ -20,7 +20,9 @@ import {
 
 const BaseLayout: FC = () => {
   const isMiniVersion = useAppSelector(selectMiniVersion);
+  const type = useAppSelector(selectType);
   const user = useAppSelector(selectUser);
+
   const [isEventAdded, setIsEventAdded] = useState(false);
 
   const [searchParams] = useSearchParams();
@@ -131,10 +133,16 @@ const BaseLayout: FC = () => {
   }, [searchParams]);
 
   useEffect(() => {
-    if (!isAuth(user) && !isMiniVersion && !isPartnerChat(searchParams)) {
+    if (!isAuth(user) && !isMiniVersion && !isPartnerChat(searchParams) && isEventAdded) {
       throw new Error('NO_INSTANCE_CREDENTIALS');
     }
-  }, [user, isMiniVersion, searchParams]);
+  }, [user, isMiniVersion, searchParams, isEventAdded, type]);
+
+  useEffect(() => {
+    if (!isAuth(user) && !isPartnerChat(searchParams) && type === 'tab') {
+      throw new Error('NO_INSTANCE_CREDENTIALS');
+    }
+  }, [type, isAuth, searchParams, user]);
 
   return (
     <Layout className={`app ${!isMiniVersion ? 'bg' : ''}`}>

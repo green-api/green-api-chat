@@ -4,7 +4,6 @@ import { LeftOutlined, PoweroffOutlined } from '@ant-design/icons';
 import { Flex, Space, Typography } from 'antd';
 import { useTranslation } from 'react-i18next';
 
-import SelectStatusMode from 'components/UI/select/select-status.component';
 import { CONSOLE_URL } from 'configs';
 import { useActions, useAppSelector } from 'hooks';
 import { selectActiveChat } from 'store/slices/chat.slice';

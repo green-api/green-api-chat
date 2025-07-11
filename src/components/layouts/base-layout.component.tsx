@@ -139,7 +139,7 @@ const BaseLayout: FC = () => {
   }, [user, isMiniVersion, searchParams, isEventAdded, type]);
 
   useEffect(() => {
-    if (!isAuth(user) && !isPartnerChat(searchParams) && type === 'tab') {
+    if (!isAuth(user) && !isMiniVersion && !isPartnerChat(searchParams) && type === 'tab') {
       throw new Error('NO_INSTANCE_CREDENTIALS');
     }
   }, [type, isAuth, searchParams, user]);

@@ -2,7 +2,7 @@ import en_US from 'antd/es/locale/en_US';
 import he_IL from 'antd/es/locale/he_IL';
 import ru_RU from 'antd/es/locale/ru_RU';
 
-export const APP_API_URL = 'https://console.green-api.com/api/v1/';
+export const APP_API_URL = 'https://console.test.greenapi.org/api/v1/';
 
 export const APP_API_TOKEN =
   import.meta.env.VITE_DEV_MODE === 'true'

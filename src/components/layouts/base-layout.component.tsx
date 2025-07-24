@@ -30,12 +30,9 @@ const BaseLayout: FC = () => {
 
   const { setType, setSelectedInstance, setBrandData, setTheme, login, setPlatform } = useActions();
 
-  // console.log(isMiniVersion, type);
-
   useEffect(() => {
     function handleMessage(event: MessageEvent<MessageData>) {
       if (!isConsoleMessageData(event.data)) {
-        console.log('unknown event');
         return;
       }
 

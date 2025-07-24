@@ -87,6 +87,9 @@ const ChatListItem: FC<ContactListItemProps> = ({
   const isLoading = isGroupDataLoading || isContactInfoLoading;
 
   const avatar = useMemo<string>(() => {
+    if (instanceCredentials.idInstance.toString().startsWith('7835')) {
+      return emptyAvatarButAvailable;
+    }
     if (contactInfo?.avatar) return contactInfo.avatar;
     if (avatarData?.urlAvatar) return avatarData.urlAvatar;
 

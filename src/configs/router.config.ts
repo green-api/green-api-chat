@@ -38,4 +38,4 @@ export const EXTERNAL_LINKS = {
   website_he: 'https://green-api.org.il/',
 };
 
-export const CONSOLE_URL = import.meta.env.VITE_CONSOLE_APP_HOST ?? 'https://console.green-api.com';
+export const CONSOLE_URL = document.referrer;

@@ -37,7 +37,7 @@ const ChatHeader: FC = () => {
       <Space style={{ gap: 10 }}>
         {platform === 'web' && (
           <Typography.Link
-            href={CONSOLE_URL + '/chats'}
+            href={CONSOLE_URL + 'chats'}
             target="_parent"
             rel="noreferrer"
             title={t('FULL_VERSION_TITLE')}

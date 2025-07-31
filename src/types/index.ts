@@ -47,7 +47,12 @@ export interface ChatState {
   brandImgUrl?: string;
 }
 
-export type ChatType = 'tab' | 'console-page' | 'instance-view-page' | 'partner-iframe';
+export type ChatType =
+  | 'tab'
+  | 'console-page'
+  | 'instance-view-page'
+  | 'partner-iframe'
+  | 'one-chat-only';
 export type ChatPlatform = 'web' | 'ios' | 'android';
 
 export interface ActiveChat

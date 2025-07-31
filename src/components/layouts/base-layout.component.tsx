@@ -4,6 +4,8 @@ import { Layout } from 'antd';
 import i18n from 'i18next';
 import { useSearchParams } from 'react-router-dom';
 
+import { useLazyGetContactInfoQuery } from '../../services/green-api/endpoints';
+import emptyAvatarButAvailable from 'assets/emptyAvatarButAvailable.svg';
 import FullChat from 'components/full-chat/chat.component';
 import MiniChat from 'components/mini-chat/chat.component';
 import { useActions, useAppSelector } from 'hooks';
@@ -28,7 +30,17 @@ const BaseLayout: FC = () => {
 
   const [searchParams] = useSearchParams();
 
-  const { setType, setSelectedInstance, setBrandData, setTheme, login, setPlatform } = useActions();
+  const {
+    setType,
+    setSelectedInstance,
+    setBrandData,
+    setTheme,
+    login,
+    setPlatform,
+    setActiveChat,
+  } = useActions();
+
+  const [getContactInfo] = useLazyGetContactInfoQuery();
 
   useEffect(() => {
     function handleMessage(event: MessageEvent<MessageData>) {
@@ -129,6 +141,32 @@ const BaseLayout: FC = () => {
 
       brandDescription && setBrandData({ description: brandDescription });
       brandImageUrl && setBrandData({ brandImageUrl });
+
+      if (searchParams.has('chatId')) {
+        setType('one-chat-only');
+
+        const chatId = searchParams.get('chatId');
+        if (chatId) {
+          (async () => {
+            const { data } = await getContactInfo({
+              chatId,
+              apiUrl: apiUrl + '/',
+              mediaUrl: mediaUrl + '/',
+              apiTokenInstance: apiTokenInstance!,
+              idInstance: +idInstance!,
+            });
+
+            if (data) {
+              setActiveChat({
+                chatId,
+                avatar: data.avatar,
+                senderName: chatId,
+                contactInfo: data,
+              });
+            }
+          })();
+        }
+      }
     }
   }, [searchParams]);
 

@@ -12,6 +12,8 @@ export const {
   useGetChatHistoryQuery,
   useGetGroupDataQuery,
   useGetContactInfoQuery,
+  useLazyGetGroupDataQuery,
+  useLazyGetContactInfoQuery,
   useCheckWhatsappMutation,
   useGetAvatarQuery,
   useLastMessagesQuery,

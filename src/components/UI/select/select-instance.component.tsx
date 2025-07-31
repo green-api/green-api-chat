@@ -27,7 +27,7 @@ const SelectInstance: FC = () => {
 
   const selectedInstance = useAppSelector(selectInstance);
 
-  const { setSelectedInstance } = useActions();
+  const { setSelectedInstance, setActiveChat } = useActions();
 
   const [instances, setInstances] = useState<SelectInstanceItemInterface[] | undefined>();
 
@@ -169,6 +169,8 @@ const SelectInstance: FC = () => {
           tariff: option.tariff,
           isChatWorking: isChatWorkingFromStorage,
         });
+
+        setActiveChat(null);
       }}
     />
   );

@@ -1,14 +1,21 @@
 import { FC, useEffect, useLayoutEffect, useState } from 'react';
 
-import { Layout } from 'antd';
+import { Layout, message } from 'antd';
 import i18n from 'i18next';
+import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 
-import { useLazyGetContactInfoQuery } from '../../services/green-api/endpoints';
+import emptyAvatar from '../../assets/emptyAvatar.svg';
 import emptyAvatarButAvailable from 'assets/emptyAvatarButAvailable.svg';
+import emptyAvatarGroup from 'assets/emptyAvatarGroup.png';
 import FullChat from 'components/full-chat/chat.component';
 import MiniChat from 'components/mini-chat/chat.component';
 import { useActions, useAppSelector } from 'hooks';
+import {
+  useLazyGetAvatarQuery,
+  useLazyGetContactInfoQuery,
+  useLazyGetGroupDataQuery,
+} from 'services/green-api/endpoints';
 import { selectMiniVersion, selectType } from 'store/slices/chat.slice';
 import { selectUser } from 'store/slices/user.slice';
 import { MessageData, MessageEventTypeEnum, TariffsEnum } from 'types';
@@ -19,6 +26,8 @@ import {
   isConsoleMessageData,
   getIsChatWorkingFromStorage,
   isPageInIframe,
+  getErrorMessage,
+  getPhoneNumberFromChatId,
 } from 'utils';
 
 const BaseLayout: FC = () => {
@@ -29,6 +38,8 @@ const BaseLayout: FC = () => {
   const [isEventAdded, setIsEventAdded] = useState(false);
 
   const [searchParams] = useSearchParams();
+
+  const { t } = useTranslation();
 
   const {
     setType,
@@ -41,7 +52,10 @@ const BaseLayout: FC = () => {
   } = useActions();
 
   const [getContactInfo] = useLazyGetContactInfoQuery();
+  const [getGroupData] = useLazyGetGroupDataQuery();
+  const [getAvatar] = useLazyGetAvatarQuery();
 
+  // TODO: refactor useEffects
   useEffect(() => {
     function handleMessage(event: MessageEvent<MessageData>) {
       if (!isConsoleMessageData(event.data)) {
@@ -121,21 +135,21 @@ const BaseLayout: FC = () => {
       const apiUrl = searchParams.get('apiUrl');
       const mediaUrl = searchParams.get('mediaUrl');
 
+      if (!idInstance || !apiTokenInstance || !apiUrl || !mediaUrl) return;
+
       const language = searchParams.get('lng');
 
       const brandDescription = searchParams.get('dsc');
       const brandImageUrl = searchParams.get('logo');
 
-      if (idInstance && apiTokenInstance && apiUrl && mediaUrl) {
-        setType('partner-iframe');
-        setSelectedInstance({
-          idInstance: +idInstance,
-          apiTokenInstance: apiTokenInstance,
-          apiUrl: apiUrl + '/',
-          mediaUrl: mediaUrl + '/',
-          tariff: TariffsEnum.Business,
-        });
-      }
+      setType('partner-iframe');
+      setSelectedInstance({
+        idInstance: +idInstance,
+        apiTokenInstance: apiTokenInstance,
+        apiUrl: apiUrl + '/',
+        mediaUrl: mediaUrl + '/',
+        tariff: TariffsEnum.Business,
+      });
 
       language && i18n.changeLanguage(language);
 
@@ -148,22 +162,81 @@ const BaseLayout: FC = () => {
         const chatId = searchParams.get('chatId');
         if (chatId) {
           (async () => {
-            const { data } = await getContactInfo({
-              chatId,
-              apiUrl: apiUrl + '/',
-              mediaUrl: mediaUrl + '/',
-              apiTokenInstance: apiTokenInstance!,
-              idInstance: +idInstance!,
-            });
+            let contactInfo = undefined;
+            let groupInfo = undefined;
+            let avatar = chatId.includes('g.us') ? emptyAvatarGroup : emptyAvatarButAvailable;
+            let error = undefined;
 
-            if (data) {
-              setActiveChat({
-                chatId,
-                avatar: data.avatar,
-                senderName: chatId,
-                contactInfo: data,
+            if (chatId.includes('g.us') && !idInstance.toString().startsWith('7835')) {
+              const { data, error: groupDataError } = await getGroupData({
+                groupId: chatId,
+                apiUrl: apiUrl + '/',
+                mediaUrl: mediaUrl + '/',
+                apiTokenInstance: apiTokenInstance,
+                idInstance: +idInstance,
               });
+
+              if (data && data !== 'Error: item-not-found') {
+                groupInfo = data;
+              }
+
+              error = groupDataError;
+
+              const { data: avatarData } = await getAvatar({
+                chatId: chatId,
+                apiUrl: apiUrl + '/',
+                mediaUrl: mediaUrl + '/',
+                apiTokenInstance: apiTokenInstance,
+                idInstance: +idInstance,
+              });
+
+              if (avatarData) {
+                avatar = avatarData.urlAvatar;
+
+                if (!avatarData.available && !chatId.includes('g.us')) {
+                  avatar = emptyAvatar;
+                }
+              }
             }
+
+            if (!chatId.includes('g.us') && !idInstance.toString().startsWith('7835')) {
+              const { data, error: contactInfoError } = await getContactInfo({
+                chatId,
+                apiUrl: apiUrl + '/',
+                mediaUrl: mediaUrl + '/',
+                apiTokenInstance: apiTokenInstance,
+                idInstance: +idInstance,
+              });
+
+              contactInfo = data;
+
+              if (contactInfo?.avatar) {
+                avatar = contactInfo.avatar;
+              }
+
+              error = contactInfoError;
+            }
+
+            if (error) {
+              message.error(getErrorMessage(error, t), 0);
+              return;
+            }
+
+            const senderName =
+              (typeof groupInfo === 'object' &&
+                groupInfo !== null &&
+                'subject' in groupInfo &&
+                groupInfo.subject) ||
+              contactInfo?.contactName ||
+              contactInfo?.name ||
+              getPhoneNumberFromChatId(chatId);
+
+            setActiveChat({
+              chatId,
+              senderName,
+              avatar,
+              contactInfo: groupInfo || contactInfo,
+            });
           })();
         }
       }

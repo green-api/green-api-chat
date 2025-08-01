@@ -77,9 +77,16 @@ export interface InstanceInterface {
   mediaUrl: string;
 }
 
-export interface ApiErrorResponse<T = unknown> {
+export interface ApiErrorResponse<T = DefaultApiErrorResponseData> {
   status: number | string;
   data: T;
+}
+
+export interface DefaultApiErrorResponseData {
+  message: string;
+  path: string;
+  statusCode: number;
+  timestamp: string;
 }
 
 export interface MessageMenuState {

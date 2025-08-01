@@ -16,6 +16,7 @@ export const {
   useLazyGetContactInfoQuery,
   useCheckWhatsappMutation,
   useGetAvatarQuery,
+  useLazyGetAvatarQuery,
   useLastMessagesQuery,
   useSendFileByUploadMutation,
   useSendContactMutation,

@@ -134,7 +134,7 @@ http://localhost:5173/?idInstance=YOUR_ID&apiTokenInstance=YOUR_API_TOKEN&apiUrl
 | `lng`     | Language (`ru`, `en`, `he`)                              |
 | `dsc`     | Description text on home screen when no chat is selected |
 | `logo`    | Image/logo URL shown above the description               |
-| `chatId`  | If you need only one chat                                |
+| `chatId`  | If you need only one chat. In format XXXXXXXXXXX@c.us    |
 
 ## 📄 License
 

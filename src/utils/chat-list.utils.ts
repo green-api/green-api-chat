@@ -126,9 +126,13 @@ export const filterContacts = (
   return Array.from(
     allMessages.reduce((acc, msg) => {
       const name = (contactNames[msg.chatId] || '').toLowerCase();
-      if (name.includes(query) && !acc.has(msg.chatId)) {
+
+      const normalizedChatId = msg.chatId.replace(/@c\.us$/, '').toLowerCase();
+
+      if ((name.includes(query) || normalizedChatId.includes(query)) && !acc.has(msg.chatId)) {
         acc.set(msg.chatId, msg);
       }
+
       return acc;
     }, new Map<string, MessageInterface>())
   ).map(([, message]) => message);

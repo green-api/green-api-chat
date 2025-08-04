@@ -15,3 +15,9 @@ RUN cd /usr/src/app && npm ci && npm run build
 FROM nginx:1.23.3-alpine
 COPY --from=build /usr/src/app/dist /usr/share/nginx/html
 ADD .devops/build/conf.nginx /etc/nginx/conf.d/default.conf
+
+WORKDIR /usr/share/nginx/html
+COPY ./.env /.env
+COPY ./entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+ENTRYPOINT sh /entrypoint.sh

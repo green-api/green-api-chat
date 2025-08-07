@@ -7,16 +7,27 @@ import { useTranslation } from 'react-i18next';
 import AddNewChat from './add-new-chat.component';
 import ChatsHeader from './chats-header.component';
 import ChatList from 'components/shared/chat-list/chat-list.component';
-import SelectInstance from 'components/UI/select/select-instance.component';
-import SelectStatusMode from 'components/UI/select/select-status.component';
+import NewChatIcon from 'assets/newChat.svg?react';
 import { useAppSelector } from 'hooks';
+import { useGetWaSettingsQuery } from 'services/green-api/endpoints';
 import { selectMiniVersion, selectType } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
+import { StateInstanceEnum } from 'types';
 
 const Chats: FC = () => {
   const isMiniVersion = useAppSelector(selectMiniVersion);
   const type = useAppSelector(selectType);
   const instanceCredentials = useAppSelector(selectInstance);
+  console.log(instanceCredentials);
+
+  const { data: waSettings, isLoading: isWaSettingsLoading } = useGetWaSettingsQuery(
+    {
+      ...instanceCredentials,
+    },
+    { skip: !instanceCredentials?.idInstance || !instanceCredentials?.apiTokenInstance }
+  );
+
+  console.log(waSettings);
 
   const { t } = useTranslation();
 
@@ -29,20 +40,41 @@ const Chats: FC = () => {
       <Flex
         align="center"
         gap={8}
-        style={{ padding: '0 5px' }}
-        justify={type === 'partner-iframe' ? 'end' : 'space-around'}
+        style={{ padding: '6px 20px' }}
+        justify={type === 'partner-iframe' ? 'end' : 'space-between'}
       >
-        {type !== 'partner-iframe' && <SelectInstance />}
+        <Flex gap={20} align="center">
+          <p style={{ fontSize: '1.5rem' }}>{t('CHAT_HEADER')}</p>
+          {!isWaSettingsLoading && (
+            <div
+              style={{
+                padding: '4px 10px',
+                borderRadius: 4,
+                color:
+                  waSettings?.stateInstance === StateInstanceEnum.Authorized
+                    ? 'var(--authorized-text-color)'
+                    : 'var(--not-authorized-text-color)',
+                backgroundColor:
+                  waSettings?.stateInstance === StateInstanceEnum.Authorized
+                    ? 'var(--authorized-status-color)'
+                    : 'var(--not-authorized-status-color)',
+              }}
+            >
+              {waSettings?.stateInstance === StateInstanceEnum.Authorized
+                ? t('AUTHORIZED')
+                : t('NOT_AUTHORIZED')}
+            </div>
+          )}
+        </Flex>
         {!isMiniVersion && (type === 'console-page' || type === 'partner-iframe') && (
           <a className={type === 'partner-iframe' ? 'p-10' : undefined}>
-            <UserAddOutlined
+            <NewChatIcon
               style={{ fontSize: 20 }}
               onClick={() => setIsVisible(true)}
               title={t('ADD_NEW_CHAT_HEADER')}
             />
           </a>
         )}
-        <SelectStatusMode />
       </Flex>
 
       <ChatList key={instanceCredentials?.idInstance} />

@@ -15,8 +15,8 @@
   --link-color: mediumseagreen;
   --link-hover-color: #009805;
 
-  --authorized-status-color: #4cae4fff;
-  --not-authorized-status-color: rgb(255, 39, 39);
+  --authorized-status-color: #264500;
+  --not-authorized-status-color: rgb(65, 28, 0);
   --starting-status-color: #1890ff;
   --warning-status-color: #ff9100;
 
@@ -63,4 +63,7 @@
   --code-example-bg: #282a36;
 
   --chat-bg-opacity: 0.2;
+
+  --authorized-text-color: #62ba64;
+  --not-authorized-text-color: #ff3535;
 }

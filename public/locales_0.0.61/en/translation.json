@@ -184,5 +184,7 @@
   "REFRESH_PAGE": "Refresh the page",
   "UNEXPECTED_ERROR": "An unexpected error occurred. Please contact technical support.",
   "SENT_STATUS_WARNING": "Sent status ID:",
-  "DUPLICATED_FIELD_ERROR": "This option already exists"
+  "DUPLICATED_FIELD_ERROR": "This option already exists",
+  "AUTHORIZED": "Authorized",
+  "NOT_AUTHORIZED": "Not authorized"
 }

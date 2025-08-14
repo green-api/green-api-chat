@@ -32,8 +32,6 @@ const GroupContactListItem: FC<GroupContactListItemProps> = ({ participant }) =>
     chatId: isMax ? (participant.chatId as string) : participant.id,
   });
 
-  console.log(isMax);
-
   const contactName =
     contactInfo?.contactName || contactInfo?.name || getPhoneNumberFromChatId(participant.id);
 

@@ -75,8 +75,6 @@ const BaseLayout: FC = () => {
               isChatWorking = getIsChatWorkingFromStorage(event.data.payload?.idInstance);
             }
 
-            console.log(event.data.payload);
-
             setSelectedInstance({
               idInstance: event.data.payload.idInstance,
               apiTokenInstance: event.data.payload.apiTokenInstance,

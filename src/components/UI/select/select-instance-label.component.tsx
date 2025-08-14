@@ -3,7 +3,7 @@ import { FC } from 'react';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Space, Spin } from 'antd';
 
-import { useIsMaxInstance } from 'hooks/use-is-max-instance';
+import { isMaxInstance } from 'hooks/use-is-max-instance';
 import { useGetWaSettingsQuery, useGetAccountSettingsQuery } from 'services/green-api/endpoints';
 import { ExpandedInstanceInterface, StateInstanceEnum } from 'types';
 
@@ -12,8 +12,8 @@ const SelectInstanceLabel: FC<
     ExpandedInstanceInterface,
     'name' | 'idInstance' | 'apiTokenInstance' | 'apiUrl' | 'mediaUrl' | 'typeInstance'
   >
-> = ({ idInstance, apiTokenInstance, apiUrl, mediaUrl, name }) => {
-  const isMax = useIsMaxInstance();
+> = ({ idInstance, apiTokenInstance, apiUrl, mediaUrl, name, typeInstance }) => {
+  const isMax = isMaxInstance(typeInstance);
 
   // Call both queries unconditionally but skip based on isMax
   const { data: waSettings, isLoading: isLoadingWaSettings } = useGetWaSettingsQuery(

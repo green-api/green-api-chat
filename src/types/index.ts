@@ -75,6 +75,7 @@ export interface InstanceInterface {
   apiTokenInstance: string;
   apiUrl: string;
   mediaUrl: string;
+  typeInstance?: string;
 }
 
 export interface ApiErrorResponse<T = DefaultApiErrorResponseData> {

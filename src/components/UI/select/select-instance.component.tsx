@@ -100,6 +100,7 @@ const SelectInstance: FC = () => {
           apiUrl: defaultInstance.apiUrl,
           mediaUrl: defaultInstance.mediaUrl,
           tariff: defaultInstance.tariff,
+          typeInstance: defaultInstance.typeInstance,
         });
       }
 
@@ -112,6 +113,7 @@ const SelectInstance: FC = () => {
       apiUrl: instances[0].apiUrl,
       mediaUrl: instances[0].mediaUrl,
       tariff: instances[0].tariff,
+      typeInstance: instances[0].typeInstance,
     });
   }, [instances, isSuccessLoadingInstances, isLoadingInstances]);
 
@@ -168,6 +170,7 @@ const SelectInstance: FC = () => {
           mediaUrl: option.mediaUrl,
           tariff: option.tariff,
           isChatWorking: isChatWorkingFromStorage,
+          typeInstance: option.typeInstance,
         });
 
         setActiveChat(null);

@@ -35,7 +35,7 @@ const GroupContactList: FC = () => {
   const handleModalOk = async () => {
     const cleaned = phoneNumber.replace(/\D/g, '');
 
-    if (cleaned.length < 10) {
+    if (cleaned.length < 7) {
       message.error(t('ENTER_VALID_PHONE_NUMBER'));
       return;
     }

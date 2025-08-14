@@ -250,6 +250,7 @@ export type GetGroupDataErrorResponse = 'Error: item-not-found' | 'Error: forbid
 
 export interface GroupParticipantInterface {
   id: string;
+  chatId?: string;
   isAdmin: boolean;
   isSuperAdmin: boolean;
 }

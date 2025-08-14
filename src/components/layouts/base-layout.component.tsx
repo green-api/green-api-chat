@@ -75,6 +75,8 @@ const BaseLayout: FC = () => {
               isChatWorking = getIsChatWorkingFromStorage(event.data.payload?.idInstance);
             }
 
+            console.log(event.data.payload);
+
             setSelectedInstance({
               idInstance: event.data.payload.idInstance,
               apiTokenInstance: event.data.payload.apiTokenInstance,
@@ -82,6 +84,7 @@ const BaseLayout: FC = () => {
               mediaUrl: event.data.payload.mediaUrl,
               tariff: event.data.payload.tariff,
               isChatWorking: isChatWorking,
+              typeInstance: event.data.payload.typeInstance,
             });
             setIsEventAdded(true);
             login({
@@ -149,6 +152,7 @@ const BaseLayout: FC = () => {
         apiUrl: apiUrl + '/',
         mediaUrl: mediaUrl + '/',
         tariff: TariffsEnum.Business,
+        typeInstance: '',
       });
 
       language && i18n.changeLanguage(language);

@@ -25,6 +25,7 @@ const ChatsHeader: FC = () => {
       apiTokenInstance: '',
       apiUrl: '',
       mediaUrl: '',
+      typeInstance: '',
       tariff: TariffsEnum.Developer,
     });
     logout();

@@ -59,7 +59,7 @@ const ChatListItem: FC<ContactListItemProps> = ({
     },
     {
       skip:
-        !lastMessage.chatId?.includes('g.us') ||
+        (!lastMessage.chatId?.includes('g.us') && !lastMessage.chatId?.startsWith('-')) ||
         instanceCredentials?.idInstance.toString().startsWith('7835'),
     }
   );
@@ -72,7 +72,8 @@ const ChatListItem: FC<ContactListItemProps> = ({
     {
       skip:
         lastMessage.chatId?.includes('g.us') ||
-        instanceCredentials?.idInstance.toString().startsWith('7835'),
+        instanceCredentials?.idInstance.toString().startsWith('7835') ||
+        lastMessage.chatId?.startsWith('-'),
     }
   );
 
@@ -89,6 +90,9 @@ const ChatListItem: FC<ContactListItemProps> = ({
   const isLoading = isGroupDataLoading || isContactInfoLoading;
 
   const avatar = useMemo<string>(() => {
+    if (instanceCredentials.idInstance.toString().startsWith('7835')) {
+      return emptyAvatarButAvailable;
+    }
     if (contactInfo?.avatar) return contactInfo.avatar;
     if (avatarData?.urlAvatar) return avatarData.urlAvatar;
 

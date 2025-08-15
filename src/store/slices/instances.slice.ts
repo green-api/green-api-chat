@@ -23,6 +23,7 @@ const initialState: InstancesState = getInitialStateFromStorage() || {
     apiTokenInstance: '',
     apiUrl: '',
     mediaUrl: '',
+    typeInstance: '',
   },
   tariff: TariffsEnum.Developer,
   isChatWorking: null,
@@ -56,6 +57,11 @@ export const instancesSlice = createSlice({
 export const instancesActions = instancesSlice.actions;
 export default instancesSlice.reducer;
 
-export const selectInstance = (state: RootState) => state.instancesReducer.selectedInstance;
+export const selectInstance = (state: RootState) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { typeInstance, ...rest } = state.instancesReducer.selectedInstance || {}; // instance cresentials without typeInstance
+  return rest;
+};
+
 export const selectInstanceTariff = (state: RootState) => state.instancesReducer.tariff;
 export const selectIsChatWorking = (state: RootState) => state.instancesReducer.isChatWorking;

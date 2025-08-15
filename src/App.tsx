@@ -7,18 +7,17 @@ import { RouterProvider } from 'react-router-dom';
 
 import { useGetProfileSettingsQuery } from './services/app/endpoints';
 import { DARK_THEME, DEFAULT_THEME, localisation } from 'configs';
-import { useActions, useAppSelector } from 'hooks';
+import { useAppSelector } from 'hooks';
 import router from 'router';
 import { selectTheme } from 'store/slices/theme.slice';
 import { selectUser } from 'store/slices/user.slice';
-import { MessageData, MessageEventTypeEnum, TariffsEnum, Themes } from 'types';
-import { getIsChatWorkingFromStorage, isConsoleMessageData, isPageInIframe } from 'utils';
+import { Themes } from 'types';
+import { isPageInIframe } from 'utils';
 
 function App() {
   const { idUser, apiTokenUser, projectId } = useAppSelector(selectUser);
 
   const { i18n } = useTranslation();
-  const { setSelectedInstance, setTheme, login, setPlatform } = useActions();
 
   useGetProfileSettingsQuery(
     { idUser, apiTokenUser, projectId },

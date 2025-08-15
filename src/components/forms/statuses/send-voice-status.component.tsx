@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 
 import Participants from './participants.component';
 import { statusFormLayout } from 'configs';
-import { useActions, useAppDispatch, useAppSelector, useFormWithLanguageValidation } from 'hooks';
+import { useAppSelector, useFormWithLanguageValidation } from 'hooks';
 import {
   useSendMediaStatusMutation,
   useSendVoiceStatusMutation,
@@ -28,9 +28,6 @@ const SendVoiceStatus: FC<SendVoiceStatusProperties> = ({ isMedia }) => {
 
   const [form] = useFormWithLanguageValidation<SendVoiceStatusFormValues>();
 
-  const dispatch = useAppDispatch();
-  const { setActiveSendingMode } = useActions();
-
   const onFinish = async (values: SendVoiceStatusFormValues) => {
     const color = values.backgroundColor?.toHexString();
 
@@ -43,11 +40,10 @@ const SendVoiceStatus: FC<SendVoiceStatusProperties> = ({ isMedia }) => {
       ...instanceCredentials,
       ...values,
       participants,
-      backgroundColor: color,
+      backgroundColor: color ?? '#000000',
     };
 
-    const { error } = isMedia ? await setMediaStatus(body) : await sendStatus(body);
-    console.log(error);
+    const { error, data } = isMedia ? await setMediaStatus(body) : await sendStatus(body);
 
     if (isApiError(error)) {
       switch (error.status) {
@@ -63,7 +59,9 @@ const SendVoiceStatus: FC<SendVoiceStatusProperties> = ({ isMedia }) => {
       }
     }
 
-    dispatch(setActiveSendingMode(null));
+    form.setFields([
+      { name: 'response', warnings: [`${t('SENT_STATUS_WARNING')} ${data?.idMessage}`] },
+    ]);
   };
 
   return (

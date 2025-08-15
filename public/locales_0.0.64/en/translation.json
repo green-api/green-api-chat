@@ -182,5 +182,7 @@
   "STATUSES_HEADER": "Send Status",
   "NO_INSTANCE_CREDENTIALS": "Instance authorization credentials not provided",
   "REFRESH_PAGE": "Refresh the page",
-  "UNEXPECTED_ERROR": "An unexpected error occurred. Please contact technical support."
+  "UNEXPECTED_ERROR": "An unexpected error occurred. Please contact technical support.",
+  "SENT_STATUS_WARNING": "Sent status ID:",
+  "DUPLICATED_FIELD_ERROR": "This option already exists"
 }

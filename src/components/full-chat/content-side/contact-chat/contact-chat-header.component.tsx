@@ -7,12 +7,14 @@ import { Header } from 'antd/es/layout/layout';
 import waChatIcon from 'assets/wa-chat.svg';
 import AvatarImage from 'components/UI/avatar-image.component';
 import { useActions, useAppSelector } from 'hooks';
-import { selectActiveChat } from 'store/slices/chat.slice';
+import { selectActiveChat, selectType } from 'store/slices/chat.slice';
 import { ActiveChat } from 'types';
 import { isWhatsAppOfficialChat } from 'utils';
 
 const ContactChatHeader: FC = () => {
   const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
+  const type = useAppSelector(selectType);
+  
   const { setActiveChat, setContactInfoOpen } = useActions();
 
   const isOfficial = isWhatsAppOfficialChat(activeChat.chatId);
@@ -28,9 +30,11 @@ const ContactChatHeader: FC = () => {
         {!isOfficial && activeChat.chatId?.includes('@c') && (
           <span>{activeChat.chatId?.replace(/\@.*$/, '')}</span>
         )}
-        <a>
-          <CloseOutlined style={{ width: 13 }} onClick={() => setActiveChat(null)} />
-        </a>
+        {type !== 'one-chat-only' && (
+          <a>
+            <CloseOutlined style={{ width: 13 }} onClick={() => setActiveChat(null)} />
+          </a>
+        )}
       </Space>
     </Header>
   );

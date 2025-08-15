@@ -17,7 +17,7 @@ const Chat: FC = () => {
       style={{ overflowY: 'hidden' }}
     >
       {type === 'tab' && <Aside />}
-      <UserSide />
+      {type !== 'one-chat-only' && <UserSide />}
       <ContentSide />
     </Flex>
   );

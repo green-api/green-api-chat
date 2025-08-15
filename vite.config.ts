@@ -3,7 +3,7 @@ import { defineConfig } from 'vite';
 import svgr from 'vite-plugin-svgr';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
-const assetsDirectory = 'assets_0.0.59';
+const assetsDirectory = 'assets_0.0.64';
 const hash = Math.floor(Math.random() * 90_000) + 10_000;
 
 // https://vitejs.dev/config/

@@ -26,6 +26,10 @@ export function getErrorMessage(error: unknown, t: i18n['t']): string | null {
       errorMessage = t('TOO_MANY_REQUESTS_ERROR');
       break;
 
+    case 400:
+      errorMessage = error.data.message;
+      break;
+
     case 'FETCH_ERROR':
       errorMessage = t('FETCH_ERROR');
       break;

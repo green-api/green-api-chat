@@ -47,7 +47,12 @@ export interface ChatState {
   brandImgUrl?: string;
 }
 
-export type ChatType = 'tab' | 'console-page' | 'instance-view-page' | 'partner-iframe';
+export type ChatType =
+  | 'tab'
+  | 'console-page'
+  | 'instance-view-page'
+  | 'partner-iframe'
+  | 'one-chat-only';
 export type ChatPlatform = 'web' | 'ios' | 'android';
 
 export interface ActiveChat
@@ -70,11 +75,19 @@ export interface InstanceInterface {
   apiTokenInstance: string;
   apiUrl: string;
   mediaUrl: string;
+  typeInstance?: string;
 }
 
-export interface ApiErrorResponse<T = unknown> {
+export interface ApiErrorResponse<T = DefaultApiErrorResponseData> {
   status: number | string;
   data: T;
+}
+
+export interface DefaultApiErrorResponseData {
+  message: string;
+  path: string;
+  statusCode: number;
+  timestamp: string;
 }
 
 export interface MessageMenuState {
@@ -296,6 +309,19 @@ export interface GetTemplateMessageLayoutOptions {
   type?: TypeConnectionMessage;
 }
 
+export interface PollMessageData {
+  name: string;
+  options?: {
+    optionName: string;
+  }[];
+  votes?: {
+    optionName: string;
+    optionVoters: string[];
+  }[];
+  multipleAnswers: boolean;
+  stanzaId?: string;
+}
+
 export interface MessageDataForRender {
   idMessage: string;
   type: TypeConnectionMessage;
@@ -316,6 +342,7 @@ export interface MessageDataForRender {
   fileName?: string;
   isDeleted?: boolean;
   isEdited?: boolean;
+  pollMessageData?: PollMessageData;
 }
 
 export interface MessageTooltipMenuData {

@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import emptyAvatar from 'assets/emptyAvatar.svg';
 import emptyAvatarButAvailable from 'assets/emptyAvatarButAvailable.svg';
 import emptyAvatarGroup from 'assets/emptyAvatarGroup.png';
+import waChatIcon from 'assets/wa-chat.svg';
 import AvatarImage from 'components/UI/avatar-image.component';
 import { useActions, useAppSelector } from 'hooks';
 import {
@@ -22,6 +23,7 @@ import {
   getPhoneNumberFromChatId,
   getOutgoingStatusMessageIcon,
   getTextMessage,
+  isWhatsAppOfficialChat,
 } from 'utils';
 
 interface ContactListItemProps {
@@ -143,13 +145,18 @@ const ChatListItem: FC<ContactListItemProps> = ({
     >
       <Skeleton avatar title={false} loading={isLoading} active>
         <List.Item.Meta
-          avatar={<AvatarImage src={avatar} size="large" />}
+          avatar={
+            <AvatarImage
+              src={isWhatsAppOfficialChat(lastMessage.chatId) ? waChatIcon : avatar}
+              size="large"
+            />
+          }
           title={
             <h6
               className="text-overflow message-signerData"
               style={{ fontSize: 14, maxWidth: 280 }}
             >
-              {chatName}
+              {isWhatsAppOfficialChat(lastMessage.chatId) ? 'WhatsApp' : chatName}
             </h6>
           }
           description={

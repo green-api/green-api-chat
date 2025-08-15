@@ -11,6 +11,7 @@ import { selectActiveChat } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
 import { ActiveChat } from 'types';
 import { isContactInfo } from 'utils';
+import { useIsMaxInstance } from 'hooks/use-is-max-instance';
 
 const GroupContactList: FC = () => {
   const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
@@ -21,6 +22,8 @@ const GroupContactList: FC = () => {
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState('');
+
+  const isMax = useIsMaxInstance();
 
   if (!activeChat.contactInfo || activeChat.contactInfo === 'Error: forbidden') {
     return null;
@@ -40,7 +43,8 @@ const GroupContactList: FC = () => {
       return;
     }
 
-    const participantChatId = `${cleaned}@c.us`;
+    console.log(isMax);
+    const participantChatId = `${cleaned}${isMax ? '' : '@c.us'}`;
 
     try {
       await addParticipant({

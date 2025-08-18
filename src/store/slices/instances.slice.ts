@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { RootState } from 'store';
-import { InstancesState, TariffsEnum } from 'types';
+import { InstancesState, TariffsEnum, TypeInstance } from 'types';
 
 const getInitialStateFromStorage = () => {
   let initialState: InstancesState | null = null;
@@ -23,10 +23,10 @@ const initialState: InstancesState = getInitialStateFromStorage() || {
     apiTokenInstance: '',
     apiUrl: '',
     mediaUrl: '',
-    typeInstance: '',
   },
   tariff: TariffsEnum.Developer,
   isChatWorking: null,
+  typeInstance: 'whatsapp',
 };
 
 export const instancesSlice = createSlice({
@@ -36,16 +36,24 @@ export const instancesSlice = createSlice({
     setSelectedInstance: (
       state,
       action: PayloadAction<
-        InstancesState['selectedInstance'] & { tariff: TariffsEnum; isChatWorking?: boolean | null }
+        InstancesState['selectedInstance'] & {
+          tariff: TariffsEnum;
+          typeInstance: TypeInstance;
+          isChatWorking?: boolean | null;
+        }
       >
     ) => {
-      const { tariff, isChatWorking, ...selectedInstance } = action.payload;
+      const { tariff, isChatWorking, typeInstance, ...selectedInstance } = action.payload;
 
       state.selectedInstance = selectedInstance;
       state.tariff = tariff;
 
       if (isChatWorking !== undefined) {
         state.isChatWorking = isChatWorking;
+      }
+
+      if (typeInstance) {
+        state.typeInstance = typeInstance;
       }
     },
     setIsChatWorking: (state, action: PayloadAction<InstancesState['isChatWorking']>) => {
@@ -57,11 +65,7 @@ export const instancesSlice = createSlice({
 export const instancesActions = instancesSlice.actions;
 export default instancesSlice.reducer;
 
-export const selectInstance = (state: RootState) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { typeInstance, ...rest } = state.instancesReducer.selectedInstance || {}; // instance cresentials without typeInstance
-  return rest;
-};
-
+export const selectInstance = (state: RootState) => state.instancesReducer.selectedInstance;
+export const selectTypeInstance = (state: RootState) => state.instancesReducer.typeInstance;
 export const selectInstanceTariff = (state: RootState) => state.instancesReducer.tariff;
 export const selectIsChatWorking = (state: RootState) => state.instancesReducer.isChatWorking;

@@ -68,14 +68,16 @@ export interface InstancesState {
   selectedInstance: InstanceInterface;
   tariff: TariffsEnum;
   isChatWorking: boolean | null;
+  typeInstance: TypeInstance;
 }
+
+export type TypeInstance = 'whatsapp' | 'v3';
 
 export interface InstanceInterface {
   idInstance: number;
   apiTokenInstance: string;
   apiUrl: string;
   mediaUrl: string;
-  typeInstance?: string;
 }
 
 export interface ApiErrorResponse<T = DefaultApiErrorResponseData> {
@@ -201,7 +203,7 @@ export interface MessageDataInit {
   payload: InstanceInterface &
     LocaleChangeMessage &
     ThemeChangeMessage &
-    UserInterface & { platform: ChatPlatform; tariff: TariffsEnum };
+    UserInterface & { platform: ChatPlatform; tariff: TariffsEnum; typeInstance: TypeInstance };
 }
 
 export interface MessageDataLocaleChange {
@@ -216,7 +218,11 @@ export interface MessageDataSetTheme {
 
 export interface MessageDataSetCredentials {
   type: MessageEventTypeEnum.SET_CREDENTIALS;
-  payload: InstanceInterface & { tariff: TariffsEnum };
+  payload: InstanceInterface & {
+    platform: ChatPlatform;
+    tariff: TariffsEnum;
+    typeInstance: TypeInstance;
+  };
 }
 
 interface LocaleChangeMessage {

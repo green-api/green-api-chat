@@ -25,7 +25,7 @@ const ChatsHeader: FC = () => {
       apiTokenInstance: '',
       apiUrl: '',
       mediaUrl: '',
-      typeInstance: '',
+      typeInstance: 'whatsapp',
       tariff: TariffsEnum.Developer,
     });
     logout();

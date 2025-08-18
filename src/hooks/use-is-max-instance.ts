@@ -1,11 +1,13 @@
 import { useMemo } from 'react';
 
 import { useAppSelector } from './redux.hook';
+import { TypeInstance } from '../types';
+import { selectTypeInstance } from 'store/slices/instances.slice';
 
-export const isMaxInstance = (typeInstance: string) => typeInstance === 'v3';
+export const isMaxInstance = (typeInstance: TypeInstance) => typeInstance === 'v3';
 
 export const useIsMaxInstance = () => {
-  const selectedInstance = useAppSelector((state) => state.instancesReducer.selectedInstance);
+  const typeInstance = useAppSelector(selectTypeInstance);
 
-  return useMemo(() => isMaxInstance(selectedInstance.typeInstance ?? ''), [selectedInstance]);
+  return useMemo(() => isMaxInstance(typeInstance ?? ''), [typeInstance]);
 };

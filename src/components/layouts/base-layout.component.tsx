@@ -150,7 +150,7 @@ const BaseLayout: FC = () => {
         apiUrl: apiUrl + '/',
         mediaUrl: mediaUrl + '/',
         tariff: TariffsEnum.Business,
-        typeInstance: '',
+        typeInstance: 'whatsapp',
       });
 
       language && i18n.changeLanguage(language);

@@ -43,7 +43,6 @@ const GroupContactList: FC = () => {
       return;
     }
 
-    console.log(isMax);
     const participantChatId = `${cleaned}${isMax ? '' : '@c.us'}`;
 
     try {

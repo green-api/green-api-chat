@@ -103,8 +103,6 @@ const ChatListItem: FC<ContactListItemProps> = ({
     return lastMessage.chatId?.includes('g.us') ? emptyAvatarGroup : emptyAvatarButAvailable;
   }, [contactInfo, avatarData, lastMessage]);
 
-  console.log(lastMessage);
-
   let chatName: string | undefined;
 
   switch (true) {

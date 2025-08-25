@@ -14,7 +14,7 @@ import { isWhatsAppOfficialChat } from 'utils';
 const ContactChatHeader: FC = () => {
   const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
   const type = useAppSelector(selectType);
-  
+
   const { setActiveChat, setContactInfoOpen } = useActions();
 
   const isOfficial = isWhatsAppOfficialChat(activeChat.chatId);

@@ -6,12 +6,12 @@ import { useTranslation } from 'react-i18next';
 
 import GroupContactListItem from './group-contact-list-item.component';
 import { useAppSelector } from 'hooks';
+import { useIsMaxInstance } from 'hooks/use-is-max-instance';
 import { useAddGroupParticipantMutation } from 'services/green-api/endpoints';
 import { selectActiveChat } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
 import { ActiveChat } from 'types';
 import { isContactInfo } from 'utils';
-import { useIsMaxInstance } from 'hooks/use-is-max-instance';
 
 const GroupContactList: FC = () => {
   const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
@@ -25,7 +25,7 @@ const GroupContactList: FC = () => {
 
   const isMax = useIsMaxInstance();
 
-  if (!activeChat.contactInfo || activeChat.contactInfo === 'Error: forbidden') {
+  if (!activeChat.contactInfo || typeof activeChat.contactInfo === 'string') {
     return null;
   }
 
@@ -43,7 +43,6 @@ const GroupContactList: FC = () => {
       return;
     }
 
-    console.log(isMax);
     const participantChatId = `${cleaned}${isMax ? '' : '@c.us'}`;
 
     try {

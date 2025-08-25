@@ -340,7 +340,7 @@ const ChatView: FC = () => {
         );
       })}
 
-      {activeChat.contactInfo === 'Error: forbidden' && <LeftGroupAlert />}
+      {typeof activeChat.contactInfo === 'string' && <LeftGroupAlert />}
     </div>
   );
 };

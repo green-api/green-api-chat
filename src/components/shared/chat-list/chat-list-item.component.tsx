@@ -103,16 +103,28 @@ const ChatListItem: FC<ContactListItemProps> = ({
     return lastMessage.chatId?.includes('g.us') ? emptyAvatarGroup : emptyAvatarButAvailable;
   }, [contactInfo, avatarData, lastMessage]);
 
-  const chatName =
-    (typeof groupData === 'object' &&
+  let chatName: string | undefined;
+
+  switch (true) {
+    case typeof groupData === 'object' &&
       groupData !== null &&
       'subject' in groupData &&
-      groupData.subject) ||
-    contactInfo?.contactName ||
-    contactInfo?.name ||
-    lastMessage.senderContactName ||
-    lastMessage.senderName ||
-    getPhoneNumberFromChatId(lastMessage.chatId);
+      Boolean(groupData.subject):
+      chatName = groupData.subject;
+      break;
+
+    case Boolean(groupData) && typeof groupData !== 'object':
+      chatName = lastMessage.chatId;
+      break;
+
+    default:
+      chatName =
+        contactInfo?.contactName ||
+        contactInfo?.name ||
+        lastMessage.senderContactName ||
+        lastMessage.senderName ||
+        getPhoneNumberFromChatId(lastMessage.chatId);
+  }
 
   useEffect(() => {
     if (chatName && onNameExtracted) {

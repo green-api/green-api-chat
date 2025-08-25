@@ -30,8 +30,8 @@ const ContactInfoHeader: FC = () => {
   const isOfficial = isWhatsAppOfficialChat(activeChat.chatId);
 
   const getHeaderBody = () => {
-    if (!activeChat.contactInfo || activeChat.contactInfo === 'Error: forbidden') {
-      const contactName = isOfficial ? 'WhatsApp' : activeChat.chatId?.replace(/\@.*$/, '');
+    if (!activeChat.contactInfo || typeof activeChat.contactInfo === 'string') {
+      const contactName = activeChat.chatId?.replace(/\@.*$/, '');
 
       const contactCredentials = activeChat.chatId?.includes('@c.us')
         ? activeChat.chatId?.replace(/\@.*$/, '')

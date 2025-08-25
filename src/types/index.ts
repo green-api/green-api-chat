@@ -47,7 +47,12 @@ export interface ChatState {
   brandImgUrl?: string;
 }
 
-export type ChatType = 'tab' | 'console-page' | 'instance-view-page' | 'partner-iframe';
+export type ChatType =
+  | 'tab'
+  | 'console-page'
+  | 'instance-view-page'
+  | 'partner-iframe'
+  | 'one-chat-only';
 export type ChatPlatform = 'web' | 'ios' | 'android';
 
 export interface ActiveChat
@@ -63,7 +68,10 @@ export interface InstancesState {
   selectedInstance: InstanceInterface;
   tariff: TariffsEnum;
   isChatWorking: boolean | null;
+  typeInstance: TypeInstance;
 }
+
+export type TypeInstance = 'whatsapp' | 'v3';
 
 export interface InstanceInterface {
   idInstance: number;
@@ -72,9 +80,16 @@ export interface InstanceInterface {
   mediaUrl: string;
 }
 
-export interface ApiErrorResponse<T = unknown> {
+export interface ApiErrorResponse<T = DefaultApiErrorResponseData> {
   status: number | string;
   data: T;
+}
+
+export interface DefaultApiErrorResponseData {
+  message: string;
+  path: string;
+  statusCode: number;
+  timestamp: string;
 }
 
 export interface MessageMenuState {
@@ -188,7 +203,7 @@ export interface MessageDataInit {
   payload: InstanceInterface &
     LocaleChangeMessage &
     ThemeChangeMessage &
-    UserInterface & { platform: ChatPlatform; tariff: TariffsEnum };
+    UserInterface & { platform: ChatPlatform; tariff: TariffsEnum; typeInstance: TypeInstance };
 }
 
 export interface MessageDataLocaleChange {
@@ -203,7 +218,11 @@ export interface MessageDataSetTheme {
 
 export interface MessageDataSetCredentials {
   type: MessageEventTypeEnum.SET_CREDENTIALS;
-  payload: InstanceInterface & { tariff: TariffsEnum };
+  payload: InstanceInterface & {
+    platform: ChatPlatform;
+    tariff: TariffsEnum;
+    typeInstance: TypeInstance;
+  };
 }
 
 interface LocaleChangeMessage {

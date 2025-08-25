@@ -10,6 +10,7 @@ import ChatList from 'components/shared/chat-list/chat-list.component';
 import SelectInstance from 'components/UI/select/select-instance.component';
 import SelectStatusMode from 'components/UI/select/select-status.component';
 import { useAppSelector } from 'hooks';
+import { useIsMaxInstance } from 'hooks/use-is-max-instance';
 import { selectMiniVersion, selectType } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
 
@@ -17,6 +18,7 @@ const Chats: FC = () => {
   const isMiniVersion = useAppSelector(selectMiniVersion);
   const type = useAppSelector(selectType);
   const instanceCredentials = useAppSelector(selectInstance);
+  const isMax = useIsMaxInstance();
 
   const { t } = useTranslation();
 
@@ -42,7 +44,7 @@ const Chats: FC = () => {
             />
           </a>
         )}
-        <SelectStatusMode />
+        {!isMax && <SelectStatusMode />}
       </Flex>
 
       <ChatList key={instanceCredentials?.idInstance} />

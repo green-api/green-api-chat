@@ -16,6 +16,15 @@ export const accountGreenApiEndpoints = greenAPI.injectEndpoints({
       }),
       keepUnusedDataFor: 1000,
     }),
+    getAccountSettings: builder.query<
+      GetWaSettingsResponseInterface,
+      InstanceInterface & { rtkWaSettingsSessionKey?: number }
+    >({
+      query: ({ idInstance, apiTokenInstance, apiUrl }) => ({
+        url: `${apiUrl}waInstance${idInstance}/getAccountSettings/${apiTokenInstance}`,
+      }),
+      keepUnusedDataFor: 1000,
+    }),
     getStateInstance: builder.query<GetStateInstanceResponseInterface, InstanceInterface>({
       query: ({ idInstance, apiTokenInstance, apiUrl }) => ({
         url: `${apiUrl}waInstance${idInstance}/getStateInstance/${apiTokenInstance}`,

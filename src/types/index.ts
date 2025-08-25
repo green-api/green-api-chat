@@ -69,7 +69,7 @@ export interface InstancesState {
   tariff: TariffsEnum;
   isChatWorking: boolean | null;
   typeInstance: TypeInstance;
-  instanceList: null | ExpandedInstanceInterface[];
+  instanceList: ExpandedInstanceInterface[] | null;
 }
 
 export type TypeInstance = 'whatsapp' | 'v3';

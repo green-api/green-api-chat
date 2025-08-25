@@ -69,6 +69,7 @@ export interface InstancesState {
   tariff: TariffsEnum;
   isChatWorking: boolean | null;
   typeInstance: TypeInstance;
+  instanceList: null | ExpandedInstanceInterface[];
 }
 
 export type TypeInstance = 'whatsapp' | 'v3';
@@ -203,7 +204,12 @@ export interface MessageDataInit {
   payload: InstanceInterface &
     LocaleChangeMessage &
     ThemeChangeMessage &
-    UserInterface & { platform: ChatPlatform; tariff: TariffsEnum; typeInstance: TypeInstance };
+    UserInterface & {
+      platform: ChatPlatform;
+      tariff: TariffsEnum;
+      typeInstance: TypeInstance;
+      instanceList: ExpandedInstanceInterface[];
+    };
 }
 
 export interface MessageDataLocaleChange {

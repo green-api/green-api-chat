@@ -49,6 +49,7 @@ const BaseLayout: FC = () => {
     login,
     setPlatform,
     setActiveChat,
+    setInstanceList,
   } = useActions();
 
   const [getContactInfo] = useLazyGetContactInfoQuery();
@@ -84,6 +85,8 @@ const BaseLayout: FC = () => {
               isChatWorking: isChatWorking,
               typeInstance: event.data.payload.typeInstance,
             });
+
+            setInstanceList(event.data.payload.instanceList);
             setIsEventAdded(true);
             login({
               login: event.data.payload.login,

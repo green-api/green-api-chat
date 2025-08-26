@@ -76,6 +76,9 @@ const BaseLayout: FC = () => {
               isChatWorking = getIsChatWorkingFromStorage(event.data.payload?.idInstance);
             }
 
+            console.log(event.data.payload);
+            setInstanceList(event.data.payload.instanceList);
+
             setSelectedInstance({
               idInstance: event.data.payload.idInstance,
               apiTokenInstance: event.data.payload.apiTokenInstance,
@@ -86,7 +89,6 @@ const BaseLayout: FC = () => {
               typeInstance: event.data.payload.typeInstance,
             });
 
-            setInstanceList(event.data.payload.instanceList);
             setIsEventAdded(true);
             login({
               login: event.data.payload.login,

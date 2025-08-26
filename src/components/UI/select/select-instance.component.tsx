@@ -91,7 +91,7 @@ const SelectInstance: FC = () => {
 
     if (!sourceList?.length) return;
 
-    if (instancesRequestData?.result && selectedInstance?.idInstance) {
+    if (selectedInstance?.idInstance) {
       const defaultInstance = sourceList.find(
         ({ idInstance }) => idInstance === selectedInstance.idInstance
       );

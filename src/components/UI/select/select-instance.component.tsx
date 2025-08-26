@@ -85,14 +85,18 @@ const SelectInstance: FC = () => {
   }, [instancesRequestData, page, searchValue, isLoadingInstances]);
 
   useEffect(() => {
-    if (isLoadingInstances || !instances?.length) return;
+    if (isLoadingInstances) return;
+
+    const sourceList = formattedInstanceList?.length ? formattedInstanceList : instances;
+
+    if (!sourceList?.length) return;
 
     if (instancesRequestData?.result && selectedInstance?.idInstance) {
-      const defaultInstance = instancesRequestData.data.find(
+      const defaultInstance = sourceList.find(
         ({ idInstance }) => idInstance === selectedInstance.idInstance
       );
 
-      if (defaultInstance) {
+      if (defaultInstance && defaultInstance.idInstance !== 0) {
         setSelectedInstance({
           idInstance: defaultInstance.idInstance,
           apiTokenInstance: defaultInstance.apiTokenInstance,
@@ -101,20 +105,20 @@ const SelectInstance: FC = () => {
           tariff: defaultInstance.tariff,
           typeInstance: defaultInstance.typeInstance,
         });
+        return;
       }
-
-      return;
     }
 
+    const firstInstance = sourceList[0];
     setSelectedInstance({
-      idInstance: instances[0].idInstance,
-      apiTokenInstance: instances[0].apiTokenInstance,
-      apiUrl: instances[0].apiUrl,
-      mediaUrl: instances[0].mediaUrl,
-      tariff: instances[0].tariff,
-      typeInstance: instances[0].typeInstance,
+      idInstance: firstInstance.idInstance,
+      apiTokenInstance: firstInstance.apiTokenInstance,
+      apiUrl: firstInstance.apiUrl,
+      mediaUrl: firstInstance.mediaUrl,
+      tariff: firstInstance.tariff,
+      typeInstance: firstInstance.typeInstance,
     });
-  }, [instances, isSuccessLoadingInstances, isLoadingInstances]);
+  }, [formattedInstanceList, instances, isSuccessLoadingInstances, isLoadingInstances]);
 
   if (isLoadingInstances || !instances) {
     return <Spin />;

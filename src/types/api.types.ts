@@ -1,4 +1,4 @@
-import { InstanceInterface, PollMessageData } from 'types';
+import { InstanceInterface, PollMessageData, TypeInstance } from 'types';
 
 export interface UserInterface {
   idUser: string;
@@ -250,6 +250,7 @@ export type GetGroupDataErrorResponse = 'Error: item-not-found' | 'Error: forbid
 
 export interface GroupParticipantInterface {
   id: string;
+  chatId?: string;
   isAdmin: boolean;
   isSuperAdmin: boolean;
 }
@@ -408,7 +409,7 @@ export interface ExpandedInstanceInterface extends InstanceInterface {
   timeDeleted: string;
   expirationDate: string;
   typeAccount: string;
-  typeInstance: string;
+  typeInstance: TypeInstance;
 }
 
 export type GetInstancesResponse = AppApiResponse<ExpandedInstanceInterface[]>;

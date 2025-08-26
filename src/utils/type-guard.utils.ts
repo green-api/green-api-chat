@@ -42,5 +42,11 @@ export function isConsoleMessageData(data: unknown): data is MessageData {
 }
 
 export function isValidChatType(type: string): type is ChatType {
-  return type === 'tab' || type === 'console-page' || type === 'instance-view-page';
+  return (
+    type === 'tab' ||
+    type === 'console-page' ||
+    type === 'instance-view-page' ||
+    type === 'partner-iframe' ||
+    type === 'one-chat-only'
+  );
 }

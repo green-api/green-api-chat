@@ -56,6 +56,13 @@ const QuotedMessage: FC<QuotedMessageProps> = ({ quotedMessage, type, messageDat
           >
             {formattedMessage}
           </Typography.Paragraph>
+          {quotedMessage.jpegThumbnail && (
+            <img
+              src={`data:image/jpeg;base64,${quotedMessage.jpegThumbnail}`}
+              alt="thumbnail"
+              className="quoted-thumbnail"
+            />
+          )}
         </Space>
       </Space>
     </MessageTooltip>

@@ -14,7 +14,7 @@ const ContactChat: FC = () => {
     <div className="chat-form-wrapper relative">
       <div className="chat-bg" />
       <ChatView />
-      {activeChat.contactInfo === 'Error: forbidden' ? <CantSendInGroupAlert /> : <ChatForm />}
+      {typeof activeChat.contactInfo === 'string' ? <CantSendInGroupAlert /> : <ChatForm />}
     </div>
   );
 };

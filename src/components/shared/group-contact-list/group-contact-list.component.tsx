@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 
 import GroupContactListItem from './group-contact-list-item.component';
 import { useAppSelector } from 'hooks';
+import { useIsMaxInstance } from 'hooks/use-is-max-instance';
 import { useAddGroupParticipantMutation } from 'services/green-api/endpoints';
 import { selectActiveChat } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
@@ -22,7 +23,9 @@ const GroupContactList: FC = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState('');
 
-  if (!activeChat.contactInfo || activeChat.contactInfo === 'Error: forbidden') {
+  const isMax = useIsMaxInstance();
+
+  if (!activeChat.contactInfo || typeof activeChat.contactInfo === 'string') {
     return null;
   }
 
@@ -35,12 +38,12 @@ const GroupContactList: FC = () => {
   const handleModalOk = async () => {
     const cleaned = phoneNumber.replace(/\D/g, '');
 
-    if (cleaned.length < 10) {
+    if (cleaned.length < 7) {
       message.error(t('ENTER_VALID_PHONE_NUMBER'));
       return;
     }
 
-    const participantChatId = `${cleaned}@c.us`;
+    const participantChatId = `${cleaned}${isMax ? '' : '@c.us'}`;
 
     try {
       await addParticipant({

@@ -1,13 +1,12 @@
 import { FC, useState } from 'react';
 
-import { UserAddOutlined } from '@ant-design/icons';
 import { Flex } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import AddNewChat from './add-new-chat.component';
 import ChatsHeader from './chats-header.component';
-import ChatList from 'components/shared/chat-list/chat-list.component';
 import NewChatIcon from 'assets/newChat.svg?react';
+import ChatList from 'components/shared/chat-list/chat-list.component';
 import { useAppSelector } from 'hooks';
 import { useGetWaSettingsQuery } from 'services/green-api/endpoints';
 import { selectMiniVersion, selectType } from 'store/slices/chat.slice';
@@ -18,7 +17,6 @@ const Chats: FC = () => {
   const isMiniVersion = useAppSelector(selectMiniVersion);
   const type = useAppSelector(selectType);
   const instanceCredentials = useAppSelector(selectInstance);
-  console.log(instanceCredentials);
 
   const { data: waSettings, isLoading: isWaSettingsLoading } = useGetWaSettingsQuery(
     {
@@ -26,8 +24,6 @@ const Chats: FC = () => {
     },
     { skip: !instanceCredentials?.idInstance || !instanceCredentials?.apiTokenInstance }
   );
-
-  console.log(waSettings);
 
   const { t } = useTranslation();
 

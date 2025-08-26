@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import emptyAvatar from 'assets/emptyAvatar.svg';
 import emptyAvatarButAvailable from 'assets/emptyAvatarButAvailable.svg';
 import emptyAvatarGroup from 'assets/emptyAvatarGroup.png';
+import waChatIcon from 'assets/wa-chat.svg';
 import AvatarImage from 'components/UI/avatar-image.component';
 import { useActions, useAppSelector } from 'hooks';
 import {
@@ -22,6 +23,7 @@ import {
   getPhoneNumberFromChatId,
   getOutgoingStatusMessageIcon,
   getTextMessage,
+  isWhatsAppOfficialChat,
 } from 'utils';
 
 interface ContactListItemProps {
@@ -57,7 +59,7 @@ const ChatListItem: FC<ContactListItemProps> = ({
     },
     {
       skip:
-        !lastMessage.chatId?.includes('g.us') ||
+        (!lastMessage.chatId?.includes('g.us') && !lastMessage.chatId?.startsWith('-')) ||
         instanceCredentials?.idInstance.toString().startsWith('7835'),
     }
   );
@@ -70,7 +72,8 @@ const ChatListItem: FC<ContactListItemProps> = ({
     {
       skip:
         lastMessage.chatId?.includes('g.us') ||
-        instanceCredentials?.idInstance.toString().startsWith('7835'),
+        instanceCredentials?.idInstance.toString().startsWith('7835') ||
+        lastMessage.chatId?.startsWith('-'),
     }
   );
 
@@ -100,16 +103,28 @@ const ChatListItem: FC<ContactListItemProps> = ({
     return lastMessage.chatId?.includes('g.us') ? emptyAvatarGroup : emptyAvatarButAvailable;
   }, [contactInfo, avatarData, lastMessage]);
 
-  const chatName =
-    (typeof groupData === 'object' &&
+  let chatName: string | undefined;
+
+  switch (true) {
+    case typeof groupData === 'object' &&
       groupData !== null &&
       'subject' in groupData &&
-      groupData.subject) ||
-    contactInfo?.contactName ||
-    contactInfo?.name ||
-    lastMessage.senderContactName ||
-    lastMessage.senderName ||
-    getPhoneNumberFromChatId(lastMessage.chatId);
+      Boolean(groupData.subject):
+      chatName = groupData.subject;
+      break;
+
+    case Boolean(groupData) && typeof groupData !== 'object':
+      chatName = lastMessage.chatId;
+      break;
+
+    default:
+      chatName =
+        contactInfo?.contactName ||
+        contactInfo?.name ||
+        lastMessage.senderContactName ||
+        lastMessage.senderName ||
+        getPhoneNumberFromChatId(lastMessage.chatId);
+  }
 
   useEffect(() => {
     if (chatName && onNameExtracted) {
@@ -142,13 +157,18 @@ const ChatListItem: FC<ContactListItemProps> = ({
     >
       <Skeleton avatar title={false} loading={isLoading} active>
         <List.Item.Meta
-          avatar={<AvatarImage src={avatar} size="large" />}
+          avatar={
+            <AvatarImage
+              src={isWhatsAppOfficialChat(lastMessage.chatId) ? waChatIcon : avatar}
+              size="large"
+            />
+          }
           title={
             <h6
               className="text-overflow message-signerData"
               style={{ fontSize: 14, maxWidth: 280 }}
             >
-              {chatName}
+              {isWhatsAppOfficialChat(lastMessage.chatId) ? 'WhatsApp' : chatName}
             </h6>
           }
           description={

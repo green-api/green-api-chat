@@ -4,7 +4,6 @@ import { LeftOutlined } from '@ant-design/icons';
 import { Flex, Space, Typography } from 'antd';
 import { useTranslation } from 'react-i18next';
 
-import { CONSOLE_URL } from 'configs';
 import { useActions, useAppSelector } from 'hooks';
 import { selectActiveChat } from 'store/slices/chat.slice';
 import { selectPlatform } from 'store/slices/user.slice';
@@ -37,7 +36,9 @@ const ChatHeader: FC = () => {
       <Space style={{ gap: 10 }}>
         {platform === 'web' && (
           <Typography.Link
-            href={CONSOLE_URL + 'chats'}
+            onClick={() => {
+              window.parent.postMessage({ event: 'openChats' }, '*');
+            }}
             target="_parent"
             rel="noreferrer"
             title={t('FULL_VERSION_TITLE')}

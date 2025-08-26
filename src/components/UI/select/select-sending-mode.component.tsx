@@ -7,6 +7,7 @@ import AttachIcon from 'assets/attach-icon.svg?react';
 import MessageServiceModal from 'components/modals/message-service-modal.component';
 import SendingModal from 'components/modals/sending-modal.component';
 import { useActions } from 'hooks';
+import { useIsMaxInstance } from 'hooks/use-is-max-instance';
 import { SendingMethodName } from 'types';
 
 interface SelectSendingModeProps {
@@ -20,6 +21,8 @@ const SelectSendingMode: FC<SelectSendingModeProps> = ({ isWaba }) => {
 
   const dir = i18n.dir();
 
+  const isMax = useIsMaxInstance();
+
   const options = [
     { value: 'sendFileByUpload', label: t('FILE') },
     { value: 'sendContact', label: t('CONTACT') },
@@ -32,7 +35,7 @@ const SelectSendingMode: FC<SelectSendingModeProps> = ({ isWaba }) => {
   if (isWaba) {
     options.push({ value: 'sendTemplate', label: t('TEMPLATE') });
   }
-
+  if (isMax) return null;
   return (
     <>
       <Select

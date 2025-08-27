@@ -30,5 +30,15 @@ export const accountGreenApiEndpoints = greenAPI.injectEndpoints({
         url: `${apiUrl}waInstance${idInstance}/getStateInstance/${apiTokenInstance}`,
       }),
     }),
+    getAuthorizationCode: builder.mutation<
+      GetQRResponseInterface,
+      CheckWhatsappParametersInterface
+    >({
+      query: ({ idInstance, apiTokenInstance, apiUrl, mediaUrl: _, ...body }) => ({
+        url: `${apiUrl}waInstance${idInstance}/getAuthorizationCode/${apiTokenInstance}`,
+        method: 'POST',
+        body,
+      }),
+    }),
   }),
 });

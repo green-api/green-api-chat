@@ -1,6 +1,6 @@
 import { FC, useState } from 'react';
 
-import { Flex } from 'antd';
+import { Button, Flex } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import AddNewChat from './add-new-chat.component';
@@ -8,7 +8,8 @@ import ChatsHeader from './chats-header.component';
 import NewChatIcon from 'assets/newChat.svg?react';
 import ChatList from 'components/shared/chat-list/chat-list.component';
 import { useAppSelector } from 'hooks';
-import { useGetWaSettingsQuery } from 'services/green-api/endpoints';
+import { useIsMaxInstance } from 'hooks/use-is-max-instance';
+import { useGetAccountSettingsQuery, useGetWaSettingsQuery } from 'services/green-api/endpoints';
 import { selectMiniVersion, selectType } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
 import { StateInstanceEnum } from 'types';
@@ -18,12 +19,23 @@ const Chats: FC = () => {
   const type = useAppSelector(selectType);
   const instanceCredentials = useAppSelector(selectInstance);
 
+  const isMax = useIsMaxInstance();
+
   const { data: waSettings, isLoading: isWaSettingsLoading } = useGetWaSettingsQuery(
     {
       ...instanceCredentials,
     },
-    { skip: !instanceCredentials?.idInstance || !instanceCredentials?.apiTokenInstance }
+    { skip: !instanceCredentials?.idInstance || !instanceCredentials?.apiTokenInstance || isMax }
   );
+
+  const { data: accountSettings, isLoading: isAccountSettingsLoading } = useGetAccountSettingsQuery(
+    {
+      ...instanceCredentials,
+    },
+    { skip: !instanceCredentials?.idInstance || !instanceCredentials?.apiTokenInstance || !isMax }
+  );
+
+  const settings = isMax ? accountSettings : waSettings;
 
   const { t } = useTranslation();
 
@@ -41,25 +53,28 @@ const Chats: FC = () => {
       >
         <Flex gap={20} align="center">
           <p style={{ fontSize: '1.5rem' }}>{t('CHAT_HEADER')}</p>
-          {!isWaSettingsLoading && (
+          {(!isWaSettingsLoading || !isAccountSettingsLoading) && (
             <div
               style={{
                 padding: '4px 10px',
                 borderRadius: 4,
                 color:
-                  waSettings?.stateInstance === StateInstanceEnum.Authorized
+                  settings?.stateInstance === StateInstanceEnum.Authorized
                     ? 'var(--authorized-text-color)'
                     : 'var(--not-authorized-text-color)',
                 backgroundColor:
-                  waSettings?.stateInstance === StateInstanceEnum.Authorized
+                  settings?.stateInstance === StateInstanceEnum.Authorized
                     ? 'var(--authorized-status-color)'
                     : 'var(--not-authorized-status-color)',
               }}
             >
-              {waSettings?.stateInstance === StateInstanceEnum.Authorized
+              {settings?.stateInstance === StateInstanceEnum.Authorized
                 ? t('AUTHORIZED')
                 : t('NOT_AUTHORIZED')}
             </div>
+          )}
+          {settings?.stateInstance === StateInstanceEnum.NotAuthorized && (
+            <Button variant="outlined">{t('AUTHORIZE')}</Button>
           )}
         </Flex>
         {!isMiniVersion && (type === 'console-page' || type === 'partner-iframe') && (

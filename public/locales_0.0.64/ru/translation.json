@@ -199,5 +199,6 @@
   "SENT_STATUS_WARNING": "ID отправленного статуса:",
   "DUPLICATED_FIELD_ERROR": "Такой вариант уже есть",
   "AUTHORIZED": "Авторизован",
-  "NOT_AUTHORIZED": "Не авторизован"
+  "NOT_AUTHORIZED": "Не авторизован",
+  "AUTHORIZE": "Подключить"
 }

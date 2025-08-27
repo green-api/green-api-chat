@@ -1,6 +1,6 @@
-import { Dispatch, ReactElement, SetStateAction } from 'react';
+import { Dispatch, HTMLAttributes, ReactElement, SetStateAction } from 'react';
 
-import { FormItemProps } from 'antd';
+import { FormItemProps, ProgressProps } from 'antd';
 import { Color } from 'antd/es/color-picker';
 
 import {
@@ -70,6 +70,7 @@ export interface InstancesState {
   isChatWorking: boolean | null;
   typeInstance: TypeInstance;
   instanceList: ExpandedInstanceInterface[] | null;
+  isAuthorizingInstance: boolean;
 }
 
 export type TypeInstance = 'whatsapp' | 'v3';
@@ -368,3 +369,18 @@ export interface MessagesDate {
 }
 
 export type FormattedMessagesWithDate = (MessageInterface | MessagesDate)[];
+
+export interface StateButtonParametersInterface
+  extends Pick<HTMLAttributes<HTMLElement>, 'children'> {
+  setState: Dispatch<SetStateAction<boolean>>;
+}
+
+export interface QrInstructionInterface {
+  isVisibleQrInstruction: boolean;
+  isNecessaryToLogout: boolean;
+}
+
+export interface ProgressBarPropertiesInterface extends Omit<ProgressProps, 'type' | 'percent'> {
+  time: number;
+  onFinish?: () => void;
+}

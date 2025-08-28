@@ -3,14 +3,19 @@ import { FC } from 'react';
 import { Image, Space, Typography } from 'antd';
 
 import { MessageProps } from './message.component';
+import playIcon from 'assets/play.svg';
 import { getMessageTypeIcon } from 'utils';
 
 const FileMessage: FC<
-  Pick<MessageProps['messageDataForRender'], 'downloadUrl' | 'typeMessage' | 'fileName' | 'type'>
-> = ({ downloadUrl, typeMessage, fileName, type }) => {
-  if (typeMessage === 'imageMessage') {
+  Pick<
+    MessageProps['messageDataForRender'],
+    'downloadUrl' | 'typeMessage' | 'fileName' | 'type' | 'jpegThumbnail'
+  >
+> = ({ downloadUrl, typeMessage, fileName, type, jpegThumbnail }) => {
+  if (typeMessage === 'imageMessage' && downloadUrl) {
     return (
       <Image
+        className="border-radius"
         width={300}
         src={downloadUrl}
         alt="image"
@@ -19,16 +24,55 @@ const FileMessage: FC<
     );
   }
 
-  return (
-    <Space title={fileName || typeMessage}>
-      {getMessageTypeIcon(typeMessage, downloadUrl)}
-      <Typography.Paragraph
-        className={`${type === 'outgoing' ? 'outgoing' : 'incoming'} full`}
-        style={{ fontSize: 14, margin: 0, maxWidth: 300, fontWeight: 600 }}
-        ellipsis={{ rows: 1 }}
+  if (typeMessage === 'videoMessage' && downloadUrl) {
+    return (
+      <a
+        className="flex-center"
+        style={{
+          backgroundImage: `url(data:image/jpeg;base64,${jpegThumbnail})`,
+          width: 300,
+          height: 300,
+          backgroundSize: 'cover',
+        }}
+        href={downloadUrl}
+        target="_blank"
+        rel="noreferrer"
       >
-        {typeMessage}
-      </Typography.Paragraph>
+        <div
+          className="flex-center"
+          style={{
+            borderRadius: '50%',
+            backgroundColor: 'rgba(11, 20, 26, .35)',
+            width: 50,
+            height: 50,
+          }}
+        >
+          <Image src={playIcon} preview={false} />
+        </div>
+      </a>
+    );
+  }
+
+  return (
+    <Space direction="vertical">
+      {jpegThumbnail && (
+        <Image
+          className="border-radius"
+          src={`data:image/jpeg;base64,${jpegThumbnail}`}
+          width={300}
+          preview={false}
+        />
+      )}
+      <Space title={fileName || typeMessage}>
+        {getMessageTypeIcon(typeMessage, downloadUrl)}
+        <Typography.Paragraph
+          className={`${type === 'outgoing' ? 'outgoing' : 'incoming'} full`}
+          style={{ fontSize: 14, margin: 0, maxWidth: 300, fontWeight: 600 }}
+          ellipsis={{ rows: 1 }}
+        >
+          {typeMessage}
+        </Typography.Paragraph>
+      </Space>
     </Space>
   );
 };

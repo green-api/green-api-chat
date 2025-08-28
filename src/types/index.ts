@@ -355,6 +355,7 @@ export interface MessageDataForRender {
   isDeleted?: boolean;
   isEdited?: boolean;
   pollMessageData?: PollMessageData;
+  jpegThumbnail?: string;
 }
 
 export interface MessageTooltipMenuData {

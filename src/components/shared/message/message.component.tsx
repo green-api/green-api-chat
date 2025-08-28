@@ -42,6 +42,7 @@ const Message: FC<MessageProps> = ({ messageDataForRender, preview }) => {
     isDeleted,
     isEdited,
     pollMessageData,
+    jpegThumbnail,
   } = messageDataForRender;
 
   const isMiniVersion = useAppSelector(selectMiniVersion);
@@ -94,6 +95,7 @@ const Message: FC<MessageProps> = ({ messageDataForRender, preview }) => {
         typeMessage={typeMessage}
         type={type}
         downloadUrl={downloadUrl}
+        jpegThumbnail={jpegThumbnail}
       />
     );
   }

@@ -335,6 +335,7 @@ const ChatView: FC = () => {
               isDeleted: message.isDeleted,
               isEdited: message.isEdited,
               pollMessageData: message.pollMessageData,
+              jpegThumbnail: message.jpegThumbnail,
             }}
           />
         );

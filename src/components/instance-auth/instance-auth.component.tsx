@@ -1,46 +1,44 @@
-// components/authorization/authorization.component.tsx
 import { useState, useEffect } from 'react';
 
-import { useGetAuthorizationCodeMutation } from '@services/green-api/endpoints';
 import { Form, InputNumber, Button, Typography, Tabs, Flex } from 'antd';
 import { useTranslation } from 'react-i18next';
 
+import codeMenuIcon from 'assets/icons/code-instruction-menu.svg';
+import codeSettingsIcon from 'assets/icons/code-instruction-settings.svg';
 import QrErrorAlert from 'components/alerts/qr-error-alert.component';
+import NumberInstructionCarouselEn from 'components/carousel/number-instruction-carousel-en.component';
+import NumberInstructionCarouselRu from 'components/carousel/number-instruction-carousel-ru';
+import QrInstructionCarouselEn from 'components/carousel/qr-instruction-carousel-en.component';
+import QrInstructionCarouselRu from 'components/carousel/qr-instruction-carousel-ru.component';
 import Progressbar from 'components/progressbar.component';
 import TutorialLink from 'components/tutorial-link.component';
 import CopyButton from 'components/UI/copy-button.component';
 import LizardLoader from 'components/UI/lizard-loader.component';
-import { useFormWithLanguageValidation } from 'hooks';
+import { EXTERNAL_LINKS, QR_HTTP_HOST } from 'configs';
+import { useAppSelector, useFormWithLanguageValidation } from 'hooks';
 import { useQrWebsocket } from 'hooks/use-qr-websocket.hook';
+import { useGetAuthorizationCodeMutation } from 'services/green-api/endpoints';
+import { selectInstance } from 'store/slices/instances.slice';
 import { StateInstanceEnum } from 'types';
+import { fillJsxString, fillString } from 'utils';
 
 interface AuthorizationProps {
-  instanceData: {
-    idInstance: number;
-    apiTokenInstance: string;
-    apiUrl: string;
-    mediaUrl: string;
-  };
   stateInstance?: StateInstanceEnum;
   onAuthorized: () => void;
   isLoadingSettings: boolean;
   tutorialLink: string;
 }
 
-export const Authorization = ({
-  instanceData,
-  stateInstance,
-  onAuthorized,
-  tutorialLink,
-}: AuthorizationProps) => {
+export const AuthInstance = ({ stateInstance, onAuthorized }: AuthorizationProps) => {
   const { t, i18n } = useTranslation();
   const [activeAuthorizationTabKey, setActiveAuthorizationTabKey] = useState('qr');
   const [showCodeError, setShowCodeError] = useState(false);
   const [showQrError, setShowQrError] = useState(false);
   const [phone, setPhone] = useState('');
+  const selectedInstance = useAppSelector(selectInstance);
 
   const { openQrWebsocket, qrData, qrText, isQrLoading, isQrError } = useQrWebsocket(
-    instanceData.apiUrl,
+    selectedInstance.apiUrl,
     onAuthorized
   );
 
@@ -74,10 +72,10 @@ export const Authorization = ({
     setPhone(phoneNumber);
 
     getCode({
-      idInstance: instanceData.idInstance,
-      apiTokenInstance: instanceData.apiTokenInstance,
-      apiUrl: instanceData.apiUrl,
-      mediaUrl: instanceData.mediaUrl,
+      idInstance: selectedInstance.idInstance,
+      apiTokenInstance: selectedInstance.apiTokenInstance,
+      apiUrl: selectedInstance.apiUrl,
+      mediaUrl: selectedInstance.mediaUrl,
       phoneNumber,
     });
   };
@@ -105,12 +103,12 @@ export const Authorization = ({
               qrText={qrText}
               isQrLoading={isQrLoading}
               isQrError={isQrError}
-              tutorialLink={tutorialLink}
               showQrError={showQrError}
+              setShowQrError={setShowQrError}
               onRefreshQr={() => {
                 openQrWebsocket({
-                  idInstance: instanceData.idInstance.toString(),
-                  apiTokenInstance: instanceData.apiTokenInstance,
+                  idInstance: selectedInstance.idInstance.toString(),
+                  apiTokenInstance: selectedInstance.apiTokenInstance,
                 });
                 setShowQrError(false);
               }}
@@ -145,7 +143,7 @@ export const Authorization = ({
           label: <span>{t('SEND_QR_TO_CLIENT')}</span>,
           children: (
             <SendQrAuthorization
-              qrLink={`${QR_HTTP_HOST}/waInstance${instanceData.idInstance}/${instanceData.apiTokenInstance}`}
+              qrLink={`${QR_HTTP_HOST}/waInstance${selectedInstance.idInstance}/${selectedInstance.apiTokenInstance}`}
               language={i18n.resolvedLanguage}
             />
           ),
@@ -161,7 +159,6 @@ const QrAuthorization = ({
   qrText,
   isQrLoading,
   isQrError,
-  tutorialLink,
   showQrError,
   onRefreshQr,
   onSwitchToPhone,
@@ -172,14 +169,20 @@ const QrAuthorization = ({
   qrText: string;
   isQrLoading: boolean;
   isQrError: boolean;
-  tutorialLink: string;
   showQrError: boolean;
   onRefreshQr: () => void;
   onSwitchToPhone: () => void;
   onSwitchToSendQr: () => void;
   setShowQrError: (value: boolean) => void;
 }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+
+  const tutorialLink =
+    i18n.resolvedLanguage === 'ru'
+      ? EXTERNAL_LINKS.freeDeveloperAccountTutorial.rutube
+      : EXTERNAL_LINKS.freeDeveloperAccountTutorial[
+          i18n.resolvedLanguage as keyof typeof EXTERNAL_LINKS.freeDeveloperAccountTutorial
+        ] || EXTERNAL_LINKS.freeDeveloperAccountTutorial.default;
 
   return (
     <div className="qr">
@@ -387,5 +390,3 @@ const SendQrAuthorization = ({ qrLink, language }: { qrLink: string; language: s
     </div>
   );
 };
-
-export default Authorization;

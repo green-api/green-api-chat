@@ -1,5 +1,7 @@
 import { greenAPI } from 'services/green-api/green-api.service';
 import {
+  CheckWhatsappParametersInterface,
+  GetQRResponseInterface,
   GetStateInstanceResponseInterface,
   GetWaSettingsResponseInterface,
   InstanceInterface,

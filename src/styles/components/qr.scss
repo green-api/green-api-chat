@@ -1,0 +1,70 @@
+$mobileResponse: 500px;
+
+.qr {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+  gap: 15px;
+  margin-top: 30px;
+
+  @media screen and (max-width: $mobileResponse) {
+    justify-content: center;
+  }
+
+  &--phone {
+    align-items: normal;
+    margin-top: 30px;
+  }
+
+  &--show {
+    gap: 8px;
+  }
+
+  &__tab {
+    .ant-tabs-tab-btn {
+      white-space: initial;
+    }
+
+    @media screen and (max-width: $mobileResponse) {
+      margin-top: 10px !important;
+    }
+  }
+
+  &__linkByText {
+    white-space: nowrap;
+  }
+
+  &__block {
+    max-width: 290px;
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+  }
+
+  &__text {
+    font-size: 1rem;
+    text-align: center;
+    height: 276px;
+    width: 276px;
+  }
+
+  &__text--error {
+    background-color: #FFDBABFF;
+  }
+
+  &__imgGroup {
+    display: flex;
+    gap: 15px;
+
+    .qr__img {
+      padding: 0;
+      flex: 0 1 calc(50% - 15px);
+      max-width: calc(50% - 15px);
+    }
+  }
+
+  &__img {
+    max-width: 237px;
+    max-height: 490px;
+  }
+}

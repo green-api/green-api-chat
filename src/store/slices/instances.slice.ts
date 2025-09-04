@@ -3,21 +3,26 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from 'store';
 import { InstancesState, TariffsEnum, TypeInstance } from 'types';
 
-const getInitialStateFromStorage = () => {
-  let initialState: InstancesState | null = null;
-
+const getInitialStateFromStorage = (): Partial<InstancesState> | null => {
   try {
     const initialStateFromStorage = localStorage.getItem('selectedInstance');
+    if (!initialStateFromStorage) return null;
 
-    initialState = JSON.parse(initialStateFromStorage!) as InstancesState;
+    const parsed = JSON.parse(initialStateFromStorage) as Partial<InstancesState>;
+
+    return {
+      selectedInstance: parsed.selectedInstance,
+      tariff: parsed.tariff,
+      isChatWorking: parsed.isChatWorking ?? null,
+      typeInstance: parsed.typeInstance ?? 'whatsapp',
+      instanceList: parsed.instanceList ?? null,
+    };
   } catch {
-    initialState = null;
+    return null;
   }
-
-  return initialState;
 };
 
-const initialState: InstancesState = getInitialStateFromStorage() || {
+const initialState: InstancesState = {
   selectedInstance: {
     idInstance: 0,
     apiTokenInstance: '',
@@ -29,6 +34,7 @@ const initialState: InstancesState = getInitialStateFromStorage() || {
   typeInstance: 'whatsapp',
   instanceList: null,
   isAuthorizingInstance: false,
+  ...getInitialStateFromStorage(),
 };
 
 export const instancesSlice = createSlice({

@@ -27,8 +27,11 @@
 @import 'components/alerts/left-group-alert';
 
 @import 'components/shared/message-tooltip-menu';
-@import 'components/modals/tutorial-modal';
-@import 'components/modals/tutorial-link';
+@import 'components/tutorial-modal';
+@import 'components/tutorial-link';
+@import 'components/qr-link';
+@import 'components/qr';
+@import 'components/authorization-code';
 
 html {
   overflow: hidden;

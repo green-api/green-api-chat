@@ -25,6 +25,7 @@ import {
   getTextMessage,
   isWhatsAppOfficialChat,
 } from 'utils';
+import { useIsMaxInstance } from 'hooks/use-is-max-instance';
 
 interface ContactListItemProps {
   lastMessage: MessageInterface;
@@ -45,7 +46,7 @@ const ChatListItem: FC<ContactListItemProps> = ({
   const instanceCredentials = useAppSelector(selectInstance);
   const activeChat = useAppSelector(selectActiveChat);
   const { setActiveChat, setSearchQuery } = useActions();
-
+  const isMax = useIsMaxInstance();
   const messageDate = getMessageDate(
     lastMessage.timestamp * 1000,
     'chatList',
@@ -90,6 +91,9 @@ const ChatListItem: FC<ContactListItemProps> = ({
   const isLoading = isGroupDataLoading || isContactInfoLoading;
 
   const avatar = useMemo<string>(() => {
+    if (isMax && !avatarData?.urlAvatar) {
+      return emptyAvatarButAvailable;
+    }
     if (instanceCredentials.idInstance.toString().startsWith('7835')) {
       return emptyAvatarButAvailable;
     }

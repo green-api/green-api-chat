@@ -197,5 +197,7 @@
   "REFRESH_PAGE": "Обновить страницу",
   "UNEXPECTED_ERROR": "Произошла непредвиденная ошибка, обратитесь в службу технической поддержки",
   "SENT_STATUS_WARNING": "ID отправленного статуса:",
-  "DUPLICATED_FIELD_ERROR": "Такой вариант уже есть"
+  "DUPLICATED_FIELD_ERROR": "Такой вариант уже есть",
+  "CONFIRM_LEAVE_GROUP": "Вы уверены, что хотите покинуть группу?",
+  "LEAVE_GROUP_SUCCESS": "Вы покинули группу"
 }

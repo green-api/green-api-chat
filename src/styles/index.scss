@@ -239,6 +239,10 @@ Button.ant-btn-primary {
   transition: background 0.8s;
 }
 
+.ant-btn-color-dangerous {
+  box-shadow: none;
+}
+
 Button.ant-btn-primary:hover,
 Button.ant-btn-primary:focus {
   background: #009805 radial-gradient(circle, transparent 1%, var(--light-primary-color) 1%)

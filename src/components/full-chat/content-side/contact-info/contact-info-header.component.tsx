@@ -23,7 +23,7 @@ const ContactInfoHeader: FC = () => {
   } = useTranslation();
 
   const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
-  const isGroup = activeChat.chatId?.includes('@g.us');
+  const isGroup = activeChat.chatId?.includes('@g.us') || activeChat.chatId?.startsWith('-');
   const info = activeChat.chatId?.includes('@c.us') ? t('CONTACT_INFO') : t('GROUP_INFO');
 
   const isAdmin = useIsGroupAdmin(activeChat);

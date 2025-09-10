@@ -340,7 +340,9 @@ const ChatView: FC = () => {
         );
       })}
 
-      {typeof activeChat.contactInfo === 'string' && <LeftGroupAlert />}
+      {(typeof activeChat.contactInfo === 'string' || !activeChat.contactInfo) && (
+        <LeftGroupAlert />
+      )}
     </div>
   );
 };

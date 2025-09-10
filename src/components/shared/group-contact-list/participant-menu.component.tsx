@@ -4,54 +4,70 @@ import { MoreOutlined } from '@ant-design/icons';
 import { Dropdown, Menu, message } from 'antd';
 import { useTranslation } from 'react-i18next';
 
-import { useAppSelector } from 'hooks';
+import { useActions, useAppSelector } from 'hooks';
+import { useIsMaxInstance } from 'hooks/use-is-max-instance';
 import {
   useRemoveAdminMutation,
   useRemoveParticipantMutation,
   useSetGroupAdminMutation,
   useGetWaSettingsQuery,
+  useGetAccountSettingsQuery,
 } from 'services/green-api/endpoints';
 import { selectActiveChat } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
-import { GroupParticipantInterface } from 'types';
+import { GroupParticipantInterface, GetGroupDataSuccessResponseInterface } from 'types';
 
 interface ParticipantMenuProps {
   participant: GroupParticipantInterface;
 }
 
+const isGroupData = (contactInfo: unknown): contactInfo is GetGroupDataSuccessResponseInterface => {
+  return (
+    typeof contactInfo === 'object' &&
+    contactInfo !== null &&
+    'participants' in contactInfo &&
+    Array.isArray((contactInfo as { participants?: unknown }).participants)
+  );
+};
+
 const ParticipantMenu: FC<ParticipantMenuProps> = ({ participant }) => {
+  const isMax = useIsMaxInstance();
   const { t } = useTranslation();
+  const { setActiveChat } = useActions();
+
   const activeChat = useAppSelector(selectActiveChat);
   const instanceCredentials = useAppSelector(selectInstance);
-  const { data: waSettings, isLoading } = useGetWaSettingsQuery(instanceCredentials);
+
+  const { data: waSettings, isLoading: isLoadingWaSettings } =
+    useGetWaSettingsQuery(instanceCredentials);
+  const { data: accountSettings, isLoading: isLoadingAccountSettings } = useGetAccountSettingsQuery(
+    instanceCredentials,
+    { skip: !isMax }
+  );
+
+  const settings = isMax ? accountSettings : waSettings;
+  const isLoading = isMax ? isLoadingAccountSettings : isLoadingWaSettings;
 
   const [removeParticipant] = useRemoveParticipantMutation();
   const [setGroupAdmin] = useSetGroupAdminMutation();
   const [removeAdmin] = useRemoveAdminMutation();
 
-  const participants =
-    activeChat &&
-    typeof activeChat.contactInfo === 'object' &&
-    activeChat.contactInfo !== null &&
-    'participants' in activeChat.contactInfo &&
-    Array.isArray(activeChat.contactInfo.participants)
-      ? activeChat.contactInfo.participants
-      : [];
-
   const isAdmin = useMemo(() => {
     if (
       isLoading ||
-      !waSettings?.phone ||
+      (!isMax && !settings?.phone) ||
+      (isMax && !settings?.chatId) ||
       !activeChat ||
-      typeof activeChat.contactInfo !== 'object' ||
-      !Array.isArray(participants)
+      !isGroupData(activeChat.contactInfo)
     ) {
       return false;
     }
 
-    const currentUserId = `${waSettings.phone}@c.us`;
-    return participants.some((p) => p.id === currentUserId && p.isAdmin);
-  }, [waSettings, isLoading, activeChat]);
+    const currentUserId = isMax ? settings?.chatId : `${settings?.phone}@c.us`;
+    return activeChat.contactInfo.participants.some((p) =>
+      isMax ? p.chatId === currentUserId && p.isAdmin : p.id === currentUserId && p.isAdmin
+    );
+  }, [settings, isLoading, activeChat]);
 
   if (!activeChat) {
     return null;
@@ -73,10 +89,25 @@ const ParticipantMenu: FC<ParticipantMenuProps> = ({ participant }) => {
   const handleSetAdmin = async () => {
     try {
       await setGroupAdmin({
-        groupId: activeChat.chatId,
-        participantChatId: participant.id,
+        ...(isMax ? { chatId: activeChat.chatId } : { groupId: activeChat.chatId }),
+        participantChatId: isMax ? participant.chatId ?? '' : participant.id,
         ...instanceCredentials,
       }).unwrap();
+
+      if (activeChat && isGroupData(activeChat.contactInfo)) {
+        const updatedParticipants = activeChat.contactInfo.participants.map((p) =>
+          p.chatId === participant.chatId ? { ...p, isAdmin: true } : p
+        );
+
+        setActiveChat({
+          ...activeChat,
+          contactInfo: {
+            ...activeChat.contactInfo,
+            participants: updatedParticipants,
+          },
+        });
+      }
+
       message.success(t('ADMIN_ASSIGNED'));
     } catch {
       message.error(t('ERROR_ASSIGNING_ADMIN'));
@@ -86,10 +117,25 @@ const ParticipantMenu: FC<ParticipantMenuProps> = ({ participant }) => {
   const handleRemoveAdmin = async () => {
     try {
       await removeAdmin({
-        groupId: activeChat.chatId,
-        participantChatId: participant.id,
+        ...(isMax ? { chatId: activeChat.chatId } : { groupId: activeChat.chatId }),
+        participantChatId: isMax ? participant.chatId ?? '' : participant.id,
         ...instanceCredentials,
       }).unwrap();
+
+      if (activeChat && isGroupData(activeChat.contactInfo)) {
+        const updatedParticipants = activeChat.contactInfo.participants.map((p) =>
+          p.chatId === participant.chatId ? { ...p, isAdmin: false } : p
+        );
+
+        setActiveChat({
+          ...activeChat,
+          contactInfo: {
+            ...activeChat.contactInfo,
+            participants: updatedParticipants,
+          },
+        });
+      }
+
       message.success(t('ADMIN_REMOVED'));
     } catch {
       message.error(t('ERROR_REMOVING_ADMIN'));

@@ -22,7 +22,7 @@ const ContactChatFooter: FC = () => {
     { skip: !idUser || !apiTokenUser }
   );
 
-  if (typeof activeChat.contactInfo === 'string') {
+  if (typeof activeChat.contactInfo === 'string' || !activeChat.contactInfo) {
     return (
       <Flex align="center" justify="center" className="chat-form-container text-center p-10">
         <Typography.Paragraph style={{ margin: 'initial' }}>

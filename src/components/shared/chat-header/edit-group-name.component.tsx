@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 
 import { useActions, useAppSelector } from 'hooks';
 import { useIsGroupAdmin } from 'hooks/use-is-group-admin.hook';
+import { useIsMaxInstance } from 'hooks/use-is-max-instance';
 import { useUpdateGroupNameMutation } from 'services/green-api/endpoints';
 import { selectActiveChat } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
@@ -21,6 +22,8 @@ const EditGroupName: FC = () => {
   const [updateGroupName] = useUpdateGroupNameMutation();
 
   const isAdmin = useIsGroupAdmin(activeChat);
+
+  const isMax = useIsMaxInstance();
 
   const initialName = useMemo(() => {
     return activeChat?.contactInfo !== 'Error: forbidden' &&
@@ -39,7 +42,7 @@ const EditGroupName: FC = () => {
 
     try {
       await updateGroupName({
-        groupId: activeChat.chatId,
+        ...(isMax ? { chatId: activeChat.chatId } : { groupId: activeChat.chatId }),
         groupName,
         ...instanceCredentials,
       });

@@ -12,8 +12,10 @@ import {
 } from 'types';
 
 export function isContactInfo(
-  info: GetContactInfoResponseInterface | GetGroupDataSuccessResponseInterface
+  info: GetContactInfoResponseInterface | GetGroupDataSuccessResponseInterface,
+  isMax?: boolean
 ): info is GetContactInfoResponseInterface {
+  if (isMax) return !info.chatId?.startsWith('-');
   return 'chatId' in info;
 }
 

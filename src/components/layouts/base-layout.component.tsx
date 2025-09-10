@@ -11,6 +11,7 @@ import emptyAvatarGroup from 'assets/emptyAvatarGroup.png';
 import FullChat from 'components/full-chat/chat.component';
 import MiniChat from 'components/mini-chat/chat.component';
 import { useActions, useAppSelector } from 'hooks';
+import { useIsMaxInstance } from 'hooks/use-is-max-instance';
 import {
   useLazyGetAvatarQuery,
   useLazyGetContactInfoQuery,
@@ -52,6 +53,8 @@ const BaseLayout: FC = () => {
     setInstanceList,
   } = useActions();
 
+  const isMax = useIsMaxInstance();
+
   const [getContactInfo] = useLazyGetContactInfoQuery();
   const [getGroupData] = useLazyGetGroupDataQuery();
   const [getAvatar] = useLazyGetAvatarQuery();
@@ -76,7 +79,6 @@ const BaseLayout: FC = () => {
               isChatWorking = getIsChatWorkingFromStorage(event.data.payload?.idInstance);
             }
 
-            console.log(event.data.payload);
             setInstanceList(event.data.payload.instanceList);
 
             setSelectedInstance({
@@ -174,9 +176,12 @@ const BaseLayout: FC = () => {
             let avatar = chatId.includes('g.us') ? emptyAvatarGroup : emptyAvatarButAvailable;
             let error = undefined;
 
-            if (chatId.includes('g.us') && !idInstance.toString().startsWith('7835')) {
+            if (
+              (chatId.includes('g.us') || chatId.startsWith('-')) &&
+              !idInstance.toString().startsWith('7835')
+            ) {
               const { data, error: groupDataError } = await getGroupData({
-                groupId: chatId,
+                ...(isMax ? { chatId: chatId } : { groupId: chatId }),
                 apiUrl: apiUrl + '/',
                 mediaUrl: mediaUrl + '/',
                 apiTokenInstance: apiTokenInstance,

@@ -15,7 +15,6 @@ const SelectInstanceLabel: FC<
 > = ({ idInstance, apiTokenInstance, apiUrl, mediaUrl, name, typeInstance }) => {
   const isMax = isMaxInstance(typeInstance);
 
-  // Call both queries unconditionally but skip based on isMax
   const { data: waSettings, isLoading: isLoadingWaSettings } = useGetWaSettingsQuery(
     {
       idInstance,
@@ -40,7 +39,6 @@ const SelectInstanceLabel: FC<
     }
   );
 
-  // Determine which data to use
   const settings = isMax ? accountSettings : waSettings;
   const isLoading = isMax ? isLoadingAccountSettings : isLoadingWaSettings;
 

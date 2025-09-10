@@ -187,7 +187,8 @@ export interface LastMessagesParametersInterface extends InstanceInterface {
 }
 
 export interface GroupBaseParametersInterface extends InstanceInterface {
-  groupId: string;
+  groupId?: string;
+  chatId?: string;
 }
 
 export interface UpdateGroupNameInterface extends GroupBaseParametersInterface {
@@ -244,6 +245,7 @@ export interface GetGroupDataSuccessResponseInterface
   subjectTime: number;
   subjectOwner: string;
   groupInviteLink: string;
+  chatId?: string;
 }
 
 export type GetGroupDataErrorResponse = 'Error: item-not-found' | 'Error: forbidden';
@@ -419,6 +421,7 @@ export interface GetWaSettingsResponseInterface {
   avatar: string;
   phone: string;
   deviceId: string;
+  chatId?: string;
 }
 
 export interface GetProfileBaseSettingsResponseInterface<T extends boolean> {

@@ -29,7 +29,7 @@ const GroupContactList: FC = () => {
     return null;
   }
 
-  if (isContactInfo(activeChat.contactInfo)) {
+  if (isContactInfo(activeChat.contactInfo, isMax)) {
     return null;
   }
 
@@ -47,7 +47,7 @@ const GroupContactList: FC = () => {
 
     try {
       await addParticipant({
-        groupId: activeChat.chatId,
+        ...(isMax ? { chatId: activeChat.chatId } : { groupId: activeChat.chatId }),
         participantChatId,
         ...instanceCredentials,
       });
@@ -84,7 +84,6 @@ const GroupContactList: FC = () => {
           </Flex>
         }
       />
-
       <Modal
         title={t('ADD_PARTICIPANT')}
         open={isModalVisible}
@@ -94,7 +93,7 @@ const GroupContactList: FC = () => {
         cancelText={t('CANCEL')}
       >
         <Input
-          placeholder={t('ADD_PARTICIPANT_PLACEHOLDER')}
+          placeholder={isMax ? '10000000' : t('ADD_PARTICIPANT_PLACEHOLDER')}
           value={phoneNumber}
           onChange={(e) => setPhoneNumber(e.target.value)}
           maxLength={15}

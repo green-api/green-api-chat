@@ -4,6 +4,7 @@ import { Button, message, Popconfirm } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import { useActions, useAppSelector } from 'hooks';
+import { useIsMaxInstance } from 'hooks/use-is-max-instance';
 import { useLeaveGroupMutation } from 'services/green-api/endpoints';
 import { selectInstance } from 'store/slices/instances.slice';
 import { ActiveChat } from 'types';
@@ -18,10 +19,12 @@ const LeaveGroupButton: FC<LeaveGroupButtonProps> = ({ activeChat }) => {
   const { setContactInfoOpen } = useActions();
   const instanceCredentials = useAppSelector(selectInstance);
 
+  const isMax = useIsMaxInstance();
+
   const handleLeaveGroupClick = async () => {
     try {
       await leaveGroup({
-        groupId: activeChat.chatId,
+        ...(isMax ? { chatId: activeChat.chatId } : { groupId: activeChat.chatId }),
         ...instanceCredentials,
       });
       message.success(t('LEFT_GROUP_SUCCESS'));

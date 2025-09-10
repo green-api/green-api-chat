@@ -9,6 +9,7 @@ import emptyAvatarGroup from 'assets/emptyAvatarGroup.png';
 import waChatIcon from 'assets/wa-chat.svg';
 import AvatarImage from 'components/UI/avatar-image.component';
 import { useActions, useAppSelector } from 'hooks';
+import { useIsMaxInstance } from 'hooks/use-is-max-instance';
 import {
   useGetAvatarQuery,
   useGetContactInfoQuery,
@@ -25,7 +26,6 @@ import {
   getTextMessage,
   isWhatsAppOfficialChat,
 } from 'utils';
-import { useIsMaxInstance } from 'hooks/use-is-max-instance';
 
 interface ContactListItemProps {
   lastMessage: MessageInterface;
@@ -56,7 +56,7 @@ const ChatListItem: FC<ContactListItemProps> = ({
   const { data: groupData, isLoading: isGroupDataLoading } = useGetGroupDataQuery(
     {
       ...instanceCredentials,
-      groupId: lastMessage?.chatId,
+      ...(isMax ? { chatId: lastMessage.chatId } : { groupId: lastMessage.chatId }),
     },
     {
       skip:

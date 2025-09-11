@@ -56,7 +56,7 @@ const GroupContactList: FC = () => {
         message.success(t('PARTICIPANT_ADDED'));
       }
       if (!res.data?.addParticipant) {
-        message.success(t('ERROR_ADDING_PARTICIPANT'));
+        message.error(t('ERROR_ADDING_PARTICIPANT'));
       }
 
       setIsModalVisible(false);

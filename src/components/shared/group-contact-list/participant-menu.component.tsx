@@ -75,12 +75,15 @@ const ParticipantMenu: FC<ParticipantMenuProps> = ({ participant }) => {
 
   const handleRemoveParticipant = async () => {
     try {
-      await removeParticipant({
+      const res = await removeParticipant({
         ...(isMax ? { chatId: activeChat.chatId } : { groupId: activeChat.chatId }),
         participantChatId: isMax ? participant.chatId ?? '' : participant.id,
         ...instanceCredentials,
       }).unwrap();
-      message.success(t('PARTICIPANT_DELETED'));
+      if (!!res.removeParticipant) {
+        message.success(t('PARTICIPANT_DELETED'));
+      }
+      if (!res.removeParticipant) message.error(t('ERROR_DELETING_PARTICIPANT'));
     } catch {
       message.error(t('ERROR_DELETING_PARTICIPANT'));
     }
@@ -111,7 +114,7 @@ const ParticipantMenu: FC<ParticipantMenuProps> = ({ participant }) => {
           message.success(t('ADMIN_ASSIGNED'));
         }
       }
-      message.error(t('ERROR_ASSIGNING_ADMIN'));
+      if (!res.setGroupAdmin) message.error(t('ERROR_ASSIGNING_ADMIN'));
     } catch {
       message.error(t('ERROR_ASSIGNING_ADMIN'));
     }
@@ -140,7 +143,7 @@ const ParticipantMenu: FC<ParticipantMenuProps> = ({ participant }) => {
           message.success(t('ADMIN_REMOVED'));
         }
       }
-      message.error(t('ERROR_REMOVING_ADMIN'));
+      if (!res.removeAdmin) message.error(t('ERROR_REMOVING_ADMIN'));
     } catch {
       message.error(t('ERROR_REMOVING_ADMIN'));
     }

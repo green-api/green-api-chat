@@ -23,17 +23,23 @@ const LeaveGroupButton: FC<LeaveGroupButtonProps> = ({ activeChat }) => {
 
   const handleLeaveGroupClick = async () => {
     try {
-      await leaveGroup({
+      const res = await leaveGroup({
         ...(isMax ? { chatId: activeChat.chatId } : { groupId: activeChat.chatId }),
         ...instanceCredentials,
       });
-      message.success(t('LEFT_GROUP_SUCCESS'));
-      setContactInfoOpen(false);
+      if (!!res.data?.leaveGroup) {
+        message.success(t('LEFT_GROUP_SUCCESS'));
+        setContactInfoOpen(false);
+      }
+      if (!res.data?.leaveGroup) {
+        message.error(t('ERROR_LEAVING_GROUP'));
+      }
     } catch {
       message.error(t('ERROR_LEAVING_GROUP'));
     }
   };
 
+  if (typeof activeChat.contactInfo === 'string' || !activeChat.contactInfo) return null;
   return (
     <Popconfirm
       title={t('CONFIRM_LEAVE_GROUP')}

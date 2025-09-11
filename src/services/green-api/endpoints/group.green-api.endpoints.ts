@@ -11,6 +11,7 @@ import {
   SetGroupAdminResponseInterface,
   RemoveGroupAdminResponseInterface,
   SetGroupPictureResponseInterface,
+  LeaveGroupResponseInterface,
 } from 'types';
 
 export const groupGreenApiEndpoints = greenAPI.injectEndpoints({
@@ -113,7 +114,7 @@ export const groupGreenApiEndpoints = greenAPI.injectEndpoints({
         ];
       },
     }),
-    leaveGroup: builder.mutation<RemoveGroupAdminResponseInterface, GroupBaseParametersInterface>({
+    leaveGroup: builder.mutation<LeaveGroupResponseInterface, GroupBaseParametersInterface>({
       query: ({ idInstance, apiTokenInstance, apiUrl, mediaUrl: _, ...body }) => ({
         url: `${apiUrl}waInstance${idInstance}/leaveGroup/${apiTokenInstance}`,
         method: 'POST',

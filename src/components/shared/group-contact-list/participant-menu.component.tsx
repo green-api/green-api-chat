@@ -76,7 +76,7 @@ const ParticipantMenu: FC<ParticipantMenuProps> = ({ participant }) => {
   const handleRemoveParticipant = async () => {
     try {
       await removeParticipant({
-        groupId: activeChat.chatId,
+        ...(isMax ? { chatId: activeChat.chatId } : { groupId: activeChat.chatId }),
         participantChatId: participant.id,
         ...instanceCredentials,
       }).unwrap();

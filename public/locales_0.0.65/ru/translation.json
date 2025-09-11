@@ -199,5 +199,6 @@
   "SENT_STATUS_WARNING": "ID отправленного статуса:",
   "DUPLICATED_FIELD_ERROR": "Такой вариант уже есть",
   "CONFIRM_LEAVE_GROUP": "Вы уверены, что хотите покинуть группу?",
-  "LEFT_GROUP_SUCCESS": "Вы покинули группу"
+  "LEFT_GROUP_SUCCESS": "Вы покинули группу",
+  "ERROR_LEAVING_GROUP": "Произошла ошибка при выходе из группы"
 }

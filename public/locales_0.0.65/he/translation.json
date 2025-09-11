@@ -184,5 +184,6 @@
   "SENT_STATUS_WARNING": "מזהה הסטטוס שנשלח:",
   "DUPLICATED_FIELD_ERROR": "אפשרות זו כבר קיימת",
   "CONFIRM_LEAVE_GROUP": "האם אתה בטוח שברצונך לעזוב את הקבוצה?",
-  "LEFT_GROUP_SUCCESS": "עזבת את הקבוצה"
+  "LEFT_GROUP_SUCCESS": "עזבת את הקבוצה",
+  "ERROR_LEAVING_GROUP": "אירעה שגיאה בעת עזיבת הקבוצה"
 }

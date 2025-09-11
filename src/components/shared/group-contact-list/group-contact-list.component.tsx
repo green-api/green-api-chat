@@ -46,13 +46,19 @@ const GroupContactList: FC = () => {
     const participantChatId = `${cleaned}${isMax ? '' : '@c.us'}`;
 
     try {
-      await addParticipant({
+      const res = await addParticipant({
         ...(isMax ? { chatId: activeChat.chatId } : { groupId: activeChat.chatId }),
         participantChatId,
         ...instanceCredentials,
       });
 
-      message.success(t('PARTICIPANT_ADDED'));
+      if (!!res.data?.addParticipant) {
+        message.success(t('PARTICIPANT_ADDED'));
+      }
+      if (!res.data?.addParticipant) {
+        message.success(t('ERROR_ADDING_PARTICIPANT'));
+      }
+
       setIsModalVisible(false);
       setPhoneNumber('');
     } catch {

@@ -214,7 +214,7 @@ export interface SetGroupAdminResponseInterface {
   setGroupAdmin: boolean;
 }
 export interface RemoveGroupAdminResponseInterface {
-  setGroupAdmin: boolean;
+  removeAdmin: boolean;
 }
 
 export interface SetGroupPictureInterface extends GroupBaseParametersInterface {

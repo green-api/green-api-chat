@@ -88,27 +88,30 @@ const ParticipantMenu: FC<ParticipantMenuProps> = ({ participant }) => {
 
   const handleSetAdmin = async () => {
     try {
-      await setGroupAdmin({
+      const res = await setGroupAdmin({
         ...(isMax ? { chatId: activeChat.chatId } : { groupId: activeChat.chatId }),
         participantChatId: isMax ? participant.chatId ?? '' : participant.id,
         ...instanceCredentials,
       }).unwrap();
 
+      console.log(res);
+
       if (activeChat && isGroupData(activeChat.contactInfo)) {
         const updatedParticipants = activeChat.contactInfo.participants.map((p) =>
           p.chatId === participant.chatId ? { ...p, isAdmin: true } : p
         );
-
-        setActiveChat({
-          ...activeChat,
-          contactInfo: {
-            ...activeChat.contactInfo,
-            participants: updatedParticipants,
-          },
-        });
+        if (!!res.setGroupAdmin) {
+          setActiveChat({
+            ...activeChat,
+            contactInfo: {
+              ...activeChat.contactInfo,
+              participants: updatedParticipants,
+            },
+          });
+          message.success(t('ADMIN_ASSIGNED'));
+        }
       }
-
-      message.success(t('ADMIN_ASSIGNED'));
+      message.error(t('ERROR_ASSIGNING_ADMIN'));
     } catch {
       message.error(t('ERROR_ASSIGNING_ADMIN'));
     }
@@ -116,7 +119,7 @@ const ParticipantMenu: FC<ParticipantMenuProps> = ({ participant }) => {
 
   const handleRemoveAdmin = async () => {
     try {
-      await removeAdmin({
+      const res = await removeAdmin({
         ...(isMax ? { chatId: activeChat.chatId } : { groupId: activeChat.chatId }),
         participantChatId: isMax ? participant.chatId ?? '' : participant.id,
         ...instanceCredentials,
@@ -126,17 +129,18 @@ const ParticipantMenu: FC<ParticipantMenuProps> = ({ participant }) => {
         const updatedParticipants = activeChat.contactInfo.participants.map((p) =>
           p.chatId === participant.chatId ? { ...p, isAdmin: false } : p
         );
-
-        setActiveChat({
-          ...activeChat,
-          contactInfo: {
-            ...activeChat.contactInfo,
-            participants: updatedParticipants,
-          },
-        });
+        if (!!res.removeAdmin) {
+          setActiveChat({
+            ...activeChat,
+            contactInfo: {
+              ...activeChat.contactInfo,
+              participants: updatedParticipants,
+            },
+          });
+          message.success(t('ADMIN_REMOVED'));
+        }
       }
-
-      message.success(t('ADMIN_REMOVED'));
+      message.error(t('ERROR_REMOVING_ADMIN'));
     } catch {
       message.error(t('ERROR_REMOVING_ADMIN'));
     }

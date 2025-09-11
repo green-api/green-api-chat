@@ -77,7 +77,7 @@ const ParticipantMenu: FC<ParticipantMenuProps> = ({ participant }) => {
     try {
       await removeParticipant({
         ...(isMax ? { chatId: activeChat.chatId } : { groupId: activeChat.chatId }),
-        participantChatId: participant.id,
+        participantChatId: isMax ? participant.chatId ?? '' : participant.id,
         ...instanceCredentials,
       }).unwrap();
       message.success(t('PARTICIPANT_DELETED'));

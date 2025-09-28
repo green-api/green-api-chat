@@ -182,6 +182,7 @@ export type GetChatInformationParameters = { onlySenderDelete?: boolean } & Pick
   InstanceInterface;
 
 export interface LastMessagesParametersInterface extends InstanceInterface {
+  minutesToRefetch?: number;
   minutes?: number;
   allMessages?: boolean;
 }

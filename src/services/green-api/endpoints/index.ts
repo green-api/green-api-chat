@@ -43,6 +43,7 @@ export const {
   useSendMediaStatusMutation,
   useGetAccountSettingsQuery,
   useGetAuthorizationCodeMutation,
+  useLazyLastMessagesQuery,
 } = {
   ...accountGreenApiEndpoints,
   ...sendingGreenApiEndpoints,

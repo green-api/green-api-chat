@@ -200,5 +200,15 @@
   "DUPLICATED_FIELD_ERROR": "Такой вариант уже есть",
   "AUTHORIZED": "Авторизован",
   "NOT_AUTHORIZED": "Не авторизован",
-  "AUTHORIZE": "Подключить"
+  "AUTHORIZE": "Подключить",
+  "LINK_BY": "Связать по",
+  "LINK_BY_QR": "QR-коду",
+  "LINK_BY_PHONE": "номеру телефона",
+  "INPUT_NUMBER_PHONE": "Введите номер телефона",
+  "GET_CODE": "Получить код",
+  "VIDEO_TUTORIAL": "Видеоинструкция",
+  "SEND_QR_TO_CLIENT": "Переслать QR-код клиенту",
+  "SEND_QR_TO_CLIENT_DESCRIPTION": "Перешлите ссылку своему клиенту для формирования QR-кода.",
+  "FIRST_GET_QR_DATA": "Нажмите кнопку получить Qr код, чтобы появилась картинка с актуальным Qr",
+  "REFRESH_QR": "Получить QR"
 }

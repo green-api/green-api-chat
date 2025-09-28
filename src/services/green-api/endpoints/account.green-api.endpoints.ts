@@ -17,6 +17,7 @@ export const accountGreenApiEndpoints = greenAPI.injectEndpoints({
         url: `${apiUrl}waInstance${idInstance}/getWaSettings/${apiTokenInstance}`,
       }),
       keepUnusedDataFor: 1000,
+      providesTags: ['lastMessages'],
     }),
     getAccountSettings: builder.query<
       GetWaSettingsResponseInterface,

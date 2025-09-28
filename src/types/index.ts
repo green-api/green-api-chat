@@ -254,7 +254,13 @@ export type SendingMethodName =
 
 export type MessageServiceMethodName = 'editMessage' | 'deleteMessage';
 
-export type UserSideActiveMode = 'chats' | 'settings' | 'profile';
+export type UserSideActiveMode =
+  | 'chats'
+  | 'settings'
+  | 'profile'
+  | 'statuses'
+  | 'calls'
+  | 'archive';
 
 export interface SendingMethod {
   name: SendingMethodName;

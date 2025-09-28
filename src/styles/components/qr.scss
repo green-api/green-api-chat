@@ -21,6 +21,7 @@ $mobileResponse: 500px;
   }
 
   &__tab {
+    margin: auto;
     .ant-tabs-tab-btn {
       white-space: initial;
     }
@@ -46,10 +47,11 @@ $mobileResponse: 500px;
     text-align: center;
     height: 276px;
     width: 276px;
+    position: relative;
   }
 
   &__text--error {
-    background-color: #FFDBABFF;
+    background-color: #ffdbabff;
   }
 
   &__imgGroup {

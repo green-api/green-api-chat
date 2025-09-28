@@ -15,27 +15,72 @@ import TutorialLink from 'components/tutorial-link.component';
 import CopyButton from 'components/UI/copy-button.component';
 import LizardLoader from 'components/UI/lizard-loader.component';
 import { EXTERNAL_LINKS, QR_HTTP_HOST } from 'configs';
-import { useAppSelector, useFormWithLanguageValidation } from 'hooks';
+import { useActions, useAppSelector, useFormWithLanguageValidation } from 'hooks';
+import { useIsMaxInstance } from 'hooks/use-is-max-instance';
 import { useQrWebsocket } from 'hooks/use-qr-websocket.hook';
-import { useGetAuthorizationCodeMutation } from 'services/green-api/endpoints';
+import {
+  useGetAccountSettingsQuery,
+  useGetAuthorizationCodeMutation,
+  useGetWaSettingsQuery,
+  useLazyLastMessagesQuery,
+} from 'services/green-api/endpoints';
 import { selectInstance } from 'store/slices/instances.slice';
 import { StateInstanceEnum } from 'types';
 import { fillJsxString, fillString } from 'utils';
 
-interface AuthorizationProps {
-  stateInstance?: StateInstanceEnum;
-  onAuthorized: () => void;
-  isLoadingSettings: boolean;
-  tutorialLink: string;
-}
-
-export const AuthInstance = ({ stateInstance, onAuthorized }: AuthorizationProps) => {
+export const AuthInstance = () => {
   const { t, i18n } = useTranslation();
   const [activeAuthorizationTabKey, setActiveAuthorizationTabKey] = useState('qr');
   const [showCodeError, setShowCodeError] = useState(false);
   const [showQrError, setShowQrError] = useState(false);
   const [phone, setPhone] = useState('');
   const selectedInstance = useAppSelector(selectInstance);
+
+  const { setIsAuthorizingInstance } = useActions();
+
+  const isMax = useIsMaxInstance();
+
+  const { refetch: waRefetch, data: settings } = useGetWaSettingsQuery(
+    {
+      idInstance: selectedInstance.idInstance,
+      apiTokenInstance: selectedInstance.apiTokenInstance,
+      apiUrl: selectedInstance.apiUrl,
+      mediaUrl: selectedInstance.mediaUrl,
+    },
+    {
+      skip: isMax,
+    }
+  );
+
+  const [fetchChats] = useLazyLastMessagesQuery();
+
+  const { refetch: maxRefetch, data: maxData } = useGetAccountSettingsQuery(
+    {
+      idInstance: selectedInstance.idInstance,
+      apiTokenInstance: selectedInstance.apiTokenInstance,
+      apiUrl: selectedInstance.apiUrl,
+      mediaUrl: selectedInstance.mediaUrl,
+    },
+    {
+      skip: !isMax,
+    }
+  );
+
+  const refetch = isMax ? maxRefetch : waRefetch;
+  const stateInstance = isMax ? maxData?.stateInstance : settings?.stateInstance;
+
+  const onAuthorized = () => {
+    refetch();
+    setIsAuthorizingInstance(false);
+    fetchChats({
+      idInstance: selectedInstance.idInstance,
+      apiTokenInstance: selectedInstance.apiTokenInstance,
+      apiUrl: selectedInstance.apiUrl,
+      mediaUrl: selectedInstance.mediaUrl,
+      allMessages: false,
+      minutesToRefetch: 26300,
+    });
+  };
 
   const { openQrWebsocket, qrData, qrText, isQrLoading, isQrError } = useQrWebsocket(
     selectedInstance.apiUrl,
@@ -134,7 +179,7 @@ export const AuthInstance = ({ stateInstance, onAuthorized }: AuthorizationProps
               codeForm={codeForm}
               onSubmitCode={handleSubmitCode}
               onBack={() => setShowCodeInstruction(false)}
-              language={i18n.resolvedLanguage}
+              language={i18n.resolvedLanguage ?? ''}
             />
           ),
         },
@@ -144,7 +189,7 @@ export const AuthInstance = ({ stateInstance, onAuthorized }: AuthorizationProps
           children: (
             <SendQrAuthorization
               qrLink={`${QR_HTTP_HOST}/waInstance${selectedInstance.idInstance}/${selectedInstance.apiTokenInstance}`}
-              language={i18n.resolvedLanguage}
+              language={i18n.resolvedLanguage ?? ''}
             />
           ),
         },

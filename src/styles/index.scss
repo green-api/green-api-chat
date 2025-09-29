@@ -32,6 +32,7 @@
 @import 'components/qr-link';
 @import 'components/qr';
 @import 'components/authorization-code';
+@import 'components/desc-group';
 
 html {
   overflow: hidden;
@@ -293,4 +294,35 @@ Button.ant-btn-primary:focus {
   &:active {
     border-color: #d1242f !important;
   }
+}
+
+.account-danger-zone {
+  border-radius: 8px;
+  border: 1px solid var(--danger-color);
+  background-color: var(--danger-zone-bg);
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  gap: 16px;
+
+  & .ant-descriptions-header {
+    margin-bottom: 0;
+  }
+
+  @media (max-width: 510px) {
+    line-height: 1.35rem;
+  }
+}
+
+.account-logout {
+  border-radius: 8px;
+  border: 1px solid var(--desc-border-color);
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  gap: 16px;
+}
+
+.select-sending-mode .ant-select-item-option-content:hover {
+  color: #1677ff;
 }

@@ -44,6 +44,7 @@ export const {
   useGetAccountSettingsQuery,
   useGetAuthorizationCodeMutation,
   useLazyLastMessagesQuery,
+  useLogoutMutation,
 } = {
   ...accountGreenApiEndpoints,
   ...sendingGreenApiEndpoints,

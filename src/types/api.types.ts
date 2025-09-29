@@ -511,3 +511,7 @@ export interface GetQRResponseInterface {
   status: boolean;
   code: string;
 }
+
+export interface LogoutResponseInterface {
+  isLogout: boolean;
+}

@@ -29,6 +29,11 @@ const AsideItem: FC<AsideItemProps> = ({ asideItem }) => {
 
   const isActive = activeAsideItem === asideItem.item;
 
+  const handleSetActive = () => {
+    if (asideItem.item === 'settings') return;
+    setUserSideActiveMode(asideItem.item);
+  };
+
   const avatar = useMemo<string>(() => {
     if (waSettings && waSettings.avatar) {
       return waSettings.avatar;
@@ -44,7 +49,7 @@ const AsideItem: FC<AsideItemProps> = ({ asideItem }) => {
   return (
     <a
       className={`aside-item ${isActive ? 'active' : ''} flex-center`}
-      onClick={() => setUserSideActiveMode(asideItem.item)}
+      onClick={handleSetActive}
       title={t(asideItem.title)}
     >
       {asideItem.icon}

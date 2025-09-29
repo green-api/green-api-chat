@@ -210,5 +210,8 @@
   "SEND_QR_TO_CLIENT": "Переслать QR-код клиенту",
   "SEND_QR_TO_CLIENT_DESCRIPTION": "Перешлите ссылку своему клиенту для формирования QR-кода.",
   "FIRST_GET_QR_DATA": "Нажмите кнопку получить Qr код, чтобы появилась картинка с актуальным Qr",
-  "REFRESH_QR": "Получить QR"
+  "REFRESH_QR": "Получить QR",
+  "INSTANCE_LOGOUT": "Разлогинить",
+  "INSTANCE_LOGOUT_WARNING_TITLE": "Отправка и получение сообщений перестанут работать",
+  "INSTANCE_LOGOUT_CONFIRM_TITLE": "Вы уверены, что хотите отвязать текущий WhatsApp аккаунт от данного инстанса?"
 }

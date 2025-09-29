@@ -5,6 +5,7 @@ import {
   GetStateInstanceResponseInterface,
   GetWaSettingsResponseInterface,
   InstanceInterface,
+  LogoutResponseInterface,
 } from 'types';
 
 export const accountGreenApiEndpoints = greenAPI.injectEndpoints({
@@ -17,7 +18,10 @@ export const accountGreenApiEndpoints = greenAPI.injectEndpoints({
         url: `${apiUrl}waInstance${idInstance}/getWaSettings/${apiTokenInstance}`,
       }),
       keepUnusedDataFor: 1000,
-      providesTags: ['lastMessages'],
+      providesTags: (result, _, arguments_) => {
+        if (result) return [{ type: 'waSettings', id: arguments_.idInstance }, 'lastMessages'];
+        return [{ type: 'waSettings', id: 'waAccountSettings' }, 'lastMessages'];
+      },
     }),
     getAccountSettings: builder.query<
       GetWaSettingsResponseInterface,
@@ -27,6 +31,10 @@ export const accountGreenApiEndpoints = greenAPI.injectEndpoints({
         url: `${apiUrl}waInstance${idInstance}/getAccountSettings/${apiTokenInstance}`,
       }),
       keepUnusedDataFor: 1000,
+      providesTags: (result, _, arguments_) => {
+        if (result) return [{ type: 'waSettings', id: arguments_.idInstance }, 'lastMessages'];
+        return [{ type: 'waSettings', id: 'waAccountSettings' }, 'lastMessages'];
+      },
     }),
     getStateInstance: builder.query<GetStateInstanceResponseInterface, InstanceInterface>({
       query: ({ idInstance, apiTokenInstance, apiUrl }) => ({
@@ -42,6 +50,14 @@ export const accountGreenApiEndpoints = greenAPI.injectEndpoints({
         method: 'POST',
         body,
       }),
+    }),
+    logout: builder.mutation<LogoutResponseInterface, InstanceInterface>({
+      query: ({ idInstance, apiTokenInstance, apiUrl }) => ({
+        url: `${apiUrl}waInstance${idInstance}/logout/${apiTokenInstance}`,
+      }),
+      invalidatesTags: (_, __, arguments_) => {
+        return [{ type: 'waSettings', id: arguments_.idInstance }];
+      },
     }),
   }),
 });

@@ -4,9 +4,12 @@ import { Flex, Select } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import AttachIcon from 'assets/attach-icon.svg?react';
+import ButtonsIcon from 'assets/buttons-icon.svg?react';
 import ContactIcon from 'assets/contact-icon.svg?react';
 import LocationIcon from 'assets/location-icon.svg?react';
 import MediaIcon from 'assets/media-icon.svg?react';
+import PollIcon from 'assets/poll-icon.svg?react';
+import PreviewIcon from 'assets/preview-icon.svg?react';
 import MessageServiceModal from 'components/modals/message-service-modal.component';
 import SendingModal from 'components/modals/sending-modal.component';
 import { useActions } from 'hooks';
@@ -30,8 +33,8 @@ const SelectSendingMode: FC<SelectSendingModeProps> = ({ isWaba }) => {
     {
       value: 'sendFileByUpload',
       label: (
-        <Flex gap={10} align="center">
-          <MediaIcon height={14} width={14} />
+        <Flex gap={15} align="center">
+          <MediaIcon />
           {t('FILE')}
         </Flex>
       ),
@@ -39,8 +42,8 @@ const SelectSendingMode: FC<SelectSendingModeProps> = ({ isWaba }) => {
     {
       value: 'sendContact',
       label: (
-        <Flex gap={10} align="center" style={{ padding: '6px 0 ' }}>
-          <ContactIcon height={14} width={14} />
+        <Flex gap={15} align="center">
+          <ContactIcon style={{ padding: '8px 0 ' }} />
           {t('CONTACT')}
         </Flex>
       ),
@@ -48,19 +51,46 @@ const SelectSendingMode: FC<SelectSendingModeProps> = ({ isWaba }) => {
     {
       value: 'sendLocation',
       label: (
-        <Flex gap={10} align="center" style={{ padding: '4px 0 ' }}>
-          <LocationIcon height={16} width={16} />
+        <Flex gap={15} align="center" style={{ padding: '4px 0 ' }}>
+          <LocationIcon />
           {t('LOCATION')}
         </Flex>
       ),
     },
-    { value: 'sendPoll', label: t('POLL') },
-    { value: 'sendPreview', label: t('PREVIEW') },
-    { value: 'sendButtons', label: t('BUTTONS') },
+    {
+      value: 'sendButtons',
+      label: (
+        <Flex gap={15} align="center">
+          <ButtonsIcon />
+          {t('BUTTONS')}
+        </Flex>
+      ),
+    },
+    {
+      value: 'sendPoll',
+      label: (
+        <Flex gap={15} align="center">
+          <PollIcon />
+          {t('POLL')}
+        </Flex>
+      ),
+    },
+    {
+      value: 'sendPreview',
+      label: (
+        <Flex gap={15} align="center">
+          <PreviewIcon />
+          {t('PREVIEW')}
+        </Flex>
+      ),
+    },
   ];
 
   if (isWaba) {
-    options.push({ value: 'sendTemplate', label: t('TEMPLATE') });
+    options.push({
+      value: 'sendTemplate',
+      label: <span>{t('TEMPLATE')}</span>,
+    });
   }
   if (isMax) return null;
   return (
@@ -71,7 +101,7 @@ const SelectSendingMode: FC<SelectSendingModeProps> = ({ isWaba }) => {
         value=""
         options={options}
         style={{ width: 50 }}
-        dropdownStyle={{ width: 120, padding: 0 }}
+        dropdownStyle={{ width: 150, padding: 0 }}
         suffixIcon={<AttachIcon style={{ pointerEvents: 'none' }} />}
         onSelect={(value) => setActiveSendingMode(value as SendingMethodName)}
       />

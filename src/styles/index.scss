@@ -323,6 +323,24 @@ Button.ant-btn-primary:focus {
   gap: 16px;
 }
 
-.select-sending-mode .ant-select-item-option-content:hover {
-  color: #1677ff;
+.ant-select-dropdown .ant-select-item-option:hover,
+.ant-select-dropdown .ant-select-item-option-active {
+  color: var(--primary-color) !important;
+}
+
+/* Общий hover для всех пунктов Dropdown */
+.ant-dropdown-menu .ant-dropdown-menu-item:hover {
+  color: var(--primary-color);
+}
+
+.ant-dropdown-menu .ant-dropdown-menu-item-danger:hover {
+  color: var(--danger-color) !important;
+}
+.ant-dropdown-menu .ant-dropdown-menu-item,
+.ant-dropdown-menu .ant-dropdown-menu-item:hover {
+  background: none !important;
+}
+
+.ant-dropdown-menu .ant-dropdown-menu-item-danger {
+  color: var(--text-color) !important;
 }

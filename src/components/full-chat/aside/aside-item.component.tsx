@@ -9,6 +9,7 @@ import { useGetWaSettingsQuery } from 'services/green-api/endpoints';
 import { selectUserSideActiveMode } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
 import type { AsideItem } from 'types';
+import clsx from 'clsx';
 
 interface AsideItemProps {
   asideItem: AsideItem;
@@ -48,7 +49,11 @@ const AsideItem: FC<AsideItemProps> = ({ asideItem }) => {
 
   return (
     <a
-      className={`aside-item ${isActive ? 'active' : ''} flex-center`}
+      className={clsx(
+        'aside-item flex-center',
+        { active: isActive },
+        activeAsideItem === asideItem.item && 'active-aside-item'
+      )}
       onClick={handleSetActive}
       title={t(asideItem.title)}
     >

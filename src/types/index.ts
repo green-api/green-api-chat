@@ -260,7 +260,9 @@ export type UserSideActiveMode =
   | 'profile'
   | 'statuses'
   | 'calls'
-  | 'archive';
+  | 'archive'
+  | 'instance'
+  | 'logout';
 
 export interface SendingMethod {
   name: SendingMethodName;

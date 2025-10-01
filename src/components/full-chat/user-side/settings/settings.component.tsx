@@ -1,4 +1,4 @@
-import { Flex } from 'antd';
+import { Avatar, Flex } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import InstanceDangerZone from 'components/instance-danger-zone.component';
@@ -12,6 +12,7 @@ import {
 } from 'services/green-api/endpoints';
 import { selectUserSideActiveMode } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
+import { Profile } from './profile.component';
 
 const Settings = () => {
   const { t } = useTranslation();
@@ -43,32 +44,20 @@ const Settings = () => {
   if (active === 'instance') {
     return (
       <Flex className="settings" vertical>
-        <h2>{t('INSTANCE')}</h2>
+        <p style={{ fontSize: '1.5rem' }}>{t('INSTANCE')}</p>
         <SelectInstance />
       </Flex>
     );
   }
 
   if (active === 'profile') {
-    return (
-      <Flex className="settings" vertical>
-        <h2>{t('PROFILE_TITLE')}</h2>
-      </Flex>
-    );
-  }
-
-  if (active === 'business') {
-    return (
-      <Flex className="settings" vertical>
-        <h2>{t('BUSINESS_TITLE')}</h2>
-      </Flex>
-    );
+    return <Profile />;
   }
 
   if (active === 'logout') {
     return (
       <Flex className="settings" vertical gap={10}>
-        <h2>{t('LOGOUT')}</h2>
+        <p style={{ fontSize: '1.5rem' }}>{t('LOGOUT')}</p>
         <InstanceDangerZone
           onLogout={() => {
             logoutInstance({

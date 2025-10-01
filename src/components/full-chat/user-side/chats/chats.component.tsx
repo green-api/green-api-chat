@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, useState } from 'react';
 
 import { Button, Flex } from 'antd';
 import { useTranslation } from 'react-i18next';
@@ -65,8 +65,8 @@ const Chats: FC = () => {
                     : 'var(--not-authorized-text-color)',
                 backgroundColor:
                   settings?.stateInstance === StateInstanceEnum.Authorized
-                    ? 'var(--authorized-status-color)'
-                    : 'var(--not-authorized-status-color)',
+                    ? 'var(--authorized-header-color)'
+                    : 'var(--not-authorized-header-color)',
               }}
             >
               {settings?.stateInstance === StateInstanceEnum.Authorized

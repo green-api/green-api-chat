@@ -15,8 +15,11 @@
   --link-color: mediumseagreen;
   --link-hover-color: #009805;
 
-  --authorized-status-color: rgba(238, 255, 227, 1);
-  --not-authorized-status-color: rgba(248, 212, 214, 1);
+  --authorized-header-color: rgba(238, 255, 227, 1);
+  --not-authorized-header-color: rgba(248, 212, 214, 1);
+
+  --authorized-status-color: #4cae4fff;
+  --not-authorized-status-color: rgb(255, 39, 39);
   --starting-status-color: #1890ff;
   --warning-status-color: #ff9100;
 

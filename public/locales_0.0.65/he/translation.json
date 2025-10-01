@@ -187,5 +187,7 @@
   "NOT_AUTHORIZED": "לא מורשה",
   "CONFIRM_LEAVE_GROUP": "האם אתה בטוח שברצונך לעזוב את הקבוצה?",
   "LEFT_GROUP_SUCCESS": "עזבת את הקבוצה",
-  "ERROR_LEAVING_GROUP": "אירעה שגיאה בעת עזיבת הקבוצה"
+  "ERROR_LEAVING_GROUP": "אירעה שגיאה בעת עזיבת הקבוצה",
+  "INSTANCE_LOGOUT_CONFIRM_TITLE": "האם אתה בטוח שברצונך לבטל את הקישור של חשבון WhatsApp הנוכחי שלך ממופע זה?",
+  "INSTANCE_LOGOUT_WARNING_TITLE": "שליחה וקבלה של הודעות יפסיקו לעבוד"
 }

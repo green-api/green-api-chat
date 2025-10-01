@@ -27,6 +27,12 @@
 @import 'components/alerts/left-group-alert';
 
 @import 'components/shared/message-tooltip-menu';
+@import 'components/tutorial-modal';
+@import 'components/tutorial-link';
+@import 'components/qr-link';
+@import 'components/qr';
+@import 'components/authorization-code';
+@import 'components/desc-group';
 
 html {
   overflow: hidden;
@@ -292,4 +298,53 @@ Button.ant-btn-primary:focus {
   &:active {
     border-color: #d1242f !important;
   }
+}
+
+.account-danger-zone {
+  border-radius: 8px;
+  border: 1px solid var(--danger-color);
+  background-color: var(--danger-zone-bg);
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  gap: 16px;
+
+  & .ant-descriptions-header {
+    margin-bottom: 0;
+  }
+
+  @media (max-width: 510px) {
+    line-height: 1.35rem;
+  }
+}
+
+.account-logout {
+  border-radius: 8px;
+  border: 1px solid var(--desc-border-color);
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  gap: 16px;
+}
+
+.ant-select-dropdown .ant-select-item-option:hover,
+.ant-select-dropdown .ant-select-item-option-active {
+  color: var(--primary-color) !important;
+}
+
+/* Общий hover для всех пунктов Dropdown */
+.ant-dropdown-menu .ant-dropdown-menu-item:hover {
+  color: var(--primary-color);
+}
+
+.ant-dropdown-menu .ant-dropdown-menu-item-danger:hover {
+  color: var(--danger-color) !important;
+}
+.ant-dropdown-menu .ant-dropdown-menu-item,
+.ant-dropdown-menu .ant-dropdown-menu-item:hover {
+  background: none !important;
+}
+
+.ant-dropdown-menu .ant-dropdown-menu-item-danger {
+  color: var(--text-color) !important;
 }

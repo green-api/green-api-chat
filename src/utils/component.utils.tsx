@@ -109,6 +109,10 @@ export function getFormattedMessage(textMessage: string): Renderable {
   return parse(formattedText);
 }
 
+export function fillString(string: string, data: string[]) {
+  return string.replaceAll(/{(\d)}/g, (_, index) => data[+index]);
+}
+
 export function fillJsxString(string: string, data: (JSX.Element | string)[]) {
   const substringArray = string.split(/{\d}/);
 

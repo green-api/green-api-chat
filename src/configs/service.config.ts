@@ -6,6 +6,8 @@ export const APP_API_URL = import.meta.env.VITE_APP_API_URL || '__VITE_APP_API_U
 
 export const APP_API_TOKEN = 'gac.cb546085ecfd42f1a135480c82c9279e';
 
+export const QR_HTTP_HOST = 'https://qr.green-api.com';
+
 export const localisation = {
   ru: ru_RU,
   en: en_US,

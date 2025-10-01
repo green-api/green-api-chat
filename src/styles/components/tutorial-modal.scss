@@ -1,0 +1,24 @@
+.tutorial-modal {
+  max-width: 640px;
+
+  .ant-modal-content {
+    background-color: transparent;
+    box-shadow: inherit;
+    padding: 10px;
+  }
+
+  .ant-modal-body {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%;
+    height: 0;
+  }
+}
+
+.tutorial-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}

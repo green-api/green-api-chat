@@ -8,12 +8,12 @@ import { asideBottomIconItems, asideTopIconItems } from 'configs';
 const Aside: FC = () => {
   return (
     <aside className="aside">
-      <Flex justify="center" style={{ flexGrow: 1 }} gap={8}>
+      <Flex vertical style={{ flexGrow: 1 }} gap={12}>
         {asideTopIconItems.map((item) => (
           <AsideItem key={item.item} asideItem={item} />
         ))}
       </Flex>
-      <Flex justify="center" align="center" vertical gap={8}>
+      <Flex justify="center" align="center" vertical gap={12}>
         {asideBottomIconItems.map((item) => (
           <AsideItem key={item.item} asideItem={item} />
         ))}

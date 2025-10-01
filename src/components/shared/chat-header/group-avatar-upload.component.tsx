@@ -6,6 +6,7 @@ import { RcFile } from 'antd/es/upload';
 import { useTranslation } from 'react-i18next';
 
 import { useAppSelector, useActions } from 'hooks';
+import { useIsMaxInstance } from 'hooks/use-is-max-instance';
 import { useSetGroupPictureMutation } from 'services/green-api/endpoints';
 import { selectInstance } from 'store/slices/instances.slice';
 import { ActiveChat } from 'types';
@@ -20,6 +21,8 @@ const GroupAvatarUpload: FC<GroupAvatarUploadProps> = ({ activeChat }) => {
   const instanceCredentials = useAppSelector(selectInstance);
   const { setActiveChat } = useActions();
 
+  const isMax = useIsMaxInstance();
+
   const handleAvatarUpload = async (file: RcFile) => {
     if (!file || !file.type.includes('image')) {
       message.error(t('INVALID_IMAGE_FILE'));
@@ -27,7 +30,7 @@ const GroupAvatarUpload: FC<GroupAvatarUploadProps> = ({ activeChat }) => {
     }
 
     const formData = new FormData();
-    formData.append('groupId', activeChat.chatId);
+    formData.append(isMax ? 'chatId' : 'groupId', activeChat.chatId);
     formData.append('file', file);
 
     try {

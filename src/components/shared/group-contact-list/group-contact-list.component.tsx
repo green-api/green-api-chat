@@ -29,7 +29,7 @@ const GroupContactList: FC = () => {
     return null;
   }
 
-  if (isContactInfo(activeChat.contactInfo)) {
+  if (isContactInfo(activeChat.contactInfo, isMax)) {
     return null;
   }
 
@@ -46,13 +46,19 @@ const GroupContactList: FC = () => {
     const participantChatId = `${cleaned}${isMax ? '' : '@c.us'}`;
 
     try {
-      await addParticipant({
-        groupId: activeChat.chatId,
+      const res = await addParticipant({
+        ...(isMax ? { chatId: activeChat.chatId } : { groupId: activeChat.chatId }),
         participantChatId,
         ...instanceCredentials,
       });
 
-      message.success(t('PARTICIPANT_ADDED'));
+      if (!!res.data?.addParticipant) {
+        message.success(t('PARTICIPANT_ADDED'));
+      }
+      if (!res.data?.addParticipant) {
+        message.error(t('ERROR_ADDING_PARTICIPANT'));
+      }
+
       setIsModalVisible(false);
       setPhoneNumber('');
     } catch {
@@ -84,7 +90,6 @@ const GroupContactList: FC = () => {
           </Flex>
         }
       />
-
       <Modal
         title={t('ADD_PARTICIPANT')}
         open={isModalVisible}
@@ -94,7 +99,7 @@ const GroupContactList: FC = () => {
         cancelText={t('CANCEL')}
       >
         <Input
-          placeholder={t('ADD_PARTICIPANT_PLACEHOLDER')}
+          placeholder={isMax ? '10000000' : t('ADD_PARTICIPANT_PLACEHOLDER')}
           value={phoneNumber}
           onChange={(e) => setPhoneNumber(e.target.value)}
           maxLength={15}

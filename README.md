@@ -115,7 +115,7 @@ export const enum ThemesEnum {
 You can also pass authorization and customization data via the URL:
 
 ```
-http://localhost:5173/?idInstance=YOUR_ID&apiTokenInstance=YOUR_API_TOKEN&apiUrl=https://api.green-api.com/&mediaUrl=https://media.green-api.com/&lng=ru&dsc=Добро%20пожаловать%20в%20чат&logo=https://example.com/logo.png
+http://localhost:5173/?idInstance=YOUR_ID&apiTokenInstance=YOUR_API_TOKEN&apiUrl=https://api.green-api.com&mediaUrl=https://media.green-api.com&lng=ru&dsc=Добро%20пожаловать%20в%20чат&logo=https://example.com/logo.png
 ```
 
 #### Required Query Parameters
@@ -259,7 +259,7 @@ export const enum ThemesEnum {
 Вы также можете передать данные авторизации и кастомизации через параметры URL при загрузке приложения:
 
 ```
-http://localhost:5173/?idInstance=YOUR_ID&apiTokenInstance=YOUR_API_TOKEN&apiUrl=https://api.green-api.com/&mediaUrl=https://media.green-api.com/&lng=ru&dsc=Добро%20пожаловать%20в%20чат&logo=https://example.com/logo.png
+http://localhost:5173/?idInstance=YOUR_ID&apiTokenInstance=YOUR_API_TOKEN&apiUrl=https://api.green-api.com&mediaUrl=https://media.green-api.com&lng=ru&dsc=Добро%20пожаловать%20в%20чат&logo=https://example.com/logo.png
 ```
 
 #### Обязательные параметры

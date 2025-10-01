@@ -61,7 +61,8 @@ export interface ActiveChat
   contactInfo?:
     | GetContactInfoResponseInterface
     | GetGroupDataSuccessResponseInterface
-    | 'Error: forbidden';
+    | 'Error: forbidden'
+    | 'groupId not found';
 }
 
 export interface InstancesState {

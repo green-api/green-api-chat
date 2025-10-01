@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import Message from './message/message.component';
 import LeftGroupAlert from 'components/alerts/left-group-alert.component';
 import { useActions, useAppSelector } from 'hooks';
+import { useIsMaxInstance } from 'hooks/use-is-max-instance';
 import { useGetProfileSettingsQuery } from 'services/app/endpoints';
 import { useGetChatHistoryQuery, useGetTemplatesQuery } from 'services/green-api/endpoints';
 import { selectActiveChat, selectMiniVersion } from 'store/slices/chat.slice';
@@ -35,6 +36,7 @@ const ChatView: FC = () => {
 
   const [count, setCount] = useState(50);
   const { setMessageCount } = useActions();
+  const isMax = useIsMaxInstance();
 
   let previousMessageAreOutgoing = false;
   let previousSenderName = '';
@@ -340,7 +342,9 @@ const ChatView: FC = () => {
         );
       })}
 
-      {typeof activeChat.contactInfo === 'string' && <LeftGroupAlert />}
+      {activeChat.contactInfo === (isMax ? 'groupId not found' : 'Error:forbiden') && (
+        <LeftGroupAlert />
+      )}
     </div>
   );
 };

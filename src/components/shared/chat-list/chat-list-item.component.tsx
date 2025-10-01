@@ -9,6 +9,7 @@ import emptyAvatarGroup from 'assets/emptyAvatarGroup.png';
 import waChatIcon from 'assets/wa-chat.svg';
 import AvatarImage from 'components/UI/avatar-image.component';
 import { useActions, useAppSelector } from 'hooks';
+import { useIsMaxInstance } from 'hooks/use-is-max-instance';
 import {
   useGetAvatarQuery,
   useGetContactInfoQuery,
@@ -45,7 +46,7 @@ const ChatListItem: FC<ContactListItemProps> = ({
   const instanceCredentials = useAppSelector(selectInstance);
   const activeChat = useAppSelector(selectActiveChat);
   const { setActiveChat, setSearchQuery } = useActions();
-
+  const isMax = useIsMaxInstance();
   const messageDate = getMessageDate(
     lastMessage.timestamp * 1000,
     'chatList',
@@ -55,7 +56,7 @@ const ChatListItem: FC<ContactListItemProps> = ({
   const { data: groupData, isLoading: isGroupDataLoading } = useGetGroupDataQuery(
     {
       ...instanceCredentials,
-      groupId: lastMessage?.chatId,
+      ...(isMax ? { chatId: lastMessage.chatId } : { groupId: lastMessage.chatId }),
     },
     {
       skip:
@@ -90,6 +91,9 @@ const ChatListItem: FC<ContactListItemProps> = ({
   const isLoading = isGroupDataLoading || isContactInfoLoading;
 
   const avatar = useMemo<string>(() => {
+    if (isMax && !avatarData?.urlAvatar) {
+      return emptyAvatarButAvailable;
+    }
     if (instanceCredentials.idInstance.toString().startsWith('7835')) {
       return emptyAvatarButAvailable;
     }

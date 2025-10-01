@@ -214,5 +214,8 @@
   "INSTANCE_LOGOUT": "Разлогинить",
   "INSTANCE_LOGOUT_WARNING_TITLE": "Отправка и получение сообщений перестанут работать",
   "INSTANCE_LOGOUT_CONFIRM_TITLE": "Вы уверены, что хотите отвязать текущий WhatsApp аккаунт от данного инстанса?",
-  "PROFILE": "Профиль"
+  "PROFILE": "Профиль",
+  "CONFIRM_LEAVE_GROUP": "Вы уверены, что хотите покинуть группу?",
+  "LEFT_GROUP_SUCCESS": "Вы покинули группу",
+  "ERROR_LEAVING_GROUP": "Произошла ошибка при выходе из группы"
 }

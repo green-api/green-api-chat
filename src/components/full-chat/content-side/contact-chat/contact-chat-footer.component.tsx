@@ -25,8 +25,6 @@ const ContactChatFooter: FC = () => {
 
   const isMax = useIsMaxInstance();
 
-  console.log(activeChat.contactInfo, 'CONTACT INFO');
-
   if (activeChat.contactInfo === (isMax ? undefined : 'Error: forbidden')) {
     return (
       <Flex align="center" justify="center" className="chat-form-container text-center p-10">

@@ -97,8 +97,6 @@ const ParticipantMenu: FC<ParticipantMenuProps> = ({ participant }) => {
         ...instanceCredentials,
       }).unwrap();
 
-      console.log(res);
-
       if (activeChat && isGroupData(activeChat.contactInfo)) {
         const updatedParticipants = activeChat.contactInfo.participants.map((p) =>
           p.chatId === participant.chatId ? { ...p, isAdmin: true } : p

@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 
 import InstanceIcon from 'assets/instance-icon.svg?react';
 import LogoutIcon from 'assets/logout-icon.svg?react';
-import ProfileIcon from 'assets/profile-icon.svg?react';
 import { useActions } from 'hooks';
 import { UserSideActiveMode } from 'types';
 
@@ -35,7 +34,7 @@ export const SettingsSelect = () => {
           //   ),
           // },
 
-          { type: 'divider' },
+          { type: 'divider', style: { backgroundColor: 'var(--icon-color)' } },
           {
             key: 'logout',
             label: (
@@ -52,7 +51,7 @@ export const SettingsSelect = () => {
         },
       }}
     >
-      <SettingOutlined style={{ width: 24, height: 24 }} />
+      <SettingOutlined style={{ width: 24, height: 24, color: 'var(--icon-color)' }} />
     </Dropdown>
   );
 };

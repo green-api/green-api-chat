@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 
 import InstanceIcon from 'assets/instance-icon.svg?react';
 import LogoutIcon from 'assets/logout-icon.svg?react';
+import ProfileIcon from 'assets/profile-icon.svg?react';
 import { useActions } from 'hooks';
 import { UserSideActiveMode } from 'types';
 
@@ -24,15 +25,15 @@ export const SettingsSelect = () => {
               </Flex>
             ),
           },
-          // {
-          //   key: 'profile',
-          //   label: (
-          //     <Flex gap={10} align="center">
-          //       <ProfileIcon width={24} style={{ padding: '2px 0' }} />
-          //       {t('PROFILE')}
-          //     </Flex>
-          //   ),
-          // },
+          {
+            key: 'profile',
+            label: (
+              <Flex gap={10} align="center">
+                <ProfileIcon width={24} style={{ padding: '2px 0' }} />
+                {t('PROFILE')}
+              </Flex>
+            ),
+          },
 
           { type: 'divider', style: { backgroundColor: 'var(--icon-color)' } },
           {

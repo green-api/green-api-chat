@@ -5,13 +5,12 @@ import { Dropdown, Menu, message } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import { useActions, useAppSelector } from 'hooks';
+import { useInstanceSettings } from 'hooks/use-instance-settings.hook';
 import { useIsMaxInstance } from 'hooks/use-is-max-instance';
 import {
   useRemoveAdminMutation,
   useRemoveParticipantMutation,
   useSetGroupAdminMutation,
-  useGetWaSettingsQuery,
-  useGetAccountSettingsQuery,
 } from 'services/green-api/endpoints';
 import { selectActiveChat } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
@@ -38,15 +37,7 @@ const ParticipantMenu: FC<ParticipantMenuProps> = ({ participant }) => {
   const activeChat = useAppSelector(selectActiveChat);
   const instanceCredentials = useAppSelector(selectInstance);
 
-  const { data: waSettings, isLoading: isLoadingWaSettings } =
-    useGetWaSettingsQuery(instanceCredentials);
-  const { data: accountSettings, isLoading: isLoadingAccountSettings } = useGetAccountSettingsQuery(
-    instanceCredentials,
-    { skip: !isMax }
-  );
-
-  const settings = isMax ? accountSettings : waSettings;
-  const isLoading = isMax ? isLoadingAccountSettings : isLoadingWaSettings;
+  const { settings, isLoading } = useInstanceSettings();
 
   const [removeParticipant] = useRemoveParticipantMutation();
   const [setGroupAdmin] = useSetGroupAdminMutation();

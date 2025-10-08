@@ -2,7 +2,7 @@ import { Flex } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import { Logout } from './logout.component';
-// import { Profile } from './profile.component';
+import { Profile } from './profile.component';
 import SelectInstance from 'components/UI/select/select-instance.component';
 import { useAppSelector } from 'hooks';
 import { selectUserSideActiveMode } from 'store/slices/chat.slice';
@@ -21,9 +21,9 @@ const Settings = () => {
     );
   }
 
-  // if (active === 'profile') {
-  //   return <Profile />;
-  // }
+  if (active === 'profile') {
+    return <Profile />;
+  }
 
   if (active === 'logout') {
     return <Logout />;

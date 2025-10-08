@@ -1,41 +1,27 @@
 import { FC, useMemo } from 'react';
 
+import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
 
 import emptyAvatar from 'assets/emptyAvatar-first.png';
 import AvatarImage from 'components/UI/avatar-image.component';
 import { useActions, useAppSelector } from 'hooks';
-import { useIsMaxInstance } from 'hooks/use-is-max-instance';
-import { useGetAccountSettingsQuery, useGetWaSettingsQuery } from 'services/green-api/endpoints';
+import { useInstanceSettings } from 'hooks/use-instance-settings.hook';
 import { selectUserSideActiveMode } from 'store/slices/chat.slice';
-import { selectInstance } from 'store/slices/instances.slice';
 import type { AsideItem } from 'types';
-import clsx from 'clsx';
 
 interface AsideItemProps {
   asideItem: AsideItem;
 }
 
 const AsideItem: FC<AsideItemProps> = ({ asideItem }) => {
-  const instanceCredentials = useAppSelector(selectInstance);
-
   const activeAsideItem = useAppSelector(selectUserSideActiveMode);
 
   const { setUserSideActiveMode } = useActions();
 
   const { t } = useTranslation();
 
-  const isMax = useIsMaxInstance();
-
-  const { data: waSettings } = useGetWaSettingsQuery(instanceCredentials, {
-    skip: asideItem.item !== 'profile' || isMax,
-  });
-
-  const { data: accountSettings } = useGetAccountSettingsQuery(instanceCredentials, {
-    skip: !isMax,
-  });
-
-  const settings = isMax ? accountSettings : waSettings;
+  const { settings } = useInstanceSettings();
 
   const isActive = activeAsideItem === asideItem.item;
 

@@ -6,10 +6,10 @@ import { useTranslation } from 'react-i18next';
 import AddNewChat from './add-new-chat.component';
 import ChatsHeader from './chats-header.component';
 import NewChatIcon from 'assets/newChat.svg?react';
+import AuthorizationStatus from 'components/instance-auth/authorization-status.component';
 import ChatList from 'components/shared/chat-list/chat-list.component';
 import { useActions, useAppSelector } from 'hooks';
-import { useIsMaxInstance } from 'hooks/use-is-max-instance';
-import { useGetAccountSettingsQuery, useGetWaSettingsQuery } from 'services/green-api/endpoints';
+import { useInstanceSettings } from 'hooks/use-instance-settings.hook';
 import { selectMiniVersion, selectType } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
 import { StateInstanceEnum } from 'types';
@@ -20,25 +20,9 @@ const Chats: FC = () => {
   const instanceCredentials = useAppSelector(selectInstance);
   const { setIsAuthorizingInstance } = useActions();
 
-  const isMax = useIsMaxInstance();
-
-  const { data: waSettings, isLoading: isWaSettingsLoading } = useGetWaSettingsQuery(
-    {
-      ...instanceCredentials,
-    },
-    { skip: !instanceCredentials?.idInstance || !instanceCredentials?.apiTokenInstance || isMax }
-  );
-
-  const { data: accountSettings, isLoading: isAccountSettingsLoading } = useGetAccountSettingsQuery(
-    {
-      ...instanceCredentials,
-    },
-    { skip: !instanceCredentials?.idInstance || !instanceCredentials?.apiTokenInstance || !isMax }
-  );
-
-  const settings = isMax ? accountSettings : waSettings;
-
   const { t } = useTranslation();
+
+  const { settings } = useInstanceSettings();
 
   const [isVisible, setIsVisible] = useState(false);
 
@@ -54,26 +38,7 @@ const Chats: FC = () => {
       >
         <Flex gap={20} align="center">
           <p style={{ fontSize: '1.5rem' }}>{t('CHAT_HEADER')}</p>
-          {(!isWaSettingsLoading || !isAccountSettingsLoading) && (
-            <div
-              style={{
-                padding: '4px 10px',
-                borderRadius: 4,
-                color:
-                  settings?.stateInstance === StateInstanceEnum.Authorized
-                    ? 'var(--authorized-text-color)'
-                    : 'var(--not-authorized-text-color)',
-                backgroundColor:
-                  settings?.stateInstance === StateInstanceEnum.Authorized
-                    ? 'var(--authorized-header-color)'
-                    : 'var(--not-authorized-header-color)',
-              }}
-            >
-              {settings?.stateInstance === StateInstanceEnum.Authorized
-                ? t('AUTHORIZED')
-                : t('NOT_AUTHORIZED')}
-            </div>
-          )}
+          <AuthorizationStatus />
           {settings?.stateInstance === StateInstanceEnum.NotAuthorized && (
             <Button variant="outlined" onClick={() => setIsAuthorizingInstance(true)}>
               {t('AUTHORIZE')}

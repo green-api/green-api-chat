@@ -3,12 +3,8 @@ import { useTranslation } from 'react-i18next';
 
 import InstanceDangerZone from 'components/instance-danger-zone.component';
 import { useActions, useAppSelector } from 'hooks';
-import { useIsMaxInstance } from 'hooks/use-is-max-instance';
-import {
-  useGetAccountSettingsQuery,
-  useGetWaSettingsQuery,
-  useLogoutMutation,
-} from 'services/green-api/endpoints';
+import { useInstanceSettings } from 'hooks/use-instance-settings.hook';
+import { useLogoutMutation } from 'services/green-api/endpoints';
 import { selectInstance } from 'store/slices/instances.slice';
 
 export const Logout = () => {
@@ -17,19 +13,7 @@ export const Logout = () => {
 
   const { setUserSideActiveMode } = useActions();
 
-  const isMax = useIsMaxInstance();
-
-  const { data: waSettings } = useGetWaSettingsQuery(
-    { ...selectedInstance },
-    { skip: !selectedInstance?.idInstance || !selectedInstance?.apiTokenInstance || isMax }
-  );
-
-  const { data: accountSettings } = useGetAccountSettingsQuery(
-    { ...selectedInstance },
-    { skip: !selectedInstance?.idInstance || !selectedInstance?.apiTokenInstance || !isMax }
-  );
-
-  const settings = isMax ? accountSettings : waSettings;
+  const { settings } = useInstanceSettings();
 
   const [logoutInstance, { isLoading: isLogouting }] = useLogoutMutation();
 

@@ -182,6 +182,7 @@ export type GetChatInformationParameters = { onlySenderDelete?: boolean } & Pick
   InstanceInterface;
 
 export interface LastMessagesParametersInterface extends InstanceInterface {
+  minutesToRefetch?: number;
   minutes?: number;
   allMessages?: boolean;
 }
@@ -502,4 +503,18 @@ export interface SendVoiceStatusInterface extends InstanceInterface {
   backgroundColor?: string;
   fileName: string;
   participants?: string[];
+}
+
+export interface QrWebsocketResponseInterface {
+  type: 'qrCode' | 'error' | 'accountData' | 'alreadyLogged' | 'timeoutExpired' | 'timeout';
+  message: string;
+}
+
+export interface GetQRResponseInterface {
+  status: boolean;
+  code: string;
+}
+
+export interface LogoutResponseInterface {
+  isLogout: boolean;
 }

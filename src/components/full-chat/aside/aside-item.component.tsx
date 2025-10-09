@@ -1,14 +1,13 @@
 import { FC, useMemo } from 'react';
 
+import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
 
 import emptyAvatar from 'assets/emptyAvatar-first.png';
 import AvatarImage from 'components/UI/avatar-image.component';
 import { useActions, useAppSelector } from 'hooks';
-import { useIsMaxInstance } from 'hooks/use-is-max-instance';
-import { useGetAccountSettingsQuery, useGetWaSettingsQuery } from 'services/green-api/endpoints';
+import { useInstanceSettings } from 'hooks/use-instance-settings.hook';
 import { selectUserSideActiveMode } from 'store/slices/chat.slice';
-import { selectInstance } from 'store/slices/instances.slice';
 import type { AsideItem } from 'types';
 
 interface AsideItemProps {
@@ -16,27 +15,20 @@ interface AsideItemProps {
 }
 
 const AsideItem: FC<AsideItemProps> = ({ asideItem }) => {
-  const instanceCredentials = useAppSelector(selectInstance);
-
   const activeAsideItem = useAppSelector(selectUserSideActiveMode);
 
   const { setUserSideActiveMode } = useActions();
 
   const { t } = useTranslation();
 
-  const isMax = useIsMaxInstance();
-
-  const { data: waSettings } = useGetWaSettingsQuery(instanceCredentials, {
-    skip: asideItem.item !== 'profile' || isMax,
-  });
-
-  const { data: accountSettings } = useGetAccountSettingsQuery(instanceCredentials, {
-    skip: !isMax,
-  });
-
-  const settings = isMax ? accountSettings : waSettings;
+  const { settings } = useInstanceSettings();
 
   const isActive = activeAsideItem === asideItem.item;
+
+  const handleSetActive = () => {
+    if (asideItem.item === 'settings') return;
+    setUserSideActiveMode(asideItem.item);
+  };
 
   const avatar = useMemo<string>(() => {
     if (settings && settings.avatar) {
@@ -52,8 +44,12 @@ const AsideItem: FC<AsideItemProps> = ({ asideItem }) => {
 
   return (
     <a
-      className={`aside-item ${isActive ? 'active' : ''} flex-center`}
-      onClick={() => setUserSideActiveMode(asideItem.item)}
+      className={clsx(
+        'aside-item flex-center',
+        { active: isActive },
+        activeAsideItem === asideItem.item && 'active-aside-item'
+      )}
+      onClick={handleSetActive}
       title={t(asideItem.title)}
     >
       {asideItem.icon}

@@ -1,0 +1,135 @@
+.descGroup {
+  margin-top: 30px;
+  max-width: 800px;
+
+  &--noWidth {
+    max-width: none;
+  }
+
+  &__buttonsBlock {
+    margin-top: 15px;
+  }
+
+  &__avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 20px;
+  }
+
+  &__label {
+    width: 200px;
+  }
+
+  &__progressBar {
+    position: relative;
+  }
+
+  &__noMargin {
+    margin: 0;
+  }
+
+  &--fitContent {
+    max-width: fit-content;
+  }
+
+  &.ant-descriptions-bordered .ant-descriptions-view,
+  &.ant-descriptions-bordered .ant-descriptions-row {
+    border-color: var(--desc-border-color);
+  }
+
+  .ant-descriptions-item-label {
+    max-width: 440px;
+  }
+
+  &__flex {
+    flex-wrap: wrap;
+    display: flex;
+  }
+
+  &__title {
+    width: 100%;
+    max-width: 600px;
+  }
+
+  &__notifications {
+    width: 100%;
+    max-width: 1000px;
+  }
+
+  .ant-descriptions-item-content {
+    min-width: 60px;
+  }
+
+  &__itemWithCopyButton.ant-descriptions-item-content {
+    position: relative;
+    padding-right: 40px !important;
+  }
+
+  &__itemWithButtons.ant-descriptions-item-content {
+    position: relative;
+    padding-right: 10px !important;
+
+    .token-update-button,
+    .icon-button,
+    .eyeIcon {
+      position: static;
+      min-width: 20px;
+      max-width: 20px;
+      padding: 0;
+      height: 20px;
+    }
+
+    .token-update-button {
+      min-width: 16px;
+      max-width: 16px;
+      height: 16px;
+    }
+
+    .descGroup__buttonsGroup {
+      @media screen and (max-width: 425px) {
+        flex-direction: column-reverse;
+      }
+    }
+  }
+}
+
+#connect-instance {
+  .ant-tabs-nav {
+    &-wrap {
+      flex: unset;
+    }
+  }
+}
+
+.account-danger-zone {
+  border-radius: 8px;
+  border: 1px solid var(--danger-color);
+  background-color: var(--danger-zone-bg);
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  gap: 16px;
+
+  & .ant-descriptions-header {
+    margin-bottom: 0;
+  }
+
+  @media (max-width: 510px) {
+    line-height: 1.35rem;
+  }
+}
+
+.account-logout {
+  border-radius: 8px;
+  border: 1px solid var(--desc-border-color);
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  gap: 16px;
+}
+
+.user-info-container .ant-descriptions-item-label {
+  @media screen and (max-width: 425px) {
+    width: 100px !important;
+  }
+}

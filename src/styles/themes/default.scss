@@ -15,6 +15,9 @@
   --link-color: mediumseagreen;
   --link-hover-color: #009805;
 
+  --authorized-header-color: rgba(238, 255, 227, 1);
+  --not-authorized-header-color: rgba(248, 212, 214, 1);
+
   --authorized-status-color: #4cae4fff;
   --not-authorized-status-color: rgb(255, 39, 39);
   --starting-status-color: #1890ff;
@@ -59,4 +62,14 @@
   --code-example-bg: #f0f0f0;
 
   --chat-bg-opacity: 1;
+
+  --authorized-text-color: rgba(59, 151, 2, 1);
+  --not-authorized-text-color: rgb(209, 36, 47);
+  --search-input-bg: #f6f5f4;
+  --search-input-font-color: #5b6368;
+
+  --danger-zone-bg: #fff9f9;
+  --danger-color: #d1242f;
+  --icon-color: rgba(91, 99, 104, 1);
+  --profile-background: rgb(233, 242, 245);
 }

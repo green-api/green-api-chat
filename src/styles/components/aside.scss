@@ -3,16 +3,19 @@
   flex-direction: column;
   background-color: var(--second-background);
   padding: 10px;
+  z-index: 10;
 
   &-item {
-    border-radius: 50%;
     height: 45px;
     width: 45px;
     font-size: 30px;
-
-
-    &.active {
-      background-color: rgba(145, 140, 140, 0.5);
-    }
   }
+}
+
+.aside-item {
+  color: var(--icon-color);
+}
+
+.active-aside-item {
+  color: var(--primary-color);
 }

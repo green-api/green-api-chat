@@ -42,6 +42,9 @@ export const {
   useSendVoiceStatusMutation,
   useSendMediaStatusMutation,
   useGetAccountSettingsQuery,
+  useGetAuthorizationCodeMutation,
+  useLazyLastMessagesQuery,
+  useLogoutMutation,
 } = {
   ...accountGreenApiEndpoints,
   ...sendingGreenApiEndpoints,

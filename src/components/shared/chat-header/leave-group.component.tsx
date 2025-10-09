@@ -27,11 +27,11 @@ const LeaveGroupButton: FC<LeaveGroupButtonProps> = ({ activeChat }) => {
         ...(isMax ? { chatId: activeChat.chatId } : { groupId: activeChat.chatId }),
         ...instanceCredentials,
       });
-      if (!!res.data?.leaveGroup) {
+      if (!!res.data?.leaveGroup || !!res.data?.removeAdmin) {
         message.success(t('LEFT_GROUP_SUCCESS'));
         setContactInfoOpen(false);
       }
-      if (!res.data?.leaveGroup) {
+      if (!res.data?.leaveGroup && !res.data?.removeAdmin) {
         message.error(t('ERROR_LEAVING_GROUP'));
       }
     } catch {

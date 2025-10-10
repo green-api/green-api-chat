@@ -2,7 +2,9 @@ import { SettingOutlined } from '@ant-design/icons';
 
 import ChatIcon from 'assets/chat.svg?react';
 import Chats from 'components/full-chat/user-side/chats/chats.component';
-import Settings from 'components/full-chat/user-side/settings/settings.component';
+import { InstanceSettings } from 'components/full-chat/user-side/settings/instance.component';
+import { Logout } from 'components/full-chat/user-side/settings/logout.component';
+import { Profile } from 'components/full-chat/user-side/settings/profile.component';
 import { SettingsSelect } from 'components/UI/select/select-settigs.component';
 import { AsideItem, UserSideItem } from 'types';
 
@@ -24,8 +26,7 @@ export const asideBottomIconItems: AsideItem[] = [
 
 export const USER_SIDE_ITEMS: UserSideItem[] = [
   { item: 'chats', element: <Chats /> },
-  { item: 'instance', element: <Settings /> },
-  { item: 'profile', element: <Settings /> },
-  // { item: 'business', element: <Settings /> },
-  { item: 'logout', element: <Settings /> },
+  { item: 'instance', element: <InstanceSettings /> },
+  { item: 'profile', element: <Profile /> },
+  { item: 'logout', element: <Logout /> },
 ];

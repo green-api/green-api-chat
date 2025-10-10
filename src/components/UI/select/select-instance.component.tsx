@@ -20,7 +20,7 @@ const SelectInstance: FC = () => {
   const selectedInstance = useAppSelector(selectInstance);
 
   const { t } = useTranslation();
-  const { setSelectedInstance, setActiveChat } = useActions();
+  const { setSelectedInstance, setActiveChat, setIsAuthorizingInstance } = useActions();
 
   const {
     isLoading: isLoadingInstances,
@@ -171,6 +171,8 @@ const SelectInstance: FC = () => {
           isChatWorking: isChatWorkingFromStorage,
           typeInstance: option.typeInstance,
         });
+
+        setIsAuthorizingInstance(false);
 
         setActiveChat(null);
       }}

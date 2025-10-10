@@ -9,9 +9,9 @@ import { selectIsAuthorizingInstance } from 'store/slices/instances.slice';
 
 const Main: FC = () => {
   const activeChat = useAppSelector(selectActiveChat);
-  const isAurhorizingInstance = useAppSelector(selectIsAuthorizingInstance);
+  const isAuthorizingInstance = useAppSelector(selectIsAuthorizingInstance);
 
-  if (isAurhorizingInstance) return <AuthInstance />;
+  if (isAuthorizingInstance) return <AuthInstance />;
 
   return activeChat ? <ContactChat /> : <HomeView />;
 };

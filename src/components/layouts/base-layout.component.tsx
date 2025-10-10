@@ -1,5 +1,4 @@
 import { FC, useEffect, useLayoutEffect, useState } from 'react';
-
 import { Layout, message } from 'antd';
 import i18n from 'i18next';
 import { useTranslation } from 'react-i18next';
@@ -19,6 +18,7 @@ import {
 } from 'services/green-api/endpoints';
 import { selectMiniVersion, selectType } from 'store/slices/chat.slice';
 import { selectUser } from 'store/slices/user.slice';
+import { selectInstance, selectInstanceList } from 'store/slices/instances.slice';
 import { MessageData, MessageEventTypeEnum, TariffsEnum } from 'types';
 import {
   isAuth,
@@ -35,12 +35,13 @@ const BaseLayout: FC = () => {
   const isMiniVersion = useAppSelector(selectMiniVersion);
   const type = useAppSelector(selectType);
   const user = useAppSelector(selectUser);
+  const selectedInstance = useAppSelector(selectInstance);
+  const instanceList = useAppSelector(selectInstanceList);
 
   const [isEventAdded, setIsEventAdded] = useState(false);
-
   const [searchParams] = useSearchParams();
-
   const { t } = useTranslation();
+  const isMax = useIsMaxInstance();
 
   const {
     setType,
@@ -53,18 +54,13 @@ const BaseLayout: FC = () => {
     setInstanceList,
   } = useActions();
 
-  const isMax = useIsMaxInstance();
-
   const [getContactInfo] = useLazyGetContactInfoQuery();
   const [getGroupData] = useLazyGetGroupDataQuery();
   const [getAvatar] = useLazyGetAvatarQuery();
 
-  // TODO: refactor useEffects
   useEffect(() => {
     function handleMessage(event: MessageEvent<MessageData>) {
-      if (!isConsoleMessageData(event.data)) {
-        return;
-      }
+      if (!isConsoleMessageData(event.data)) return;
 
       switch (event.data.type) {
         case MessageEventTypeEnum.INIT:
@@ -72,11 +68,10 @@ const BaseLayout: FC = () => {
             let isChatWorking: boolean | null = null;
 
             if (
-              event.data.payload &&
-              event.data.payload?.idInstance &&
+              event.data.payload.idInstance &&
               event.data.payload.tariff === TariffsEnum.Developer
             ) {
-              isChatWorking = getIsChatWorkingFromStorage(event.data.payload?.idInstance);
+              isChatWorking = getIsChatWorkingFromStorage(event.data.payload.idInstance);
             }
 
             setInstanceList(event.data.payload.instanceList);
@@ -92,6 +87,7 @@ const BaseLayout: FC = () => {
             });
 
             setIsEventAdded(true);
+
             login({
               login: event.data.payload.login,
               idUser: event.data.payload.idUser,
@@ -101,12 +97,10 @@ const BaseLayout: FC = () => {
             });
 
             setPlatform(event.data.payload.platform);
-
             setTheme(event.data.payload.theme);
 
             return i18n.changeLanguage(event.data.payload.locale);
           }
-
           return;
 
         case MessageEventTypeEnum.SET_CREDENTIALS:
@@ -124,14 +118,28 @@ const BaseLayout: FC = () => {
     }
 
     window.addEventListener('message', handleMessage);
-
     return () => window.removeEventListener('message', handleMessage);
   }, []);
+
+  useEffect(() => {
+    if (!selectedInstance?.idInstance && Array.isArray(instanceList) && instanceList.length > 0) {
+      const firstInstance = instanceList[0];
+
+      setSelectedInstance({
+        idInstance: firstInstance.idInstance,
+        apiTokenInstance: firstInstance.apiTokenInstance,
+        apiUrl: firstInstance.apiUrl,
+        mediaUrl: firstInstance.mediaUrl,
+        tariff: firstInstance.tariff,
+        typeInstance: firstInstance.typeInstance,
+        isChatWorking: getIsChatWorkingFromStorage(firstInstance.idInstance),
+      });
+    }
+  }, [instanceList, selectedInstance, setSelectedInstance]);
 
   useLayoutEffect(() => {
     if (searchParams.has('type')) {
       const chatType = searchParams.get('type');
-
       if (chatType && isValidChatType(chatType)) {
         setType(chatType);
       }
@@ -146,14 +154,13 @@ const BaseLayout: FC = () => {
       if (!idInstance || !apiTokenInstance || !apiUrl || !mediaUrl) return;
 
       const language = searchParams.get('lng');
-
       const brandDescription = searchParams.get('dsc');
       const brandImageUrl = searchParams.get('logo');
 
       setType('partner-iframe');
       setSelectedInstance({
         idInstance: +idInstance,
-        apiTokenInstance: apiTokenInstance,
+        apiTokenInstance,
         apiUrl: apiUrl + '/',
         mediaUrl: mediaUrl + '/',
         tariff: TariffsEnum.Business,
@@ -161,14 +168,13 @@ const BaseLayout: FC = () => {
       });
 
       language && i18n.changeLanguage(language);
-
       brandDescription && setBrandData({ description: brandDescription });
       brandImageUrl && setBrandData({ brandImageUrl });
 
       if (searchParams.has('chatId')) {
         setType('one-chat-only');
-
         const chatId = searchParams.get('chatId');
+
         if (chatId) {
           (async () => {
             let contactInfo = undefined;
@@ -181,33 +187,27 @@ const BaseLayout: FC = () => {
               !idInstance.toString().startsWith('7835')
             ) {
               const { data, error: groupDataError } = await getGroupData({
-                ...(isMax ? { chatId: chatId } : { groupId: chatId }),
+                ...(isMax ? { chatId } : { groupId: chatId }),
                 apiUrl: apiUrl + '/',
                 mediaUrl: mediaUrl + '/',
-                apiTokenInstance: apiTokenInstance,
+                apiTokenInstance,
                 idInstance: +idInstance,
               });
 
-              if (data && data !== 'Error: item-not-found') {
-                groupInfo = data;
-              }
-
+              if (data && data !== 'Error: item-not-found') groupInfo = data;
               error = groupDataError;
 
               const { data: avatarData } = await getAvatar({
-                chatId: chatId,
+                chatId,
                 apiUrl: apiUrl + '/',
                 mediaUrl: mediaUrl + '/',
-                apiTokenInstance: apiTokenInstance,
+                apiTokenInstance,
                 idInstance: +idInstance,
               });
 
               if (avatarData) {
                 avatar = avatarData.urlAvatar;
-
-                if (!avatarData.available && !chatId.includes('g.us')) {
-                  avatar = emptyAvatar;
-                }
+                if (!avatarData.available && !chatId.includes('g.us')) avatar = emptyAvatar;
               }
             }
 
@@ -216,16 +216,12 @@ const BaseLayout: FC = () => {
                 chatId,
                 apiUrl: apiUrl + '/',
                 mediaUrl: mediaUrl + '/',
-                apiTokenInstance: apiTokenInstance,
+                apiTokenInstance,
                 idInstance: +idInstance,
               });
 
               contactInfo = data;
-
-              if (contactInfo?.avatar) {
-                avatar = contactInfo.avatar;
-              }
-
+              if (contactInfo?.avatar) avatar = contactInfo.avatar;
               error = contactInfoError;
             }
 

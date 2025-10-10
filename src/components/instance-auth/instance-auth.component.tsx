@@ -267,7 +267,7 @@ const QrAuthorization = ({
                 </div>
               )}
               <Button
-                className="simpleType w-100"
+                className="w-100"
                 type="primary"
                 onClick={onRefreshQr}
                 size="large"
@@ -340,7 +340,7 @@ const PhoneAuthorization = ({
               <Form.Item>
                 <Button
                   htmlType="submit"
-                  className="simpleType w-100"
+                  className="w-100"
                   type="primary"
                   size="large"
                   loading={isLoadingCode}

@@ -11,48 +11,51 @@ import { UserSideActiveMode } from 'types';
 export const SettingsSelect = () => {
   const { setUserSideActiveMode } = useActions();
   const { t } = useTranslation();
+
+  const SETTINGS_SELECT_ITEMS = [
+    {
+      key: 'instance',
+      label: (
+        <Flex gap={10} align="center">
+          <InstanceIcon />
+          {t('INSTANCE')}
+        </Flex>
+      ),
+    },
+    {
+      key: 'profile',
+      label: (
+        <Flex gap={10} align="center">
+          <ProfileIcon width={24} style={{ padding: '2px 0' }} />
+          {t('PROFILE')}
+        </Flex>
+      ),
+    },
+
+    { type: 'divider' as const, style: { backgroundColor: 'var(--icon-color)' } },
+    {
+      key: 'logout',
+      label: (
+        <Flex align="center" gap={10} style={{ margin: '4px 0' }}>
+          <LogoutIcon width={24} />
+          {t('LOGOUT')}
+        </Flex>
+      ),
+      danger: true,
+    },
+  ];
+
   return (
     <Dropdown
       placement="top"
       menu={{
-        items: [
-          {
-            key: 'instance',
-            label: (
-              <Flex gap={10} align="center">
-                <InstanceIcon />
-                {t('INSTANCE')}
-              </Flex>
-            ),
-          },
-          {
-            key: 'profile',
-            label: (
-              <Flex gap={10} align="center">
-                <ProfileIcon width={24} style={{ padding: '2px 0' }} />
-                {t('PROFILE')}
-              </Flex>
-            ),
-          },
-
-          { type: 'divider', style: { backgroundColor: 'var(--icon-color)' } },
-          {
-            key: 'logout',
-            label: (
-              <Flex align="center" gap={10} style={{ margin: '4px 0' }}>
-                <LogoutIcon width={24} />
-                {t('LOGOUT')}
-              </Flex>
-            ),
-            danger: true,
-          },
-        ],
+        items: SETTINGS_SELECT_ITEMS,
         onClick: ({ key }) => {
           setUserSideActiveMode(key as UserSideActiveMode);
         },
       }}
     >
-      <SettingOutlined style={{ width: 24, height: 24, color: 'var(--icon-color)' }} />
+      <SettingOutlined style={{ width: 24, height: 24 }} />
     </Dropdown>
   );
 };

@@ -218,5 +218,6 @@
   "CONFIRM_LEAVE_GROUP": "Вы уверены, что хотите покинуть группу?",
   "LEFT_GROUP_SUCCESS": "Вы покинули группу",
   "ERROR_LEAVING_GROUP": "Произошла ошибка при выходе из группы",
-  "PHONE_NUMBER": "Номер телефона"
+  "PHONE_NUMBER": "Номер телефона",
+  "INSTANCE_OPEN": "Открыть"
 }

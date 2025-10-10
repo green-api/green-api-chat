@@ -14,6 +14,8 @@ interface AsideItemProps {
   asideItem: AsideItem;
 }
 
+const SETTINGS_ITEMS = ['instance', 'profile', 'logout'] as AsideItem['item'][];
+
 const AsideItem: FC<AsideItemProps> = ({ asideItem }) => {
   const activeAsideItem = useAppSelector(selectUserSideActiveMode);
 
@@ -42,12 +44,23 @@ const AsideItem: FC<AsideItemProps> = ({ asideItem }) => {
     return <AvatarImage src={avatar} size="large" />;
   }
 
+  console.log(
+    SETTINGS_ITEMS.includes(activeAsideItem),
+    asideItem.item === 'settings',
+    activeAsideItem,
+    asideItem.item,
+    SETTINGS_ITEMS.includes(asideItem.item) && activeAsideItem === 'settings'
+  );
+
   return (
     <a
       className={clsx(
         'aside-item flex-center',
         { active: isActive },
-        activeAsideItem === asideItem.item && 'active-aside-item'
+        activeAsideItem === asideItem.item && 'active-aside-item',
+        SETTINGS_ITEMS.includes(activeAsideItem) &&
+          asideItem.item === 'settings' &&
+          'active-aside-item'
       )}
       onClick={handleSetActive}
       title={t(asideItem.title)}

@@ -1,6 +1,6 @@
 import { FC, useRef } from 'react';
 
-import { Button, Form, Switch } from 'antd';
+import { Button, Flex, Form, Typography } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import { useActions, useAppDispatch, useAppSelector, useFormWithLanguageValidation } from 'hooks';
@@ -20,7 +20,6 @@ const DeleteMessageForm: FC = () => {
 
   const dispatch = useAppDispatch();
   const { setActiveServiceMethod } = useActions();
-
   const { t } = useTranslation();
 
   const [deleteMessage, { isLoading: isDeleteMessageLoading }] = useDeleteMessageMutation();
@@ -30,19 +29,16 @@ const DeleteMessageForm: FC = () => {
   >();
   const responseTimerReference = useRef<number | null>(null);
 
-  const onDeleteMessage = async (
-    values: Pick<GetChatInformationParameters, 'onlySenderDelete'>
-  ) => {
+  const handleDelete = async (onlySenderDelete: boolean) => {
     const body = {
       ...instanceCredentials,
       chatId: activeChat.chatId,
       idMessage: deletedMessageData.idMessage,
-      onlySenderDelete: values.onlySenderDelete ? true : undefined,
+      onlySenderDelete: onlySenderDelete ? true : undefined,
     };
 
     if (responseTimerReference.current) {
       clearTimeout(responseTimerReference.current);
-
       responseTimerReference.current = null;
     }
 
@@ -52,7 +48,6 @@ const DeleteMessageForm: FC = () => {
 
     if (error && 'status' in error && error.status === 466) {
       form.setFields([{ name: 'response', errors: [t('QUOTE_EXCEEDED')] }]);
-
       return;
     }
 
@@ -68,15 +63,8 @@ const DeleteMessageForm: FC = () => {
           const existingMessage = draftChatHistory.find(
             (msg) => msg.idMessage === deletedMessageData.idMessage
           );
-
-          if (!existingMessage) {
-            console.log('message not found in chat history');
-
-            return;
-          }
-
+          if (!existingMessage) return;
           existingMessage.isDeleted = true;
-
           return draftChatHistory;
         }
       );
@@ -88,20 +76,14 @@ const DeleteMessageForm: FC = () => {
           const existingChat = draftChatList.find(
             (msg) => msg.idMessage === deletedMessageData.idMessage
           );
-
-          if (!existingChat) {
-            return;
-          }
-
+          if (!existingChat) return;
           existingChat.isDeleted = true;
-
           return draftChatList;
         }
       );
 
       dispatch(updateChatHistoryThunk);
       dispatch(updateChatListThunk);
-
       form.resetFields();
 
       responseTimerReference.current = setTimeout(() => {
@@ -113,31 +95,37 @@ const DeleteMessageForm: FC = () => {
   };
 
   return (
-    <Form
-      name="delete-message-form"
-      onFinish={onDeleteMessage}
-      onSubmitCapture={() => form.setFields([{ name: 'response', errors: [], warnings: [] }])}
-      form={form}
-      onKeyDown={(e) => !e.ctrlKey && e.key === 'Enter' && form.submit()}
-      disabled={isDeleteMessageLoading}
-      style={{ borderRadius: 8 }}
-    >
-      <Form.Item name="onlySenderDelete" label={t('ONLY_SENDER_DELETE_LABEL')}>
-        <Switch />
-      </Form.Item>
-      <Form.Item style={{ marginBottom: 0 }}>
-        <Button
-          disabled={isDeleteMessageLoading}
-          htmlType="submit"
-          size="large"
-          block={true}
-          type="primary"
-        >
-          {t('DELETE_MESSAGE')}
-        </Button>
-      </Form.Item>
-      <Form.Item style={{ marginBottom: 0 }} name="response" className="response-form-item" />
-    </Form>
+    <>
+      <Typography.Paragraph>{t('DELETE_MESSAGE')}?</Typography.Paragraph>
+      <Form name="delete-message-form" form={form} disabled={isDeleteMessageLoading}>
+        <Flex style={{ flexDirection: 'column-reverse' }} gap={20} align="flex-end">
+          <Form.Item noStyle>
+            <Button
+              style={{ width: 120 }}
+              size="middle"
+              type="default"
+              onClick={() => handleDelete(false)}
+              disabled={isDeleteMessageLoading}
+            >
+              {t('DELETE_FOR_ALL')}
+            </Button>
+          </Form.Item>
+          <Form.Item noStyle>
+            <Button
+              style={{ width: 120 }}
+              size="middle"
+              type="default"
+              onClick={() => handleDelete(true)}
+              disabled={isDeleteMessageLoading}
+            >
+              {t('DELETE_FOR_ME')}
+            </Button>
+          </Form.Item>
+
+          <Form.Item name="response" className="response-form-item" />
+        </Flex>
+      </Form>
+    </>
   );
 };
 

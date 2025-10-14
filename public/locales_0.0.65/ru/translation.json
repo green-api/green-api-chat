@@ -219,5 +219,7 @@
   "LEFT_GROUP_SUCCESS": "Вы покинули группу",
   "ERROR_LEAVING_GROUP": "Произошла ошибка при выходе из группы",
   "PHONE_NUMBER": "Номер телефона",
-  "INSTANCE_OPEN": "Открыть"
+  "INSTANCE_OPEN": "Открыть",
+  "DELETE_FOR_ME": "Удалить у меня",
+  "DELETE_FOR_ALL": "Удалить у всех"
 }

@@ -44,14 +44,6 @@ const AsideItem: FC<AsideItemProps> = ({ asideItem }) => {
     return <AvatarImage src={avatar} size="large" />;
   }
 
-  console.log(
-    SETTINGS_ITEMS.includes(activeAsideItem),
-    asideItem.item === 'settings',
-    activeAsideItem,
-    asideItem.item,
-    SETTINGS_ITEMS.includes(asideItem.item) && activeAsideItem === 'settings'
-  );
-
   return (
     <a
       className={clsx(

@@ -1,6 +1,6 @@
 import { FC, useRef } from 'react';
 
-import { Button, Flex, Form } from 'antd';
+import { Button, Flex, Form, Typography } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import { useActions, useAppDispatch, useAppSelector, useFormWithLanguageValidation } from 'hooks';
@@ -95,38 +95,37 @@ const DeleteMessageForm: FC = () => {
   };
 
   return (
-    <Form
-      name="delete-message-form"
-      form={form}
-      disabled={isDeleteMessageLoading}
-      style={{ borderRadius: 8 }}
-    >
-      <Flex vertical gap={8} align="flex-end">
-        <Form.Item>
-          <Button
-            size="middle"
-            type="default"
-            onClick={() => handleDelete(true)}
-            disabled={isDeleteMessageLoading}
-          >
-            {t('DELETE_FOR_ME')}
-          </Button>
-        </Form.Item>
+    <>
+      <Typography.Paragraph>{t('DELETE_MESSAGE')}?</Typography.Paragraph>
+      <Form name="delete-message-form" form={form} disabled={isDeleteMessageLoading}>
+        <Flex style={{ flexDirection: 'column-reverse' }} gap={20} align="flex-end">
+          <Form.Item noStyle>
+            <Button
+              style={{ width: 120 }}
+              size="middle"
+              type="default"
+              onClick={() => handleDelete(false)}
+              disabled={isDeleteMessageLoading}
+            >
+              {t('DELETE_FOR_ALL')}
+            </Button>
+          </Form.Item>
+          <Form.Item noStyle>
+            <Button
+              style={{ width: 120 }}
+              size="middle"
+              type="default"
+              onClick={() => handleDelete(true)}
+              disabled={isDeleteMessageLoading}
+            >
+              {t('DELETE_FOR_ME')}
+            </Button>
+          </Form.Item>
 
-        <Form.Item>
-          <Button
-            size="middle"
-            type="default"
-            onClick={() => handleDelete(false)}
-            disabled={isDeleteMessageLoading}
-          >
-            {t('DELETE_FOR_ALL')}
-          </Button>
-        </Form.Item>
-
-        <Form.Item name="response" className="response-form-item" />
-      </Flex>
-    </Form>
+          <Form.Item name="response" className="response-form-item" />
+        </Flex>
+      </Form>
+    </>
   );
 };
 

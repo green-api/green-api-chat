@@ -217,5 +217,7 @@
   "PROFILE": "Профиль",
   "CONFIRM_LEAVE_GROUP": "Вы уверены, что хотите покинуть группу?",
   "LEFT_GROUP_SUCCESS": "Вы покинули группу",
-  "ERROR_LEAVING_GROUP": "Произошла ошибка при выходе из группы"
+  "ERROR_LEAVING_GROUP": "Произошла ошибка при выходе из группы",
+  "DELETE_FOR_ME": "Удалить у меня",
+  "DELETE_FOR_ALL": "Удалить у всех"
 }

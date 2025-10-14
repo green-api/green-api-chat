@@ -8,13 +8,13 @@ import ChatsHeader from './chats-header.component';
 import NewChatIcon from 'assets/newChat.svg?react';
 import AuthorizationStatus from 'components/instance-auth/authorization-status.component';
 import ChatList from 'components/shared/chat-list/chat-list.component';
+import SelectStatusMode from 'components/UI/select/select-status.component';
 import { useActions, useAppSelector } from 'hooks';
 import { useInstanceSettings } from 'hooks/use-instance-settings.hook';
 import { useIsMaxInstance } from 'hooks/use-is-max-instance';
 import { selectMiniVersion, selectType } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
 import { StateInstanceEnum } from 'types';
-import SelectStatusMode from 'components/UI/select/select-status.component';
 
 const Chats: FC = () => {
   const isMiniVersion = useAppSelector(selectMiniVersion);

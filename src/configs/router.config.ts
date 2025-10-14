@@ -30,6 +30,12 @@ export const EXTERNAL_LINKS = {
     default: 'support@green-api.com',
     'console.greenapi.com': 'support@greenapi.com',
   },
+  freeDeveloperAccountTutorial: {
+    default: 'https://www.youtube.com/embed/FW--xWr-9Nw?start=36',
+    en: 'https://www.youtube.com/embed/FW--xWr-9Nw?start=36',
+    ru: 'https://www.youtube.com/embed/e-91GrRDBVc?start=27',
+    rutube: 'https://rutube.ru/play/embed/64d23df2ce90aff6e808106cfb430228/?t=27&r=plwd',
+  },
   billingEmail: {
     default: 'billing@green-api.com',
   },

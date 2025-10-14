@@ -20,7 +20,7 @@ const SelectInstance: FC = () => {
   const selectedInstance = useAppSelector(selectInstance);
 
   const { t } = useTranslation();
-  const { setSelectedInstance, setActiveChat } = useActions();
+  const { setSelectedInstance, setActiveChat, setIsAuthorizingInstance } = useActions();
 
   const {
     isLoading: isLoadingInstances,
@@ -129,9 +129,8 @@ const SelectInstance: FC = () => {
       size="large"
       showSearch
       style={{
-        margin: type === 'console-page' ? '5px 0' : '8px 0',
-        padding: '0 5px',
-        width: type === 'console-page' ? '80%' : '100%',
+        margin: type === 'console-page' ? '16px 0' : '8px 0',
+        width: '100%',
       }}
       placeholder={t('SELECT_INSTANCE_PLACEHOLDER')}
       value={selectedInstance?.idInstance}
@@ -172,6 +171,8 @@ const SelectInstance: FC = () => {
           isChatWorking: isChatWorkingFromStorage,
           typeInstance: option.typeInstance,
         });
+
+        setIsAuthorizingInstance(false);
 
         setActiveChat(null);
       }}

@@ -185,7 +185,16 @@
   "UNEXPECTED_ERROR": "An unexpected error occurred. Please contact technical support.",
   "SENT_STATUS_WARNING": "Sent status ID:",
   "DUPLICATED_FIELD_ERROR": "This option already exists",
+  "AUTHORIZED": "Authorized",
+  "NOT_AUTHORIZED": "Not authorized",
   "CONFIRM_LEAVE_GROUP": "Are you sure you want to leave the group?",
   "LEFT_GROUP_SUCCESS": "You have left the group",
-  "ERROR_LEAVING_GROUP": "An error occurred while leaving the group"
+  "ERROR_LEAVING_GROUP": "An error occurred while leaving the group",
+  "INSTANCE_LOGOUT": "Log out",
+  "INSTANCE_LOGOUT_CONFIRM_TITLE": "Are you sure you want to unlink your current WhatsApp account from this instance?",
+  "INSTANCE_LOGOUT_WARNING_TITLE": "Sending and receiving messages will stop working",
+  "PHONE_NUMBER": "Phone number",
+  "INSTANCE_OPEN": "Open",
+  "DELETE_FOR_ME": "Delete for me",
+  "DELETE_FOR_ALL": "Delete for everyone"
 }

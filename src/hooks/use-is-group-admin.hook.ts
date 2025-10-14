@@ -1,28 +1,13 @@
 import { useMemo } from 'react';
 
+import { useInstanceSettings } from './use-instance-settings.hook';
 import { useIsMaxInstance } from './use-is-max-instance';
-import { useAppSelector } from 'hooks';
-import { useGetAccountSettingsQuery, useGetWaSettingsQuery } from 'services/green-api/endpoints';
-import { selectInstance } from 'store/slices/instances.slice';
 import { ActiveChat } from 'types';
 
 export const useIsGroupAdmin = (activeChat: ActiveChat | null): boolean => {
-  const instanceCredentials = useAppSelector(selectInstance);
+  const { settings, isLoading } = useInstanceSettings();
 
   const isMax = useIsMaxInstance();
-
-  const { data: waSettings, isLoading: isLoadingWaSettings } =
-    useGetWaSettingsQuery(instanceCredentials);
-
-  const { data: accountSettings, isLoading: isLoadingAccountSettings } = useGetAccountSettingsQuery(
-    instanceCredentials,
-    {
-      skip: !isMax,
-    }
-  );
-
-  const settings = isMax ? accountSettings : waSettings;
-  const isLoading = isMax ? isLoadingAccountSettings : isLoadingWaSettings;
 
   const isAdmin = useMemo(() => {
     const participants =

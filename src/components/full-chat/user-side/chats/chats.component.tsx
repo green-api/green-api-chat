@@ -1,28 +1,34 @@
 import { FC, useState } from 'react';
 
-import { UserAddOutlined } from '@ant-design/icons';
-import { Flex } from 'antd';
+import { Button, Flex } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import AddNewChat from './add-new-chat.component';
 import ChatsHeader from './chats-header.component';
+import NewChatIcon from 'assets/newChat.svg?react';
+import AuthorizationStatus from 'components/instance-auth/authorization-status.component';
 import ChatList from 'components/shared/chat-list/chat-list.component';
-import SelectInstance from 'components/UI/select/select-instance.component';
 import SelectStatusMode from 'components/UI/select/select-status.component';
-import { useAppSelector } from 'hooks';
+import { useActions, useAppSelector } from 'hooks';
+import { useInstanceSettings } from 'hooks/use-instance-settings.hook';
 import { useIsMaxInstance } from 'hooks/use-is-max-instance';
 import { selectMiniVersion, selectType } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
+import { StateInstanceEnum } from 'types';
 
 const Chats: FC = () => {
   const isMiniVersion = useAppSelector(selectMiniVersion);
   const type = useAppSelector(selectType);
   const instanceCredentials = useAppSelector(selectInstance);
-  const isMax = useIsMaxInstance();
+  const { setIsAuthorizingInstance } = useActions();
 
   const { t } = useTranslation();
 
+  const { settings } = useInstanceSettings();
+
   const [isVisible, setIsVisible] = useState(false);
+
+  const isMax = useIsMaxInstance();
 
   return (
     <Flex className="chats" vertical>
@@ -31,20 +37,30 @@ const Chats: FC = () => {
       <Flex
         align="center"
         gap={8}
-        style={{ padding: '0 5px' }}
-        justify={type === 'partner-iframe' ? 'end' : 'space-around'}
+        style={{ padding: '6px 20px' }}
+        justify={type === 'partner-iframe' ? 'end' : 'space-between'}
       >
-        {type !== 'partner-iframe' && <SelectInstance />}
-        {!isMiniVersion && (type === 'console-page' || type === 'partner-iframe') && (
-          <a className={type === 'partner-iframe' ? 'p-10' : undefined}>
-            <UserAddOutlined
-              style={{ fontSize: 20 }}
-              onClick={() => setIsVisible(true)}
-              title={t('ADD_NEW_CHAT_HEADER')}
-            />
-          </a>
-        )}
-        {!isMax && <SelectStatusMode />}
+        <Flex gap={20} align="center">
+          <p style={{ fontSize: '1.5rem' }}>{t('CHAT_HEADER')}</p>
+          <AuthorizationStatus />
+          {settings?.stateInstance === StateInstanceEnum.NotAuthorized && !isMax && (
+            <Button variant="outlined" onClick={() => setIsAuthorizingInstance(true)}>
+              {t('AUTHORIZE')}
+            </Button>
+          )}
+        </Flex>
+        <Flex gap={14} align="center">
+          {!isMax && <SelectStatusMode />}
+          {!isMiniVersion && (type === 'console-page' || type === 'partner-iframe') && (
+            <a className={type === 'partner-iframe' ? 'p-10' : undefined}>
+              <NewChatIcon
+                style={{ fontSize: 20 }}
+                onClick={() => setIsVisible(true)}
+                title={t('ADD_NEW_CHAT_HEADER')}
+              />
+            </a>
+          )}
+        </Flex>
       </Flex>
 
       <ChatList key={instanceCredentials?.idInstance} />

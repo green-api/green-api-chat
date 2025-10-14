@@ -50,7 +50,7 @@ const Chats: FC = () => {
           )}
         </Flex>
         <Flex gap={14} align="center">
-          <SelectStatusMode />
+          {!isMax && <SelectStatusMode />}
           {!isMiniVersion && (type === 'console-page' || type === 'partner-iframe') && (
             <a className={type === 'partner-iframe' ? 'p-10' : undefined}>
               <NewChatIcon

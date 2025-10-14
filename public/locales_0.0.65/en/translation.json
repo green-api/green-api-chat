@@ -194,5 +194,7 @@
   "INSTANCE_LOGOUT_CONFIRM_TITLE": "Are you sure you want to unlink your current WhatsApp account from this instance?",
   "INSTANCE_LOGOUT_WARNING_TITLE": "Sending and receiving messages will stop working",
   "PHONE_NUMBER": "Phone number",
-  "INSTANCE_OPEN": "Open"
+  "INSTANCE_OPEN": "Open",
+  "DELETE_FOR_ME": "Delete for me",
+  "DELETE_FOR_ALL": "Delete for everyone"
 }

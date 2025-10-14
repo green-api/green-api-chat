@@ -191,5 +191,7 @@
   "INSTANCE_LOGOUT_CONFIRM_TITLE": "האם אתה בטוח שברצונך לבטל את הקישור של חשבון WhatsApp הנוכחי שלך ממופע זה?",
   "INSTANCE_LOGOUT_WARNING_TITLE": "שליחה וקבלה של הודעות יפסיקו לעבוד",
   "PHONE_NUMBER": "מספר טלפון",
-  "INSTANCE_OPEN": "פתח"
+  "INSTANCE_OPEN": "פתח",
+  "DELETE_FOR_ME": "מחק עבורי",
+  "DELETE_FOR_ALL": "מחק עבור כולם"
 }

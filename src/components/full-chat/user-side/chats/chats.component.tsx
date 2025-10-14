@@ -10,9 +10,11 @@ import AuthorizationStatus from 'components/instance-auth/authorization-status.c
 import ChatList from 'components/shared/chat-list/chat-list.component';
 import { useActions, useAppSelector } from 'hooks';
 import { useInstanceSettings } from 'hooks/use-instance-settings.hook';
+import { useIsMaxInstance } from 'hooks/use-is-max-instance';
 import { selectMiniVersion, selectType } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
 import { StateInstanceEnum } from 'types';
+import SelectStatusMode from 'components/UI/select/select-status.component';
 
 const Chats: FC = () => {
   const isMiniVersion = useAppSelector(selectMiniVersion);
@@ -25,6 +27,8 @@ const Chats: FC = () => {
   const { settings } = useInstanceSettings();
 
   const [isVisible, setIsVisible] = useState(false);
+
+  const isMax = useIsMaxInstance();
 
   return (
     <Flex className="chats" vertical>
@@ -39,21 +43,24 @@ const Chats: FC = () => {
         <Flex gap={20} align="center">
           <p style={{ fontSize: '1.5rem' }}>{t('CHAT_HEADER')}</p>
           <AuthorizationStatus />
-          {settings?.stateInstance === StateInstanceEnum.NotAuthorized && (
+          {settings?.stateInstance === StateInstanceEnum.NotAuthorized && !isMax && (
             <Button variant="outlined" onClick={() => setIsAuthorizingInstance(true)}>
               {t('AUTHORIZE')}
             </Button>
           )}
         </Flex>
-        {!isMiniVersion && (type === 'console-page' || type === 'partner-iframe') && (
-          <a className={type === 'partner-iframe' ? 'p-10' : undefined}>
-            <NewChatIcon
-              style={{ fontSize: 20 }}
-              onClick={() => setIsVisible(true)}
-              title={t('ADD_NEW_CHAT_HEADER')}
-            />
-          </a>
-        )}
+        <Flex gap={14} align="center">
+          <SelectStatusMode />
+          {!isMiniVersion && (type === 'console-page' || type === 'partner-iframe') && (
+            <a className={type === 'partner-iframe' ? 'p-10' : undefined}>
+              <NewChatIcon
+                style={{ fontSize: 20 }}
+                onClick={() => setIsVisible(true)}
+                title={t('ADD_NEW_CHAT_HEADER')}
+              />
+            </a>
+          )}
+        </Flex>
       </Flex>
 
       <ChatList key={instanceCredentials?.idInstance} />

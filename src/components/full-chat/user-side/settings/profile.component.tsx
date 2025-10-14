@@ -8,14 +8,19 @@ import emptyAvatarButAvailable from 'assets/emptyAvatarButAvailable.svg';
 import AuthorizationStatus from 'components/instance-auth/authorization-status.component';
 import { useActions, useAppSelector } from 'hooks';
 import { useInstanceSettings } from 'hooks/use-instance-settings.hook';
+import { useIsMaxInstance } from 'hooks/use-is-max-instance';
 import { useGetAvatarQuery } from 'services/green-api/endpoints';
 import { selectInstance } from 'store/slices/instances.slice';
 
 export const Profile = () => {
   const { setIsAuthorizingInstance } = useActions();
   const selectedInstance = useAppSelector(selectInstance);
+
   const { t } = useTranslation();
+
   const { settings } = useInstanceSettings();
+
+  const isMax = useIsMaxInstance();
 
   const { data: avatar } = useGetAvatarQuery(
     {
@@ -29,7 +34,7 @@ export const Profile = () => {
   );
 
   useEffect(() => {
-    if (settings?.stateInstance === 'notAuthorized') {
+    if (settings?.stateInstance === 'notAuthorized' && !isMax) {
       setIsAuthorizingInstance(true);
     }
     return () => {

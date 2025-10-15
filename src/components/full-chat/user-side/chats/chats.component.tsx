@@ -1,6 +1,6 @@
 import { FC, useState } from 'react';
 
-import { Button, Flex } from 'antd';
+import { Button, Flex, Spin } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import AddNewChat from './add-new-chat.component';
@@ -62,8 +62,9 @@ const Chats: FC = () => {
           )}
         </Flex>
       </Flex>
-
-      <ChatList key={instanceCredentials?.idInstance} />
+      {settings?.stateInstance === StateInstanceEnum.Authorized && (
+        <ChatList key={instanceCredentials?.idInstance} />
+      )}
       {!isMiniVersion && (type === 'console-page' || type === 'partner-iframe') && (
         <AddNewChat isVisible={isVisible} setIsVisible={setIsVisible} />
       )}

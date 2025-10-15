@@ -22,6 +22,7 @@ import {
   useGetAccountSettingsQuery,
   useGetAuthorizationCodeMutation,
   useGetWaSettingsQuery,
+  useLazyGetStateInstanceQuery,
   useLazyLastMessagesQuery,
 } from 'services/green-api/endpoints';
 import { selectInstance } from 'store/slices/instances.slice';
@@ -34,6 +35,7 @@ export const AuthInstance = () => {
   const [showCodeError, setShowCodeError] = useState(false);
   const [showQrError, setShowQrError] = useState(false);
   const [phone, setPhone] = useState('');
+  const [showCodeInstruction, setShowCodeInstruction] = useState(false);
   const selectedInstance = useAppSelector(selectInstance);
 
   const { setIsAuthorizingInstance } = useActions();
@@ -66,22 +68,37 @@ export const AuthInstance = () => {
     }
   );
 
+  const [updateStateInstanceTrigger, { data: stateInstanceData }] = useLazyGetStateInstanceQuery();
+
   const refetch = isMax ? maxRefetch : waRefetch;
   const stateInstance = isMax ? maxData?.stateInstance : settings?.stateInstance;
 
   const onAuthorized = () => {
     refetch();
     setIsAuthorizingInstance(false);
-    setTimeout(() => {
-      fetchChats({
-        idInstance: selectedInstance.idInstance,
-        apiTokenInstance: selectedInstance.apiTokenInstance,
-        apiUrl: selectedInstance.apiUrl,
-        mediaUrl: selectedInstance.mediaUrl,
-        allMessages: false,
-        minutesToRefetch: 26300,
-      });
-    }, 2000);
+
+    const fetchChatsWithRetry = async () => {
+      try {
+        const result = await fetchChats({
+          idInstance: selectedInstance.idInstance,
+          apiTokenInstance: selectedInstance.apiTokenInstance,
+          apiUrl: selectedInstance.apiUrl,
+          mediaUrl: selectedInstance.mediaUrl,
+          allMessages: true,
+          minutesToRefetch: 26300,
+        }).unwrap();
+
+        if (Array.isArray(result) && result.length > 0) {
+          return;
+        }
+
+        setTimeout(() => fetchChatsWithRetry(), 3000);
+      } catch (error) {
+        setTimeout(() => fetchChatsWithRetry(), 5000);
+      }
+    };
+
+    fetchChatsWithRetry();
   };
 
   const { openQrWebsocket, qrData, qrText, isQrLoading, isQrError } = useQrWebsocket(
@@ -91,7 +108,54 @@ export const AuthInstance = () => {
 
   const [getCode, { data: codeData, isLoading: isLoadingCode }] = useGetAuthorizationCodeMutation();
   const [codeForm] = useFormWithLanguageValidation();
-  const [showCodeInstruction, setShowCodeInstruction] = useState(false);
+
+  useEffect(() => {
+    if (!selectedInstance || !showCodeInstruction) return;
+
+    const updateStateInstance = () => {
+      if (document.visibilityState === 'visible') {
+        updateStateInstanceTrigger({
+          idInstance: selectedInstance.idInstance,
+          apiTokenInstance: selectedInstance.apiTokenInstance,
+          apiUrl: selectedInstance.apiUrl,
+          mediaUrl: selectedInstance.mediaUrl,
+        });
+      }
+    };
+
+    const interval = setInterval(updateStateInstance, 7000);
+
+    if (stateInstanceData?.stateInstance === StateInstanceEnum.Authorized && showCodeInstruction) {
+      setShowCodeInstruction(false);
+      setPhone('');
+      refetch();
+      setIsAuthorizingInstance(false);
+    }
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [
+    showCodeInstruction,
+    selectedInstance,
+    stateInstanceData,
+    refetch,
+    setIsAuthorizingInstance,
+    updateStateInstanceTrigger,
+  ]);
+
+  useEffect(() => {
+    if (
+      !stateInstanceData ||
+      !settings ||
+      stateInstanceData.stateInstance === settings.stateInstance ||
+      showCodeInstruction
+    ) {
+      return;
+    }
+
+    refetch();
+  }, [stateInstanceData, settings, showCodeInstruction, refetch]);
 
   useEffect(() => {
     if (!codeData || !codeData.status) {
@@ -200,7 +264,6 @@ export const AuthInstance = () => {
   );
 };
 
-// Подкомпоненты для каждой вкладки авторизации
 const QrAuthorization = ({
   qrData,
   qrText,

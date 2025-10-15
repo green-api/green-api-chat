@@ -5,14 +5,14 @@ import InstanceDangerZone from 'components/instance-danger-zone.component';
 import { useActions, useAppDispatch, useAppSelector } from 'hooks';
 import { useInstanceSettings } from 'hooks/use-instance-settings.hook';
 import { useLogoutMutation } from 'services/green-api/endpoints';
-import { selectInstance } from 'store/slices/instances.slice';
 import { greenAPI } from 'services/green-api/green-api.service';
+import { selectInstance } from 'store/slices/instances.slice';
 
 export const Logout = () => {
   const { t } = useTranslation();
   const selectedInstance = useAppSelector(selectInstance);
 
-  const { setUserSideActiveMode } = useActions();
+  const { setUserSideActiveMode, setActiveChat } = useActions();
 
   const { settings } = useInstanceSettings();
 
@@ -27,6 +27,7 @@ export const Logout = () => {
       mediaUrl: selectedInstance?.mediaUrl,
     });
     setUserSideActiveMode('chats');
+    setActiveChat(null);
     dispatch(dispatch(greenAPI.util.resetApiState()));
   };
 

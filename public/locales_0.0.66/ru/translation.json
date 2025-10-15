@@ -221,5 +221,15 @@
   "PHONE_NUMBER": "Номер телефона",
   "INSTANCE_OPEN": "Открыть",
   "DELETE_FOR_ME": "Удалить у меня",
-  "DELETE_FOR_ALL": "Удалить у всех"
+  "DELETE_FOR_ALL": "Удалить у всех",
+  "INPUT_CODE_ON_PHONE": "Введите код на телефоне",
+  "CHANGE_NUMBER": "Изменить номер",
+  "CONNECT_WHATSAPP_ACCOUNT": "Связывание аккаунта WhatsApp {0}",
+  "LINK_BY_CODE_STEP_1": "Откройте WhatsApp на своём телефоне или нажмите на уведомление, которое отправил WhatsApp",
+  "LINK_BY_CODE_STEP_2": "Чтобы перейти в&nbsp;настройки, нажмите на&nbsp;ваше фото профиля, <strong>\"Меню\" {0}</strong> или <strong>\"Настройки\" {1}</strong>",
+  "LINK_BY_CODE_STEP_3": "Нажмите \"<strong>Связанные устройства</strong>\" и&nbsp;затем \"<strong>Привязка устройства</strong>\"",
+  "LINK_BY_CODE_STEP_4": "Нажмите \"<strong>Связать по&nbsp;номеру телефона</strong>\" и&nbsp;введите этот код на&nbsp;своем телефоне",
+  "CODE_ERROR_FIRST": "Не удалось получить код!",
+  "CODE_ERROR_SECOND": "Попробуйте позже или отсканируйте QR код",
+  "ERROR_DELETING_MESSAGE": "Произошла ошибка при удалении сообщения"
 }

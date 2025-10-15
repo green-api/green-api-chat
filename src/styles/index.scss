@@ -376,3 +376,8 @@ Button.simpleType:focus {
 Button.simpleType:disabled:hover {
   background: rgba(0, 0, 0, 0.04);
 }
+
+.success {
+  color: var(--primary-color);
+  cursor: pointer;
+}

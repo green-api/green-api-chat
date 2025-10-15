@@ -193,5 +193,14 @@
   "PHONE_NUMBER": "מספר טלפון",
   "INSTANCE_OPEN": "פתח",
   "DELETE_FOR_ME": "מחק עבורי",
-  "DELETE_FOR_ALL": "מחק עבור כולם"
+  "DELETE_FOR_ALL": "מחק עבור כולם",
+  "INPUT_CODE_ON_PHONE": "הזן את הקוד בטלפון שלך",
+  "CHANGE_NUMBER": "שנה את המספר",
+  "LINK_BY_CODE_STEP_1": "פותחים את WhatsApp בטלפון או לחץ על ההודעה שנשלחה בוואטסאפ.",
+  "LINK_BY_CODE_STEP_2": "להיכנס להגדרות על ידי הקשה על תמונת הפרופיל, <strong>תפריט {0}</strong>&rlm; או <strong>הגדרות {1}</strong>",
+  "LINK_BY_CODE_STEP_3": "להקיש על <strong>מכשירים מקושרים</strong> ואז על <strong>קישור מכשיר</strong>",
+  "LINK_BY_CODE_STEP_4": "להקיש על '<strong>קישור באמצעות מספר הטלפון</strong>' ולהזין את הקוד בטלפון",
+  "CODE_ERROR_FIRST": "לא הצלחתי להשיג את הקוד!",
+  "CODE_ERROR_SECOND": "נסה מאוחר יותר או סרוק קוד QR",
+  "ERROR_DELETING_MESSAGE": "אירעה שגיאה בעת מחיקת ההודעה"
 }

@@ -1,6 +1,7 @@
 import { FC, useRef } from 'react';
 
 import { Button, Flex, Form, Typography } from 'antd';
+import useMessage from 'antd/es/message/useMessage';
 import { useTranslation } from 'react-i18next';
 
 import { useActions, useAppDispatch, useAppSelector, useFormWithLanguageValidation } from 'hooks';
@@ -21,6 +22,7 @@ const DeleteMessageForm: FC = () => {
   const dispatch = useAppDispatch();
   const { setActiveServiceMethod } = useActions();
   const { t } = useTranslation();
+  const [message, contextMessageHolder] = useMessage();
 
   const [deleteMessage, { isLoading: isDeleteMessageLoading }] = useDeleteMessageMutation();
 
@@ -45,6 +47,10 @@ const DeleteMessageForm: FC = () => {
     form.setFields([{ name: 'response', errors: [], warnings: [] }]);
 
     const { data, error } = await deleteMessage(body);
+
+    if (error) {
+      message.error(t('ERROR_DELETING_MESSAGE'));
+    }
 
     if (error && 'status' in error && error.status === 466) {
       form.setFields([{ name: 'response', errors: [t('QUOTE_EXCEEDED')] }]);
@@ -125,6 +131,7 @@ const DeleteMessageForm: FC = () => {
           <Form.Item name="response" className="response-form-item" />
         </Flex>
       </Form>
+      {contextMessageHolder}
     </>
   );
 };

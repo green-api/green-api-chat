@@ -51,7 +51,7 @@ export const Profile = () => {
         style={{ height: 150, backgroundColor: 'var(--profile-background)', position: 'relative' }}
       >
         <Avatar
-          src={avatar?.urlAvatar ?? emptyAvatarButAvailable}
+          src={avatar?.urlAvatar?.trim() ? avatar.urlAvatar : emptyAvatarButAvailable}
           size={115}
           style={{
             position: 'absolute',
@@ -66,12 +66,12 @@ export const Profile = () => {
       {settings?.stateInstance === 'authorized' && (
         <div style={{ paddingLeft: '2rem' }}>
           <Flex
-            gap={10}
+            gap={22}
             align="center"
             style={{ color: 'var(--secondary-text-color)', marginLeft: '2 rem' }}
           >
             <PhoneOutlined style={{ fontSize: '1.5rem' }} />
-            <Flex vertical gap={4}>
+            <Flex vertical gap={12}>
               <div>{t('PHONE_NUMBER')}</div>
               <div>{settings?.phone}</div>
             </Flex>

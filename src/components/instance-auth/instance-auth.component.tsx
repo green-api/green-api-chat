@@ -72,14 +72,16 @@ export const AuthInstance = () => {
   const onAuthorized = () => {
     refetch();
     setIsAuthorizingInstance(false);
-    fetchChats({
-      idInstance: selectedInstance.idInstance,
-      apiTokenInstance: selectedInstance.apiTokenInstance,
-      apiUrl: selectedInstance.apiUrl,
-      mediaUrl: selectedInstance.mediaUrl,
-      allMessages: false,
-      minutesToRefetch: 26300,
-    });
+    setTimeout(() => {
+      fetchChats({
+        idInstance: selectedInstance.idInstance,
+        apiTokenInstance: selectedInstance.apiTokenInstance,
+        apiUrl: selectedInstance.apiUrl,
+        mediaUrl: selectedInstance.mediaUrl,
+        allMessages: false,
+        minutesToRefetch: 26300,
+      });
+    }, 2000);
   };
 
   const { openQrWebsocket, qrData, qrText, isQrLoading, isQrError } = useQrWebsocket(

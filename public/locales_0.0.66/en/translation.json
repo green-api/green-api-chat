@@ -196,5 +196,14 @@
   "PHONE_NUMBER": "Phone number",
   "INSTANCE_OPEN": "Open",
   "DELETE_FOR_ME": "Delete for me",
-  "DELETE_FOR_ALL": "Delete for everyone"
+  "DELETE_FOR_ALL": "Delete for everyone",
+  "INPUT_CODE_ON_PHONE": "Input the code on your phone",
+  "LINK_BY_CODE_STEP_1": "Open WhatsApp on your phone or click on the notification sent by Whatsapp",
+  "LINK_BY_CODE_STEP_2": "Go to settings by tapping on your profile photo, <strong>Menu {0}</strong>, or <strong>Settings {1}</strong>",
+  "LINK_BY_CODE_STEP_3": "Tap <strong>Linked devices</strong> and then <strong>Link a device</strong>",
+  "LINK_BY_CODE_STEP_4": "Tap <strong>Link with phone number instead</strong> and enter this code on your phone",
+  "CHANGE_NUMBER": "Change the number",
+  "CODE_ERROR_FIRST": "Couldn't get the code!",
+  "CODE_ERROR_SECOND": "Try again later or scan the QR code",
+  "ERROR_DELETING_MESSAGE": "An error occurred while deleting the message"
 }

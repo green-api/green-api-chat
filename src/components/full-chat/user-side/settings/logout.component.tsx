@@ -2,10 +2,11 @@ import { Flex } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import InstanceDangerZone from 'components/instance-danger-zone.component';
-import { useActions, useAppSelector } from 'hooks';
+import { useActions, useAppDispatch, useAppSelector } from 'hooks';
 import { useInstanceSettings } from 'hooks/use-instance-settings.hook';
 import { useLogoutMutation } from 'services/green-api/endpoints';
 import { selectInstance } from 'store/slices/instances.slice';
+import { greenAPI } from 'services/green-api/green-api.service';
 
 export const Logout = () => {
   const { t } = useTranslation();
@@ -16,6 +17,7 @@ export const Logout = () => {
   const { settings } = useInstanceSettings();
 
   const [logoutInstance, { isLoading: isLogouting }] = useLogoutMutation();
+  const dispatch = useAppDispatch();
 
   const handleLogout = () => {
     logoutInstance({
@@ -25,6 +27,7 @@ export const Logout = () => {
       mediaUrl: selectedInstance?.mediaUrl,
     });
     setUserSideActiveMode('chats');
+    dispatch(dispatch(greenAPI.util.resetApiState()));
   };
 
   return (

@@ -27,6 +27,7 @@ const AuthorizationStatus: FC<Properties> = ({ style }) => {
         padding: '4px 10px',
         borderRadius: 4,
         width: 'fit-content',
+        textWrap: 'nowrap',
         textAlign: 'center',
         color: isAuthorized ? 'var(--authorized-text-color)' : 'var(--not-authorized-text-color)',
         backgroundColor: isAuthorized

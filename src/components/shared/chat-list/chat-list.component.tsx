@@ -199,7 +199,7 @@ const ChatList: FC = () => {
               />
             )}
             loading={{
-              spinning: isLoading || !data?.length,
+              spinning: isLoading || (!data?.length && !isMiniVersion),
               className: `${isMiniVersion ? 'min-height-460' : 'height-720'}`,
               size: 'large',
             }}

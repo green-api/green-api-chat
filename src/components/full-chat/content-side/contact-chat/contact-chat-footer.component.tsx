@@ -4,24 +4,15 @@ import { Flex, Typography } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import ChatForm from 'components/forms/chat-form.component';
-import SelectSendingMode from 'components/UI/select/select-sending-mode.component';
 import { useAppSelector } from 'hooks';
 import { useIsMaxInstance } from 'hooks/use-is-max-instance';
-import { useGetProfileSettingsQuery } from 'services/app/endpoints';
 import { selectActiveChat } from 'store/slices/chat.slice';
-import { selectUser } from 'store/slices/user.slice';
 import { ActiveChat } from 'types';
 
 const ContactChatFooter: FC = () => {
-  const { idUser, apiTokenUser, projectId } = useAppSelector(selectUser);
   const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
 
   const { t } = useTranslation();
-
-  const { data: profileSettings } = useGetProfileSettingsQuery(
-    { idUser, apiTokenUser, projectId },
-    { skip: !idUser || !apiTokenUser }
-  );
 
   const isMax = useIsMaxInstance();
 
@@ -35,16 +26,7 @@ const ContactChatFooter: FC = () => {
     );
   }
 
-  return (
-    <Flex align="center" className="chat-form-container">
-      <SelectSendingMode
-        isWaba={profileSettings && profileSettings.result && profileSettings.data.isWaba}
-      />
-      <div style={{ flex: '1' }}>
-        <ChatForm />
-      </div>
-    </Flex>
-  );
+  return <ChatForm />;
 };
 
 export default ContactChatFooter;

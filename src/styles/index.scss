@@ -33,6 +33,7 @@
 @import 'components/qr';
 @import 'components/authorization-code';
 @import 'components/desc-group';
+@import 'components/reply-message';
 
 html {
   overflow: hidden;
@@ -380,4 +381,8 @@ Button.simpleType:disabled:hover {
 .success {
   color: var(--primary-color);
   cursor: pointer;
+}
+
+.ant-dropdown .ant-dropdown-menu .ant-dropdown-menu-item-icon {
+  margin-inline-end: 20px !important;
 }

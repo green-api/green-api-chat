@@ -205,5 +205,6 @@
   "CHANGE_NUMBER": "Change the number",
   "CODE_ERROR_FIRST": "Couldn't get the code!",
   "CODE_ERROR_SECOND": "Try again later or scan the QR code",
-  "ERROR_DELETING_MESSAGE": "An error occurred while deleting the message"
+  "ERROR_DELETING_MESSAGE": "An error occurred while deleting the message",
+  "REPLY": "Reply"
 }

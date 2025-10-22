@@ -45,6 +45,7 @@ export interface ChatState {
   searchQuery: string;
   description?: string;
   brandImgUrl?: string;
+  replyMessage: MessageDataForRender | null;
 }
 
 export type ChatType =

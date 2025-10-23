@@ -62,6 +62,7 @@ const Message: FC<MessageProps> = ({ messageDataForRender, preview }) => {
 
   let messageBody = (
     <TextMessage
+      jsonMessage={jsonMessage}
       textMessage={textMessage}
       typeMessage={typeMessage}
       downloadUrl={downloadUrl}

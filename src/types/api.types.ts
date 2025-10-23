@@ -501,3 +501,7 @@ export interface SendVoiceStatusInterface extends InstanceInterface {
 export interface DownloadFileResponseInterface {
   downloadUrl: string;
 }
+
+export interface DownloadFileResponseInterface {
+  downloadUrl: string;
+}

@@ -4,8 +4,8 @@ import {
   ReceiveNotificationResponseInterface,
   DeleteNotificationParameters,
   ResultResponseInterface,
-  GetChatInformationParameters,
   DownloadFileResponseInterface,
+  GetChatInformationParameters,
 } from 'types';
 
 export const receivingGreenApiEndpoints = greenAPI.injectEndpoints({

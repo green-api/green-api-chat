@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef, useState } from 'react';
+import { FC, useEffect, useRef, useState, useMemo } from 'react';
 
 import { Select, Spin } from 'antd';
 import { BaseSelectRef } from 'rc-select';
@@ -8,48 +8,45 @@ import SelectInstanceLabel from './select-instance-label.component';
 import { useActions, useAppSelector } from 'hooks';
 import { useGetInstancesQuery } from 'services/app/endpoints';
 import { selectType } from 'store/slices/chat.slice';
-import { selectInstance } from 'store/slices/instances.slice';
+import { selectInstance, selectInstanceList } from 'store/slices/instances.slice';
 import { selectUser } from 'store/slices/user.slice';
-import {
-  ExpandedInstanceInterface,
-  HasDefaultInstance,
-  InstanceInterface,
-  SelectInstanceItemInterface,
-} from 'types';
+import { SelectInstanceItemInterface } from 'types';
 import { getIsChatWorkingFromStorage } from 'utils';
 
 const SelectInstance: FC = () => {
   const type = useAppSelector(selectType);
   const { idUser, apiTokenUser, projectId } = useAppSelector(selectUser);
+  const instanceList = useAppSelector(selectInstanceList);
+  const selectedInstance = useAppSelector(selectInstance);
 
   const { t } = useTranslation();
+  const { setSelectedInstance, setActiveChat, setIsAuthorizingInstance } = useActions();
 
   const {
     isLoading: isLoadingInstances,
     data: instancesRequestData,
     isSuccess: isSuccessLoadingInstances,
-  } = useGetInstancesQuery({ idUser, apiTokenUser, projectId }, { skip: !idUser || !apiTokenUser });
-
-  const selectedInstance = useAppSelector(selectInstance);
-
-  const { setSelectedInstance } = useActions();
+  } = useGetInstancesQuery(
+    { idUser, apiTokenUser, projectId },
+    { skip: !idUser || !apiTokenUser || ['console-page', 'tab'].includes(type) }
+  );
 
   const [instances, setInstances] = useState<SelectInstanceItemInterface[] | undefined>();
-
-  const [defaultInstanceToRender, setDefaultInstanceToRender] = useState<
-    undefined | { label: JSX.Element; idInstance: InstanceInterface['idInstance'] }
-  >();
-  const [hasDefaultInstance, setHasDefaultInstance] = useState<HasDefaultInstance>('unknown');
-
-  const limit = 10;
   const [page, setPage] = useState(1);
   const [searchValue, setSearchValue] = useState('');
-
   const setPageTimerReference = useRef<ReturnType<typeof setTimeout>>();
-
   const selectReference = useRef<BaseSelectRef>(null);
 
-  // useEffect - для добавления полей в инстансы (поля: label и isLoadingStatus)
+  const limit = 10;
+
+  const formattedInstanceList = useMemo(() => {
+    if (!instanceList) return undefined;
+    return instanceList.map((instance) => ({
+      ...instance,
+      label: <SelectInstanceLabel {...instance} />,
+    }));
+  }, [instanceList]);
+
   useEffect(() => {
     if (isLoadingInstances) return;
 
@@ -57,8 +54,7 @@ const SelectInstance: FC = () => {
       let countInstances = 0;
 
       const searchValueInLowerCase = searchValue.toLowerCase();
-
-      const bufferInstances = [];
+      const bufferInstances: SelectInstanceItemInterface[] = [];
 
       for (const instance of instancesRequestData.data) {
         if (instance.deleted || countInstances >= page * limit) continue;
@@ -72,7 +68,6 @@ const SelectInstance: FC = () => {
         }
 
         countInstances++;
-
         bufferInstances.push({ ...instance, label: <SelectInstanceLabel {...instance} /> });
       }
 
@@ -80,81 +75,52 @@ const SelectInstance: FC = () => {
 
       const scrollTimer = setTimeout(() => {
         if (!selectReference.current) return;
-
         selectReference.current.scrollTo({ index: countInstances - limit });
       }, 100);
 
-      return () => {
-        clearTimeout(scrollTimer);
-      };
+      return () => clearTimeout(scrollTimer);
     }
 
     setInstances([]);
-  }, [instancesRequestData, page, searchValue]);
+  }, [instancesRequestData, page, searchValue, isLoadingInstances]);
 
-  // useEffect - для установки инстанса в списке в качестве значения по умолчанию
   useEffect(() => {
-    if (isLoadingInstances || !instances) {
-      return;
-    }
+    if (isLoadingInstances) return;
 
-    if (instances.length === 0) {
-      setHasDefaultInstance('no');
-      return;
-    }
+    const sourceList = formattedInstanceList?.length ? formattedInstanceList : instances;
 
-    const setLabelForDefaultInstance = (defaultInstance: ExpandedInstanceInterface) => {
-      const defaultInstanceToRender = {
-        idInstance: defaultInstance?.idInstance,
-        label: <SelectInstanceLabel {...defaultInstance} />,
-      };
-      setDefaultInstanceToRender(defaultInstanceToRender);
+    if (!sourceList?.length) return;
 
-      setHasDefaultInstance('yes');
-    };
-
-    if (instancesRequestData?.result && selectedInstance?.idInstance) {
-      const defaultInstance = instancesRequestData.data.find(
+    if (selectedInstance?.idInstance) {
+      const defaultInstance = sourceList.find(
         ({ idInstance }) => idInstance === selectedInstance.idInstance
       );
 
-      if (defaultInstance) setLabelForDefaultInstance(defaultInstance);
-
-      return;
-    }
-
-    if (instancesRequestData?.result) {
-      const defaultInstance = instancesRequestData.data.find(
-        ({ idInstance }) => idInstance === selectedInstance.idInstance
-      );
-
-      if (defaultInstance) {
-        setLabelForDefaultInstance(defaultInstance);
-
+      if (defaultInstance && defaultInstance.idInstance !== 0) {
         setSelectedInstance({
           idInstance: defaultInstance.idInstance,
           apiTokenInstance: defaultInstance.apiTokenInstance,
           apiUrl: defaultInstance.apiUrl,
           mediaUrl: defaultInstance.mediaUrl,
           tariff: defaultInstance.tariff,
+          typeInstance: defaultInstance.typeInstance,
         });
-
         return;
       }
     }
 
-    setHasDefaultInstance('no');
-
+    const firstInstance = sourceList[0];
     setSelectedInstance({
-      idInstance: instances[0].idInstance,
-      apiTokenInstance: instances[0].apiTokenInstance,
-      apiUrl: instances[0].apiUrl,
-      mediaUrl: instances[0].mediaUrl,
-      tariff: instances[0].tariff,
+      idInstance: firstInstance.idInstance,
+      apiTokenInstance: firstInstance.apiTokenInstance,
+      apiUrl: firstInstance.apiUrl,
+      mediaUrl: firstInstance.mediaUrl,
+      tariff: firstInstance.tariff,
+      typeInstance: firstInstance.typeInstance,
     });
-  }, [instances, isSuccessLoadingInstances]);
+  }, [formattedInstanceList, instances, isSuccessLoadingInstances, isLoadingInstances]);
 
-  if (isLoadingInstances || !instances || hasDefaultInstance === 'unknown') {
+  if (isLoadingInstances || !instances) {
     return <Spin />;
   }
 
@@ -163,13 +129,12 @@ const SelectInstance: FC = () => {
       size="large"
       showSearch
       style={{
-        margin: type === 'console-page' ? '5px 0' : '8px 0',
-        padding: '0 5px',
-        width: type === 'console-page' ? '80%' : '100%',
+        margin: type === 'console-page' ? '16px 0' : '8px 0',
+        width: '100%',
       }}
       placeholder={t('SELECT_INSTANCE_PLACEHOLDER')}
-      defaultValue={defaultInstanceToRender ?? instances[0]?.idInstance}
-      options={instances}
+      value={selectedInstance?.idInstance}
+      options={formattedInstanceList ?? instances}
       ref={selectReference}
       filterOption={(inputValue, option) =>
         `${option?.idInstance}`.includes(inputValue) ||
@@ -183,7 +148,6 @@ const SelectInstance: FC = () => {
           instancesRequestData.data.length > page * limit
         ) {
           clearTimeout(setPageTimerReference.current);
-
           setPageTimerReference.current = setTimeout(
             () => setPage((previousPage) => previousPage + 1),
             200
@@ -194,9 +158,7 @@ const SelectInstance: FC = () => {
         setSearchValue(value);
         setPage(1);
       }}
-      fieldNames={{
-        value: 'idInstance',
-      }}
+      fieldNames={{ value: 'idInstance' }}
       onSelect={(_, option: SelectInstanceItemInterface) => {
         const isChatWorkingFromStorage = getIsChatWorkingFromStorage(option.idInstance);
 
@@ -207,7 +169,12 @@ const SelectInstance: FC = () => {
           mediaUrl: option.mediaUrl,
           tariff: option.tariff,
           isChatWorking: isChatWorkingFromStorage,
+          typeInstance: option.typeInstance,
         });
+
+        setIsAuthorizingInstance(false);
+
+        setActiveChat(null);
       }}
     />
   );

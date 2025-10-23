@@ -5,6 +5,7 @@ import { Divider, Flex, Image, Typography } from 'antd';
 import { Header } from 'antd/es/layout/layout';
 import { useTranslation } from 'react-i18next';
 
+import waChatIcon from 'assets/wa-chat.svg';
 import EditGroupName from 'components/shared/chat-header/edit-group-name.component';
 import GroupAvatarUpload from 'components/shared/chat-header/group-avatar-upload.component';
 import LeaveGroupButton from 'components/shared/chat-header/leave-group.component';
@@ -12,7 +13,7 @@ import { useActions, useAppSelector } from 'hooks';
 import { useIsGroupAdmin } from 'hooks/use-is-group-admin.hook';
 import { selectActiveChat } from 'store/slices/chat.slice';
 import { ActiveChat, LanguageLiteral } from 'types';
-import { fillJsxString, isContactInfo, numWord } from 'utils';
+import { fillJsxString, isContactInfo, isWhatsAppOfficialChat, numWord } from 'utils';
 
 const ContactInfoHeader: FC = () => {
   const { setContactInfoOpen } = useActions();
@@ -22,13 +23,14 @@ const ContactInfoHeader: FC = () => {
   } = useTranslation();
 
   const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
-  const isGroup = activeChat.chatId?.includes('@g.us');
+  const isGroup = activeChat.chatId?.includes('@g.us') || activeChat.chatId?.startsWith('-');
   const info = activeChat.chatId?.includes('@c.us') ? t('CONTACT_INFO') : t('GROUP_INFO');
 
   const isAdmin = useIsGroupAdmin(activeChat);
+  const isOfficial = isWhatsAppOfficialChat(activeChat.chatId);
 
   const getHeaderBody = () => {
-    if (!activeChat.contactInfo || activeChat.contactInfo === 'Error: forbidden') {
+    if (!activeChat.contactInfo || typeof activeChat.contactInfo === 'string') {
       const contactName = activeChat.chatId?.replace(/\@.*$/, '');
 
       const contactCredentials = activeChat.chatId?.includes('@c.us')
@@ -44,7 +46,7 @@ const ContactInfoHeader: FC = () => {
           >
             {contactName}
           </Typography.Title>
-          {contactCredentials !== contactName && (
+          {!isOfficial && contactCredentials !== contactName && (
             <Typography.Text className="contact-info-credentials">
               {contactCredentials}
             </Typography.Text>
@@ -86,6 +88,15 @@ const ContactInfoHeader: FC = () => {
             id: {activeChat.chatId?.replace(/\@.*$/, '')}
           </Typography.Text>
         )}
+        {isContactInfo(activeChat.contactInfo) && contactName && (
+          <Typography.Title
+            level={2}
+            style={{ marginBottom: 'unset' }}
+            className="contact-info-name"
+          >
+            {contactName}
+          </Typography.Title>
+        )}
         {contactCredentials !== contactName && (
           <Typography.Text className="contact-info-credentials">
             {contactCredentials}
@@ -120,7 +131,11 @@ const ContactInfoHeader: FC = () => {
       <Flex vertical justify="center" align="center" gap={10} className="p-10 text-center">
         <Flex vertical align="center" gap={8}>
           <div style={{ borderRadius: '50%', overflow: 'hidden' }}>
-            <Image preview={false} className="contact-info-avatar" src={activeChat.avatar} />
+            <Image
+              preview={false}
+              className="contact-info-avatar"
+              src={isOfficial ? waChatIcon : activeChat.avatar}
+            />
           </div>
           {isGroup && isAdmin && <GroupAvatarUpload activeChat={activeChat} />}
         </Flex>

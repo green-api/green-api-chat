@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 
 import GroupContactListItem from './group-contact-list-item.component';
 import { useAppSelector } from 'hooks';
+import { useIsMaxInstance } from 'hooks/use-is-max-instance';
 import { useAddGroupParticipantMutation } from 'services/green-api/endpoints';
 import { selectActiveChat } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
@@ -22,11 +23,13 @@ const GroupContactList: FC = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState('');
 
-  if (!activeChat.contactInfo || activeChat.contactInfo === 'Error: forbidden') {
+  const isMax = useIsMaxInstance();
+
+  if (!activeChat.contactInfo || typeof activeChat.contactInfo === 'string') {
     return null;
   }
 
-  if (isContactInfo(activeChat.contactInfo)) {
+  if (isContactInfo(activeChat.contactInfo, isMax)) {
     return null;
   }
 
@@ -35,21 +38,27 @@ const GroupContactList: FC = () => {
   const handleModalOk = async () => {
     const cleaned = phoneNumber.replace(/\D/g, '');
 
-    if (cleaned.length < 10) {
+    if (cleaned.length < 7) {
       message.error(t('ENTER_VALID_PHONE_NUMBER'));
       return;
     }
 
-    const participantChatId = `${cleaned}@c.us`;
+    const participantChatId = `${cleaned}${isMax ? '' : '@c.us'}`;
 
     try {
-      await addParticipant({
-        groupId: activeChat.chatId,
+      const res = await addParticipant({
+        ...(isMax ? { chatId: activeChat.chatId } : { groupId: activeChat.chatId }),
         participantChatId,
         ...instanceCredentials,
       });
 
-      message.success(t('PARTICIPANT_ADDED'));
+      if (!!res.data?.addParticipant) {
+        message.success(t('PARTICIPANT_ADDED'));
+      }
+      if (!res.data?.addParticipant) {
+        message.error(t('ERROR_ADDING_PARTICIPANT'));
+      }
+
       setIsModalVisible(false);
       setPhoneNumber('');
     } catch {
@@ -81,7 +90,6 @@ const GroupContactList: FC = () => {
           </Flex>
         }
       />
-
       <Modal
         title={t('ADD_PARTICIPANT')}
         open={isModalVisible}
@@ -91,7 +99,7 @@ const GroupContactList: FC = () => {
         cancelText={t('CANCEL')}
       >
         <Input
-          placeholder={t('ADD_PARTICIPANT_PLACEHOLDER')}
+          placeholder={isMax ? '10000000' : t('ADD_PARTICIPANT_PLACEHOLDER')}
           value={phoneNumber}
           onChange={(e) => setPhoneNumber(e.target.value)}
           maxLength={15}

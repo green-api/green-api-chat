@@ -1,0 +1,84 @@
+@import '../rest/functions';
+
+.authorizationCode {
+  font-size: 14px;
+  display: flex;
+  gap: 30px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin: 15px 0;
+  max-width: 295px;
+
+  @media screen and (max-width: 635px) {
+    max-width: initial;
+  }
+
+  &__instruction {
+    flex: 1 1 400px;
+    max-width: 505px;
+  }
+
+  ol {
+    padding-left: 15px;
+    img {
+      vertical-align: text-bottom;
+    }
+
+    li {
+      margin-top: 10px;
+    }
+  }
+
+  &__code {
+    display: flex;
+    margin-top: 15px;
+    font-size: 18px;
+    font-weight: 600;
+    max-width: 300px;
+
+    @media screen and (max-width: 635px) {
+      max-width: initial;
+    }
+
+    @media screen and (max-width: 460px) {
+      font-size: vw(18, 460);
+    }
+  }
+
+  &__copy {
+    position: relative;
+    width: em(40, 18);
+    height: em(40, 18);
+    .icon-button {
+      font-size: em(24, 18);
+    }
+  }
+
+  &__letter {
+    border: 1px solid lightgray;
+    width: em(40, 18);
+    height: em(40, 18);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    &:not(:last-child) {
+      margin-right: em(5, 18);
+    }
+
+    &:nth-child(4) {
+      margin-right: em(30, 18);
+      position: relative;
+      &:after {
+        content: '';
+        width: em(20, 18);
+        height: 3px;
+        background: lightgray;
+        right: em(-25, 18);
+        top: 50%;
+        position: absolute;
+        transform: translateY(-50%);
+      }
+    }
+  }
+}

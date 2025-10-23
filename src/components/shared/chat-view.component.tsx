@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import Message from './message/message.component';
 import LeftGroupAlert from 'components/alerts/left-group-alert.component';
 import { useActions, useAppSelector } from 'hooks';
+import { useIsMaxInstance } from 'hooks/use-is-max-instance';
 import { useGetProfileSettingsQuery } from 'services/app/endpoints';
 import { useGetChatHistoryQuery, useGetTemplatesQuery } from 'services/green-api/endpoints';
 import { selectActiveChat, selectMiniVersion } from 'store/slices/chat.slice';
@@ -35,6 +36,7 @@ const ChatView: FC = () => {
 
   const [count, setCount] = useState(50);
   const { setMessageCount } = useActions();
+  const isMax = useIsMaxInstance();
 
   let previousMessageAreOutgoing = false;
   let previousSenderName = '';
@@ -122,7 +124,45 @@ const ChatView: FC = () => {
 
   const formattedMessages = useMemo(() => {
     if (!messages) return [];
-    return formatMessages(messages, resolvedLanguage as LanguageLiteral);
+
+    const allFormatted = formatMessages(messages, resolvedLanguage as LanguageLiteral);
+
+    const pollUpdateMap = new Map<string, (typeof messages)[number]>();
+
+    for (const msg of allFormatted) {
+      if ('typeMessage' in msg && msg.typeMessage === 'pollUpdateMessage') {
+        const stanzaId = msg.pollMessageData?.stanzaId;
+        if (!stanzaId) continue;
+        const existing = pollUpdateMap.get(stanzaId);
+        if (!existing || msg.timestamp > existing.timestamp) {
+          pollUpdateMap.set(stanzaId, msg);
+        }
+      }
+    }
+
+    const processedMessages = allFormatted
+      .filter((msg) => {
+        return !('typeMessage' in msg) || msg.typeMessage !== 'pollUpdateMessage';
+      })
+      .map((msg) => {
+        if ('typeMessage' in msg && msg.typeMessage === 'pollMessage') {
+          const update = pollUpdateMap.get(msg.idMessage);
+          if (update) {
+            return {
+              ...msg,
+              pollMessageData: {
+                name: msg.pollMessageData?.name ?? '',
+                options: msg.pollMessageData?.options ?? [],
+                multipleAnswers: msg.pollMessageData?.multipleAnswers ?? false,
+                votes: update.pollMessageData?.votes || [],
+              },
+            };
+          }
+        }
+        return msg;
+      });
+
+    return processedMessages;
   }, [messages, resolvedLanguage]);
 
   if (isLoading || templatesLoading) {
@@ -296,12 +336,15 @@ const ChatView: FC = () => {
               fileName: message.fileName,
               isDeleted: message.isDeleted,
               isEdited: message.isEdited,
+              pollMessageData: message.pollMessageData,
             }}
           />
         );
       })}
 
-      {activeChat.contactInfo === 'Error: forbidden' && <LeftGroupAlert />}
+      {activeChat.contactInfo === (isMax ? 'groupId not found' : 'Error:forbiden') && (
+        <LeftGroupAlert />
+      )}
     </div>
   );
 };

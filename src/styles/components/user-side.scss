@@ -3,7 +3,6 @@
   flex-direction: column;
   max-width: 450px;
   width: 100%;
-  min-height: 850px;
 
   @media screen and (max-width: 975px) {
     max-width: initial;
@@ -13,26 +12,25 @@
     padding: 10px;
   }
 
- & > *:first-child {
+  & > *:first-child {
     flex-grow: 1;
   }
 }
 
 .settings {
-  padding: 5px;
-  height: 820px;
+  padding: 0 20px;
+  // height: 820px;
 }
 
 .chats {
   overflow: auto;
 }
 
-
 .add-new-chat-menu {
   background: var(--main-background);
   height: 100%;
   width: 100%;
-  transition: .5s all;
+  transition: 0.5s all;
   transform: translateX(-150%);
   z-index: 5;
   @include useAbsolutePosition();

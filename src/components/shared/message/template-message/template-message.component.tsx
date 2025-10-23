@@ -6,7 +6,7 @@ import { ParsedWabaTemplateInterface, TypeConnectionMessage } from 'types';
 import {
   fillTemplateString,
   getFormattedMessage,
-  getInteractiveBunttonsMessageLayout,
+  getInteractiveButtonsMessageLayout,
   getTemplateMessageLayout,
 } from 'utils';
 
@@ -49,7 +49,7 @@ const TemplateMessage: FC<TemplateMessageProps> = ({
   const buttons = message.buttons;
 
   if (interactiveButtonsMessage) {
-    return getInteractiveBunttonsMessageLayout({
+    return getInteractiveButtonsMessageLayout({
       header,
       content,
       footer,

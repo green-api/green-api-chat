@@ -10,7 +10,7 @@ import {
   UserOutlined,
   VideoCameraOutlined,
 } from '@ant-design/icons';
-import { Button, Col, Row, Space, Typography, Image } from 'antd';
+import { Button, Col, Row, Space, Typography, Image, Flex } from 'antd';
 import OTP from 'antd/es/input/OTP';
 import parse from 'html-react-parser';
 
@@ -26,11 +26,11 @@ import {
 } from 'types';
 
 const INTERACTIVE_BUTTON_ICONS = {
-  PHONE_NUMBER: <PhoneOutlined style={{ fontSize: 24 }} />,
-  COPY_CODE: <FileOutlined style={{ fontSize: 24 }} />,
-  URL: <GlobalOutlined style={{ fontSize: 24 }} />,
-  QUICK_REPLY: <ArrowLeftOutlined style={{ fontSize: 24 }} />,
-  OTP: <OTP style={{ fontSize: 24 }} />,
+  PHONE_NUMBER: <PhoneOutlined style={{ fontSize: 18 }} />,
+  COPY_CODE: <FileOutlined style={{ fontSize: 18 }} />,
+  URL: <GlobalOutlined style={{ fontSize: 18 }} />,
+  QUICK_REPLY: <ArrowLeftOutlined style={{ fontSize: 18 }} />,
+  OTP: <OTP style={{ fontSize: 18 }} />,
 } as const;
 
 export function getOutgoingStatusMessageIcon(
@@ -107,6 +107,10 @@ export function getFormattedMessage(textMessage: string): Renderable {
   }
 
   return parse(formattedText);
+}
+
+export function fillString(string: string, data: string[]) {
+  return string.replaceAll(/{(\d)}/g, (_, index) => data[+index]);
 }
 
 export function fillJsxString(string: string, data: (JSX.Element | string)[]) {
@@ -208,7 +212,7 @@ export function getTemplateMessageLayout(options: GetTemplateMessageLayoutOption
   return (
     <div
       style={{
-        maxWidth: 500,
+        maxWidth: 300,
       }}
       className={containerClassName}
     >
@@ -253,18 +257,22 @@ export function getTemplateMessageLayout(options: GetTemplateMessageLayoutOption
   );
 }
 
-export function getInteractiveBunttonsMessageLayout(options: GetTemplateMessageLayoutOptions) {
+export function getInteractiveButtonsMessageLayout(options: GetTemplateMessageLayoutOptions) {
   const { containerClassName, header, content, footer, mediaUrl, buttons, symbol, type, time } =
     options;
 
   if (!containerClassName) {
     return (
-      <>
-        <Space direction="vertical" className="p-10">
+      <div
+        style={{
+          maxWidth: 300,
+        }}
+      >
+        <>
           {header && (
             <Typography.Paragraph
               style={{ fontSize: 16, margin: 0 }}
-              className={`${type === 'outgoing' ? 'outgoing' : 'incoming'} full`}
+              className={`${type === 'outgoing' ? 'outgoing' : 'incoming'} full w-100 interactiveButtonsBody `}
             >
               {header}
             </Typography.Paragraph>
@@ -273,12 +281,12 @@ export function getInteractiveBunttonsMessageLayout(options: GetTemplateMessageL
           <Typography.Paragraph
             style={{ fontSize: 14, margin: 0 }}
             ellipsis={{ rows: 6, expandable: true, symbol: symbol }}
-            className={`${type === 'outgoing' ? 'outgoing' : 'incoming'} full`}
+            className={`${type === 'outgoing' ? 'outgoing' : 'incoming'} full w-100 interactiveButtonsBody`}
           >
             {content}
           </Typography.Paragraph>
-        </Space>
-        <Row wrap={false} gutter={[15, 15]} className="p-10">
+        </>
+        <Row wrap={false} gutter={[5, 5]} className="interactiveButtonsBody">
           {footer && (
             <Col>
               <Typography.Paragraph
@@ -292,7 +300,7 @@ export function getInteractiveBunttonsMessageLayout(options: GetTemplateMessageL
         </Row>
 
         {buttons && buttons.length > 0 && (
-          <Space direction="vertical">
+          <Flex vertical gap={0}>
             {buttons.map((button, idx) => (
               <Button
                 variant="outlined"
@@ -302,10 +310,12 @@ export function getInteractiveBunttonsMessageLayout(options: GetTemplateMessageL
                   padding: 14,
                   borderRadius: 0,
                   height: 50,
+                  width: '300px',
                   whiteSpace: 'nowrap',
                   backgroundColor: 'transparent',
                   borderRight: '0px',
                   borderLeft: '0px',
+                  borderTop: idx === 0 ? undefined : '0px',
                 }}
               >
                 {INTERACTIVE_BUTTON_ICONS[button.type] || null}
@@ -314,16 +324,16 @@ export function getInteractiveBunttonsMessageLayout(options: GetTemplateMessageL
                 </div>
               </Button>
             ))}
-          </Space>
+          </Flex>
         )}
-      </>
+      </div>
     );
   }
 
   return (
     <div
       style={{
-        maxWidth: 500,
+        maxWidth: 300,
       }}
       className={containerClassName}
     >
@@ -333,13 +343,13 @@ export function getInteractiveBunttonsMessageLayout(options: GetTemplateMessageL
         )}
         {mediaUrl && <Image src={mediaUrl} loading="lazy" alt="media" />}
         <Typography.Paragraph
-          style={{ fontSize: 14, margin: 0 }}
+          style={{ fontSize: 18, margin: 0 }}
           ellipsis={{ rows: 6, expandable: true, symbol: symbol }}
         >
           {content}
         </Typography.Paragraph>
       </Space>
-      <Row wrap={false} gutter={[15, 15]} className="margin-top">
+      <Row wrap={false} gutter={[5, 5]}>
         {footer && (
           <Col>
             <Typography.Paragraph style={{ fontSize: 13, margin: 0, fontStyle: 'italic' }}>

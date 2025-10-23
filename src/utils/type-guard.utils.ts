@@ -12,8 +12,10 @@ import {
 } from 'types';
 
 export function isContactInfo(
-  info: GetContactInfoResponseInterface | GetGroupDataSuccessResponseInterface
+  info: GetContactInfoResponseInterface | GetGroupDataSuccessResponseInterface,
+  isMax?: boolean
 ): info is GetContactInfoResponseInterface {
+  if (isMax) return !info.chatId?.startsWith('-');
   return 'chatId' in info;
 }
 
@@ -42,5 +44,11 @@ export function isConsoleMessageData(data: unknown): data is MessageData {
 }
 
 export function isValidChatType(type: string): type is ChatType {
-  return type === 'tab' || type === 'console-page' || type === 'instance-view-page';
+  return (
+    type === 'tab' ||
+    type === 'console-page' ||
+    type === 'instance-view-page' ||
+    type === 'partner-iframe' ||
+    type === 'one-chat-only'
+  );
 }

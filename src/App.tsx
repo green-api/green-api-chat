@@ -7,18 +7,17 @@ import { RouterProvider } from 'react-router-dom';
 
 import { useGetProfileSettingsQuery } from './services/app/endpoints';
 import { DARK_THEME, DEFAULT_THEME, localisation } from 'configs';
-import { useActions, useAppSelector } from 'hooks';
+import { useAppSelector } from 'hooks';
 import router from 'router';
 import { selectTheme } from 'store/slices/theme.slice';
 import { selectUser } from 'store/slices/user.slice';
-import { MessageData, MessageEventTypeEnum, TariffsEnum, Themes } from 'types';
-import { getIsChatWorkingFromStorage, isConsoleMessageData, isPageInIframe } from 'utils';
+import { Themes } from 'types';
+import { isPageInIframe } from 'utils';
 
 function App() {
   const { idUser, apiTokenUser, projectId } = useAppSelector(selectUser);
 
   const { i18n } = useTranslation();
-  const { setSelectedInstance, setTheme, login, setPlatform } = useActions();
 
   useGetProfileSettingsQuery(
     { idUser, apiTokenUser, projectId },
@@ -62,71 +61,6 @@ function App() {
       }
     }
   }, [currentTheme]);
-
-  useEffect(() => {
-    function handleMessage(event: MessageEvent<MessageData>) {
-      if (!isConsoleMessageData(event.data)) {
-        console.log('unknown event');
-        return;
-      }
-
-      switch (event.data.type) {
-        case MessageEventTypeEnum.INIT:
-          if (event.data.payload) {
-            let isChatWorking: boolean | null = null;
-
-            if (
-              event.data.payload &&
-              event.data.payload?.idInstance &&
-              event.data.payload.tariff === TariffsEnum.Developer
-            ) {
-              isChatWorking = getIsChatWorkingFromStorage(event.data.payload?.idInstance);
-            }
-
-            setSelectedInstance({
-              idInstance: event.data.payload.idInstance,
-              apiTokenInstance: event.data.payload.apiTokenInstance,
-              apiUrl: event.data.payload.apiUrl,
-              mediaUrl: event.data.payload.mediaUrl,
-              tariff: event.data.payload.tariff,
-              isChatWorking: isChatWorking,
-            });
-
-            login({
-              login: event.data.payload.login,
-              idUser: event.data.payload.idUser,
-              apiTokenUser: event.data.payload.apiTokenUser,
-              remember: true,
-              projectId: event.data.payload.projectId,
-            });
-
-            setPlatform(event.data.payload.platform);
-
-            setTheme(event.data.payload.theme);
-
-            return i18n.changeLanguage(event.data.payload.locale);
-          }
-
-          return;
-
-        case MessageEventTypeEnum.SET_CREDENTIALS:
-          return setSelectedInstance(event.data.payload);
-
-        case MessageEventTypeEnum.LOCALE_CHANGE:
-          return i18n.changeLanguage(event.data.payload.locale);
-
-        case MessageEventTypeEnum.SET_THEME:
-          return setTheme(event.data.payload.theme);
-
-        default:
-          return;
-      }
-    }
-
-    window.addEventListener('message', handleMessage);
-
-    return () => window.removeEventListener('message', handleMessage);
-  }, []);
 
   return (
     <ConfigProvider

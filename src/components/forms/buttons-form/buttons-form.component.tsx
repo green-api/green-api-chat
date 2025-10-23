@@ -148,7 +148,13 @@ const ButtonsForm: FC = () => {
           style={{ flexGrow: 1 }}
           labelCol={{ style: { width: 300 } }}
         >
-          <Form.Item required {...formItemDefaultLayout} name="body" key="body" label={t('BODY')}>
+          <Form.Item
+            rules={[{ required: true, message: t('EMPTY_FIELD_ERROR') }]}
+            {...formItemDefaultLayout}
+            name="body"
+            key="body"
+            label={t('BODY')}
+          >
             <TextArea />
           </Form.Item>
 

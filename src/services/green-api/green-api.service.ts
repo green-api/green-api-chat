@@ -28,15 +28,18 @@ const customQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError>
 
   const state = api.getState() as RootState;
   const type = state.chatReducer.type;
-  const { idInstance, apiTokenInstance, apiUrl, mediaUrl, allMessages } = (args as FetchArgs)
-    .params as InstanceInterface & { allMessages?: boolean };
+  const { idInstance, apiTokenInstance, apiUrl, mediaUrl, allMessages, minutesToRefetch } = (
+    args as FetchArgs
+  ).params as InstanceInterface & { allMessages?: boolean; minutesToRefetch?: number };
 
-  const cacheKey = `lastMessages(${JSON.stringify({ apiTokenInstance, apiUrl, idInstance, mediaUrl })})`;
-  const currentChats = state.greenAPI.queries[cacheKey]?.data;
+  const cacheKey = `lastMessages(${JSON.stringify({ allMessages, apiTokenInstance, apiUrl, idInstance, mediaUrl })})`;
+  const currentChats: MessageInterface[] | undefined = state.greenAPI.queries[cacheKey]?.data as
+    | MessageInterface[]
+    | undefined;
 
-  let minutes = 3;
+  let minutes = minutesToRefetch ?? 3;
 
-  if (!currentChats) {
+  if (!currentChats?.length) {
     minutes = getIsMiniVersion(type) ? 1440 : 20160;
 
     if (type === 'partner-iframe') {
@@ -70,10 +73,17 @@ const customQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError>
 
   if (lastIncomingMessages.data && lastOutgoingMessages.data) {
     if (allMessages) {
-      lastIncomingMessages.data = getAllChats(
-        lastIncomingMessages.data as MessageInterface[],
-        lastOutgoingMessages.data as MessageInterface[]
-      );
+      !currentChats
+        ? (lastIncomingMessages.data = getAllChats(
+            lastIncomingMessages.data as MessageInterface[],
+            lastOutgoingMessages.data as MessageInterface[]
+          ))
+        : (lastIncomingMessages.data = updateLastChats(
+            currentChats as MessageInterface[],
+            lastIncomingMessages.data as MessageInterface[],
+            lastOutgoingMessages.data as MessageInterface[],
+            getIsMiniVersion(type) ? 5 : undefined
+          ));
     } else {
       lastIncomingMessages.data = !currentChats
         ? getLastChats(

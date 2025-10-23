@@ -142,3 +142,7 @@ export const filterMessagesByText = (
 
   return allMessages.filter((msg) => extractTextFromMessage(msg).toLowerCase().includes(query));
 };
+
+export const isWhatsAppOfficialChat = (chatId: string): boolean => {
+  return chatId === '0@c.us';
+};

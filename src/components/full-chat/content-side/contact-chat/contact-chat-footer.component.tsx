@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import ChatForm from 'components/forms/chat-form.component';
 import SelectSendingMode from 'components/UI/select/select-sending-mode.component';
 import { useAppSelector } from 'hooks';
+import { useIsMaxInstance } from 'hooks/use-is-max-instance';
 import { useGetProfileSettingsQuery } from 'services/app/endpoints';
 import { selectActiveChat } from 'store/slices/chat.slice';
 import { selectUser } from 'store/slices/user.slice';
@@ -22,7 +23,9 @@ const ContactChatFooter: FC = () => {
     { skip: !idUser || !apiTokenUser }
   );
 
-  if (activeChat.contactInfo === 'Error: forbidden') {
+  const isMax = useIsMaxInstance();
+
+  if (activeChat.contactInfo === (isMax ? undefined : 'Error: forbidden')) {
     return (
       <Flex align="center" justify="center" className="chat-form-container text-center p-10">
         <Typography.Paragraph style={{ margin: 'initial' }}>

@@ -231,16 +231,8 @@
   "LINK_BY_CODE_STEP_4": "Нажмите \"<strong>Связать по&nbsp;номеру телефона</strong>\" и&nbsp;введите этот код на&nbsp;своем телефоне",
   "CODE_ERROR_FIRST": "Не удалось получить код!",
   "CODE_ERROR_SECOND": "Попробуйте позже или отсканируйте QR код",
-<<<<<<< HEAD
-  "ERROR_DELETING_MESSAGE": "Произошла ошибка при удалении сообщения"
-=======
-<<<<<<< HEAD:public/locales_0.0.58/ru/translation.json
   "ERROR_DELETING_MESSAGE": "Произошла ошибка при удалении сообщения",
   "REPLY": "Ответить",
   "DOWNLOAD": "Загрузить",
   "DOWNLOAD_ERROR": "Произошла ошибка при скачивании файла"
-=======
-  "ERROR_DELETING_MESSAGE": "Произошла ошибка при удалении сообщения"
->>>>>>> main:public/locales_0.0.66/ru/translation.json
->>>>>>> af8e94a52c15d668e763d195e01a694b860623cc
 }

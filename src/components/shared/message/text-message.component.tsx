@@ -30,7 +30,6 @@ const TextMessage: FC<
 
   const [downloadFile, { isLoading }] = useDownloadFileMutation();
 
-  const instanceCredentials = useAppSelector(selectInstance);
   const formattedMessage = getFormattedMessage(textMessage);
 
   const { idMessage, chatId } = JSON.parse(jsonMessage ?? '{}');
@@ -48,7 +47,7 @@ const TextMessage: FC<
         'getChatHistory',
         {
           ...selectedInstance,
-          chatId: activeChat.chatId,
+          chatId: activeChat?.chatId ?? chatId,
           count: isMiniVersion ? 10 : messageCount,
         },
         (draftChatHistory) => {
@@ -65,9 +64,11 @@ const TextMessage: FC<
           return draftChatHistory;
         }
       );
-      dispatch(updateChatHistoryThunk);
+      if (updateChatHistoryThunk) {
+        dispatch(updateChatHistoryThunk);
+      }
     } catch (error) {
-      message.error('Произошла ошибка при скачивании файла');
+      message.error(t('DOWNLOAD_ERROR'));
     }
   };
 

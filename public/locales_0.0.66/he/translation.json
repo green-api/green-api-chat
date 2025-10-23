@@ -202,18 +202,8 @@
   "LINK_BY_CODE_STEP_4": "להקיש על '<strong>קישור באמצעות מספר הטלפון</strong>' ולהזין את הקוד בטלפון",
   "CODE_ERROR_FIRST": "לא הצלחתי להשיג את הקוד!",
   "CODE_ERROR_SECOND": "נסה מאוחר יותר או סרוק קוד QR",
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD:public/locales_0.0.58/he/translation.json
->>>>>>> af8e94a52c15d668e763d195e01a694b860623cc
   "ERROR_DELETING_MESSAGE": "אירעה שגיאה בעת מחיקת ההודעה",
   "REPLY": "תגובה",
   "DOWNLOAD": "הורדה",
   "DOWNLOAD_ERROR": "אירעה שגיאה בעת הורדת הקובץ"
-<<<<<<< HEAD
-=======
-=======
-  "ERROR_DELETING_MESSAGE": "אירעה שגיאה בעת מחיקת ההודעה"
->>>>>>> main:public/locales_0.0.66/he/translation.json
->>>>>>> af8e94a52c15d668e763d195e01a694b860623cc
 }

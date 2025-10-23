@@ -1,6 +1,6 @@
-import { Dispatch, ReactElement, SetStateAction } from 'react';
+import { Dispatch, HTMLAttributes, ReactElement, SetStateAction } from 'react';
 
-import { FormItemProps } from 'antd';
+import { FormItemProps, ProgressProps } from 'antd';
 import { Color } from 'antd/es/color-picker';
 
 import {
@@ -47,7 +47,12 @@ export interface ChatState {
   brandImgUrl?: string;
 }
 
-export type ChatType = 'tab' | 'console-page' | 'instance-view-page' | 'partner-iframe';
+export type ChatType =
+  | 'tab'
+  | 'console-page'
+  | 'instance-view-page'
+  | 'partner-iframe'
+  | 'one-chat-only';
 export type ChatPlatform = 'web' | 'ios' | 'android';
 
 export interface ActiveChat
@@ -56,14 +61,20 @@ export interface ActiveChat
   contactInfo?:
     | GetContactInfoResponseInterface
     | GetGroupDataSuccessResponseInterface
-    | 'Error: forbidden';
+    | 'Error: forbidden'
+    | 'groupId not found';
 }
 
 export interface InstancesState {
   selectedInstance: InstanceInterface;
   tariff: TariffsEnum;
   isChatWorking: boolean | null;
+  typeInstance: TypeInstance;
+  instanceList: ExpandedInstanceInterface[] | null;
+  isAuthorizingInstance: boolean;
 }
+
+export type TypeInstance = 'whatsapp' | 'v3';
 
 export interface InstanceInterface {
   idInstance: number;
@@ -72,9 +83,16 @@ export interface InstanceInterface {
   mediaUrl: string;
 }
 
-export interface ApiErrorResponse<T = unknown> {
+export interface ApiErrorResponse<T = DefaultApiErrorResponseData> {
   status: number | string;
   data: T;
+}
+
+export interface DefaultApiErrorResponseData {
+  message: string;
+  path: string;
+  statusCode: number;
+  timestamp: string;
 }
 
 export interface MessageMenuState {
@@ -188,7 +206,12 @@ export interface MessageDataInit {
   payload: InstanceInterface &
     LocaleChangeMessage &
     ThemeChangeMessage &
-    UserInterface & { platform: ChatPlatform; tariff: TariffsEnum };
+    UserInterface & {
+      platform: ChatPlatform;
+      tariff: TariffsEnum;
+      typeInstance: TypeInstance;
+      instanceList: ExpandedInstanceInterface[];
+    };
 }
 
 export interface MessageDataLocaleChange {
@@ -203,7 +226,11 @@ export interface MessageDataSetTheme {
 
 export interface MessageDataSetCredentials {
   type: MessageEventTypeEnum.SET_CREDENTIALS;
-  payload: InstanceInterface & { tariff: TariffsEnum };
+  payload: InstanceInterface & {
+    platform: ChatPlatform;
+    tariff: TariffsEnum;
+    typeInstance: TypeInstance;
+  };
 }
 
 interface LocaleChangeMessage {
@@ -228,7 +255,15 @@ export type SendingMethodName =
 
 export type MessageServiceMethodName = 'editMessage' | 'deleteMessage';
 
-export type UserSideActiveMode = 'chats' | 'settings' | 'profile';
+export type UserSideActiveMode =
+  | 'chats'
+  | 'settings'
+  | 'profile'
+  | 'statuses'
+  | 'calls'
+  | 'archive'
+  | 'instance'
+  | 'logout';
 
 export interface SendingMethod {
   name: SendingMethodName;
@@ -296,6 +331,19 @@ export interface GetTemplateMessageLayoutOptions {
   type?: TypeConnectionMessage;
 }
 
+export interface PollMessageData {
+  name: string;
+  options?: {
+    optionName: string;
+  }[];
+  votes?: {
+    optionName: string;
+    optionVoters: string[];
+  }[];
+  multipleAnswers: boolean;
+  stanzaId?: string;
+}
+
 export interface MessageDataForRender {
   idMessage: string;
   type: TypeConnectionMessage;
@@ -316,6 +364,7 @@ export interface MessageDataForRender {
   fileName?: string;
   isDeleted?: boolean;
   isEdited?: boolean;
+  pollMessageData?: PollMessageData;
 }
 
 export interface MessageTooltipMenuData {
@@ -329,3 +378,18 @@ export interface MessagesDate {
 }
 
 export type FormattedMessagesWithDate = (MessageInterface | MessagesDate)[];
+
+export interface StateButtonParametersInterface
+  extends Pick<HTMLAttributes<HTMLElement>, 'children'> {
+  setState: Dispatch<SetStateAction<boolean>>;
+}
+
+export interface QrInstructionInterface {
+  isVisibleQrInstruction: boolean;
+  isNecessaryToLogout: boolean;
+}
+
+export interface ProgressBarPropertiesInterface extends Omit<ProgressProps, 'type' | 'percent'> {
+  time: number;
+  onFinish?: () => void;
+}

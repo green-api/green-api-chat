@@ -1,0 +1,17 @@
+@import '../rest/mixins';
+
+.qrLink {
+  gap: 15px;
+  font-size: 16px;
+  flex-wrap: wrap;
+  position: relative;
+  border: 1px solid lightgray;
+  padding-right: 40px;
+
+  &__linkArea {
+    padding: 7px 0 7px 7px;
+    white-space: nowrap;
+    overflow: scroll;
+    @include scrollBar(7px);
+  }
+}

@@ -19,11 +19,6 @@ export const sendingGreenApiEndpoints = greenAPI.injectEndpoints({
         method: 'POST',
         body,
       }),
-      invalidatesTags: (result) => {
-        if (!result) return [];
-
-        return ['lastMessages'];
-      },
     }),
     sendContact: builder.mutation<SendingResponseInterface, SendContactParametersInterface>({
       query: ({ idInstance, apiTokenInstance, apiUrl, mediaUrl: _, ...body }) => ({

@@ -1,41 +1,44 @@
 import { FC, useMemo } from 'react';
 
+import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
 
 import emptyAvatar from 'assets/emptyAvatar-first.png';
 import AvatarImage from 'components/UI/avatar-image.component';
 import { useActions, useAppSelector } from 'hooks';
-import { useGetWaSettingsQuery } from 'services/green-api/endpoints';
+import { useInstanceSettings } from 'hooks/use-instance-settings.hook';
 import { selectUserSideActiveMode } from 'store/slices/chat.slice';
-import { selectInstance } from 'store/slices/instances.slice';
 import type { AsideItem } from 'types';
 
 interface AsideItemProps {
   asideItem: AsideItem;
 }
 
-const AsideItem: FC<AsideItemProps> = ({ asideItem }) => {
-  const instanceCredentials = useAppSelector(selectInstance);
+const SETTINGS_ITEMS = ['instance', 'profile', 'logout'] as AsideItem['item'][];
 
+const AsideItem: FC<AsideItemProps> = ({ asideItem }) => {
   const activeAsideItem = useAppSelector(selectUserSideActiveMode);
 
   const { setUserSideActiveMode } = useActions();
 
   const { t } = useTranslation();
 
-  const { data: waSettings } = useGetWaSettingsQuery(instanceCredentials, {
-    skip: asideItem.item !== 'profile',
-  });
+  const { settings } = useInstanceSettings();
 
   const isActive = activeAsideItem === asideItem.item;
 
+  const handleSetActive = () => {
+    if (asideItem.item === 'settings') return;
+    setUserSideActiveMode(asideItem.item);
+  };
+
   const avatar = useMemo<string>(() => {
-    if (waSettings && waSettings.avatar) {
-      return waSettings.avatar;
+    if (settings && settings.avatar) {
+      return settings.avatar;
     }
 
     return emptyAvatar;
-  }, [waSettings]);
+  }, [settings]);
 
   if (asideItem.item === 'profile') {
     return <AvatarImage src={avatar} size="large" />;
@@ -43,8 +46,15 @@ const AsideItem: FC<AsideItemProps> = ({ asideItem }) => {
 
   return (
     <a
-      className={`aside-item ${isActive ? 'active' : ''} flex-center`}
-      onClick={() => setUserSideActiveMode(asideItem.item)}
+      className={clsx(
+        'aside-item flex-center',
+        { active: isActive },
+        activeAsideItem === asideItem.item && 'active-aside-item',
+        SETTINGS_ITEMS.includes(activeAsideItem) &&
+          asideItem.item === 'settings' &&
+          'active-aside-item'
+      )}
+      onClick={handleSetActive}
       title={t(asideItem.title)}
     >
       {asideItem.icon}

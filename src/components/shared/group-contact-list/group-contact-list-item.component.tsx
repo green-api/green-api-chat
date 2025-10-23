@@ -6,6 +6,7 @@ import ParticipantMenu from './participant-menu.component';
 import emptyAvatar from 'assets/emptyAvatarButAvailable.svg';
 import AvatarImage from 'components/UI/avatar-image.component';
 import { useAppSelector } from 'hooks';
+import { useIsMaxInstance } from 'hooks/use-is-max-instance';
 import { useGetContactInfoQuery } from 'services/green-api/endpoints';
 import { selectInstance } from 'store/slices/instances.slice';
 import { selectTheme } from 'store/slices/theme.slice';
@@ -20,13 +21,15 @@ const GroupContactListItem: FC<GroupContactListItemProps> = ({ participant }) =>
   const instanceCredentials = useAppSelector(selectInstance);
   const theme = useAppSelector(selectTheme);
 
+  const isMax = useIsMaxInstance();
+
   const {
     data: contactInfo,
     isLoading,
     isFetching,
   } = useGetContactInfoQuery({
     ...instanceCredentials,
-    chatId: participant.id,
+    chatId: isMax ? (participant.chatId as string) : participant.id,
   });
 
   const contactName =

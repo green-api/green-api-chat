@@ -4,8 +4,6 @@ export function mapButtonsToInteractive(buttons: Button[]): InteractiveButton[] 
   return buttons.map((button) => {
     const { type, buttonId, buttonText } = button;
 
-    console.log(type);
-
     switch (type) {
       case 'copy':
         return {
@@ -30,7 +28,7 @@ export function mapButtonsToInteractive(buttons: Button[]): InteractiveButton[] 
         };
       default:
         return {
-          type: 'copy',
+          type: 'reply',
           buttonId,
           buttonText,
         };

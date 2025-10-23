@@ -1,4 +1,4 @@
-import { InstanceInterface } from 'types';
+import { InstanceInterface, PollMessageData, TypeInstance } from 'types';
 
 export interface UserInterface {
   idUser: string;
@@ -58,7 +58,8 @@ export type TypeMessage =
   | 'stickerMessage'
   | 'templateMessage'
   | 'templateButtonsReplyMessage'
-  | 'interactiveButtons';
+  | 'interactiveButtons'
+  | 'pollUpdateMessage';
 
 export type Contact = {
   displayName: string;
@@ -110,6 +111,7 @@ export interface MessageInterface
   isEdited?: boolean;
   editedMessageId?: string;
   deletedMessageId?: string;
+  pollMessageData?: PollMessageData;
 }
 
 export interface QuotedMessageInterface extends MessageInterface {
@@ -180,12 +182,14 @@ export type GetChatInformationParameters = { onlySenderDelete?: boolean } & Pick
   InstanceInterface;
 
 export interface LastMessagesParametersInterface extends InstanceInterface {
+  minutesToRefetch?: number;
   minutes?: number;
   allMessages?: boolean;
 }
 
 export interface GroupBaseParametersInterface extends InstanceInterface {
-  groupId: string;
+  groupId?: string;
+  chatId?: string;
 }
 
 export interface UpdateGroupNameInterface extends GroupBaseParametersInterface {
@@ -211,7 +215,7 @@ export interface SetGroupAdminResponseInterface {
   setGroupAdmin: boolean;
 }
 export interface RemoveGroupAdminResponseInterface {
-  setGroupAdmin: boolean;
+  removeAdmin: boolean;
 }
 
 export interface SetGroupPictureInterface extends GroupBaseParametersInterface {
@@ -242,12 +246,14 @@ export interface GetGroupDataSuccessResponseInterface
   subjectTime: number;
   subjectOwner: string;
   groupInviteLink: string;
+  chatId?: string;
 }
 
 export type GetGroupDataErrorResponse = 'Error: item-not-found' | 'Error: forbidden';
 
 export interface GroupParticipantInterface {
   id: string;
+  chatId?: string;
   isAdmin: boolean;
   isSuperAdmin: boolean;
 }
@@ -406,7 +412,7 @@ export interface ExpandedInstanceInterface extends InstanceInterface {
   timeDeleted: string;
   expirationDate: string;
   typeAccount: string;
-  typeInstance: string;
+  typeInstance: TypeInstance;
 }
 
 export type GetInstancesResponse = AppApiResponse<ExpandedInstanceInterface[]>;
@@ -416,6 +422,7 @@ export interface GetWaSettingsResponseInterface {
   avatar: string;
   phone: string;
   deviceId: string;
+  chatId?: string;
 }
 
 export interface GetProfileBaseSettingsResponseInterface<T extends boolean> {
@@ -502,6 +509,16 @@ export interface DownloadFileResponseInterface {
   downloadUrl: string;
 }
 
-export interface DownloadFileResponseInterface {
-  downloadUrl: string;
+export interface QrWebsocketResponseInterface {
+  type: 'qrCode' | 'error' | 'accountData' | 'alreadyLogged' | 'timeoutExpired' | 'timeout';
+  message: string;
+}
+
+export interface GetQRResponseInterface {
+  status: boolean;
+  code: string;
+}
+
+export interface LogoutResponseInterface {
+  isLogout: boolean;
 }

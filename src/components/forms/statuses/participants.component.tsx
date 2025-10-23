@@ -37,8 +37,17 @@ const Participants = () => {
     <Form.Item label={<span title={t('PARTICIPANTS_LABEL')}>{t('PARTICIPANTS_LABEL')}</span>}>
       <SelectParticipants onChange={() => setShowListParticipants((prev) => !prev)} />
 
+      {!showListParticipants && (
+        <Form.Item noStyle initialValue={[]} className="margin-top" name="participants" />
+      )}
+
       {showListParticipants && (
-        <Form.Item style={{ marginBottom: 0 }} className="margin-top" name="participants">
+        <Form.Item
+          style={{ marginBottom: 0 }}
+          initialValue={[]}
+          className="margin-top"
+          name="participants"
+        >
           <FormListFields
             listProperties={{ name: 'participants' }}
             minFields={1}

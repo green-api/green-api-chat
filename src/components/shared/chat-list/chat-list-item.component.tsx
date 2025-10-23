@@ -6,8 +6,10 @@ import { useTranslation } from 'react-i18next';
 import emptyAvatar from 'assets/emptyAvatar.svg';
 import emptyAvatarButAvailable from 'assets/emptyAvatarButAvailable.svg';
 import emptyAvatarGroup from 'assets/emptyAvatarGroup.png';
+import waChatIcon from 'assets/wa-chat.svg';
 import AvatarImage from 'components/UI/avatar-image.component';
 import { useActions, useAppSelector } from 'hooks';
+import { useIsMaxInstance } from 'hooks/use-is-max-instance';
 import {
   useGetAvatarQuery,
   useGetContactInfoQuery,
@@ -22,6 +24,7 @@ import {
   getPhoneNumberFromChatId,
   getOutgoingStatusMessageIcon,
   getTextMessage,
+  isWhatsAppOfficialChat,
 } from 'utils';
 
 interface ContactListItemProps {
@@ -43,7 +46,7 @@ const ChatListItem: FC<ContactListItemProps> = ({
   const instanceCredentials = useAppSelector(selectInstance);
   const activeChat = useAppSelector(selectActiveChat);
   const { setActiveChat, setSearchQuery } = useActions();
-
+  const isMax = useIsMaxInstance();
   const messageDate = getMessageDate(
     lastMessage.timestamp * 1000,
     'chatList',
@@ -53,11 +56,11 @@ const ChatListItem: FC<ContactListItemProps> = ({
   const { data: groupData, isLoading: isGroupDataLoading } = useGetGroupDataQuery(
     {
       ...instanceCredentials,
-      groupId: lastMessage?.chatId,
+      ...(isMax ? { chatId: lastMessage.chatId } : { groupId: lastMessage.chatId }),
     },
     {
       skip:
-        !lastMessage.chatId?.includes('g.us') ||
+        (!lastMessage.chatId?.includes('g.us') && !lastMessage.chatId?.startsWith('-')) ||
         instanceCredentials?.idInstance.toString().startsWith('7835'),
     }
   );
@@ -70,7 +73,8 @@ const ChatListItem: FC<ContactListItemProps> = ({
     {
       skip:
         lastMessage.chatId?.includes('g.us') ||
-        instanceCredentials?.idInstance.toString().startsWith('7835'),
+        instanceCredentials?.idInstance.toString().startsWith('7835') ||
+        lastMessage.chatId?.startsWith('-'),
     }
   );
 
@@ -87,6 +91,12 @@ const ChatListItem: FC<ContactListItemProps> = ({
   const isLoading = isGroupDataLoading || isContactInfoLoading;
 
   const avatar = useMemo<string>(() => {
+    if (isMax && !avatarData?.urlAvatar) {
+      return emptyAvatarButAvailable;
+    }
+    if (instanceCredentials.idInstance.toString().startsWith('7835')) {
+      return emptyAvatarButAvailable;
+    }
     if (contactInfo?.avatar) return contactInfo.avatar;
     if (avatarData?.urlAvatar) return avatarData.urlAvatar;
 
@@ -97,16 +107,28 @@ const ChatListItem: FC<ContactListItemProps> = ({
     return lastMessage.chatId?.includes('g.us') ? emptyAvatarGroup : emptyAvatarButAvailable;
   }, [contactInfo, avatarData, lastMessage]);
 
-  const chatName =
-    (typeof groupData === 'object' &&
+  let chatName: string | undefined;
+
+  switch (true) {
+    case typeof groupData === 'object' &&
       groupData !== null &&
       'subject' in groupData &&
-      groupData.subject) ||
-    contactInfo?.contactName ||
-    contactInfo?.name ||
-    lastMessage.senderContactName ||
-    lastMessage.senderName ||
-    getPhoneNumberFromChatId(lastMessage.chatId);
+      Boolean(groupData.subject):
+      chatName = groupData.subject;
+      break;
+
+    case Boolean(groupData) && typeof groupData !== 'object':
+      chatName = lastMessage.chatId;
+      break;
+
+    default:
+      chatName =
+        contactInfo?.contactName ||
+        contactInfo?.name ||
+        lastMessage.senderContactName ||
+        lastMessage.senderName ||
+        getPhoneNumberFromChatId(lastMessage.chatId);
+  }
 
   useEffect(() => {
     if (chatName && onNameExtracted) {
@@ -139,13 +161,18 @@ const ChatListItem: FC<ContactListItemProps> = ({
     >
       <Skeleton avatar title={false} loading={isLoading} active>
         <List.Item.Meta
-          avatar={<AvatarImage src={avatar} size="large" />}
+          avatar={
+            <AvatarImage
+              src={isWhatsAppOfficialChat(lastMessage.chatId) ? waChatIcon : avatar}
+              size="large"
+            />
+          }
           title={
             <h6
               className="text-overflow message-signerData"
               style={{ fontSize: 14, maxWidth: 280 }}
             >
-              {chatName}
+              {isWhatsAppOfficialChat(lastMessage.chatId) ? 'WhatsApp' : chatName}
             </h6>
           }
           description={

@@ -1,23 +1,28 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { RootState } from 'store';
-import { InstancesState, TariffsEnum } from 'types';
+import { InstancesState, TariffsEnum, TypeInstance } from 'types';
 
-const getInitialStateFromStorage = () => {
-  let initialState: InstancesState | null = null;
-
+const getInitialStateFromStorage = (): Partial<InstancesState> | null => {
   try {
     const initialStateFromStorage = localStorage.getItem('selectedInstance');
+    if (!initialStateFromStorage) return null;
 
-    initialState = JSON.parse(initialStateFromStorage!) as InstancesState;
+    const parsed = JSON.parse(initialStateFromStorage) as Partial<InstancesState>;
+
+    return {
+      selectedInstance: parsed.selectedInstance,
+      tariff: parsed.tariff,
+      isChatWorking: parsed.isChatWorking ?? null,
+      typeInstance: parsed.typeInstance ?? 'whatsapp',
+      instanceList: parsed.instanceList ?? null,
+    };
   } catch {
-    initialState = null;
+    return null;
   }
-
-  return initialState;
 };
 
-const initialState: InstancesState = getInitialStateFromStorage() || {
+const initialState: InstancesState = {
   selectedInstance: {
     idInstance: 0,
     apiTokenInstance: '',
@@ -26,6 +31,10 @@ const initialState: InstancesState = getInitialStateFromStorage() || {
   },
   tariff: TariffsEnum.Developer,
   isChatWorking: null,
+  typeInstance: 'whatsapp',
+  instanceList: null,
+  isAuthorizingInstance: false,
+  ...getInitialStateFromStorage(),
 };
 
 export const instancesSlice = createSlice({
@@ -35,10 +44,14 @@ export const instancesSlice = createSlice({
     setSelectedInstance: (
       state,
       action: PayloadAction<
-        InstancesState['selectedInstance'] & { tariff: TariffsEnum; isChatWorking?: boolean | null }
+        InstancesState['selectedInstance'] & {
+          tariff: TariffsEnum;
+          typeInstance: TypeInstance;
+          isChatWorking?: boolean | null;
+        }
       >
     ) => {
-      const { tariff, isChatWorking, ...selectedInstance } = action.payload;
+      const { tariff, isChatWorking, typeInstance, ...selectedInstance } = action.payload;
 
       state.selectedInstance = selectedInstance;
       state.tariff = tariff;
@@ -46,9 +59,24 @@ export const instancesSlice = createSlice({
       if (isChatWorking !== undefined) {
         state.isChatWorking = isChatWorking;
       }
+
+      if (typeInstance) {
+        state.typeInstance = typeInstance;
+      }
     },
     setIsChatWorking: (state, action: PayloadAction<InstancesState['isChatWorking']>) => {
       state.isChatWorking = action.payload;
+    },
+    setInstanceList: (state, action: PayloadAction<InstancesState['instanceList']>) => {
+      state.instanceList = action.payload
+        ? action.payload.filter((instance) => !instance.deleted)
+        : null;
+    },
+    setIsAuthorizingInstance: (
+      state,
+      action: PayloadAction<InstancesState['isAuthorizingInstance']>
+    ) => {
+      state.isAuthorizingInstance = action.payload;
     },
   },
 });
@@ -57,5 +85,9 @@ export const instancesActions = instancesSlice.actions;
 export default instancesSlice.reducer;
 
 export const selectInstance = (state: RootState) => state.instancesReducer.selectedInstance;
+export const selectInstanceList = (state: RootState) => state.instancesReducer.instanceList;
+export const selectTypeInstance = (state: RootState) => state.instancesReducer.typeInstance;
 export const selectInstanceTariff = (state: RootState) => state.instancesReducer.tariff;
 export const selectIsChatWorking = (state: RootState) => state.instancesReducer.isChatWorking;
+export const selectIsAuthorizingInstance = (state: RootState) =>
+  state.instancesReducer.isAuthorizingInstance;

@@ -10,9 +10,6 @@ import { journalsGreenApiEndpoints } from 'services/green-api/endpoints/journals
 import { selectActiveChat, selectMessageCount, selectMiniVersion } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
 import { getFormattedMessage, getMessageTypeIcon } from 'utils';
-import { use } from 'i18next';
-import { selectInstance } from 'store/slices/instances.slice';
-import { useDownloadFileMutation } from 'services/green-api/endpoints';
 
 const TextMessage: FC<
   Pick<

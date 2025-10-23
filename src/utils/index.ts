@@ -2,8 +2,14 @@ import { i18n } from 'i18next';
 
 import { getUTCDate } from './date.utils';
 import { isApiError } from './type-guard.utils';
-import { Routes } from 'configs';
-import { ChatType, CookieOptionsInterface, ExpandedInstanceInterface, UserInterface } from 'types';
+import { EXTERNAL_LINKS, Routes } from 'configs';
+import {
+  ChatType,
+  CookieOptionsInterface,
+  ExpandedInstanceInterface,
+  LanguageLiteral,
+  UserInterface,
+} from 'types';
 
 export * from './component.utils';
 export * from './date.utils';
@@ -24,6 +30,10 @@ export function getErrorMessage(error: unknown, t: i18n['t']): string | null {
 
     case 429:
       errorMessage = t('TOO_MANY_REQUESTS_ERROR');
+      break;
+
+    case 400:
+      errorMessage = error.data.message;
       break;
 
     case 'FETCH_ERROR':
@@ -125,4 +135,11 @@ export function isPartnerChat(searchParams: URLSearchParams): boolean {
     searchParams.has('apiUrl') &&
     searchParams.has('mediaUrl')
   );
+}
+
+export function getSupportEmailByLanguage(language: LanguageLiteral) {
+  if (language === 'en' || language === 'he')
+    return EXTERNAL_LINKS.supportEmail['console.greenapi.com'];
+
+  return EXTERNAL_LINKS.supportEmail.default;
 }

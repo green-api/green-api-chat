@@ -1,6 +1,7 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 
 import { listenerMiddleware } from './auth-middleware';
+import { qrInstructionReducer } from './slices/qr-instruction.slice';
 import { appAPI } from 'services/app/app.service';
 import { greenAPI } from 'services/green-api/green-api.service';
 import chatReducer from 'store/slices/chat.slice';
@@ -15,6 +16,7 @@ const rootReducer = combineReducers({
   themeReducer,
   instancesReducer,
   messageMenuReducer,
+  qrInstructionReducer,
   [appAPI.reducerPath]: appAPI.reducer,
   [greenAPI.reducerPath]: greenAPI.reducer,
 });

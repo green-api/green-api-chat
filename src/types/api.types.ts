@@ -505,6 +505,10 @@ export interface SendVoiceStatusInterface extends InstanceInterface {
   participants?: string[];
 }
 
+export interface DownloadFileResponseInterface {
+  downloadUrl: string;
+}
+
 export interface QrWebsocketResponseInterface {
   type: 'qrCode' | 'error' | 'accountData' | 'alreadyLogged' | 'timeoutExpired' | 'timeout';
   message: string;

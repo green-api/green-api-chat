@@ -169,7 +169,7 @@ const TextMessage: FC<
           )}
         </span>
       </Space>
-      {typeMessage === 'imageMessage' && (
+      {typeMessage === 'imageMessage' && !isMiniVersion && (
         <Button loading={isLoading} onClick={handleDownloadFile}>
           {t('DOWNLOAD')}
         </Button>

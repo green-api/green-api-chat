@@ -1,6 +1,6 @@
 import { FC } from 'react';
 
-import { Flex, Select } from 'antd';
+import { Dropdown, MenuProps } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import AttachIcon from 'assets/attach-icon.svg?react';
@@ -12,99 +12,84 @@ import PollIcon from 'assets/poll-icon.svg?react';
 import PreviewIcon from 'assets/preview-icon.svg?react';
 import MessageServiceModal from 'components/modals/message-service-modal.component';
 import SendingModal from 'components/modals/sending-modal.component';
-import { useActions } from 'hooks';
+import { useActions, useAppSelector } from 'hooks';
 import { useIsMaxInstance } from 'hooks/use-is-max-instance';
+import i18n from 'i18n';
+import { useGetProfileSettingsQuery } from 'services/app/endpoints';
+import { selectUser } from 'store/slices/user.slice';
 import { SendingMethodName } from 'types';
 
-interface SelectSendingModeProps {
-  isWaba?: boolean;
-}
-
-const SelectSendingMode: FC<SelectSendingModeProps> = ({ isWaba }) => {
-  const { t, i18n } = useTranslation();
-
+const SelectSendingMode: FC = () => {
+  const { t } = useTranslation();
+  const { idUser, apiTokenUser, projectId } = useAppSelector(selectUser);
   const { setActiveSendingMode } = useActions();
 
   const dir = i18n.dir();
 
   const isMax = useIsMaxInstance();
 
-  const options = [
+  const { data: profileSettings } = useGetProfileSettingsQuery(
+    { idUser, apiTokenUser, projectId },
+    { skip: !idUser || !apiTokenUser }
+  );
+
+  const isWaba = profileSettings?.result && profileSettings.data.isWaba;
+
+  const items: MenuProps['items'] = [
     {
-      value: 'sendFileByUpload',
-      label: (
-        <Flex gap={15} align="center">
-          <MediaIcon />
-          {t('FILE')}
-        </Flex>
-      ),
+      key: 'sendFileByUpload',
+      icon: <MediaIcon />,
+      label: t('FILE'),
     },
     {
-      value: 'sendContact',
-      label: (
-        <Flex gap={15} align="center">
-          <ContactIcon style={{ padding: '8px 0 ' }} />
-          {t('CONTACT')}
-        </Flex>
-      ),
+      key: 'sendContact',
+      icon: <ContactIcon />,
+      label: t('CONTACT'),
     },
     {
-      value: 'sendLocation',
-      label: (
-        <Flex gap={15} align="center" style={{ padding: '4px 0 ' }}>
-          <LocationIcon />
-          {t('LOCATION')}
-        </Flex>
-      ),
+      key: 'sendLocation',
+      icon: <LocationIcon />,
+      label: t('LOCATION'),
     },
     {
-      value: 'sendButtons',
-      label: (
-        <Flex gap={15} align="center">
-          <ButtonsIcon />
-          {t('BUTTONS')}
-        </Flex>
-      ),
+      key: 'sendButtons',
+      icon: <ButtonsIcon />,
+      label: t('BUTTONS'),
     },
     {
-      value: 'sendPoll',
-      label: (
-        <Flex gap={15} align="center">
-          <PollIcon />
-          {t('POLL')}
-        </Flex>
-      ),
+      key: 'sendPoll',
+      icon: <PollIcon />,
+      label: t('POLL'),
     },
     {
-      value: 'sendPreview',
-      label: (
-        <Flex gap={15} align="center">
-          <PreviewIcon />
-          {t('PREVIEW')}
-        </Flex>
-      ),
+      key: 'sendPreview',
+      icon: <PreviewIcon />,
+      label: t('PREVIEW'),
     },
   ];
 
   if (isWaba) {
-    options.push({
-      value: 'sendTemplate',
+    items.push({
+      key: 'sendTemplate',
       label: <span>{t('TEMPLATE')}</span>,
     });
   }
+
   if (isMax) return null;
+
   return (
     <>
-      <Select
-        className={`select-sending-mode ${dir === 'rtl' ? 'rtl' : ''}`}
-        variant="borderless"
-        value=""
-        options={options}
-        style={{ width: 50 }}
-        dropdownStyle={{ width: 150, padding: 0 }}
-        suffixIcon={<AttachIcon style={{ pointerEvents: 'none' }} />}
-        onSelect={(value) => setActiveSendingMode(value as SendingMethodName)}
-      />
+      <Dropdown
+        menu={{
+          items,
+          onClick: ({ key }) => setActiveSendingMode(key as SendingMethodName),
+        }}
+        placement={dir === 'rtl' ? 'topRight' : 'topLeft'}
+        trigger={['click']}
+      >
+        <AttachIcon style={{ cursor: 'pointer' }} height={24} width={24} />
+      </Dropdown>
+
       <SendingModal />
       <MessageServiceModal />
     </>

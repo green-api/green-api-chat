@@ -1,0 +1,33 @@
+.replyMessage {
+  border-radius: 4px;
+  background-color: var(--incoming-message-bg);
+  border-left: 4px solid var(--qouted-message-border-color);
+  padding: 0 10px;
+  margin: 10px 0;
+  min-height: 40px;
+  position: relative;
+}
+
+.phoneNumber {
+  font-size: 11px;
+}
+
+.close {
+  flex-shrink: 0;
+  cursor: pointer;
+  padding: 10px;
+  align-self: baseline;
+}
+
+.replyMessageText {
+  max-width: 1100px;
+  max-height: 60px;
+
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+  margin: 6px;
+}

@@ -50,6 +50,7 @@ const TextMessage: FC<
             WebkitBoxOrient: 'vertical',
             overflow: 'hidden',
             lineHeight: '1.5',
+            wordBreak: 'break-word',
           }}
         >
           {formattedMessage}
@@ -88,6 +89,7 @@ const TextMessage: FC<
             WebkitBoxOrient: 'vertical',
             overflow: 'hidden',
             lineHeight: '1.5',
+            wordBreak: 'break-word',
           }}
         >
           {typeMessage === 'templateButtonsReplyMessage' && (

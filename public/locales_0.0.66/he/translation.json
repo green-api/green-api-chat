@@ -203,5 +203,7 @@
   "CODE_ERROR_FIRST": "לא הצלחתי להשיג את הקוד!",
   "CODE_ERROR_SECOND": "נסה מאוחר יותר או סרוק קוד QR",
   "ERROR_DELETING_MESSAGE": "אירעה שגיאה בעת מחיקת ההודעה",
-  "REPLY": "תגובה"
+  "REPLY": "תגובה",
+  "DOWNLOAD": "הורדה",
+  "DOWNLOAD_ERROR": "אירעה שגיאה בעת הורדת הקובץ"
 }

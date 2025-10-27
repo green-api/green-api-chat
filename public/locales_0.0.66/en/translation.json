@@ -206,5 +206,7 @@
   "CODE_ERROR_FIRST": "Couldn't get the code!",
   "CODE_ERROR_SECOND": "Try again later or scan the QR code",
   "ERROR_DELETING_MESSAGE": "An error occurred while deleting the message",
-  "REPLY": "Reply"
+  "REPLY": "Reply",
+  "DOWNLOAD": "Download",
+  "DOWNLOAD_ERROR": "An error occurred while downloading the file"
 }

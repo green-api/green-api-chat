@@ -65,6 +65,7 @@ const Message: FC<MessageProps> = ({ messageDataForRender, preview }) => {
 
   let messageBody = (
     <TextMessage
+      jsonMessage={jsonMessage}
       textMessage={textMessage}
       typeMessage={typeMessage}
       downloadUrl={downloadUrl}
@@ -140,7 +141,13 @@ const Message: FC<MessageProps> = ({ messageDataForRender, preview }) => {
       )}
 
       {!isDeleted && caption && !isMiniVersion && (
-        <TextMessage textMessage={caption} typeMessage={typeMessage} type={type} isCaption={true} />
+        <TextMessage
+          textMessage={caption}
+          typeMessage={typeMessage}
+          type={type}
+          isCaption={true}
+          jsonMessage={jsonMessage}
+        />
       )}
 
       <Space className="message-date">

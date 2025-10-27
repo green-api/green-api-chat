@@ -86,6 +86,7 @@ const TextMessage: FC<
             WebkitBoxOrient: 'vertical',
             overflow: 'hidden',
             lineHeight: '1.5',
+            wordBreak: 'break-word',
           }}
         >
           {formattedMessage}
@@ -96,7 +97,7 @@ const TextMessage: FC<
             style={{
               background: 'none',
               border: 'none',
-              color: '#1890ff',
+              color: 'var(--primary-color)',
               cursor: 'pointer',
               padding: 0,
               marginTop: 4,
@@ -115,8 +116,16 @@ const TextMessage: FC<
         {getMessageTypeIcon(typeMessage, downloadUrl)}
         <Typography.Paragraph
           className={`${type === 'outgoing' ? 'outgoing' : 'incoming'} ${isMiniVersion ? '' : 'full'}`}
-          style={{ fontSize: isMiniVersion ? 16 : 14, margin: 0 }}
-          ellipsis={{ rows: 6, expandable: true, symbol: t('SHOW_ALL_TEXT') }}
+          style={{
+            fontSize: isMiniVersion ? 16 : 14,
+            margin: 0,
+            display: '-webkit-box',
+            WebkitLineClamp: expanded ? 'unset' : 6,
+            WebkitBoxOrient: 'vertical',
+            overflow: 'hidden',
+            lineHeight: '1.5',
+            wordBreak: 'break-word',
+          }}
         >
           {typeMessage === 'templateButtonsReplyMessage' && (
             <>
@@ -134,6 +143,24 @@ const TextMessage: FC<
         </Button>
       )}
     </Flex>
+        </div>
+        {!expanded && needsExpansion && (
+          <button
+            onClick={toggleExpand}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: 'var(--primary-color)',
+              cursor: 'pointer',
+              padding: 0,
+              marginTop: 4,
+            }}
+          >
+            {t('SHOW_ALL_TEXT')}
+          </button>
+        )}
+      </span>
+    </Space>
   );
 };
 

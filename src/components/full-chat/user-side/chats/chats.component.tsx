@@ -1,6 +1,6 @@
 import { FC, useState } from 'react';
 
-import { Button, Flex, Spin } from 'antd';
+import { Button, Flex } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import AddNewChat from './add-new-chat.component';

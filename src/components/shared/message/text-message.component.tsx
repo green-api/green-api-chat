@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useState, useRef, useEffect } from 'react';
 
 import { Button, Flex, message, Space, Typography } from 'antd';
 import { useTranslation } from 'react-i18next';
@@ -74,17 +74,38 @@ const TextMessage: FC<
 
   if (isCaption) {
     return (
-      <Typography.Paragraph
-        className={`${type === 'outgoing' ? 'outgoing' : 'incoming'} full`}
-        style={{
-          fontSize: isMiniVersion ? 16 : 14,
-          margin: 0,
-          width: typeMessage === 'imageMessage' ? 300 : undefined,
-        }}
-        ellipsis={{ rows: 6, expandable: true, symbol: t('SHOW_ALL_TEXT') }}
-      >
-        {formattedMessage}
-      </Typography.Paragraph>
+      <span>
+        <div
+          className={`${type === 'outgoing' ? 'outgoing' : 'incoming'} full`}
+          style={{
+            fontSize: isMiniVersion ? 16 : 14,
+            margin: 0,
+            width: typeMessage === 'imageMessage' ? 300 : undefined,
+            display: '-webkit-box',
+            WebkitLineClamp: expanded ? 'unset' : 6,
+            WebkitBoxOrient: 'vertical',
+            overflow: 'hidden',
+            lineHeight: '1.5',
+          }}
+        >
+          {formattedMessage}
+        </div>
+        {!expanded && needsExpansion && (
+          <button
+            onClick={toggleExpand}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: '#1890ff',
+              cursor: 'pointer',
+              padding: 0,
+              marginTop: 4,
+            }}
+          >
+            {t('SHOW_ALL_TEXT')}
+          </button>
+        )}
+      </span>
     );
   }
 

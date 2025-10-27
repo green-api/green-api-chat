@@ -104,7 +104,7 @@ const TextMessage: FC<
             style={{
               background: 'none',
               border: 'none',
-              color: '#1890ff',
+              color: 'var(--primary-color)',
               cursor: 'pointer',
               padding: 0,
               marginTop: 4,

@@ -1,6 +1,6 @@
 import { FC, useState, useRef, useEffect } from 'react';
 
-import { Button, Flex, message, Space, Typography } from 'antd';
+import { Button, Flex, message, Space } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import { MessageProps } from './message.component';
@@ -31,6 +31,20 @@ const TextMessage: FC<
   const [downloadFile, { isLoading }] = useDownloadFileMutation();
 
   const formattedMessage = getFormattedMessage(textMessage);
+
+  const [expanded, setExpanded] = useState(false);
+  const [needsExpansion, setNeedsExpansion] = useState(false);
+  const textRef = useRef<HTMLDivElement>(null);
+
+  const toggleExpand = () => setExpanded(!expanded);
+
+  useEffect(() => {
+    if (textRef.current) {
+      const element = textRef.current;
+      const needsExpand = element.scrollHeight > element.clientHeight;
+      setNeedsExpansion(needsExpand);
+    }
+  }, [textMessage, formattedMessage]);
 
   const { idMessage, chatId } = JSON.parse(jsonMessage ?? '{}');
 
@@ -114,28 +128,46 @@ const TextMessage: FC<
     <Flex vertical gap={8}>
       <Space>
         {getMessageTypeIcon(typeMessage, downloadUrl)}
-        <Typography.Paragraph
-          className={`${type === 'outgoing' ? 'outgoing' : 'incoming'} ${isMiniVersion ? '' : 'full'}`}
-          style={{
-            fontSize: isMiniVersion ? 16 : 14,
-            margin: 0,
-            display: '-webkit-box',
-            WebkitLineClamp: expanded ? 'unset' : 6,
-            WebkitBoxOrient: 'vertical',
-            overflow: 'hidden',
-            lineHeight: '1.5',
-            wordBreak: 'break-word',
-          }}
-        >
-          {typeMessage === 'templateButtonsReplyMessage' && (
-            <>
-              <em>Button reply:</em>
-              <br />
-            </>
-          )}
+        <span>
+          <div
+            ref={textRef}
+            className={`${type === 'outgoing' ? 'outgoing' : 'incoming'} ${isMiniVersion ? '' : 'full'}`}
+            style={{
+              fontSize: isMiniVersion ? 16 : 14,
+              margin: 0,
+              display: '-webkit-box',
+              WebkitLineClamp: expanded ? 'unset' : 6,
+              WebkitBoxOrient: 'vertical',
+              overflow: 'hidden',
+              lineHeight: '1.5',
+              wordBreak: 'break-word',
+            }}
+          >
+            {typeMessage === 'templateButtonsReplyMessage' && (
+              <span>
+                <em>Button reply:</em>
+                <br />
+              </span>
+            )}
+            {formattedMessage}
+          </div>
 
-          {formattedMessage}
-        </Typography.Paragraph>
+          {!expanded && needsExpansion && (
+            <button
+              onClick={toggleExpand}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: 'var(--primary-color)',
+                cursor: 'pointer',
+                padding: 0,
+                marginTop: 4,
+              }}
+            >
+              {t('SHOW_ALL_TEXT')}
+            </button>
+          )}
+        </span>
       </Space>
       {typeMessage === 'imageMessage' && (
         <Button loading={isLoading} onClick={handleDownloadFile}>
@@ -143,24 +175,6 @@ const TextMessage: FC<
         </Button>
       )}
     </Flex>
-        </div>
-        {!expanded && needsExpansion && (
-          <button
-            onClick={toggleExpand}
-            style={{
-              background: 'none',
-              border: 'none',
-              color: 'var(--primary-color)',
-              cursor: 'pointer',
-              padding: 0,
-              marginTop: 4,
-            }}
-          >
-            {t('SHOW_ALL_TEXT')}
-          </button>
-        )}
-      </span>
-    </Space>
   );
 };
 

@@ -72,6 +72,7 @@ export interface InstancesState {
   typeInstance: TypeInstance;
   instanceList: ExpandedInstanceInterface[] | null;
   isAuthorizingInstance: boolean;
+  isSendingStatus: 'text' | 'voice' | 'media' | null;
 }
 
 export type TypeInstance = 'whatsapp' | 'v3';

@@ -500,7 +500,7 @@ export interface SendTextStatusInterface extends InstanceInterface {
 
 export interface SendVoiceStatusInterface extends InstanceInterface {
   urlFile: string;
-  backgroundColor?: string;
+  caption?: string;
   fileName: string;
   participants?: string[];
 }

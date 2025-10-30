@@ -34,6 +34,7 @@ const initialState: InstancesState = {
   typeInstance: 'whatsapp',
   instanceList: null,
   isAuthorizingInstance: false,
+  isSendingStatus: null,
   ...getInitialStateFromStorage(),
 };
 
@@ -78,6 +79,9 @@ export const instancesSlice = createSlice({
     ) => {
       state.isAuthorizingInstance = action.payload;
     },
+    setIsSendingStatus: (state, action: PayloadAction<InstancesState['isSendingStatus']>) => {
+      state.isSendingStatus = action.payload;
+    },
   },
 });
 
@@ -91,3 +95,4 @@ export const selectInstanceTariff = (state: RootState) => state.instancesReducer
 export const selectIsChatWorking = (state: RootState) => state.instancesReducer.isChatWorking;
 export const selectIsAuthorizingInstance = (state: RootState) =>
   state.instancesReducer.isAuthorizingInstance;
+export const selectIsSendingStatus = (state: RootState) => state.instancesReducer.isSendingStatus;

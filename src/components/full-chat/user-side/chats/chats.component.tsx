@@ -37,7 +37,7 @@ const Chats: FC = () => {
       <Flex
         align="center"
         gap={8}
-        style={{ padding: '6px 20px' }}
+        style={{ padding: '20px' }}
         justify={type === 'partner-iframe' ? 'end' : 'space-between'}
       >
         <Flex gap={20} align="center">

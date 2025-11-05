@@ -1,15 +1,16 @@
 import { FC, useEffect, useRef, useState, memo } from 'react';
 
-import { PlusOutlined } from '@ant-design/icons';
-import { Button, Flex, Input, message } from 'antd';
+import { PlusOutlined, CloseOutlined, SendOutlined } from '@ant-design/icons';
+import { Button, Flex, Form, Input, message } from 'antd';
+import { useForm } from 'antd/es/form/Form';
 import { useTranslation } from 'react-i18next';
 
+import { CloseStatus } from './close-status.component';
+import Participants from 'components/forms/statuses/participants.component';
 import LizardLoader from 'components/UI/lizard-loader.component';
 import { useAppSelector } from 'hooks';
 import { useSendMediaStatusMutation, useUploadFileMutation } from 'services/green-api/endpoints';
 import { selectInstance } from 'store/slices/instances.slice';
-
-const { TextArea } = Input;
 
 interface PreviewItem {
   file: File;
@@ -25,10 +26,12 @@ const SendMediaStatusComponent: FC = () => {
   const hasOpenedRef = useRef(false);
   const [previews, setPreviews] = useState<PreviewItem[]>([]);
   const [activeIndex, setActiveIndex] = useState<number>(0);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [form] = useForm();
+  const participants = Form.useWatch('participants', form);
 
-  const [uploadFile, { isLoading: isUploadFileLoading }] = useUploadFileMutation();
-  const [sendMediaStatus, { isLoading: isMediaStatusLoading }] = useSendMediaStatusMutation();
-
+  const [uploadFile] = useUploadFileMutation();
+  const [sendMediaStatus] = useSendMediaStatusMutation();
   const instanceCredentials = useAppSelector(selectInstance);
 
   useEffect(() => {
@@ -38,17 +41,34 @@ const SendMediaStatusComponent: FC = () => {
     }
   }, []);
 
+  const MAX_PREVIEWS = 100;
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = e.target.files ? Array.from(e.target.files) : [];
     if (selectedFiles.length === 0) return;
-    const newPreviews = selectedFiles.map((file) => ({
-      file,
-      url: URL.createObjectURL(file),
-      type: file.type,
-      name: file.name,
-      description: '',
-    }));
-    setPreviews((prev) => [...prev, ...newPreviews]);
+
+    setPreviews((prev) => {
+      const availableSlots = MAX_PREVIEWS - prev.length;
+
+      if (availableSlots <= 0) {
+        message.warning(t('Вы не можете добавить больше 100 файлов'));
+        e.target.value = '';
+        return prev;
+      }
+
+      const allowedFiles = selectedFiles.slice(0, availableSlots);
+
+      const newPreviews = allowedFiles.map((file) => ({
+        file,
+        url: URL.createObjectURL(file),
+        type: file.type,
+        name: file.name,
+        description: '',
+      }));
+
+      return [...prev, ...newPreviews];
+    });
+
     e.target.value = '';
   };
 
@@ -58,9 +78,7 @@ const SendMediaStatusComponent: FC = () => {
     };
   }, []);
 
-  const handleSelect = (index: number) => {
-    setActiveIndex(index);
-  };
+  const handleSelect = (index: number) => setActiveIndex(index);
 
   const handleDescriptionChange = (value: string) => {
     setPreviews((prev) =>
@@ -68,156 +86,170 @@ const SendMediaStatusComponent: FC = () => {
     );
   };
 
+  const handleRemove = (index: number) => {
+    setPreviews((prev) => {
+      const newList = prev.filter((_, i) => i !== index);
+      if (activeIndex >= newList.length) {
+        setActiveIndex(Math.max(newList.length - 1, 0));
+      }
+      return newList;
+    });
+  };
+
   const handleUpload = async () => {
-    if (previews.length === 0) return;
+    setIsProcessing(true);
 
     try {
-      const uploadPromises = previews.map((item) =>
-        uploadFile({ ...instanceCredentials, file: item.file }).unwrap()
-      );
+      const UPLOAD_BATCH_SIZE = 50;
+      const SEND_BATCH_SIZE = 5;
 
-      const results = await Promise.all(uploadPromises);
-      const urls = results.map((res) => res.urlFile);
-      try {
-        urls.forEach(async (url, index) => {
-          await sendMediaStatus({
-            ...instanceCredentials,
-            urlFile: url,
-            fileName: previews[index].name,
-            caption: previews[index].description,
-          });
-        });
-        message.success(t('SENT_STATUS_SUCCESS'));
-      } catch (error) {
-        console.error('Sending media status failed:', error);
+      const uploadBatches = [];
+      for (let i = 0; i < previews.length; i += UPLOAD_BATCH_SIZE) {
+        uploadBatches.push(previews.slice(i, i + UPLOAD_BATCH_SIZE));
       }
 
-      console.log('Uploaded URLs in order:', urls);
-      return urls;
+      const uploadedUrls: string[] = [];
+
+      for (const batch of uploadBatches) {
+        const uploadPromises = batch.map((item) =>
+          uploadFile({ ...instanceCredentials, file: item.file }).unwrap()
+        );
+
+        const results = await Promise.allSettled(uploadPromises);
+
+        const fulfilledResults = results.filter(
+          (res): res is PromiseFulfilledResult<{ urlFile: string }> =>
+            res.status === 'fulfilled' && !!res.value?.urlFile
+        );
+
+        uploadedUrls.push(...fulfilledResults.map((res) => res.value.urlFile));
+
+        if (batch !== uploadBatches[uploadBatches.length - 1]) {
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+        }
+      }
+
+      if (uploadedUrls.length === 0) {
+        message.error(t('UPLOAD_FAILED'));
+        return;
+      }
+
+      const sendBatches = [];
+      for (let i = 0; i < uploadedUrls.length; i += SEND_BATCH_SIZE) {
+        sendBatches.push(uploadedUrls.slice(i, i + SEND_BATCH_SIZE));
+      }
+
+      let totalSent = 0;
+
+      const mappedParticipants = participants?.map((participant: string) => {
+        const cleaned = participant.trim();
+        return cleaned.endsWith('@c.us') ? cleaned : `${cleaned}@c.us`;
+      });
+
+      for (const [batchIndex, batch] of sendBatches.entries()) {
+        const sendPromises = batch.map((url, idx) =>
+          sendMediaStatus({
+            ...instanceCredentials,
+            urlFile: url,
+            fileName: previews[batchIndex * SEND_BATCH_SIZE + idx].name,
+            caption: previews[batchIndex * SEND_BATCH_SIZE + idx].description,
+            participants:
+              mappedParticipants && mappedParticipants.length > 0 ? mappedParticipants : undefined,
+          })
+        );
+
+        const sendResults = await Promise.allSettled(sendPromises);
+        totalSent += sendResults.filter((r) => r.status === 'fulfilled').length;
+
+        if (batch !== sendBatches[sendBatches.length - 1]) {
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+        }
+      }
+
+      if (totalSent > 0) {
+        message.success(t('SENT_STATUS_SUCCESS'));
+      } else {
+        message.error(t('SENT_STATUS_FAILED'));
+      }
     } catch (error) {
-      console.error('Upload failed:', error);
+      console.error('Upload process failed:', error);
+      message.error(t('UPLOAD_FAILED'));
+    } finally {
+      setIsProcessing(false);
     }
   };
+
   const activePreview = previews[activeIndex];
 
-  if (isMediaStatusLoading || isUploadFileLoading) {
+  if (isProcessing) {
     return <LizardLoader />;
   }
 
   return (
-    <Flex
-      vertical
-      align="center"
-      justify="space-between"
-      gap={40}
-      style={{
-        width: '100%',
-        height: '50%',
-        top: '50%',
-        position: 'absolute',
-        transform: 'translateY(-50%)',
-      }}
-    >
+    <Flex className="send-media" vertical align="center" justify="center">
       <input
         ref={fileInputRef}
         type="file"
         accept="image/*,video/*"
         multiple
-        style={{ display: 'none' }}
+        className="send-media__input"
         onChange={handleFileChange}
       />
+      <CloseStatus />
 
-      {activePreview ? (
-        <div style={{ width: '100%', maxWidth: 1000, textAlign: 'center' }}>
-          {activePreview.type.startsWith('image/') ? (
-            <img
-              key={`${activePreview.url}-${activeIndex}`}
-              src={activePreview.url}
-              alt={activePreview.name}
-              style={{
-                height: 400,
-                maxWidth: '80%',
-                objectFit: 'contain',
-                borderRadius: 12,
-                margin: '0 auto',
-                display: 'block',
-                transition: 'opacity 0.3s ease',
-              }}
-              onError={(e) => {
-                (e.target as HTMLImageElement).style.display = 'none';
-              }}
-            />
-          ) : (
-            <video
-              key={`${activePreview.url}-${activeIndex}`}
-              src={activePreview.url}
-              controls
-              style={{
-                height: 400,
-                maxWidth: '100%',
-                borderRadius: 12,
-              }}
-            />
-          )}
-        </div>
-      ) : (
-        <div
-          onClick={() => fileInputRef.current?.click()}
-          style={{
-            textAlign: 'center',
-            color: '#999',
-            padding: '60px 0',
-            cursor: 'pointer',
-          }}
-        >
-          {t('Выберите изображение или видео')}
-        </div>
-      )}
+      <div className="send-media__center">
+        {activePreview ? (
+          <div className="send-media__preview">
+            {activePreview.type.startsWith('image/') ? (
+              <img
+                key={`${activePreview.url}-${activeIndex}`}
+                src={activePreview.url}
+                alt={activePreview.name}
+                className="send-media__image"
+                onError={(e) => ((e.target as HTMLImageElement).style.display = 'none')}
+              />
+            ) : (
+              <video
+                key={`${activePreview.url}-${activeIndex}`}
+                src={activePreview.url}
+                controls
+                className="send-media__video"
+              />
+            )}
+          </div>
+        ) : (
+          <div className="send-media__empty" onClick={() => fileInputRef.current?.click()}>
+            {t('Выберите изображение или видео')}
+          </div>
+        )}
 
-      {previews.length > 0 && (
-        <Flex vertical align="center" gap={16} style={{ width: '100%' }}>
-          <Flex justify="center" align="center" gap={10} style={{ marginBottom: 36 }}>
+        {previews.length > 0 && (
+          <Flex justify="center" align="center" gap={10} className="send-media__thumbnails">
             {previews.map((item, index) => {
               const isActive = index === activeIndex;
               const isImage = item.type.startsWith('image/');
               const isVideo = item.type.startsWith('video/');
+
               return (
                 <div
                   key={index}
+                  className={`send-media__thumb ${isActive ? 'active' : ''}`}
                   onClick={() => handleSelect(index)}
-                  style={{
-                    width: 50,
-                    height: 50,
-                    borderRadius: 8,
-                    overflow: 'hidden',
-                    cursor: 'pointer',
-                    border: isActive ? '2px solid var(--primary-color)' : '1px solid #ccc',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    background: '#f9f9f9',
-                  }}
                 >
+                  <button
+                    className="send-media__remove-btn"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleRemove(index);
+                    }}
+                  >
+                    <CloseOutlined />
+                  </button>
+
                   {isImage ? (
-                    <img
-                      src={item.url}
-                      alt={item.name}
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'cover',
-                      }}
-                    />
+                    <img src={item.url} alt={item.name} />
                   ) : isVideo ? (
-                    <video
-                      src={item.url}
-                      muted
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'cover',
-                      }}
-                    />
+                    <video src={item.url} muted />
                   ) : null}
                 </div>
               );
@@ -226,28 +258,40 @@ const SendMediaStatusComponent: FC = () => {
               type="default"
               icon={<PlusOutlined />}
               onClick={() => fileInputRef.current?.click()}
-              style={{ width: 50, height: 50 }}
+              className="send-media__add-btn"
+              disabled={previews.length >= MAX_PREVIEWS}
             />
           </Flex>
-          <Flex style={{ width: '100%' }} gap={10} justify="center">
-            {activePreview && (
-              <TextArea
-                rows={3}
-                placeholder={
-                  t('Введите описание (опционально)') || 'Введите описание (опционально)'
-                }
-                value={activePreview.description || ''}
-                onChange={(e) => handleDescriptionChange(e.target.value)}
-                style={{ maxWidth: 600, borderRadius: 8 }}
-              />
-            )}
-
-            <Button type="primary" onClick={handleUpload} style={{ marginTop: 20 }}>
-              {t('SEND_MESSAGE')}
-            </Button>
-          </Flex>
+        )}
+      </div>
+      <div className="send-media__bottom">
+        {activePreview && (
+          <Form form={form}>
+            <Participants />
+          </Form>
+        )}
+        <Flex justify="center" align="center" gap={10}>
+          {activePreview && (
+            <Input
+              placeholder={t('Введите описание (опционально)') || 'Введите описание (опционально)'}
+              value={activePreview.description || ''}
+              onChange={(e) => handleDescriptionChange(e.target.value)}
+            />
+          )}
+          {activePreview && (
+            <Button
+              htmlType="submit"
+              size="large"
+              type="primary"
+              shape="circle"
+              style={{ width: 40, height: 40 }}
+              icon={<SendOutlined />}
+              onClick={handleUpload}
+              className="send-media__send-btn"
+            ></Button>
+          )}
         </Flex>
-      )}
+      </div>
     </Flex>
   );
 };

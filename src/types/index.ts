@@ -297,6 +297,7 @@ export interface AsideItem {
   item: UserSideActiveMode;
   title: string;
   icon: ReactElement;
+  waOnly?: boolean;
 }
 
 export interface UserSideItem {

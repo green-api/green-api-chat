@@ -12,7 +12,7 @@ import { AsideItem, UserSideItem } from 'types';
 
 export const asideTopIconItems: AsideItem[] = [
   { item: 'chats', title: 'CHATS_TITLE', icon: <ChatIcon /> },
-  { item: 'statuses', title: 'STATUSES', icon: <StatusIcon /> },
+  { item: 'statuses', title: 'STATUSES', icon: <StatusIcon />, waOnly: true },
   // { item: 'calls', title: 'CALLS_TITLE', icon: <PhoneIcon /> },
 ];
 

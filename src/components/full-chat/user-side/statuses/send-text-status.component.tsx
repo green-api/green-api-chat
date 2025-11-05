@@ -2,6 +2,7 @@ import { SendOutlined } from '@ant-design/icons';
 import { Button, ColorPicker, Flex, Form, Input, message as antdMessage } from 'antd';
 import { useTranslation } from 'react-i18next';
 
+import { CloseStatus } from './close-status.component';
 import PaletteIcon from 'assets/palette.svg?react';
 import Participants from 'components/forms/statuses/participants.component';
 import SelectStatusFont from 'components/forms/statuses/select-status-font.component';
@@ -80,6 +81,7 @@ export const SendTextStatus = () => {
         position: 'relative',
       }}
     >
+      <CloseStatus />
       <Form
         className="textStatusForm"
         form={form}

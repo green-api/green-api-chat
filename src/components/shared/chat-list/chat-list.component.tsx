@@ -60,6 +60,20 @@ const ChatList: FC = () => {
   const pagedFilteredMessages = filteredMessages.slice(0, messagesPage * limit);
 
   useEffect(() => {
+    if (!allMessages.length) return;
+
+    setContactNames((prev) => {
+      const updated = { ...prev };
+      allMessages.forEach((msg) => {
+        if (!updated[msg.chatId]) {
+          updated[msg.chatId] = msg.chatId.toLowerCase();
+        }
+      });
+      return updated;
+    });
+  }, [allMessages]);
+
+  useEffect(() => {
     const element = chatListRef.current;
     if (!element) return;
 

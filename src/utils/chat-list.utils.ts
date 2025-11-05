@@ -123,6 +123,8 @@ export const filterContacts = (
 ): MessageInterface[] => {
   const query = searchQuery.toLowerCase();
 
+  console.log(allMessages);
+
   return Array.from(
     allMessages.reduce((acc, msg) => {
       const name = (contactNames[msg.chatId] || '').toLowerCase();

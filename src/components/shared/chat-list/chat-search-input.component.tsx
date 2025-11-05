@@ -1,11 +1,11 @@
 import React, { useCallback } from 'react';
 
+import { SearchOutlined } from '@ant-design/icons';
 import { Input } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import { useActions, useAppSelector } from 'hooks';
 import { selectMiniVersion, selectSearchQuery } from 'store/slices/chat.slice';
-import { SearchOutlined } from '@ant-design/icons';
 
 interface ChatSearchInputProps {
   setPage: (page: number) => void;

@@ -208,5 +208,6 @@
   "ERROR_DELETING_MESSAGE": "An error occurred while deleting the message",
   "REPLY": "Reply",
   "DOWNLOAD": "Download",
-  "DOWNLOAD_ERROR": "An error occurred while downloading the file"
+  "DOWNLOAD_ERROR": "An error occurred while downloading the file",
+  "UNABLE_TO_DISPLAY_MESSAGE": "Unable to display message"
 }

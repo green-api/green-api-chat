@@ -14,44 +14,53 @@ export function getPhoneNumberFromChatId(chatId: string) {
 }
 
 export function getJSONMessage(message: MessageInterface): string {
-  let copyMessage: MessageInterface;
+  try {
+    let copyMessage: MessageInterface;
 
-  if ('structuredClone' in window) {
-    copyMessage = structuredClone(message);
-  } else {
-    // TODO: rework
-    copyMessage = { ...message };
+    if ('structuredClone' in window) {
+      copyMessage = structuredClone(message);
+    } else {
+      // TODO: rework
+      copyMessage = { ...message };
+    }
+
+    if (copyMessage.jpegThumbnail) {
+      copyMessage.jpegThumbnail = copyMessage.jpegThumbnail.slice(0, 50) + '...';
+    }
+
+    if (copyMessage.extendedTextMessage && copyMessage.extendedTextMessage.jpegThumbnail) {
+      copyMessage.extendedTextMessage.jpegThumbnail =
+        copyMessage.extendedTextMessage.jpegThumbnail.slice(0, 50) + '...';
+    }
+
+    if (copyMessage.extendedTextMessage && copyMessage.extendedTextMessage.text.length > 250) {
+      copyMessage.extendedTextMessage.text =
+        copyMessage.extendedTextMessage.text.slice(0, 250) + '...';
+    }
+
+    if (copyMessage.textMessage && copyMessage.textMessage.length > 250) {
+      copyMessage.textMessage = copyMessage.textMessage.slice(0, 250) + '...';
+    }
+
+    if (copyMessage.caption && copyMessage.caption.length > 150) {
+      copyMessage.caption = copyMessage.caption.slice(0, 150) + '...';
+    }
+
+    if (copyMessage.location && copyMessage.location.jpegThumbnail.length > 50) {
+      copyMessage.location.jpegThumbnail = copyMessage.location.jpegThumbnail.slice(0, 50) + '...';
+    }
+
+    if (copyMessage.quotedMessage) {
+      copyMessage.quotedMessage = JSON.parse(getJSONMessage(copyMessage.quotedMessage));
+    }
+
+    return JSON.stringify(copyMessage, null, 2);
+  } catch (error) {
+    console.error('Error occured while processing JSON:', error);
+    try {
+      return JSON.stringify(message, null, 2);
+    } catch {
+      return '{"error": "Could not serialize message to JSON"}';
+    }
   }
-
-  if (copyMessage.jpegThumbnail) {
-    copyMessage.jpegThumbnail = copyMessage.jpegThumbnail.slice(0, 50) + '...';
-  }
-
-  if (copyMessage.extendedTextMessage && copyMessage.extendedTextMessage.jpegThumbnail) {
-    copyMessage.extendedTextMessage.jpegThumbnail =
-      copyMessage.extendedTextMessage.jpegThumbnail.slice(0, 50) + '...';
-  }
-
-  if (copyMessage.extendedTextMessage && copyMessage.extendedTextMessage.text.length > 250) {
-    copyMessage.extendedTextMessage.text =
-      copyMessage.extendedTextMessage.text.slice(0, 250) + '...';
-  }
-
-  if (copyMessage.textMessage && copyMessage.textMessage.length > 250) {
-    copyMessage.textMessage = copyMessage.textMessage.slice(0, 250) + '...';
-  }
-
-  if (copyMessage.caption && copyMessage.caption.length > 150) {
-    copyMessage.caption = copyMessage.caption.slice(0, 150) + '...';
-  }
-
-  if (copyMessage.location && copyMessage.location.jpegThumbnail.length > 50) {
-    copyMessage.location.jpegThumbnail = copyMessage.location.jpegThumbnail.slice(0, 50) + '...';
-  }
-
-  if (copyMessage.quotedMessage) {
-    copyMessage.quotedMessage = JSON.parse(getJSONMessage(copyMessage.quotedMessage));
-  }
-
-  return JSON.stringify(copyMessage, null, 2);
 }

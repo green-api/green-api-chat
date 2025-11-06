@@ -5,6 +5,7 @@ import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
 
 import FileMessage from './file-message.component';
+import MessageErrorBoundary from './message-error-boundary.component';
 import MessageSenderInfo from './message-sender-info.component';
 import MessageTooltip from './message-tooltip/message-tooltip.component';
 import PollMessage from './poll-message.component';
@@ -63,38 +64,64 @@ const Message: FC<MessageProps> = ({ messageDataForRender, preview }) => {
 
   const [showDeletedMessage, setShowDeletedMessage] = useState(false);
 
-  let messageBody = (
-    <TextMessage
-      jsonMessage={jsonMessage}
-      textMessage={textMessage}
-      typeMessage={typeMessage}
-      downloadUrl={downloadUrl}
-      type={type}
-    />
-  );
+  let messageBody;
 
-  if (typeMessage === 'pollMessage' && pollMessageData) {
+  try {
     messageBody = (
-      <PollMessage
-        data={pollMessageData}
-        type={type}
-        senderName={senderName}
-        isMiniVersion={isMiniVersion}
-      />
+      <MessageErrorBoundary type={type} jsonMessage={jsonMessage}>
+        <TextMessage
+          jsonMessage={jsonMessage}
+          textMessage={textMessage}
+          typeMessage={typeMessage}
+          downloadUrl={downloadUrl}
+          type={type}
+        />
+      </MessageErrorBoundary>
     );
-  } else if (interactiveButtonsMessage) {
+
+    if (typeMessage === 'pollMessage' && pollMessageData) {
+      messageBody = (
+        <MessageErrorBoundary type={type} jsonMessage={jsonMessage}>
+          <PollMessage
+            data={pollMessageData}
+            type={type}
+            senderName={senderName}
+            isMiniVersion={isMiniVersion}
+          />
+        </MessageErrorBoundary>
+      );
+    } else if (interactiveButtonsMessage) {
+      messageBody = (
+        <MessageErrorBoundary type={type} jsonMessage={jsonMessage}>
+          <TemplateMessage interactiveButtonsMessage={interactiveButtonsMessage} type={type} />
+        </MessageErrorBoundary>
+      );
+    } else if (templateMessage) {
+      messageBody = (
+        <MessageErrorBoundary type={type} jsonMessage={jsonMessage}>
+          <TemplateMessage templateMessage={templateMessage} type={type} />
+        </MessageErrorBoundary>
+      );
+    } else if (downloadUrl && typeMessage !== 'stickerMessage' && !isMiniVersion) {
+      messageBody = (
+        <FileMessage
+          fileName={fileName}
+          typeMessage={typeMessage}
+          type={type}
+          downloadUrl={downloadUrl}
+        />
+      );
+    }
+  } catch (error) {
+    console.error('Ошибка при рендере сообщения:', error);
     messageBody = (
-      <TemplateMessage interactiveButtonsMessage={interactiveButtonsMessage} type={type} />
-    );
-  } else if (templateMessage) {
-    messageBody = <TemplateMessage templateMessage={templateMessage} type={type} />;
-  } else if (downloadUrl && typeMessage !== 'stickerMessage' && !isMiniVersion) {
-    messageBody = (
-      <FileMessage
-        fileName={fileName}
-        typeMessage={typeMessage}
+      <TextMessage
+        textMessage={t('UNABLE_TO_DISPLAY_MESSAGE', {
+          defaultValue: 'Невозможно отобразить сообщение',
+        })}
+        typeMessage="textMessage"
+        jsonMessage={jsonMessage}
         type={type}
-        downloadUrl={downloadUrl}
       />
     );
   }

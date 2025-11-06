@@ -62,7 +62,8 @@ const Chats: FC = () => {
           )}
         </Flex>
       </Flex>
-      {settings?.stateInstance === StateInstanceEnum.Authorized && (
+      {(settings?.stateInstance === StateInstanceEnum.Authorized ||
+        settings?.stateInstance === StateInstanceEnum.Suspended) && (
         <ChatList key={instanceCredentials?.idInstance} />
       )}
       {!isMiniVersion && (type === 'console-page' || type === 'partner-iframe') && (

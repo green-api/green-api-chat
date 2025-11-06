@@ -359,6 +359,7 @@ export enum StateInstanceEnum {
   Starting = 'starting',
   YellowCard = 'yellowCard',
   PendingCode = 'pendingCode',
+  Suspended = 'suspended',
 }
 
 export interface GetStateInstanceResponseInterface {

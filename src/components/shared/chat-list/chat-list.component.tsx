@@ -66,7 +66,7 @@ const ChatList: FC = () => {
       const updated = { ...prev };
       allMessages.forEach((msg) => {
         if (!updated[msg.chatId]) {
-          updated[msg.chatId] = msg.chatId.toLowerCase();
+          updated[msg.chatId] = msg.chatId?.toLowerCase();
         }
       });
       return updated;

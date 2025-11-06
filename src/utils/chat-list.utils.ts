@@ -126,9 +126,9 @@ export const filterContacts = (
   return Array.from(
     allMessages.reduce((acc, msg) => {
       const name = (contactNames[msg.chatId] || '').toLowerCase();
-      const chatId = msg.chatId.toLowerCase();
+      const chatId = msg.chatId?.toLowerCase();
 
-      if ((name.includes(query) || chatId.includes(query)) && !acc.has(msg.chatId)) {
+      if ((name.includes(query) || chatId?.includes(query)) && !acc.has(msg.chatId)) {
         acc.set(msg.chatId, msg);
       }
 

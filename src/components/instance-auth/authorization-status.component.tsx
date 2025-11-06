@@ -28,7 +28,7 @@ const AuthorizationStatus: FC<Properties> = ({ style }) => {
     color = 'var(--authorized-text-color)';
   } else if (isSuspended) {
     text = 'Suspended';
-    backgroundColor = '#fff6e4';
+    backgroundColor = 'var(--suspended-header-bg)';
     color = 'var(--suspended-header-color)';
   } else {
     text = t('NOT_AUTHORIZED');

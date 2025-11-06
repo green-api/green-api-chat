@@ -1,7 +1,5 @@
 import { FC } from 'react';
-
 import { useTranslation } from 'react-i18next';
-
 import { useInstanceSettings } from 'hooks/use-instance-settings.hook';
 import { StateInstanceEnum } from 'types';
 
@@ -11,7 +9,6 @@ interface Properties {
 
 const AuthorizationStatus: FC<Properties> = ({ style }) => {
   const { t } = useTranslation();
-
   const { settings, isLoading } = useInstanceSettings();
 
   const state = settings?.stateInstance;
@@ -19,6 +16,25 @@ const AuthorizationStatus: FC<Properties> = ({ style }) => {
   if (isLoading) return null;
 
   const isAuthorized = state === StateInstanceEnum.Authorized;
+  const isSuspended = state === StateInstanceEnum.Suspended;
+
+  let text = '';
+  let backgroundColor = '';
+  let color = '';
+
+  if (isAuthorized) {
+    text = t('AUTHORIZED');
+    backgroundColor = 'var(--authorized-header-color)';
+    color = 'var(--authorized-text-color)';
+  } else if (isSuspended) {
+    text = 'Suspended';
+    backgroundColor = 'var(--suspended-header-color)';
+    color = 'var(--suspended-text-color)';
+  } else {
+    text = t('NOT_AUTHORIZED');
+    backgroundColor = 'var(--not-authorized-header-color)';
+    color = 'var(--not-authorized-text-color)';
+  }
 
   return (
     <div
@@ -29,13 +45,11 @@ const AuthorizationStatus: FC<Properties> = ({ style }) => {
         width: 'fit-content',
         textWrap: 'nowrap',
         textAlign: 'center',
-        color: isAuthorized ? 'var(--authorized-text-color)' : 'var(--not-authorized-text-color)',
-        backgroundColor: isAuthorized
-          ? 'var(--authorized-header-color)'
-          : 'var(--not-authorized-header-color)',
+        color,
+        backgroundColor,
       }}
     >
-      {isAuthorized ? t('AUTHORIZED') : t('NOT_AUTHORIZED')}
+      {text}
     </div>
   );
 };

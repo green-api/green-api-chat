@@ -9,6 +9,7 @@ import { useActions, useAppSelector } from 'hooks';
 import { useInstanceSettings } from 'hooks/use-instance-settings.hook';
 import { selectUserSideActiveMode } from 'store/slices/chat.slice';
 import type { AsideItem } from 'types';
+import { useBreakpoint } from 'hooks/use-breakpoint.hook';
 
 interface AsideItemProps {
   asideItem: AsideItem;
@@ -19,7 +20,8 @@ const SETTINGS_ITEMS = ['instance', 'profile', 'logout'] as AsideItem['item'][];
 const AsideItem: FC<AsideItemProps> = ({ asideItem }) => {
   const activeAsideItem = useAppSelector(selectUserSideActiveMode);
 
-  const { setUserSideActiveMode } = useActions();
+  const { setUserSideActiveMode, setActiveChat } = useActions();
+  const { isMobile } = useBreakpoint();
 
   const { t } = useTranslation();
 
@@ -30,6 +32,7 @@ const AsideItem: FC<AsideItemProps> = ({ asideItem }) => {
   const handleSetActive = () => {
     if (asideItem.item === 'settings') return;
     setUserSideActiveMode(asideItem.item);
+    isMobile && setActiveChat(null);
   };
 
   const avatar = useMemo<string>(() => {

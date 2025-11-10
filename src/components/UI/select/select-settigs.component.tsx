@@ -6,11 +6,13 @@ import InstanceIcon from 'assets/instance-icon.svg?react';
 import LogoutIcon from 'assets/logout-icon.svg?react';
 import ProfileIcon from 'assets/profile-icon.svg?react';
 import { useActions } from 'hooks';
+import { useBreakpoint } from 'hooks/use-breakpoint.hook';
 import { UserSideActiveMode } from 'types';
 
 export const SettingsSelect = () => {
-  const { setUserSideActiveMode } = useActions();
+  const { setUserSideActiveMode, setActiveChat } = useActions();
   const { t } = useTranslation();
+  const { isMobile } = useBreakpoint();
 
   const SETTINGS_SELECT_ITEMS = [
     {
@@ -52,6 +54,7 @@ export const SettingsSelect = () => {
         items: SETTINGS_SELECT_ITEMS,
         onClick: ({ key }) => {
           setUserSideActiveMode(key as UserSideActiveMode);
+          isMobile && setActiveChat(null);
         },
       }}
     >

@@ -6,32 +6,18 @@ import { useTranslation } from 'react-i18next';
 
 import emptyAvatarButAvailable from 'assets/emptyAvatarButAvailable.svg';
 import AuthorizationStatus from 'components/instance-auth/authorization-status.component';
-import { useActions, useAppSelector } from 'hooks';
+import { useActions } from 'hooks';
 import { useInstanceSettings } from 'hooks/use-instance-settings.hook';
 import { useIsMaxInstance } from 'hooks/use-is-max-instance';
-import { useGetAvatarQuery } from 'services/green-api/endpoints';
-import { selectInstance } from 'store/slices/instances.slice';
 
 export const Profile = () => {
   const { setIsAuthorizingInstance } = useActions();
-  const selectedInstance = useAppSelector(selectInstance);
 
   const { t } = useTranslation();
 
   const { settings } = useInstanceSettings();
 
   const isMax = useIsMaxInstance();
-
-  const { data: avatar } = useGetAvatarQuery(
-    {
-      ...selectedInstance,
-      chatId: `${settings?.phone}@c.us`,
-    },
-    {
-      skip:
-        !selectedInstance?.idInstance || !selectedInstance?.apiTokenInstance || !settings?.phone,
-    }
-  );
 
   useEffect(() => {
     if (settings?.stateInstance === 'notAuthorized' && !isMax) {
@@ -51,7 +37,7 @@ export const Profile = () => {
         style={{ height: 150, backgroundColor: 'var(--profile-background)', position: 'relative' }}
       >
         <Avatar
-          src={avatar?.urlAvatar?.trim() ? avatar.urlAvatar : emptyAvatarButAvailable}
+          src={settings?.avatar ?? emptyAvatarButAvailable}
           size={115}
           style={{
             position: 'absolute',

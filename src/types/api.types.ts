@@ -523,3 +523,68 @@ export interface GetQRResponseInterface {
 export interface LogoutResponseInterface {
   isLogout: boolean;
 }
+
+export interface StartAuthorizationResponseInterface {
+  status: boolean;
+  data: {
+    status: 'success' | 'fail';
+    reason: string;
+  };
+}
+
+export interface SendMaxAuthCodeParametersInterface extends InstanceInterface {
+  code: string;
+}
+
+export type FlagRequest = 'yes' | 'no';
+export interface GetSettingsResponseInterface {
+  wid: string;
+  typeAccount: string;
+  typeInstance: string;
+  webhookUrl: string;
+  webhookUrlToken: string;
+  delaySendMessagesMilliseconds: number;
+  markIncomingMessagesReaded: FlagRequest;
+  markIncomingMessagesReadedOnReply: FlagRequest;
+  sharedSession: FlagRequest;
+  countryInstance: string;
+  outgoingWebhook: FlagRequest;
+  outgoingMessageWebhook: FlagRequest;
+  outgoingAPIMessageWebhook: FlagRequest;
+  stateWebhook: FlagRequest;
+  incomingWebhook: FlagRequest;
+  incomingBlockWebhook: FlagRequest;
+  deviceWebhook: FlagRequest;
+  statusInstanceWebhook: FlagRequest;
+  enableMessagesHistory: FlagRequest;
+  keepOnlineStatus: FlagRequest;
+  pollMessageWebhook: FlagRequest;
+  incomingCallWebhook: FlagRequest;
+  deletedMessageWebhook: FlagRequest;
+  editedMessageWebhook: FlagRequest;
+}
+
+export interface ExpandedGetSettingsInterface
+  extends GetSettingsResponseInterface,
+    Pick<
+      ExpandedInstanceInterface,
+      'idInstance' | 'name' | 'tariff' | 'expirationDate' | 'isExpired'
+    > {
+  proxyInstance: string;
+  avatarInfoWebhook: FlagRequest;
+  pollMessageWebhook: FlagRequest;
+  incomingCallWebhook: FlagRequest;
+}
+
+export type InstanceData = ExpandedGetSettingsInterface &
+  Pick<
+    ExpandedInstanceInterface,
+    | 'deleted'
+    | 'isFree'
+    | 'isPartner'
+    | 'partnerUserUiid'
+    | 'timeCreated'
+    | 'timeDeleted'
+    | 'typeInstance'
+  > &
+  Pick<InstanceInterface, 'apiTokenInstance' | 'apiUrl' | 'mediaUrl'>;

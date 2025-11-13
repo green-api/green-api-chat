@@ -161,6 +161,19 @@ const SelectInstance: FC = () => {
       fieldNames={{ value: 'idInstance' }}
       onSelect={(_, option: SelectInstanceItemInterface) => {
         const isChatWorkingFromStorage = getIsChatWorkingFromStorage(option.idInstance);
+        window.parent.postMessage(
+          {
+            event: 'selectInstance',
+            selectedInstance: {
+              idInstance: option.idInstance,
+              apiTokenInstance: option.apiTokenInstance,
+              apiUrl: option.apiUrl,
+              mediaUrl: option.mediaUrl,
+              typeInstance: option.typeInstance,
+            },
+          },
+          '*'
+        );
 
         setSelectedInstance({
           idInstance: option.idInstance,

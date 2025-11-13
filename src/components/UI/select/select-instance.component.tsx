@@ -19,6 +19,8 @@ const SelectInstance: FC = () => {
   const instanceList = useAppSelector(selectInstanceList);
   const selectedInstance = useAppSelector(selectInstance);
 
+  const { setUserSideActiveMode } = useActions();
+
   const { t } = useTranslation();
   const { setSelectedInstance, setActiveChat, setIsAuthorizingInstance } = useActions();
 
@@ -161,6 +163,19 @@ const SelectInstance: FC = () => {
       fieldNames={{ value: 'idInstance' }}
       onSelect={(_, option: SelectInstanceItemInterface) => {
         const isChatWorkingFromStorage = getIsChatWorkingFromStorage(option.idInstance);
+        window.parent.postMessage(
+          {
+            event: 'selectInstance',
+            selectedInstance: {
+              idInstance: option.idInstance,
+              apiTokenInstance: option.apiTokenInstance,
+              apiUrl: option.apiUrl,
+              mediaUrl: option.mediaUrl,
+              typeInstance: option.typeInstance,
+            },
+          },
+          '*'
+        );
 
         setSelectedInstance({
           idInstance: option.idInstance,
@@ -173,6 +188,7 @@ const SelectInstance: FC = () => {
         });
 
         setIsAuthorizingInstance(false);
+        setUserSideActiveMode('chats');
 
         setActiveChat(null);
       }}

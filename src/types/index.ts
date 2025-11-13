@@ -264,7 +264,8 @@ export type UserSideActiveMode =
   | 'calls'
   | 'archive'
   | 'instance'
-  | 'logout';
+  | 'logout'
+  | 'language';
 
 export interface SendingMethod {
   name: SendingMethodName;

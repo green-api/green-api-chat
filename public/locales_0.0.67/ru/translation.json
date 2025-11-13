@@ -235,5 +235,6 @@
   "REPLY": "Ответить",
   "DOWNLOAD": "Загрузить",
   "DOWNLOAD_ERROR": "Произошла ошибка при скачивании файла",
-  "UNABLE_TO_DISPLAY_MESSAGE": "Невозможно отобразить сообщение"
+  "UNABLE_TO_DISPLAY_MESSAGE": "Невозможно отобразить сообщение",
+  "LANGUAGE": "Язык"
 }

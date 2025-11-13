@@ -28,5 +28,6 @@ export const USER_SIDE_ITEMS: UserSideItem[] = [
   { item: 'chats', element: <Chats /> },
   { item: 'instance', element: <InstanceSettings /> },
   { item: 'profile', element: <Profile /> },
+  { item: 'language', element: <Profile /> },
   { item: 'logout', element: <Logout /> },
 ];

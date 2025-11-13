@@ -42,6 +42,16 @@ export const EXTERNAL_LINKS = {
   website_ru: 'https://green-api.com/',
   website_en: 'https://green-api.com/en/',
   website_he: 'https://green-api.org.il/',
+  userAgreement: {
+    ru: 'https://green-api.com/user-agreement',
+    he: 'https://green-api.org.il/user-agreement',
+    default: 'https://greenapi.com/user-agreement',
+  },
+  privacyPolicy: {
+    ru: 'https://green-api.com/privacy-policy',
+    he: 'https://green-api.org.il/privacy-policy',
+    default: 'https://greenapi.com/privacy-policy',
+  },
 };
 
 export const CONSOLE_URL = document.referrer;

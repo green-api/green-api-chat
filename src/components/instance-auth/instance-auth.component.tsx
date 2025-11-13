@@ -191,7 +191,7 @@ export const AuthInstance = () => {
     });
   };
 
-  if (stateInstance === StateInstanceEnum.Authorized) {
+  if (stateInstance === StateInstanceEnum.Authorized || isMax) {
     return null;
   }
 

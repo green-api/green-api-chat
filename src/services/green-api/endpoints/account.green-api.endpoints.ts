@@ -6,6 +6,8 @@ import {
   GetWaSettingsResponseInterface,
   InstanceInterface,
   LogoutResponseInterface,
+  SendMaxAuthCodeParametersInterface,
+  StartAuthorizationResponseInterface,
 } from 'types';
 
 export const accountGreenApiEndpoints = greenAPI.injectEndpoints({
@@ -54,6 +56,29 @@ export const accountGreenApiEndpoints = greenAPI.injectEndpoints({
     logout: builder.mutation<LogoutResponseInterface, InstanceInterface>({
       query: ({ idInstance, apiTokenInstance, apiUrl }) => ({
         url: `${apiUrl}waInstance${idInstance}/logout/${apiTokenInstance}`,
+      }),
+      invalidatesTags: (_, __, arguments_) => {
+        return [{ type: 'waSettings', id: arguments_.idInstance }];
+      },
+    }),
+    startAuthorization: builder.mutation<
+      StartAuthorizationResponseInterface,
+      CheckWhatsappParametersInterface
+    >({
+      query: ({ idInstance, apiTokenInstance, apiUrl, mediaUrl: _, ...body }) => ({
+        url: `${apiUrl}waInstance${idInstance}/startAuthorization/${apiTokenInstance}`,
+        method: 'POST',
+        body,
+      }),
+    }),
+    sendAuthorizationCode: builder.mutation<
+      StartAuthorizationResponseInterface,
+      SendMaxAuthCodeParametersInterface
+    >({
+      query: ({ idInstance, apiTokenInstance, apiUrl, mediaUrl: _, ...body }) => ({
+        url: `${apiUrl}waInstance${idInstance}/sendAuthorizationCode/${apiTokenInstance}`,
+        method: 'POST',
+        body,
       }),
       invalidatesTags: (_, __, arguments_) => {
         return [{ type: 'waSettings', id: arguments_.idInstance }];

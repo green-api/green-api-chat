@@ -1,0 +1,21 @@
+.max-auth-otp-input {
+  font-weight: 700;
+  font-size: 5rem;
+  height: 100px;
+  input {
+    height: 100px;
+  }
+}
+
+.otp-input {
+  width: 48px;
+  text-align: center;
+  font-size: 1.5rem;
+}
+
+@media (max-width: 480px) {
+  .otp-input {
+    font-size: 1.3rem;
+    width: 35px;
+  }
+}

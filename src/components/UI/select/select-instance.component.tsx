@@ -19,6 +19,8 @@ const SelectInstance: FC = () => {
   const instanceList = useAppSelector(selectInstanceList);
   const selectedInstance = useAppSelector(selectInstance);
 
+  const { setUserSideActiveMode } = useActions();
+
   const { t } = useTranslation();
   const { setSelectedInstance, setActiveChat, setIsAuthorizingInstance } = useActions();
 
@@ -186,6 +188,7 @@ const SelectInstance: FC = () => {
         });
 
         setIsAuthorizingInstance(false);
+        setUserSideActiveMode('chats');
 
         setActiveChat(null);
       }}

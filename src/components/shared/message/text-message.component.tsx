@@ -55,7 +55,6 @@ const TextMessage: FC<
         idMessage,
         ...selectedInstance,
       }).unwrap();
-      console.log(res);
 
       const updateChatHistoryThunk = journalsGreenApiEndpoints.util?.updateQueryData(
         'getChatHistory',

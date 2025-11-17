@@ -1,4 +1,4 @@
-import { SettingOutlined } from '@ant-design/icons';
+import { GlobalOutlined, SettingOutlined } from '@ant-design/icons';
 import { Dropdown, Flex } from 'antd';
 import { useTranslation } from 'react-i18next';
 
@@ -30,6 +30,15 @@ export const SettingsSelect = () => {
         <Flex gap={10} align="center">
           <ProfileIcon width={24} style={{ padding: '2px 0' }} />
           {t('PROFILE')}
+        </Flex>
+      ),
+    },
+    {
+      key: 'language',
+      label: (
+        <Flex gap={10} align="center">
+          <GlobalOutlined width={24} style={{ padding: '2px 4px', fontSize: 16 }} />
+          {t('LANGUAGE')}
         </Flex>
       ),
     },

@@ -43,7 +43,7 @@ const Chats: FC = () => {
         <Flex gap={20} align="center">
           <p style={{ fontSize: '1.5rem' }}>{t('CHAT_HEADER')}</p>
           <AuthorizationStatus />
-          {settings?.stateInstance === StateInstanceEnum.NotAuthorized && !isMax && (
+          {settings?.stateInstance === StateInstanceEnum.NotAuthorized && (
             <Button variant="outlined" onClick={() => setIsAuthorizingInstance(true)}>
               {t('AUTHORIZE')}
             </Button>

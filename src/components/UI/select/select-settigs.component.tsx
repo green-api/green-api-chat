@@ -29,7 +29,7 @@ export const SettingsSelect = () => {
       label: (
         <Flex gap={10} align="center">
           <ProfileIcon width={24} style={{ padding: '2px 0' }} />
-          {t('PROFILE')}
+          {t('PROFILE_TITLE')}
         </Flex>
       ),
     },

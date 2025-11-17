@@ -210,5 +210,6 @@
   "DOWNLOAD": "Download",
   "DOWNLOAD_ERROR": "An error occurred while downloading the file",
   "UNABLE_TO_DISPLAY_MESSAGE": "Unable to display message",
-  "LANGUAGE": "Language"
+  "LANGUAGE": "Language",
+  "AUTHORIZE": "Authorize"
 }

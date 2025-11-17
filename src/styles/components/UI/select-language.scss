@@ -43,5 +43,6 @@
 }
 
 .ant-select-arrow {
-  right: 35px !important;
+  position: absolute;
+  inset-inline-end: 35px !important;
 }

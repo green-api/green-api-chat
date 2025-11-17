@@ -107,7 +107,7 @@ const DeleteMessageForm: FC = () => {
         <Flex style={{ flexDirection: 'column-reverse' }} gap={20} align="flex-end">
           <Form.Item noStyle>
             <Button
-              style={{ width: 120 }}
+              // style={{ width: 120 }}
               size="middle"
               type="default"
               onClick={() => handleDelete(false)}

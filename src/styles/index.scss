@@ -387,3 +387,12 @@ Button.simpleType:disabled:hover {
 .ant-dropdown .ant-dropdown-menu .ant-dropdown-menu-item-icon {
   margin-inline-end: 20px !important;
 }
+
+html.dark-theme .ant-select-dropdown .ant-select-item.ant-select-item-option {
+  margin: 2px !important;
+}
+
+html.dark-theme .ant-select-dropdown .ant-select-item.ant-select-item-option:hover {
+  box-shadow: 0 0 0 1px var(--primary-color) !important;
+  border-color: transparent !important;
+}

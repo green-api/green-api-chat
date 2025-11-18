@@ -392,7 +392,7 @@ html.dark-theme .ant-select-dropdown .ant-select-item.ant-select-item-option {
   margin: 2px !important;
 }
 
-html.dark-theme .ant-select-dropdown .ant-select-item.ant-select-item-option:hover {
-  box-shadow: 0 0 0 1px var(--primary-color) !important;
-  border-color: transparent !important;
+html.dark-theme .ant-select-dropdown {
+  box-shadow: 0 0 0 2px var(--second-background) !important;
+  background-color: var(--second-background) !important ;
 }

@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 
 import TextArea from 'components/UI/text-area.component';
 import { useAppDispatch, useAppSelector, useFormWithLanguageValidation } from 'hooks';
+import { useIsMaxInstance } from 'hooks/use-is-max-instance';
 import { useCheckWhatsappMutation, useSendMessageMutation } from 'services/green-api/endpoints';
 import { journalsGreenApiEndpoints } from 'services/green-api/endpoints/journals.green-api.endpoints';
 import { selectMiniVersion } from 'store/slices/chat.slice';
@@ -13,7 +14,6 @@ import { selectInstance, selectIsChatWorking } from 'store/slices/instances.slic
 import { selectUser } from 'store/slices/user.slice';
 import { MessageInterface, NewChatFormValues } from 'types';
 import { getLastChats, isAuth } from 'utils';
-import { useIsMaxInstance } from 'hooks/use-is-max-instance';
 
 interface NewChatFormProps {
   onSubmitCallback?: () => void;

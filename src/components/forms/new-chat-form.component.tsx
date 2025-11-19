@@ -13,6 +13,7 @@ import { selectInstance, selectIsChatWorking } from 'store/slices/instances.slic
 import { selectUser } from 'store/slices/user.slice';
 import { MessageInterface, NewChatFormValues } from 'types';
 import { getLastChats, isAuth } from 'utils';
+import { useIsMaxInstance } from 'hooks/use-is-max-instance';
 
 interface NewChatFormProps {
   onSubmitCallback?: () => void;
@@ -23,6 +24,7 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
   const user = useAppSelector(selectUser);
   const isMiniVersion = useAppSelector(selectMiniVersion);
   const isChatWorking = useAppSelector(selectIsChatWorking);
+  const isMax = useIsMaxInstance();
 
   const dispatch = useAppDispatch();
 
@@ -51,7 +53,7 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
     ]);
 
     const isGroupChat = /\d{17}/.test(chatId);
-    const fullChatId = isGroupChat ? `${chatId}@g.us` : `${chatId}@c.us`;
+    const fullChatId = isMax ? chatId : isGroupChat ? `${chatId}@g.us` : `${chatId}@c.us`;
 
     let addNewChatInList = !isGroupChat;
 
@@ -142,7 +144,7 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
         }}
         rules={[
           { required: true, message: t('EMPTY_FIELD_ERROR') },
-          { min: 9, message: t('CHAT_ID_INVALID_VALUE_MESSAGE') },
+          { min: isMax ? 8 : 9, message: t('CHAT_ID_INVALID_VALUE_MESSAGE') },
         ]}
         validateDebounce={800}
         required

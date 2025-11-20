@@ -11,9 +11,7 @@ import { isHydrateAction } from 'utils/hydrate';
 export const persistedMethods = createApi({
   reducerPath: 'groupPersistentAPI',
   baseQuery: fetchBaseQuery({ baseUrl: '/' }),
-  keepUnusedDataFor: 180,
   extractRehydrationInfo(action, { reducerPath }): any {
-    console.log(action.key === reducerPath);
     if (isHydrateAction(action)) {
       if (action.key === reducerPath) {
         return action.payload;

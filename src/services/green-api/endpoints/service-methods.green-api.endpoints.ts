@@ -3,7 +3,6 @@ import {
   CheckWhatsappParametersInterface,
   CheckWhatsappResponseInterface,
   EditMessageParameters,
-  GetAvatarResponseInterface,
   GetChatInformationParameters,
   GetContactInfoResponseInterface,
   RequestWithChatIdParameters,
@@ -23,15 +22,6 @@ export const serviceMethodsGreenApiEndpoints = greenAPI.injectEndpoints({
         method: 'POST',
         body,
       }),
-    }),
-    getAvatar: builder.query<GetAvatarResponseInterface, RequestWithChatIdParameters>({
-      query: ({ idInstance, apiTokenInstance, apiUrl, mediaUrl: _, ...body }) => ({
-        url: `${apiUrl}waInstance${idInstance}/getAvatar/${apiTokenInstance}`,
-        method: 'POST',
-        body,
-      }),
-      keepUnusedDataFor: 1000,
-      providesTags: (result, error, { chatId }) => [{ type: 'avatar', id: chatId }],
     }),
     uploadFile: builder.mutation<
       Pick<SendFileByUrlParametersInterface, 'urlFile'>,

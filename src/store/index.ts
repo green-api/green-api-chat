@@ -1,4 +1,6 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
+import { FLUSH, PAUSE, PERSIST, persistReducer, PURGE, REGISTER, REHYDRATE } from 'redux-persist';
+import storage from 'redux-persist/es/storage';
 
 import { listenerMiddleware } from './auth-middleware';
 import { qrInstructionReducer } from './slices/qr-instruction.slice';
@@ -9,6 +11,7 @@ import instancesReducer from 'store/slices/instances.slice';
 import messageMenuReducer from 'store/slices/message-menu.slice';
 import themeReducer from 'store/slices/theme.slice';
 import userReducer from 'store/slices/user.slice';
+import { persistedMethods } from 'services/green-api/endpoints/persisted-methods.green-api.endpoints';
 
 const rootReducer = combineReducers({
   userReducer,
@@ -19,18 +22,31 @@ const rootReducer = combineReducers({
   qrInstructionReducer,
   [appAPI.reducerPath]: appAPI.reducer,
   [greenAPI.reducerPath]: greenAPI.reducer,
+  [persistedMethods.reducerPath]: persistedMethods.reducer,
 });
+const persistConfig = {
+  key: 'root',
+  version: 1,
+  storage,
+  whitelist: [persistedMethods.reducerPath],
+};
 
-export const setupStore = (preloadedState?: RootState) =>
+const persistedReducer = persistReducer(persistConfig, rootReducer);
+
+export const setupStore = () =>
   configureStore({
-    reducer: rootReducer,
+    reducer: persistedReducer,
     middleware: (getDefaultMiddleware) =>
-      getDefaultMiddleware().concat(
+      getDefaultMiddleware({
+        serializableCheck: {
+          ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+        },
+      }).concat(
         listenerMiddleware.middleware,
         appAPI.middleware,
-        greenAPI.middleware
+        greenAPI.middleware,
+        persistedMethods.middleware
       ),
-    preloadedState,
   });
 
 export type RootState = ReturnType<typeof rootReducer>;

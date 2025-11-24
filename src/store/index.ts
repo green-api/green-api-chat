@@ -1,7 +1,5 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { FLUSH, PAUSE, PERSIST, persistReducer, PURGE, REGISTER, REHYDRATE } from 'redux-persist';
-import storage from 'redux-persist/es/storage';
-import expireReducer from 'redux-persist-expire';
 
 import { listenerMiddleware } from './auth-middleware';
 import { qrInstructionReducer } from './slices/qr-instruction.slice';
@@ -26,20 +24,54 @@ const rootReducer = combineReducers({
   [persistedMethods.reducerPath]: persistedMethods.reducer,
 });
 
-const transforms = [
-  expireReducer(persistedMethods.reducerPath, {
-    expireSeconds: 180,
-    expiredState: {},
-    autoExpire: true,
-  }),
-];
+const storageWithTimestamp = {
+  getItem: async (key: string): Promise<string | null> => {
+    try {
+      const raw = localStorage.getItem(key);
+      if (!raw) return null;
+
+      const wrapped = JSON.parse(raw);
+      return JSON.stringify(wrapped.state ?? null);
+    } catch {
+      return null;
+    }
+  },
+
+  setItem: async (key: string, value: string): Promise<void> => {
+    try {
+      const existingRaw = localStorage.getItem(key);
+      let timestamp = Date.now();
+
+      if (existingRaw) {
+        const parsed = JSON.parse(existingRaw);
+        const EXPIRE_MS = 3 * 60 * 1000;
+
+        if (parsed.timestamp && Date.now() - parsed.timestamp < EXPIRE_MS) {
+          timestamp = parsed.timestamp;
+        }
+      }
+
+      const wrapped = {
+        state: JSON.parse(value),
+        timestamp,
+      };
+
+      localStorage.setItem(key, JSON.stringify(wrapped));
+    } catch (err) {
+      console.error('persist setItem error:', err);
+    }
+  },
+
+  removeItem: async (key: string): Promise<void> => {
+    localStorage.removeItem(key);
+  },
+};
 
 const persistConfig = {
   key: 'root',
   version: 1,
-  storage,
+  storage: storageWithTimestamp,
   whitelist: [persistedMethods.reducerPath],
-  transforms,
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

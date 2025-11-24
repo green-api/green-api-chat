@@ -1,4 +1,5 @@
 import { FC, useEffect, useLayoutEffect, useState } from 'react';
+
 import { Layout, message } from 'antd';
 import i18n from 'i18next';
 import { useTranslation } from 'react-i18next';
@@ -17,8 +18,8 @@ import {
   useLazyGetGroupDataQuery,
 } from 'services/green-api/endpoints';
 import { selectMiniVersion, selectType } from 'store/slices/chat.slice';
-import { selectUser } from 'store/slices/user.slice';
 import { selectInstance, selectInstanceList } from 'store/slices/instances.slice';
+import { selectUser } from 'store/slices/user.slice';
 import { MessageData, MessageEventTypeEnum, TariffsEnum } from 'types';
 import {
   isAuth,

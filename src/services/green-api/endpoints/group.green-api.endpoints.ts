@@ -1,7 +1,6 @@
 import { greenAPI } from 'services/green-api/green-api.service';
 import {
   AddGroupParticipantResponseInterface,
-  GetGroupDataResponseInterface,
   GroupBaseParametersInterface,
   UpdateGroupNameInterface,
   UpdateGroupNameResponseInterface,
@@ -16,17 +15,6 @@ import {
 
 export const groupGreenApiEndpoints = greenAPI.injectEndpoints({
   endpoints: (builder) => ({
-    getGroupData: builder.query<GetGroupDataResponseInterface, GroupBaseParametersInterface>({
-      query: ({ idInstance, apiTokenInstance, apiUrl, mediaUrl: _, ...body }) => ({
-        url: `${apiUrl}waInstance${idInstance}/getGroupData/${apiTokenInstance}`,
-        method: 'POST',
-        body,
-      }),
-      keepUnusedDataFor: 1000,
-      providesTags: (result, error, { groupId, chatId }) => {
-        return [{ type: 'groupData', id: chatId ?? groupId }];
-      },
-    }),
     updateGroupName: builder.mutation<UpdateGroupNameResponseInterface, UpdateGroupNameInterface>({
       query: ({ idInstance, apiTokenInstance, apiUrl, mediaUrl: _, ...body }) => ({
         url: `${apiUrl}waInstance${idInstance}/updateGroupName/${apiTokenInstance}`,

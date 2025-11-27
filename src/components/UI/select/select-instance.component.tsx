@@ -1,17 +1,27 @@
-import { FC, useEffect, useRef, useState, useMemo } from 'react';
+import { FC, useEffect, useState, useMemo, useRef } from 'react';
 
-import { Select, Spin } from 'antd';
-import { BaseSelectRef } from 'rc-select';
+import { Flex } from 'antd';
+import VirtualList from 'rc-virtual-list';
 import { useTranslation } from 'react-i18next';
 
 import SelectInstanceLabel from './select-instance-label.component';
+import { Search } from '../search.component';
 import { useActions, useAppSelector } from 'hooks';
 import { useGetInstancesQuery } from 'services/app/endpoints';
 import { selectType } from 'store/slices/chat.slice';
 import { selectInstance, selectInstanceList } from 'store/slices/instances.slice';
 import { selectUser } from 'store/slices/user.slice';
-import { SelectInstanceItemInterface } from 'types';
 import { getIsChatWorkingFromStorage } from 'utils';
+
+function moveSelectedToTop<T extends { idInstance: number }>(list: T[], selectedId?: number): T[] {
+  if (!selectedId) return list;
+  const index = list.findIndex((i) => i.idInstance === selectedId);
+  if (index <= 0) return list;
+  const copy = [...list];
+  const [target] = copy.splice(index, 1);
+  copy.unshift(target);
+  return copy;
+}
 
 const SelectInstance: FC = () => {
   const type = useAppSelector(selectType);
@@ -20,179 +30,126 @@ const SelectInstance: FC = () => {
   const selectedInstance = useAppSelector(selectInstance);
 
   const { setUserSideActiveMode } = useActions();
-
-  const { t } = useTranslation();
   const { setSelectedInstance, setActiveChat, setIsAuthorizingInstance } = useActions();
+  const { t } = useTranslation();
 
-  const {
-    isLoading: isLoadingInstances,
-    data: instancesRequestData,
-    isSuccess: isSuccessLoadingInstances,
-  } = useGetInstancesQuery(
+  const { isLoading } = useGetInstancesQuery(
     { idUser, apiTokenUser, projectId },
     { skip: !idUser || !apiTokenUser || ['console-page', 'tab'].includes(type) }
   );
 
-  const [instances, setInstances] = useState<SelectInstanceItemInterface[] | undefined>();
-  const [page, setPage] = useState(1);
-  const [searchValue, setSearchValue] = useState('');
-  const setPageTimerReference = useRef<ReturnType<typeof setTimeout>>();
-  const selectReference = useRef<BaseSelectRef>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [listHeight, setListHeight] = useState(window.innerHeight);
 
-  const limit = 10;
-
-  const formattedInstanceList = useMemo(() => {
-    if (!instanceList) return undefined;
-    return instanceList.map((instance) => ({
-      ...instance,
-      label: <SelectInstanceLabel {...instance} />,
-    }));
-  }, [instanceList]);
+  const searchRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    if (isLoadingInstances) return;
+    const recalcHeight = () => {
+      if (!searchRef.current) return;
+      const rect = searchRef.current.getBoundingClientRect();
+      const available = window.innerHeight - rect.bottom - 20;
+      setListHeight(available > 0 ? available : 0);
+    };
 
-    if (instancesRequestData?.result && Array.isArray(instancesRequestData?.data)) {
-      let countInstances = 0;
+    recalcHeight();
+    window.addEventListener('resize', recalcHeight);
+    return () => window.removeEventListener('resize', recalcHeight);
+  }, []);
 
-      const searchValueInLowerCase = searchValue.toLowerCase();
-      const bufferInstances: SelectInstanceItemInterface[] = [];
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value.replace(/\D/g, ''));
+  };
 
-      for (const instance of instancesRequestData.data) {
-        if (instance.deleted || countInstances >= page * limit) continue;
+  const rawList = useMemo(() => {
+    return moveSelectedToTop(
+      instanceList?.filter((i) => !i.deleted) ?? [],
+      selectedInstance?.idInstance
+    );
+  }, [instanceList, selectedInstance?.idInstance]);
 
-        if (
-          searchValueInLowerCase &&
-          !`${instance?.idInstance}`.includes(searchValueInLowerCase) &&
-          !instance.name.toLowerCase().includes(searchValueInLowerCase)
-        ) {
-          continue;
-        }
-
-        countInstances++;
-        bufferInstances.push({ ...instance, label: <SelectInstanceLabel {...instance} /> });
-      }
-
-      setInstances(bufferInstances);
-
-      const scrollTimer = setTimeout(() => {
-        if (!selectReference.current) return;
-        selectReference.current.scrollTo({ index: countInstances - limit });
-      }, 100);
-
-      return () => clearTimeout(scrollTimer);
-    }
-
-    setInstances([]);
-  }, [instancesRequestData, page, searchValue, isLoadingInstances]);
+  const filteredList = useMemo(() => {
+    if (!searchQuery) return rawList;
+    return rawList.filter((i) => String(i.idInstance).includes(searchQuery));
+  }, [rawList, searchQuery]);
 
   useEffect(() => {
-    if (isLoadingInstances) return;
+    if (!filteredList.length) return;
 
-    const sourceList = formattedInstanceList?.length ? formattedInstanceList : instances;
+    const currentId = selectedInstance?.idInstance;
+    const found = currentId ? filteredList.find((i) => i.idInstance === currentId) : null;
+    const next = found ?? filteredList[0];
 
-    if (!sourceList?.length) return;
+    if (next.idInstance === currentId) return;
 
-    if (selectedInstance?.idInstance) {
-      const defaultInstance = sourceList.find(
-        ({ idInstance }) => idInstance === selectedInstance.idInstance
-      );
-
-      if (defaultInstance && defaultInstance.idInstance !== 0) {
-        setSelectedInstance({
-          idInstance: defaultInstance.idInstance,
-          apiTokenInstance: defaultInstance.apiTokenInstance,
-          apiUrl: defaultInstance.apiUrl,
-          mediaUrl: defaultInstance.mediaUrl,
-          tariff: defaultInstance.tariff,
-          typeInstance: defaultInstance.typeInstance,
-        });
-        return;
-      }
-    }
-
-    const firstInstance = sourceList[0];
     setSelectedInstance({
-      idInstance: firstInstance.idInstance,
-      apiTokenInstance: firstInstance.apiTokenInstance,
-      apiUrl: firstInstance.apiUrl,
-      mediaUrl: firstInstance.mediaUrl,
-      tariff: firstInstance.tariff,
-      typeInstance: firstInstance.typeInstance,
+      idInstance: next.idInstance,
+      apiTokenInstance: next.apiTokenInstance,
+      apiUrl: next.apiUrl,
+      mediaUrl: next.mediaUrl,
+      tariff: next.tariff,
+      typeInstance: next.typeInstance,
     });
-  }, [formattedInstanceList, instances, isSuccessLoadingInstances, isLoadingInstances]);
+  }, [filteredList, selectedInstance?.idInstance]);
 
-  if (isLoadingInstances || !instances) {
-    return <Spin />;
-  }
+  if (isLoading) return null;
 
   return (
-    <Select
-      size="large"
-      showSearch
-      style={{
-        margin: type === 'console-page' ? '16px 0' : '8px 0',
-        width: '100%',
-      }}
-      placeholder={t('SELECT_INSTANCE_PLACEHOLDER')}
-      value={selectedInstance?.idInstance}
-      options={formattedInstanceList ?? instances}
-      ref={selectReference}
-      filterOption={(inputValue, option) =>
-        `${option?.idInstance}`.includes(inputValue) ||
-        `${option?.name.toLowerCase()}`.includes(inputValue.toLowerCase())
-      }
-      onPopupScroll={({ target }) => {
-        const typedTarget = target as HTMLElement;
-        if (
-          typedTarget.scrollTop + typedTarget.offsetHeight + 50 >= typedTarget.scrollHeight &&
-          instancesRequestData?.result &&
-          instancesRequestData.data.length > page * limit
-        ) {
-          clearTimeout(setPageTimerReference.current);
-          setPageTimerReference.current = setTimeout(
-            () => setPage((previousPage) => previousPage + 1),
-            200
-          );
-        }
-      }}
-      onSearch={(value) => {
-        setSearchValue(value);
-        setPage(1);
-      }}
-      fieldNames={{ value: 'idInstance' }}
-      onSelect={(_, option: SelectInstanceItemInterface) => {
-        const isChatWorkingFromStorage = getIsChatWorkingFromStorage(option.idInstance);
-        window.parent.postMessage(
-          {
-            event: 'selectInstance',
-            selectedInstance: {
-              idInstance: option.idInstance,
-              apiTokenInstance: option.apiTokenInstance,
-              apiUrl: option.apiUrl,
-              mediaUrl: option.mediaUrl,
-              typeInstance: option.typeInstance,
-            },
-          },
-          '*'
-        );
+    <Flex vertical gap={8} style={{ height: '100vh' }}>
+      <div ref={searchRef}>
+        <Search searchQuery={searchQuery} t={t} handleChange={handleSearchChange} />
+      </div>
 
-        setSelectedInstance({
-          idInstance: option.idInstance,
-          apiTokenInstance: option.apiTokenInstance,
-          apiUrl: option.apiUrl,
-          mediaUrl: option.mediaUrl,
-          tariff: option.tariff,
-          isChatWorking: isChatWorkingFromStorage,
-          typeInstance: option.typeInstance,
-        });
+      <div style={{ margin: '0 12px' }}>
+        <VirtualList data={filteredList} itemHeight={56} itemKey="idInstance" height={listHeight}>
+          {(item) => (
+            <div
+              key={item.idInstance}
+              onClick={() => {
+                const isChatWorking = getIsChatWorkingFromStorage(item.idInstance);
 
-        setIsAuthorizingInstance(false);
-        setUserSideActiveMode('chats');
+                window.parent.postMessage(
+                  {
+                    event: 'selectInstance',
+                    selectedInstance: {
+                      idInstance: item.idInstance,
+                      apiTokenInstance: item.apiTokenInstance,
+                      apiUrl: item.apiUrl,
+                      mediaUrl: item.mediaUrl,
+                      typeInstance: item.typeInstance,
+                    },
+                  },
+                  '*'
+                );
 
-        setActiveChat(null);
-      }}
-    />
+                setSelectedInstance({
+                  idInstance: item.idInstance,
+                  apiTokenInstance: item.apiTokenInstance,
+                  apiUrl: item.apiUrl,
+                  mediaUrl: item.mediaUrl,
+                  tariff: item.tariff,
+                  isChatWorking,
+                  typeInstance: item.typeInstance,
+                });
+
+                setIsAuthorizingInstance(false);
+                setUserSideActiveMode('chats');
+                setActiveChat(null);
+              }}
+              style={{
+                padding: '6px 12px',
+                cursor: 'pointer',
+                background:
+                  selectedInstance?.idInstance === item.idInstance
+                    ? 'var(--authorized-header-color)'
+                    : 'transparent',
+              }}
+            >
+              <SelectInstanceLabel {...item} />
+            </div>
+          )}
+        </VirtualList>
+      </div>
+    </Flex>
   );
 };
 

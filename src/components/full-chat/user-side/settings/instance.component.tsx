@@ -8,7 +8,7 @@ export const InstanceSettings = () => {
 
   return (
     <Flex className="settings" vertical>
-      <p style={{ fontSize: '1.5rem' }}>{t('INSTANCE')}</p>
+      <p style={{ fontSize: '1.5rem', padding: '6px 20px' }}>{t('INSTANCE')}</p>
       <SelectInstance />
     </Flex>
   );

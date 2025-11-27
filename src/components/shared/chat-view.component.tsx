@@ -118,7 +118,7 @@ const ChatView: FC = () => {
         element.scrollTo({ top: element.scrollHeight, behavior: 'smooth' });
       }, 10);
     }
-  }, [messages, templates]);
+  }, [count, templates]);
 
   const loaderVisible = !isMiniVersion && isFetching;
 

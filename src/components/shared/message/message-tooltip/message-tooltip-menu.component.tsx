@@ -17,7 +17,7 @@ const MessageTooltipMenu: FC<MessageTooltipMenuProps> = ({ onMenuItemClick }) =>
 
   const { t } = useTranslation();
 
-  const { setMessageMenuActiveMode, setActiveServiceMethod } = useActions();
+  const { setMessageMenuActiveMode, setActiveServiceMethod, setReplyMessage } = useActions();
 
   const getMenuData = () => {
     if (!messageData) return [];
@@ -27,6 +27,14 @@ const MessageTooltipMenu: FC<MessageTooltipMenuProps> = ({ onMenuItemClick }) =>
         key: 'messageInfo',
         label: t('MESSAGE_INFO'),
         onClick: () => setMessageMenuActiveMode('messageInfo'),
+      },
+      {
+        key: 'reply',
+        label: t('REPLY'),
+        onClick: () => {
+          setReplyMessage(messageData);
+          onMenuItemClick();
+        },
       },
     ];
 

@@ -101,12 +101,10 @@ export function getMessageTypeIcon(typeMessage: TypeMessage, downloadUrl?: strin
 
 export function getFormattedMessage(textMessage: string): Renderable {
   const formattedText = TextFormatter(textMessage);
-
   if (!formattedText) {
     return textMessage;
   }
-
-  return parse(formattedText);
+  return <span>{parse(formattedText)}</span>;
 }
 
 export function fillString(string: string, data: string[]) {

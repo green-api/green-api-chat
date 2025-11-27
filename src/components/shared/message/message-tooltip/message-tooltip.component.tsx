@@ -7,6 +7,7 @@ import useMessage from 'antd/es/message/useMessage';
 import MessageInfo from './message-info.component';
 import MessageTooltipMenu from './message-tooltip-menu.component';
 import { useActions, useAppSelector } from 'hooks';
+import { useBreakpoint } from 'hooks/use-breakpoint.hook';
 import { selectMiniVersion } from 'store/slices/chat.slice';
 import {
   selectActiveServiceMethod,
@@ -36,6 +37,8 @@ const MessageTooltip: FC<PropsWithChildren<MessageTooltipProps>> = ({
 
   const [visible, setIsVisible] = useState(false);
 
+  const { isMobile } = useBreakpoint();
+
   const onOpenChange = (visible: boolean) => {
     if (visible && !isQuotedMessage) {
       setMessageDataForRender(messageDataForRender);
@@ -58,7 +61,12 @@ const MessageTooltip: FC<PropsWithChildren<MessageTooltipProps>> = ({
           <MessageTooltipMenu onMenuItemClick={() => setIsVisible(false)} />
         )
       }
-      overlayStyle={{ maxWidth: 450, lineHeight: 'initial', fontSize: 13 }}
+      overlayStyle={{
+        maxWidth: isMobile ? 300 : 350,
+        lineHeight: 'initial',
+        fontSize: 13,
+        marginInlineEnd: isMobile ? 20 : 0,
+      }}
       onOpenChange={onOpenChange}
       arrow={isQuotedMessage || isMiniVersion}
       open={visible}

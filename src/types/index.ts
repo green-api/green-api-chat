@@ -45,6 +45,7 @@ export interface ChatState {
   searchQuery: string;
   description?: string;
   brandImgUrl?: string;
+  replyMessage: MessageDataForRender | null;
 }
 
 export type ChatType =
@@ -264,7 +265,8 @@ export type UserSideActiveMode =
   | 'calls'
   | 'archive'
   | 'instance'
-  | 'logout';
+  | 'logout'
+  | 'language';
 
 export interface SendingMethod {
   name: SendingMethodName;

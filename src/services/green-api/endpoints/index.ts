@@ -1,6 +1,7 @@
 import { accountGreenApiEndpoints } from './account.green-api.endpoints';
 import { groupGreenApiEndpoints } from './group.green-api.endpoints';
 import { journalsGreenApiEndpoints } from './journals.green-api.endpoints';
+import { persistedMethods } from './persisted-methods.green-api.endpoints';
 import { receivingGreenApiEndpoints } from './receiving.green-api.endpoints';
 import { sendingGreenApiEndpoints } from './sending.green-api.endpoints';
 import { serviceMethodsGreenApiEndpoints } from './service-methods.green-api.endpoints';
@@ -10,13 +11,10 @@ import { wabaGreenApiEndpoints } from './waba.green-api.endpoints';
 export const {
   useSendMessageMutation,
   useGetChatHistoryQuery,
-  useGetGroupDataQuery,
   useGetContactInfoQuery,
   useLazyGetGroupDataQuery,
   useLazyGetContactInfoQuery,
   useCheckWhatsappMutation,
-  useGetAvatarQuery,
-  useLazyGetAvatarQuery,
   useLastMessagesQuery,
   useSendFileByUploadMutation,
   useSendContactMutation,
@@ -46,6 +44,12 @@ export const {
   useLazyLastMessagesQuery,
   useLogoutMutation,
   useLazyGetStateInstanceQuery,
+  useDownloadFileMutation,
+  useStartAuthorizationMutation,
+  useSendAuthorizationCodeMutation,
+  useGetGroupDataQuery,
+  useGetAvatarQuery,
+  useLazyGetAvatarQuery,
 } = {
   ...accountGreenApiEndpoints,
   ...sendingGreenApiEndpoints,
@@ -55,4 +59,5 @@ export const {
   ...serviceMethodsGreenApiEndpoints,
   ...wabaGreenApiEndpoints,
   ...statusesGreenApiEndpoints,
+  ...persistedMethods,
 };

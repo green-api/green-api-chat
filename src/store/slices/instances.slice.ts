@@ -5,13 +5,30 @@ import { InstancesState, TariffsEnum, TypeInstance } from 'types';
 
 const getInitialStateFromStorage = (): Partial<InstancesState> | null => {
   try {
-    const initialStateFromStorage = localStorage.getItem('selectedInstance');
-    if (!initialStateFromStorage) return null;
+    const params = new URLSearchParams(window.location.search);
 
-    const parsed = JSON.parse(initialStateFromStorage) as Partial<InstancesState>;
+    const idInstance = params.get('idInstance');
+    const apiTokenInstance = params.get('apiTokenInstance');
+    const apiUrl = params.get('apiUrl');
+    const mediaUrl = params.get('mediaUrl');
+
+    const initialStateFromStorage = localStorage.getItem('selectedInstance');
+    const parsed = initialStateFromStorage
+      ? (JSON.parse(initialStateFromStorage) as Partial<InstancesState>)
+      : {};
+
+    const selectedInstance =
+      idInstance && apiTokenInstance && apiUrl && mediaUrl
+        ? {
+            idInstance: Number(idInstance),
+            apiTokenInstance,
+            apiUrl,
+            mediaUrl,
+          }
+        : parsed.selectedInstance ?? undefined;
 
     return {
-      selectedInstance: parsed.selectedInstance,
+      selectedInstance,
       tariff: parsed.tariff,
       isChatWorking: parsed.isChatWorking ?? null,
       typeInstance: parsed.typeInstance ?? 'whatsapp',

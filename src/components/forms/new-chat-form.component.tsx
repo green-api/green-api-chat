@@ -90,7 +90,7 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
       if (addNewChatInList) {
         const updateChatListThunk = journalsGreenApiEndpoints.util?.updateQueryData(
           'lastMessages',
-          instanceCredentials,
+          { allMessages: true, ...instanceCredentials },
           (draftChatHistory) => {
             const newMessage: MessageInterface = {
               type: 'outgoing',

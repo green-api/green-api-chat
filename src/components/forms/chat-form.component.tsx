@@ -1,14 +1,21 @@
 import { FC, useCallback, useEffect, useRef, useState } from 'react';
 
 import { SendOutlined } from '@ant-design/icons';
-import { Button, Col, Form, Row } from 'antd';
+import { Button, Flex, Form } from 'antd';
 import { useTranslation } from 'react-i18next';
 
+import { ReplyMessage } from 'components/full-chat/user-side/chats/reply-message.component';
+import SelectSendingMode from 'components/UI/select/select-sending-mode.component';
 import TextArea from 'components/UI/text-area.component';
-import { useAppDispatch, useAppSelector, useFormWithLanguageValidation } from 'hooks';
+import { useActions, useAppDispatch, useAppSelector, useFormWithLanguageValidation } from 'hooks';
 import { useSendMessageMutation } from 'services/green-api/endpoints';
 import { journalsGreenApiEndpoints } from 'services/green-api/endpoints/journals.green-api.endpoints';
-import { selectActiveChat, selectMessageCount, selectMiniVersion } from 'store/slices/chat.slice';
+import {
+  selectActiveChat,
+  selectReplyMessage,
+  selectMessageCount,
+  selectMiniVersion,
+} from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
 import { selectPlatform } from 'store/slices/user.slice';
 import { ActiveChat, ChatFormValues, MessageInterface } from 'types';
@@ -20,6 +27,9 @@ const ChatForm: FC = () => {
   const isMiniVersion = useAppSelector(selectMiniVersion);
   const messageCount = useAppSelector(selectMessageCount);
   const platform = useAppSelector(selectPlatform);
+  const replyMessage = useAppSelector(selectReplyMessage);
+
+  const { setReplyMessage } = useActions();
 
   const dispatch = useAppDispatch();
 
@@ -46,6 +56,10 @@ const ChatForm: FC = () => {
       chatId: activeChat.chatId,
       message,
     };
+
+    if (replyMessage?.idMessage) {
+      Object.assign(body, { quotedMessageId: replyMessage.idMessage });
+    }
 
     if (responseTimerReference.current) {
       clearTimeout(responseTimerReference.current);
@@ -79,17 +93,30 @@ const ChatForm: FC = () => {
             return;
           }
 
-          draftChatHistory.push({
-            type: 'outgoing',
-            typeMessage: 'textMessage',
+          const newMessage = {
+            type: 'outgoing' as const,
+            typeMessage: 'textMessage' as const,
             textMessage: message,
             timestamp: Math.floor(Date.now() / 1000),
             senderName: activeChat.senderName || '',
             senderContactName: activeChat.senderContactName || '',
             idMessage: data.idMessage,
             chatId: activeChat.chatId,
-            statusMessage: 'sent',
-          });
+            statusMessage: 'sent' as const,
+          };
+
+          if (replyMessage?.idMessage) {
+            Object.assign(newMessage, {
+              quotedMessage: {
+                stanzaId: replyMessage.idMessage,
+                participant: JSON.parse(replyMessage?.jsonMessage).chatId,
+                textMessage: replyMessage.textMessage,
+              },
+              typeMessage: 'extendedTextMessage',
+            });
+          }
+
+          draftChatHistory.push(newMessage);
 
           return draftChatHistory;
         }
@@ -121,6 +148,7 @@ const ChatForm: FC = () => {
       form.resetFields();
 
       setInputValue('');
+      setReplyMessage(null);
 
       setTimeout(() => textAreaRef.current?.focus(), 100);
 
@@ -155,34 +183,40 @@ const ChatForm: FC = () => {
       disabled={isSendMessageLoading}
     >
       <Form.Item style={{ marginBottom: 0 }} name="response" className="response-form-item">
-        <Row gutter={[15, 15]} align={isMiniVersion ? 'bottom' : 'middle'}>
-          <Col flex="auto">
-            <Form.Item
-              style={{ marginBottom: 0 }}
-              name="message"
-              normalize={(value) => {
-                form.setFields([{ name: 'response', warnings: [] }]);
+        <ReplyMessage />
+        <Flex gap={10} align="center">
+          <Flex align="center" justify="center">
+            <SelectSendingMode />
+          </Flex>
+          <Form.Item
+            style={{ marginBottom: 0, flex: '1 1 auto' }}
+            name="message"
+            normalize={(value) => {
+              form.setFields([{ name: 'response', warnings: [] }]);
 
-                return value;
-              }}
+              return value;
+            }}
+          >
+            <TextArea ref={textAreaRef} onChange={onInputChange} />
+          </Form.Item>
+
+          <Form.Item
+            style={{
+              marginBottom: 0,
+              visibility: inputValue || isMiniVersion ? 'initial' : 'hidden',
+            }}
+          >
+            <Button
+              type="link"
+              htmlType="submit"
+              size="large"
+              className="login-form-button"
+              loading={isSendMessageLoading}
             >
-              <TextArea ref={textAreaRef} onChange={onInputChange} />
-            </Form.Item>
-          </Col>
-          <Col style={{ visibility: inputValue || isMiniVersion ? 'initial' : 'hidden' }}>
-            <Form.Item style={{ marginBottom: 0 }}>
-              <Button
-                type="link"
-                htmlType="submit"
-                size="large"
-                className="login-form-button"
-                loading={isSendMessageLoading}
-              >
-                <SendOutlined />
-              </Button>
-            </Form.Item>
-          </Col>
-        </Row>
+              <SendOutlined />
+            </Button>
+          </Form.Item>
+        </Flex>
       </Form.Item>
     </Form>
   );

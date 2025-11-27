@@ -15,6 +15,7 @@ const initialState: ChatState = {
   activeTemplate: null,
   templateMessagesLoading: false,
   searchQuery: '',
+  replyMessage: null,
 };
 
 const chatSlice = createSlice({
@@ -51,6 +52,10 @@ const chatSlice = createSlice({
       state.activeTemplate = action.payload;
     },
 
+    setReplyMessage: (state, action: PayloadAction<ChatState['replyMessage']>) => {
+      state.replyMessage = action.payload;
+    },
+
     setBrandData: (
       state,
       action: PayloadAction<{
@@ -81,3 +86,4 @@ export const selectActiveTemplate = (state: RootState) => state.chatReducer.acti
 export const selectDescription = (state: RootState) => state.chatReducer.description;
 export const selectBrandImgUrl = (state: RootState) => state.chatReducer.brandImgUrl;
 export const selectSearchQuery = (state: RootState) => state.chatReducer.searchQuery;
+export const selectReplyMessage = (state: RootState) => state.chatReducer.replyMessage;

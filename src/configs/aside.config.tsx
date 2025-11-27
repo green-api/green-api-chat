@@ -4,6 +4,7 @@ import ChatIcon from 'assets/chat.svg?react';
 import StatusIcon from 'assets/status.svg?react';
 import Chats from 'components/full-chat/user-side/chats/chats.component';
 import { InstanceSettings } from 'components/full-chat/user-side/settings/instance.component';
+import { Language } from 'components/full-chat/user-side/settings/language.componet';
 import { Logout } from 'components/full-chat/user-side/settings/logout.component';
 import { Profile } from 'components/full-chat/user-side/settings/profile.component';
 import { Statuses } from 'components/full-chat/user-side/statuses/statuses.component';
@@ -30,6 +31,7 @@ export const USER_SIDE_ITEMS: UserSideItem[] = [
   { item: 'chats', element: <Chats /> },
   { item: 'instance', element: <InstanceSettings /> },
   { item: 'profile', element: <Profile /> },
+  { item: 'language', element: <Language /> },
   { item: 'logout', element: <Logout /> },
   { item: 'statuses', element: <Statuses /> },
 ];

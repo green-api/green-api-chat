@@ -1,17 +1,15 @@
 .selectLanguage {
   min-width: 96px;
-  max-width: 96px;
+  // max-width: 96px;
+  font-size: 18px !important;
+  text-align: start;
 
   .ant-select-selector {
     position: relative;
+    padding: 0px !important;
 
     &:before {
-      content: '';
-      position: absolute;
-      height: 100%;
-      width: calc(100% + 20px);
-      top: 0;
-      left: -20px;
+      display: none;
     }
   }
 
@@ -28,17 +26,23 @@
     align-items: center;
     justify-content: space-between;
     padding-right: 8px;
+    width: 100px;
   }
 
   &__text {
-    text-align: center;
-    padding-left: 3px
+    text-align: start;
+    font-size: 18px !important;
   }
 
   &__icon {
     text-align: center;
     border-width: 1px;
     border-style: solid;
-    border-color: gray
+    border-color: gray;
   }
+}
+
+.ant-select-arrow {
+  position: absolute;
+  inset-inline-end: 35px !important;
 }

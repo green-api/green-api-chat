@@ -9,7 +9,6 @@ const SelectLanguage = () => {
 
   return (
     <div style={{ display: 'inline-flex' }}>
-      <GlobalOutlined />
       <Select
         onSelect={handlerSelect}
         className="selectLanguage"

@@ -24,7 +24,9 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
     return (
       <Input.TextArea
         ref={ref}
-        style={{ height: isMiniVersion ? '' : '42px !important' }}
+        style={{
+          height: isMiniVersion ? '' : '42px !important',
+        }}
         autoSize={{ minRows: computedMinRows, maxRows: 5 }}
         maxLength={500}
         placeholder={t('MESSAGE_PLACEHOLDER')}

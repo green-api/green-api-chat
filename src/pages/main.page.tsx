@@ -13,14 +13,13 @@ import { useIsMaxInstance } from 'hooks/use-is-max-instance';
 import { selectActiveChat } from 'store/slices/chat.slice';
 import { selectIsAuthorizingInstance, selectIsSendingStatus } from 'store/slices/instances.slice';
 import { MessageEventTypeEnum } from 'types';
+import { SendVoiceStatus } from 'components/full-chat/user-side/statuses/send-voice-status.component';
 
 const Main: FC = () => {
   const activeChat = useAppSelector(selectActiveChat);
   const isAuthorizingInstance = useAppSelector(selectIsAuthorizingInstance);
   const isSendingStatus = useAppSelector(selectIsSendingStatus);
 
-  if (isSendingStatus === 'text') return <SendTextStatus />;
-  if (isSendingStatus === 'media') return <SendMediaStatus />;
   const isMax = useIsMaxInstance();
   const {
     i18n: { resolvedLanguage },
@@ -39,6 +38,10 @@ const Main: FC = () => {
       );
     }
   }, [resolvedLanguage]);
+
+  if (isSendingStatus === 'text') return <SendTextStatus />;
+  if (isSendingStatus === 'media') return <SendMediaStatus />;
+  if (isSendingStatus === 'voice') return <SendVoiceStatus />;
 
   if (isAuthorizingInstance) return isMax ? <MaxAuth /> : <AuthInstance />;
 

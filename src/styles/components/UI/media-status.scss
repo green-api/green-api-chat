@@ -159,8 +159,6 @@
     flex-direction: column;
     justify-content: center;
     gap: 10px;
-    background: linear-gradient(to top, rgba(255, 255, 255, 0.9), transparent);
-    backdrop-filter: blur(4px);
   }
 
   &__textarea {
@@ -239,4 +237,15 @@
       height: 36px;
     }
   }
+}
+
+.delete-voice-status {
+  color: var(--icon-color);
+  transition: color 0.5s ease;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.delete-voice-status:hover {
+  color: var(--primary-color);
 }

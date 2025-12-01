@@ -8,10 +8,8 @@ import ChatsHeader from './chats-header.component';
 import NewChatIcon from 'assets/newChat.svg?react';
 import AuthorizationStatus from 'components/instance-auth/authorization-status.component';
 import ChatList from 'components/shared/chat-list/chat-list.component';
-import SelectStatusMode from 'components/UI/select/select-status.component';
 import { useActions, useAppSelector } from 'hooks';
 import { useInstanceSettings } from 'hooks/use-instance-settings.hook';
-import { useIsMaxInstance } from 'hooks/use-is-max-instance';
 import { selectMiniVersion, selectType } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
 import { StateInstanceEnum } from 'types';
@@ -28,8 +26,6 @@ const Chats: FC = () => {
 
   const [isVisible, setIsVisible] = useState(false);
 
-  const isMax = useIsMaxInstance();
-
   return (
     <Flex className="chats" vertical>
       {!isMiniVersion && type === 'tab' && <ChatsHeader />}
@@ -40,7 +36,7 @@ const Chats: FC = () => {
         style={{ padding: '20px' }}
         justify={type === 'partner-iframe' ? 'end' : 'space-between'}
       >
-        <Flex gap={20} align="center">
+        <Flex gap={20} align="center" style={{ width: '100%' }}>
           <p style={{ fontSize: '1.5rem' }}>{t('CHAT_HEADER')}</p>
           <AuthorizationStatus />
           {settings?.stateInstance === StateInstanceEnum.NotAuthorized && (

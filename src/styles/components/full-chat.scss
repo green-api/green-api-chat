@@ -6,6 +6,8 @@
   background-color: var(--main-background);
   @include scrollBar();
 
+  height: 70vh;
+
   @media screen and (max-width: 1440px) {
     width: 100vw;
     height: 100vh;

@@ -1,6 +1,7 @@
 import { SettingOutlined } from '@ant-design/icons';
 
 import ChatIcon from 'assets/chat.svg?react';
+import InstanceIcon from 'assets/instance-icon.svg?react';
 import Chats from 'components/full-chat/user-side/chats/chats.component';
 import { InstanceSettings } from 'components/full-chat/user-side/settings/instance.component';
 import { Language } from 'components/full-chat/user-side/settings/language.componet';
@@ -10,8 +11,8 @@ import { SettingsSelect } from 'components/UI/select/select-settigs.component';
 import { AsideItem, UserSideItem } from 'types';
 
 export const asideTopIconItems: AsideItem[] = [
+  { item: 'instance', title: 'INSTANCE', icon: <InstanceIcon /> },
   { item: 'chats', title: 'CHATS_TITLE', icon: <ChatIcon /> },
-  // { item: 'statuses', title: 'STATUSES', icon: <StatusIcon /> },
   // { item: 'calls', title: 'CALLS_TITLE', icon: <PhoneIcon /> },
 ];
 

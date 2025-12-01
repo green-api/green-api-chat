@@ -1,6 +1,6 @@
 import { FC, useEffect, useState, useMemo, useRef } from 'react';
 
-import { Flex } from 'antd';
+import { Flex, Spin } from 'antd';
 import VirtualList from 'rc-virtual-list';
 import { useTranslation } from 'react-i18next';
 
@@ -33,7 +33,7 @@ const SelectInstance: FC = () => {
   const { setSelectedInstance, setActiveChat, setIsAuthorizingInstance } = useActions();
   const { t } = useTranslation();
 
-  const { isLoading } = useGetInstancesQuery(
+  const { isLoading: isLoadingInstances } = useGetInstancesQuery(
     { idUser, apiTokenUser, projectId },
     { skip: !idUser || !apiTokenUser || ['console-page', 'tab'].includes(type) }
   );
@@ -91,7 +91,9 @@ const SelectInstance: FC = () => {
     });
   }, [filteredList, selectedInstance?.idInstance]);
 
-  if (isLoading) return null;
+  if (isLoadingInstances || !instanceList) {
+    return <Spin />;
+  }
 
   return (
     <Flex vertical gap={8} style={{ height: '100vh' }}>

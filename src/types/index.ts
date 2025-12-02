@@ -200,6 +200,7 @@ export enum MessageEventTypeEnum {
   LOCALE_CHANGE = 'localeChange',
   SET_CREDENTIALS = 'setCredentials',
   SET_THEME = 'setTheme',
+  IFRAME_READY = 'IFRAME_READY',
 }
 
 export interface MessageDataInit {

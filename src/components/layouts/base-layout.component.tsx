@@ -20,7 +20,7 @@ import {
 import { selectMiniVersion, selectType } from 'store/slices/chat.slice';
 import { selectInstance, selectInstanceList } from 'store/slices/instances.slice';
 import { selectUser } from 'store/slices/user.slice';
-import { MessageData, MessageEventTypeEnum, TariffsEnum } from 'types';
+import { MessageEventTypeEnum, TariffsEnum } from 'types';
 import {
   isAuth,
   isPartnerChat,
@@ -38,11 +38,11 @@ const BaseLayout: FC = () => {
   const user = useAppSelector(selectUser);
   const selectedInstance = useAppSelector(selectInstance);
   const instanceList = useAppSelector(selectInstanceList);
-
   const [isEventAdded, setIsEventAdded] = useState(false);
   const [searchParams] = useSearchParams();
   const { t } = useTranslation();
   const isMax = useIsMaxInstance();
+  const [isThemeSet, setIsThemeSet] = useState(false);
 
   const {
     setType,
@@ -60,7 +60,18 @@ const BaseLayout: FC = () => {
   const [getAvatar] = useLazyGetAvatarQuery();
 
   useEffect(() => {
-    function handleMessage(event: MessageEvent<MessageData>) {
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage(
+        {
+          type: MessageEventTypeEnum.IFRAME_READY,
+        },
+        '*'
+      );
+    }
+  }, []);
+
+  useEffect(() => {
+    function handleMessage(event: MessageEvent) {
       if (!isConsoleMessageData(event.data)) return;
 
       switch (event.data.type) {
@@ -76,7 +87,6 @@ const BaseLayout: FC = () => {
             }
 
             setInstanceList(event.data.payload.instanceList);
-
             setSelectedInstance({
               idInstance: event.data.payload.idInstance,
               apiTokenInstance: event.data.payload.apiTokenInstance,
@@ -86,7 +96,6 @@ const BaseLayout: FC = () => {
               isChatWorking: isChatWorking,
               typeInstance: event.data.payload.typeInstance,
             });
-
             setIsEventAdded(true);
 
             login({
@@ -111,7 +120,9 @@ const BaseLayout: FC = () => {
           return i18n.changeLanguage(event.data.payload.locale);
 
         case MessageEventTypeEnum.SET_THEME:
-          return setTheme(event.data.payload.theme);
+          setIsThemeSet(true);
+          setTheme(event.data.payload.theme);
+          return;
 
         default:
           return;
@@ -125,7 +136,6 @@ const BaseLayout: FC = () => {
   useEffect(() => {
     if (!selectedInstance?.idInstance && Array.isArray(instanceList) && instanceList.length > 0) {
       const firstInstance = instanceList[0];
-
       setSelectedInstance({
         idInstance: firstInstance.idInstance,
         apiTokenInstance: firstInstance.apiTokenInstance,
@@ -265,13 +275,9 @@ const BaseLayout: FC = () => {
     }
   }, [user, isMiniVersion, searchParams, isEventAdded, type]);
 
-  return (
-    <Layout className={`app ${!isMiniVersion ? 'bg' : ''}`}>
-      <Layout.Content className={`main ${!isMiniVersion ? 'flex-center' : ''}`}>
-        {isMiniVersion ? <MiniChat /> : <FullChat />}
-      </Layout.Content>
-    </Layout>
-  );
+  if (!isThemeSet) return null;
+
+  return <Layout>{isMiniVersion ? <MiniChat /> : <FullChat />}</Layout>;
 };
 
 export default BaseLayout;

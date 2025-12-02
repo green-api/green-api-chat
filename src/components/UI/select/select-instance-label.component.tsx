@@ -1,3 +1,5 @@
+import { memo } from 'react';
+
 import { LoadingOutlined } from '@ant-design/icons';
 import { Image, Flex, Space, Spin } from 'antd';
 
@@ -21,40 +23,33 @@ const SelectInstanceLabel = ({
   const isMax = isMaxInstance(typeInstance);
 
   const { data: waSettings, isLoading: isLoadingWaSettings } = useGetWaSettingsQuery(
-    {
-      idInstance,
-      apiTokenInstance,
-      apiUrl,
-      mediaUrl,
-    },
-    {
-      skip: isMax,
-    }
+    { idInstance, apiTokenInstance, apiUrl, mediaUrl },
+    { skip: isMax }
   );
 
   const { data: accountSettings, isLoading: isLoadingAccountSettings } = useGetAccountSettingsQuery(
-    {
-      idInstance,
-      apiTokenInstance,
-      apiUrl,
-      mediaUrl,
-    },
-    {
-      skip: !isMax,
-    }
+    { idInstance, apiTokenInstance, apiUrl, mediaUrl },
+    { skip: !isMax }
   );
 
   const settings = isMax ? accountSettings : waSettings;
   const isLoading = isMax ? isLoadingAccountSettings : isLoadingWaSettings;
 
   return (
-    <Space align="center" size="small">
+    <Space
+      align="center"
+      size="small"
+      style={{
+        maxWidth: '100%',
+        whiteSpace: 'nowrap',
+      }}
+    >
       {isLoading ? (
         <Space align="center" size="small">
-          <Spin indicator={<LoadingOutlined />} /> {idInstance} {name}
+          <Spin indicator={<LoadingOutlined />} />
         </Space>
       ) : (
-        <Flex gap={8} align="center">
+        <Flex gap={8} align="center" style={{ flexShrink: 0 }}>
           <Image
             style={{ verticalAlign: 'text-bottom' }}
             preview={false}
@@ -70,9 +65,20 @@ const SelectInstanceLabel = ({
           />
         </Flex>
       )}
-      {idInstance} {name} {settings?.phone}
+
+      <span
+        style={{
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+          display: 'inline-block',
+        }}
+        title={`${idInstance} ${name} ${settings?.phone || ''}`}
+      >
+        {idInstance} {name} {settings?.phone}
+      </span>
     </Space>
   );
 };
 
-export default SelectInstanceLabel;
+export default memo(SelectInstanceLabel);

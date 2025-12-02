@@ -277,7 +277,13 @@ const BaseLayout: FC = () => {
 
   if (!isThemeSet) return null;
 
-  return <Layout>{isMiniVersion ? <MiniChat /> : <FullChat />}</Layout>;
+  return (
+    <Layout className={`app ${!isMiniVersion ? 'bg' : ''}`}>
+      <Layout.Content className={`main ${!isMiniVersion ? 'flex-center' : ''}`}>
+        {isMiniVersion ? <MiniChat /> : <FullChat />}
+      </Layout.Content>
+    </Layout>
+  );
 };
 
 export default BaseLayout;

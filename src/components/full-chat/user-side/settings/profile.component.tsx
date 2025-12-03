@@ -43,9 +43,9 @@ export const Profile = () => {
   }, []);
 
   return (
-    <Flex gap={20} vertical>
+    <Flex className="height-720" gap={20} vertical>
       <Flex className="settings" vertical style={{ flex: '0 0 auto' }}>
-        <p style={{ fontSize: '1.5rem' }}>{t('PROFILE_TITLE')}</p>
+        <p style={{ fontSize: '1.5rem', padding: '10px 20px' }}>{t('PROFILE_TITLE')}</p>
       </Flex>
       <div
         style={{ height: 150, backgroundColor: 'var(--profile-background)', position: 'relative' }}

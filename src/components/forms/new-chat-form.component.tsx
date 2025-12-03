@@ -8,7 +8,7 @@ import TextArea from 'components/UI/text-area.component';
 import { useAppDispatch, useAppSelector, useFormWithLanguageValidation } from 'hooks';
 import { useCheckWhatsappMutation, useSendMessageMutation } from 'services/green-api/endpoints';
 import { journalsGreenApiEndpoints } from 'services/green-api/endpoints/journals.green-api.endpoints';
-import { selectMiniVersion } from 'store/slices/chat.slice';
+import { selectMiniVersion, selectType } from 'store/slices/chat.slice';
 import { selectInstance, selectIsChatWorking } from 'store/slices/instances.slice';
 import { selectUser } from 'store/slices/user.slice';
 import { MessageInterface, NewChatFormValues } from 'types';
@@ -23,6 +23,7 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
   const user = useAppSelector(selectUser);
   const isMiniVersion = useAppSelector(selectMiniVersion);
   const isChatWorking = useAppSelector(selectIsChatWorking);
+  const type = useAppSelector(selectType);
 
   const dispatch = useAppDispatch();
 
@@ -34,8 +35,11 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
   const [form] = useFormWithLanguageValidation<NewChatFormValues>();
   const responseTimerReference = useRef<number | null>(null);
 
+  const standaloneChatTypes = ['partner-iframe', 'one-chat-only'];
+
   const onSendMessage = async (values: NewChatFormValues) => {
-    if (!isAuth(user) || isChatWorking === false) return;
+    console.log(isAuth(user));
+    if (!isAuth(user) && !standaloneChatTypes.includes(type) && isChatWorking === false) return;
 
     const { message, chatId } = values;
 

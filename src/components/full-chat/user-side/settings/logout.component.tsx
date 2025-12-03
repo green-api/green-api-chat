@@ -32,7 +32,7 @@ export const Logout = () => {
   };
 
   return (
-    <Flex className="settings" vertical gap={10}>
+    <Flex className="settings height-720" vertical gap={10} style={{ padding: '10px 20px' }}>
       <p style={{ fontSize: '1.5rem' }}>{t('LOGOUT')}</p>
       <InstanceDangerZone
         onLogout={handleLogout}

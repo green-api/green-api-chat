@@ -34,12 +34,7 @@ const Chats: FC = () => {
     <Flex className="chats" vertical>
       {!isMiniVersion && type === 'tab' && <ChatsHeader />}
 
-      <Flex
-        align="center"
-        gap={8}
-        style={{ padding: '6px 20px' }}
-        justify={type === 'partner-iframe' ? 'end' : 'space-between'}
-      >
+      <Flex align="center" gap={8} style={{ padding: '6px 20px' }} justify={'space-between'}>
         <Flex gap={20} align="center">
           <p style={{ fontSize: '1.5rem' }}>{t('CHAT_HEADER')}</p>
           <AuthorizationStatus />

@@ -6,7 +6,7 @@ import { Header } from 'antd/es/layout/layout';
 import { useTranslation } from 'react-i18next';
 
 import AddNewChat from './add-new-chat.component';
-import logo from 'assets/header-logo.png';
+import logo from 'assets/header-logo.svg';
 import { useActions } from 'hooks';
 import { TariffsEnum } from 'types';
 

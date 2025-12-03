@@ -8,10 +8,12 @@ import { Language } from 'components/full-chat/user-side/settings/language.compo
 import { Logout } from 'components/full-chat/user-side/settings/logout.component';
 import { Profile } from 'components/full-chat/user-side/settings/profile.component';
 import { SettingsSelect } from 'components/UI/select/select-settigs.component';
-import { AsideItem, UserSideItem } from 'types';
+import { AsideItem, ChatType, UserSideItem } from 'types';
 
-export const asideTopIconItems: AsideItem[] = [
-  { item: 'instance', title: 'INSTANCE', icon: <InstanceIcon /> },
+export const asideTopIconItems: (type: ChatType) => (AsideItem | null)[] = (type) => [
+  type !== 'partner-iframe' && type !== 'one-chat-only'
+    ? { item: 'instance', title: 'INSTANCE', icon: <InstanceIcon /> }
+    : null,
   { item: 'chats', title: 'CHATS_TITLE', icon: <ChatIcon /> },
   // { item: 'calls', title: 'CALLS_TITLE', icon: <PhoneIcon /> },
 ];

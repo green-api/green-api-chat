@@ -5,8 +5,9 @@ import { useTranslation } from 'react-i18next';
 import InstanceIcon from 'assets/instance-icon.svg?react';
 import LogoutIcon from 'assets/logout-icon.svg?react';
 import ProfileIcon from 'assets/profile-icon.svg?react';
-import { useActions } from 'hooks';
+import { useActions, useAppSelector } from 'hooks';
 import { useBreakpoint } from 'hooks/use-breakpoint.hook';
+import { selectType } from 'store/slices/chat.slice';
 import { UserSideActiveMode } from 'types';
 
 export const SettingsSelect = () => {
@@ -14,16 +15,20 @@ export const SettingsSelect = () => {
   const { t } = useTranslation();
   const { isMobile } = useBreakpoint();
 
+  const type = useAppSelector(selectType);
+
   const SETTINGS_SELECT_ITEMS = [
-    {
-      key: 'instance',
-      label: (
-        <Flex gap={10} align="center">
-          <InstanceIcon />
-          {t('INSTANCE')}
-        </Flex>
-      ),
-    },
+    type === 'partner-iframe' || type === 'one-chat-only'
+      ? null
+      : {
+          key: 'instance',
+          label: (
+            <Flex gap={10} align="center">
+              <InstanceIcon />
+              {t('INSTANCE')}
+            </Flex>
+          ),
+        },
     {
       key: 'profile',
       label: (

@@ -1,4 +1,3 @@
-import { GlobalOutlined } from '@ant-design/icons';
 import { Select, Typography } from 'antd';
 import { useTranslation } from 'react-i18next';
 

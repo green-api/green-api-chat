@@ -1,19 +1,10 @@
 .full-chat {
-  max-width: 1600px;
-  width: 97%;
+  width: 100vw;
+  height: 100vh;
   box-shadow: 0 6px 18px var(--register-form-shadow-color);
   border-radius: 0;
   background-color: var(--main-background);
   @include scrollBar();
-
-  @media screen and (max-width: 1440px) {
-    width: 100vw;
-    height: 100vh;
-  }
-
-  @media screen and (max-height: 950px) {
-    height: 100vh;
-  }
 
   &.console-page {
     width: 100vw;

@@ -5,7 +5,7 @@ import i18n from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 
-import emptyAvatar from '../../assets/emptyAvatar.svg';
+import emptyAvatar from 'assets/emptyAvatar.svg';
 import emptyAvatarButAvailable from 'assets/emptyAvatarButAvailable.svg';
 import emptyAvatarGroup from 'assets/emptyAvatarGroup.png';
 import FullChat from 'components/full-chat/chat.component';
@@ -17,7 +17,7 @@ import {
   useLazyGetContactInfoQuery,
   useLazyGetGroupDataQuery,
 } from 'services/green-api/endpoints';
-import { selectMiniVersion, selectType } from 'store/slices/chat.slice';
+import { selectMiniVersion } from 'store/slices/chat.slice';
 import { selectInstance, selectInstanceList } from 'store/slices/instances.slice';
 import { selectUser } from 'store/slices/user.slice';
 import { MessageEventTypeEnum, TariffsEnum } from 'types';
@@ -34,7 +34,6 @@ import {
 
 const BaseLayout: FC = () => {
   const isMiniVersion = useAppSelector(selectMiniVersion);
-  const type = useAppSelector(selectType);
   const user = useAppSelector(selectUser);
   const selectedInstance = useAppSelector(selectInstance);
   const instanceList = useAppSelector(selectInstanceList);
@@ -268,14 +267,14 @@ const BaseLayout: FC = () => {
     const isNotIframe = !isPageInIframe();
 
     const shouldThrowOnMini = isNotAuthorized && !isMiniVersion && isNotPartner && isEventAdded;
-    const shouldThrowOnTab = isNotAuthorized && isNotPartner && isNotIframe && type === 'tab';
+    const shouldThrowOnTab = isNotAuthorized && isNotPartner && isNotIframe && !selectedInstance;
 
     if (shouldThrowOnMini || shouldThrowOnTab) {
       throw new Error('NO_INSTANCE_CREDENTIALS');
     }
-  }, [user, isMiniVersion, searchParams, isEventAdded, type]);
+  }, [user, isMiniVersion, searchParams, isEventAdded, selectedInstance]);
 
-  if (!isThemeSet && type != 'partner-iframe' && type != 'one-chat-only') return null;
+  if (!isThemeSet && isPageInIframe()) return null;
 
   return (
     <Layout className={`app ${!isMiniVersion ? 'bg' : ''}`}>

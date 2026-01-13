@@ -8,6 +8,7 @@ import waIcon from 'assets/wa-logo.svg';
 import { isMaxInstance } from 'hooks/use-is-max-instance';
 import { useGetWaSettingsQuery, useGetAccountSettingsQuery } from 'services/green-api/endpoints';
 import { ExpandedInstanceInterface, StateInstanceEnum } from 'types';
+import { isPageInIframe } from 'utils';
 
 const SelectInstanceLabel = ({
   idInstance,
@@ -29,11 +30,11 @@ const SelectInstanceLabel = ({
 
   const { data: accountSettings, isLoading: isLoadingAccountSettings } = useGetAccountSettingsQuery(
     { idInstance, apiTokenInstance, apiUrl, mediaUrl },
-    { skip: !isMax }
+    { skip: !isMax && !isPageInIframe() }
   );
 
-  const settings = isMax ? accountSettings : waSettings;
-  const isLoading = isMax ? isLoadingAccountSettings : isLoadingWaSettings;
+  const settings = accountSettings ?? waSettings;
+  const isLoading = isLoadingAccountSettings ?? isLoadingWaSettings;
 
   return (
     <Space

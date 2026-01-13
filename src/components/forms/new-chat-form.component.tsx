@@ -38,7 +38,6 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
   const standaloneChatTypes = ['partner-iframe', 'one-chat-only'];
 
   const onSendMessage = async (values: NewChatFormValues) => {
-    console.log(isAuth(user));
     if (!isAuth(user) && !standaloneChatTypes.includes(type) && isChatWorking === false) return;
 
     const { message, chatId } = values;

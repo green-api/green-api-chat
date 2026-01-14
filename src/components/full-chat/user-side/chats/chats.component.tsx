@@ -1,10 +1,9 @@
 import { FC, useState } from 'react';
 
-import { Button, Flex, Spin } from 'antd';
+import { Button, Flex } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import AddNewChat from './add-new-chat.component';
-import ChatsHeader from './chats-header.component';
 import NewChatIcon from 'assets/newChat.svg?react';
 import AuthorizationStatus from 'components/instance-auth/authorization-status.component';
 import ChatList from 'components/shared/chat-list/chat-list.component';
@@ -32,8 +31,6 @@ const Chats: FC = () => {
 
   return (
     <Flex className="chats" vertical>
-      {!isMiniVersion && type === 'tab' && <ChatsHeader />}
-
       <Flex align="center" gap={8} style={{ padding: '6px 20px' }} justify={'space-between'}>
         <Flex gap={20} align="center">
           <p style={{ fontSize: '1.5rem' }}>{t('CHAT_HEADER')}</p>
@@ -46,24 +43,26 @@ const Chats: FC = () => {
         </Flex>
         <Flex gap={14} align="center">
           {!isMax && <SelectStatusMode />}
-          {!isMiniVersion && (type === 'console-page' || type === 'partner-iframe') && (
-            <a className={type === 'partner-iframe' ? 'p-10' : undefined}>
-              <NewChatIcon
-                style={{ fontSize: 20 }}
-                onClick={() => setIsVisible(true)}
-                title={t('ADD_NEW_CHAT_HEADER')}
-              />
-            </a>
-          )}
+          {!isMiniVersion &&
+            (type === 'console-page' || type === 'partner-iframe' || type === 'tab') && (
+              <a className={type === 'partner-iframe' ? 'p-10' : undefined}>
+                <NewChatIcon
+                  style={{ fontSize: 20 }}
+                  onClick={() => setIsVisible(true)}
+                  title={t('ADD_NEW_CHAT_HEADER')}
+                />
+              </a>
+            )}
         </Flex>
       </Flex>
       {(settings?.stateInstance === StateInstanceEnum.Authorized ||
         settings?.stateInstance === StateInstanceEnum.Suspended) && (
         <ChatList key={instanceCredentials?.idInstance} />
       )}
-      {!isMiniVersion && (type === 'console-page' || type === 'partner-iframe') && (
-        <AddNewChat isVisible={isVisible} setIsVisible={setIsVisible} />
-      )}
+      {!isMiniVersion &&
+        (type === 'console-page' || type === 'partner-iframe' || type === 'tab') && (
+          <AddNewChat isVisible={isVisible} setIsVisible={setIsVisible} />
+        )}
     </Flex>
   );
 };

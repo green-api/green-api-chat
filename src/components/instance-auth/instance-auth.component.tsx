@@ -27,7 +27,7 @@ import {
 } from 'services/green-api/endpoints';
 import { selectInstance } from 'store/slices/instances.slice';
 import { StateInstanceEnum } from 'types';
-import { fillJsxString, fillString } from 'utils';
+import { fillJsxString, fillString, isPageInIframe } from 'utils';
 
 export const AuthInstance = () => {
   const { t, i18n } = useTranslation();
@@ -64,14 +64,14 @@ export const AuthInstance = () => {
       mediaUrl: selectedInstance.mediaUrl,
     },
     {
-      skip: !isMax,
+      skip: !isMax && !isPageInIframe(),
     }
   );
 
   const [updateStateInstanceTrigger, { data: stateInstanceData }] = useLazyGetStateInstanceQuery();
 
-  const refetch = isMax ? maxRefetch : waRefetch;
-  const stateInstance = isMax ? maxData?.stateInstance : settings?.stateInstance;
+  const refetch = maxRefetch ?? waRefetch;
+  const stateInstance = maxData?.stateInstance ?? settings?.stateInstance;
 
   const onAuthorized = () => {
     refetch();

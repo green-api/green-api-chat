@@ -20,6 +20,8 @@ export const EXTERNAL_LINKS = {
     he: '',
     default: 'https://youtube.com/channel/UCaSiSG2NGdhNzyCTaUNTqFA',
   },
+  linkedIn: 'https://www.linkedin.com/company/green-api/posts/',
+  rutube: 'https://rutube.ru/channel/49192924/',
   github: 'https://github.com/green-api/issues/issues',
   whatsapp: 'https://wa.me/972506973848',
   whatsappNewsChannel: {

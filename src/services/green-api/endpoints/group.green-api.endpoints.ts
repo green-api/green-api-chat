@@ -1,3 +1,4 @@
+import { persistor } from 'main';
 import { greenAPI } from 'services/green-api/green-api.service';
 import {
   AddGroupParticipantResponseInterface,
@@ -13,6 +14,16 @@ import {
   LeaveGroupResponseInterface,
 } from 'types';
 
+const clearPersistRootOnSuccess = async (
+  _arg: unknown,
+  { queryFulfilled }: { queryFulfilled: Promise<unknown> }
+) => {
+  try {
+    await queryFulfilled;
+    await persistor.purge();
+  } catch {}
+};
+
 export const groupGreenApiEndpoints = greenAPI.injectEndpoints({
   endpoints: (builder) => ({
     updateGroupName: builder.mutation<UpdateGroupNameResponseInterface, UpdateGroupNameInterface>({
@@ -21,10 +32,13 @@ export const groupGreenApiEndpoints = greenAPI.injectEndpoints({
         method: 'POST',
         body,
       }),
-      invalidatesTags: (result, error, { groupId, chatId }) => {
-        return [{ type: 'groupData', id: chatId ?? groupId }, { type: 'chatHistory' }];
-      },
+      onQueryStarted: clearPersistRootOnSuccess,
+      invalidatesTags: (result, error, { groupId, chatId }) => [
+        { type: 'groupData', id: chatId ?? groupId },
+        { type: 'chatHistory' },
+      ],
     }),
+
     addGroupParticipant: builder.mutation<
       AddGroupParticipantResponseInterface,
       GroupParticipantApiInterface
@@ -34,10 +48,10 @@ export const groupGreenApiEndpoints = greenAPI.injectEndpoints({
         method: 'POST',
         body,
       }),
-      invalidatesTags: (result, error, { groupId }) => {
-        return [{ type: 'groupData', id: groupId }];
-      },
+      onQueryStarted: clearPersistRootOnSuccess,
+      invalidatesTags: (result, error, { groupId }) => [{ type: 'groupData', id: groupId }],
     }),
+
     removeParticipant: builder.mutation<
       RemoveGroupParticipantResponseInterface,
       GroupParticipantApiInterface
@@ -47,30 +61,34 @@ export const groupGreenApiEndpoints = greenAPI.injectEndpoints({
         method: 'POST',
         body,
       }),
-      invalidatesTags: (result, error, { groupId }) => {
-        return [{ type: 'groupData', id: groupId }];
-      },
+      onQueryStarted: clearPersistRootOnSuccess,
+      invalidatesTags: (result, error, { groupId }) => [{ type: 'groupData', id: groupId }],
     }),
+
     setGroupAdmin: builder.mutation<SetGroupAdminResponseInterface, SetGroupAdminInterface>({
       query: ({ idInstance, apiTokenInstance, apiUrl, mediaUrl: _, ...body }) => ({
         url: `${apiUrl}waInstance${idInstance}/setGroupAdmin/${apiTokenInstance}`,
         method: 'POST',
         body,
       }),
-      invalidatesTags: (result, error, { groupId, chatId }) => {
-        return [{ type: 'groupData', id: chatId ?? groupId }];
-      },
+      onQueryStarted: clearPersistRootOnSuccess,
+      invalidatesTags: (result, error, { groupId, chatId }) => [
+        { type: 'groupData', id: chatId ?? groupId },
+      ],
     }),
+
     removeAdmin: builder.mutation<RemoveGroupAdminResponseInterface, SetGroupAdminInterface>({
       query: ({ idInstance, apiTokenInstance, apiUrl, mediaUrl: _, ...body }) => ({
         url: `${apiUrl}waInstance${idInstance}/removeAdmin/${apiTokenInstance}`,
         method: 'POST',
         body,
       }),
-      invalidatesTags: (result, error, { groupId, chatId }) => {
-        return [{ type: 'groupData', id: chatId ?? groupId }];
-      },
+      onQueryStarted: clearPersistRootOnSuccess,
+      invalidatesTags: (result, error, { groupId, chatId }) => [
+        { type: 'groupData', id: chatId ?? groupId },
+      ],
     }),
+
     setGroupPicture: builder.mutation<
       SetGroupPictureResponseInterface,
       {
@@ -85,9 +103,11 @@ export const groupGreenApiEndpoints = greenAPI.injectEndpoints({
         method: 'POST',
         body,
       }),
+      onQueryStarted: clearPersistRootOnSuccess,
       invalidatesTags: (result, error, { body }) => {
         const groupId = body.get('groupId');
         const chatId = body.get('chatId');
+
         return [
           {
             type: 'avatar',
@@ -102,15 +122,17 @@ export const groupGreenApiEndpoints = greenAPI.injectEndpoints({
         ];
       },
     }),
+
     leaveGroup: builder.mutation<LeaveGroupResponseInterface, GroupBaseParametersInterface>({
       query: ({ idInstance, apiTokenInstance, apiUrl, mediaUrl: _, ...body }) => ({
         url: `${apiUrl}waInstance${idInstance}/leaveGroup/${apiTokenInstance}`,
         method: 'POST',
         body,
       }),
-      invalidatesTags: (result, error, { groupId, chatId }) => {
-        return [{ type: 'groupData', id: chatId ?? groupId }];
-      },
+      onQueryStarted: clearPersistRootOnSuccess,
+      invalidatesTags: (result, error, { groupId, chatId }) => [
+        { type: 'groupData', id: chatId ?? groupId },
+      ],
     }),
   }),
 });

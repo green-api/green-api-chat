@@ -47,6 +47,8 @@ const ChatListItem: FC<ContactListItemProps> = ({
   const activeChat = useAppSelector(selectActiveChat);
   const { setActiveChat, setSearchQuery } = useActions();
   const isMax = useIsMaxInstance();
+  const isMaxGroup = isMax && lastMessage.chatId?.startsWith('-');
+
   const messageDate = getMessageDate(
     lastMessage.timestamp * 1000,
     'chatList',
@@ -119,6 +121,10 @@ const ChatListItem: FC<ContactListItemProps> = ({
 
     case Boolean(groupData) && typeof groupData !== 'object':
       chatName = lastMessage.chatId;
+      break;
+
+    case isMaxGroup && !contactInfo?.contactName && !contactInfo?.name:
+      chatName = lastMessage?.chatId;
       break;
 
     default:

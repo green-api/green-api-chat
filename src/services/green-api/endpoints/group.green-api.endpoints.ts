@@ -20,7 +20,8 @@ const clearPersistRootOnSuccess = async (
 ) => {
   try {
     await queryFulfilled;
-    await persistor.purge();
+    console.log('Clearing persist:root due to group data change');
+    localStorage.removeItem('persist:root');
   } catch {}
 };
 

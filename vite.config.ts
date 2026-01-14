@@ -1,5 +1,6 @@
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
+import viteCompression from 'vite-plugin-compression';
 import svgr from 'vite-plugin-svgr';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
@@ -18,5 +19,17 @@ export default defineConfig({
       },
     },
   },
-  plugins: [svgr(), react(), tsconfigPaths()],
+  plugins: [
+    svgr(),
+    react(),
+    tsconfigPaths(),
+    viteCompression({
+      verbose: true, // Output compression results
+      disable: false, // Enable compression
+      algorithm: 'gzip', // Use gzip compression
+      ext: '.gz', // The extension of the compressed file
+      threshold: 10_240, // Only compress files larger than 10kb
+      deleteOriginFile: false, // Do not delete the original files
+    }),
+  ],
 });

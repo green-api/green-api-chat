@@ -588,3 +588,8 @@ export type InstanceData = ExpandedGetSettingsInterface &
     | 'typeInstance'
   > &
   Pick<InstanceInterface, 'apiTokenInstance' | 'apiUrl' | 'mediaUrl'>;
+
+export interface QRResponseInterface {
+  type: 'qrCode' | 'error' | 'alreadyLogged';
+  message: 'string';
+}

@@ -50,6 +50,7 @@ export const {
   useGetGroupDataQuery,
   useGetAvatarQuery,
   useLazyGetAvatarQuery,
+  useQrMutation,
 } = {
   ...accountGreenApiEndpoints,
   ...sendingGreenApiEndpoints,

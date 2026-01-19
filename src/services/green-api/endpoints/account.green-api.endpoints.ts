@@ -6,6 +6,7 @@ import {
   GetWaSettingsResponseInterface,
   InstanceInterface,
   LogoutResponseInterface,
+  QRResponseInterface,
   SendMaxAuthCodeParametersInterface,
   StartAuthorizationResponseInterface,
 } from 'types';
@@ -83,6 +84,11 @@ export const accountGreenApiEndpoints = greenAPI.injectEndpoints({
       invalidatesTags: (_, __, arguments_) => {
         return [{ type: 'waSettings', id: arguments_.idInstance }];
       },
+    }),
+    qr: builder.mutation<QRResponseInterface, InstanceInterface>({
+      query: ({ idInstance, apiTokenInstance, apiUrl }) => ({
+        url: `${apiUrl}waInstance${idInstance}/qr/${apiTokenInstance}`,
+      }),
     }),
   }),
 });

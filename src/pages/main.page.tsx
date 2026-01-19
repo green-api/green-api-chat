@@ -8,14 +8,30 @@ import { AuthInstance } from 'components/instance-auth/instance-auth.component';
 import { MaxAuth } from 'components/instance-auth/max-auth.component';
 import { useAppSelector } from 'hooks';
 import { useIsMaxInstance } from 'hooks/use-is-max-instance';
+import { useGetAccountSettingsQuery } from 'services/green-api/endpoints';
 import { selectActiveChat } from 'store/slices/chat.slice';
-import { selectIsAuthorizingInstance } from 'store/slices/instances.slice';
+import { selectInstance, selectIsAuthorizingInstance } from 'store/slices/instances.slice';
 import { MessageEventTypeEnum } from 'types';
 
 const Main: FC = () => {
   const activeChat = useAppSelector(selectActiveChat);
   const isAuthorizingInstance = useAppSelector(selectIsAuthorizingInstance);
   const isMax = useIsMaxInstance();
+  const instanceData = useAppSelector(selectInstance);
+
+  const { refetch: refetchAccountSettings } = useGetAccountSettingsQuery(
+    {
+      idInstance: instanceData?.idInstance as number,
+      apiTokenInstance: instanceData?.apiTokenInstance as string,
+      apiUrl: instanceData?.apiUrl as string,
+      mediaUrl: instanceData?.mediaUrl as string,
+    },
+    {
+      skip: !instanceData || !isMax,
+      refetchOnMountOrArgChange: true,
+    }
+  );
+
   const {
     i18n: { resolvedLanguage },
   } = useTranslation();
@@ -34,7 +50,12 @@ const Main: FC = () => {
     }
   }, [resolvedLanguage]);
 
-  if (isAuthorizingInstance) return isMax ? <MaxAuth /> : <AuthInstance />;
+  if (isAuthorizingInstance)
+    return isMax ? (
+      <MaxAuth instanceData={instanceData} refetchStateInstace={refetchAccountSettings} />
+    ) : (
+      <AuthInstance />
+    );
 
   return activeChat ? <ContactChat /> : <HomeView />;
 };

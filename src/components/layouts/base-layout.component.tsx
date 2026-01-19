@@ -274,7 +274,7 @@ const BaseLayout: FC = () => {
     }
   }, [user, isMiniVersion, searchParams, isEventAdded, selectedInstance]);
 
-  if (!isThemeSet && isPageInIframe()) return null;
+  if (!isThemeSet && isPageInIframe() && !isPartnerChat(searchParams)) return null;
 
   return (
     <Layout className={`app ${!isMiniVersion ? 'bg' : ''}`}>

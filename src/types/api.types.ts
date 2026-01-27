@@ -254,6 +254,7 @@ export type GetGroupDataErrorResponse = 'Error: item-not-found' | 'Error: forbid
 export interface GroupParticipantInterface {
   id: string;
   chatId?: string;
+  name?: string;
   isAdmin: boolean;
   isSuperAdmin: boolean;
 }
@@ -534,6 +535,7 @@ export interface StartAuthorizationResponseInterface {
 
 export interface SendMaxAuthCodeParametersInterface extends InstanceInterface {
   code: string;
+  password?: string;
 }
 
 export type FlagRequest = 'yes' | 'no';
@@ -590,6 +592,13 @@ export type InstanceData = ExpandedGetSettingsInterface &
   Pick<InstanceInterface, 'apiTokenInstance' | 'apiUrl' | 'mediaUrl'>;
 
 export interface QRResponseInterface {
-  type: 'qrCode' | 'error' | 'alreadyLogged';
+  type: 'qrCode' | 'error' | 'alreadyLogged' | 'pending_password';
   message: 'string';
+}
+
+export interface GetChatsReponseInterface {
+  chatId: string;
+  name: string;
+  type: string;
+  phoneNumber?: string;
 }

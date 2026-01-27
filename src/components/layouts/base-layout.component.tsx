@@ -12,6 +12,7 @@ import FullChat from 'components/full-chat/chat.component';
 import MiniChat from 'components/mini-chat/chat.component';
 import { useActions, useAppSelector } from 'hooks';
 import { useIsMaxInstance } from 'hooks/use-is-max-instance';
+import { useIsTelegramInstance } from 'hooks/use-is-telegram-instance';
 import {
   useLazyGetAvatarQuery,
   useLazyGetContactInfoQuery,
@@ -41,6 +42,7 @@ const BaseLayout: FC = () => {
   const [searchParams] = useSearchParams();
   const { t } = useTranslation();
   const isMax = useIsMaxInstance();
+  const isTelegram = useIsTelegramInstance();
   const [isThemeSet, setIsThemeSet] = useState(false);
 
   const {
@@ -197,7 +199,7 @@ const BaseLayout: FC = () => {
               !idInstance.toString().startsWith('7835')
             ) {
               const { data, error: groupDataError } = await getGroupData({
-                ...(isMax ? { chatId } : { groupId: chatId }),
+                ...(isMax || isTelegram ? { chatId } : { groupId: chatId }),
                 apiUrl: apiUrl + '/',
                 mediaUrl: mediaUrl + '/',
                 apiTokenInstance,

@@ -4,6 +4,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { Image, Flex, Space, Spin } from 'antd';
 
 import maxIcon from 'assets/max-logo.svg';
+import telegramIcon from 'assets/telegram-logo.svg';
 import waIcon from 'assets/wa-logo.svg';
 import { isMaxInstance } from 'hooks/use-is-max-instance';
 import { useGetWaSettingsQuery, useGetAccountSettingsQuery } from 'services/green-api/endpoints';
@@ -22,15 +23,17 @@ const SelectInstanceLabel = ({
   'name' | 'idInstance' | 'apiTokenInstance' | 'apiUrl' | 'mediaUrl' | 'typeInstance'
 >) => {
   const isMax = isMaxInstance(typeInstance);
+  const isTelegram = typeInstance === 'telegram';
+  const isAccountSettingsInstance = isMax || isTelegram;
 
   const { data: waSettings, isLoading: isLoadingWaSettings } = useGetWaSettingsQuery(
     { idInstance, apiTokenInstance, apiUrl, mediaUrl },
-    { skip: isMax }
+    { skip: isAccountSettingsInstance }
   );
 
   const { data: accountSettings, isLoading: isLoadingAccountSettings } = useGetAccountSettingsQuery(
     { idInstance, apiTokenInstance, apiUrl, mediaUrl },
-    { skip: !isMax && !isPageInIframe() }
+    { skip: !isAccountSettingsInstance && !isPageInIframe() }
   );
 
   const settings = accountSettings ?? waSettings;
@@ -55,7 +58,7 @@ const SelectInstanceLabel = ({
             style={{ verticalAlign: 'text-bottom' }}
             preview={false}
             width={16}
-            src={isMax ? maxIcon : waIcon}
+            src={isMax ? maxIcon : isTelegram ? telegramIcon : waIcon}
           />
           <div
             className={`statusCircle ${

@@ -10,8 +10,10 @@ import waChatIcon from 'assets/wa-chat.svg';
 import AvatarImage from 'components/UI/avatar-image.component';
 import { useActions, useAppSelector } from 'hooks';
 import { useIsMaxInstance } from 'hooks/use-is-max-instance';
+import { useIsTelegramInstance } from 'hooks/use-is-telegram-instance';
 import {
   useGetAvatarQuery,
+  useGetChatsQuery,
   useGetContactInfoQuery,
   useGetGroupDataQuery,
 } from 'services/green-api/endpoints';
@@ -47,6 +49,7 @@ const ChatListItem: FC<ContactListItemProps> = ({
   const activeChat = useAppSelector(selectActiveChat);
   const { setActiveChat, setSearchQuery } = useActions();
   const isMax = useIsMaxInstance();
+  const isTelegram = useIsTelegramInstance();
   const isMaxGroup = isMax && lastMessage.chatId?.startsWith('-');
 
   const messageDate = getMessageDate(
@@ -55,13 +58,22 @@ const ChatListItem: FC<ContactListItemProps> = ({
     resolvedLanguage as LanguageLiteral
   );
 
+  const { data: chats } = useGetChatsQuery(
+    { ...instanceCredentials },
+    {
+      skip:
+        !instanceCredentials?.idInstance || !instanceCredentials?.apiTokenInstance || !isTelegram,
+    }
+  );
+
   const { data: groupData, isLoading: isGroupDataLoading } = useGetGroupDataQuery(
     {
       ...instanceCredentials,
-      ...(isMax ? { chatId: lastMessage.chatId } : { groupId: lastMessage.chatId }),
+      ...(isMax || isTelegram ? { chatId: lastMessage.chatId } : { groupId: lastMessage.chatId }),
     },
     {
       skip:
+        isTelegram ||
         (!lastMessage.chatId?.includes('g.us') && !lastMessage.chatId?.startsWith('-')) ||
         instanceCredentials?.idInstance.toString().startsWith('7835'),
     }
@@ -112,6 +124,10 @@ const ChatListItem: FC<ContactListItemProps> = ({
   let chatName: string | undefined;
 
   switch (true) {
+    case Boolean(chats && isTelegram):
+      const chat = chats?.find((c) => c.chatId === lastMessage.chatId);
+      chatName = chat ? chat.name : lastMessage.chatId;
+      break;
     case typeof groupData === 'object' &&
       groupData !== null &&
       'subject' in groupData &&

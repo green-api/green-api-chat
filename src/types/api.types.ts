@@ -254,6 +254,7 @@ export type GetGroupDataErrorResponse = 'Error: item-not-found' | 'Error: forbid
 export interface GroupParticipantInterface {
   id: string;
   chatId?: string;
+  name?: string;
   isAdmin: boolean;
   isSuperAdmin: boolean;
 }
@@ -592,4 +593,11 @@ export type InstanceData = ExpandedGetSettingsInterface &
 export interface QRResponseInterface {
   type: 'qrCode' | 'error' | 'alreadyLogged';
   message: 'string';
+}
+
+export interface GetChatsReponseInterface {
+  chatId: string;
+  name: string;
+  type: string;
+  phoneNumber?: string;
 }

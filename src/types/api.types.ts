@@ -535,6 +535,7 @@ export interface StartAuthorizationResponseInterface {
 
 export interface SendMaxAuthCodeParametersInterface extends InstanceInterface {
   code: string;
+  password?: string;
 }
 
 export type FlagRequest = 'yes' | 'no';
@@ -591,7 +592,7 @@ export type InstanceData = ExpandedGetSettingsInterface &
   Pick<InstanceInterface, 'apiTokenInstance' | 'apiUrl' | 'mediaUrl'>;
 
 export interface QRResponseInterface {
-  type: 'qrCode' | 'error' | 'alreadyLogged';
+  type: 'qrCode' | 'error' | 'alreadyLogged' | 'pending_password';
   message: 'string';
 }
 

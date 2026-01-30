@@ -329,7 +329,7 @@ export interface SendContactParametersInterface
 }
 
 export interface ContactInterface {
-  phoneContact: string;
+  phoneContact: string | number;
   firstName?: string;
   middleName?: string;
   lastName?: string;
@@ -341,8 +341,8 @@ export interface SendLocationParametersInterface
     Pick<SendingBaseParametersInterface, 'chatId' | 'quotedMessageId'> {
   nameLocation?: string;
   address?: string;
-  latitude: string;
-  longitude: string;
+  latitude: number;
+  longitude: number;
 }
 
 export interface SendPollParametersInterface

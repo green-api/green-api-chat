@@ -4,7 +4,9 @@ import {
   CheckWhatsappResponseInterface,
   EditMessageParameters,
   GetChatInformationParameters,
+  GetChatsReponseInterface,
   GetContactInfoResponseInterface,
+  InstanceInterface,
   RequestWithChatIdParameters,
   SendFileByUrlParametersInterface,
   SendingResponseInterface,
@@ -59,6 +61,11 @@ export const serviceMethodsGreenApiEndpoints = greenAPI.injectEndpoints({
         url: `${apiUrl}waInstance${idInstance}/editMessage/${apiTokenInstance}`,
         method: 'POST',
         body,
+      }),
+    }),
+    getChats: builder.query<GetChatsReponseInterface[], InstanceInterface>({
+      query: ({ idInstance, apiTokenInstance, apiUrl, mediaUrl: _ }) => ({
+        url: `${apiUrl}waInstance${idInstance}/getChats/${apiTokenInstance}`,
       }),
     }),
   }),

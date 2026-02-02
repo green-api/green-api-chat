@@ -11,6 +11,7 @@ import SelectStatusMode from 'components/UI/select/select-status.component';
 import { useActions, useAppSelector } from 'hooks';
 import { useInstanceSettings } from 'hooks/use-instance-settings.hook';
 import { useIsMaxInstance } from 'hooks/use-is-max-instance';
+import { useIsTelegramInstance } from 'hooks/use-is-telegram-instance';
 import { selectMiniVersion, selectType } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
 import { StateInstanceEnum } from 'types';
@@ -28,6 +29,7 @@ const Chats: FC = () => {
   const [isVisible, setIsVisible] = useState(false);
 
   const isMax = useIsMaxInstance();
+  const isTelegram = useIsTelegramInstance();
 
   return (
     <Flex className="chats" vertical>
@@ -42,7 +44,7 @@ const Chats: FC = () => {
           )}
         </Flex>
         <Flex gap={14} align="center">
-          {!isMax && <SelectStatusMode />}
+          {!isMax && !isTelegram && <SelectStatusMode />}
           {!isMiniVersion &&
             (type === 'console-page' || type === 'partner-iframe' || type === 'tab') && (
               <a className={type === 'partner-iframe' ? 'p-10' : undefined}>

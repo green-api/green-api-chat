@@ -85,6 +85,10 @@
   "INPUT_USER_PASSWORD_HINT": "הכנס סיסמה",
   "E_MAIL": "אימייל",
   "INPUT_USER_PASSWORD": "סיסמה",
+  "ENTER_PASSWORD": "הזן סיסמה",
+  "PASSWORD_REQUIRED": "נא להזין סיסמה",
+  "ERROR_SENDING_PASSWORD": "שליחת הסיסמה נכשלה",
+  "SUBMIT": "לשלוח",
   "CHECK_REMEMBER_ME": "זכור אותי",
   "CLICK_FORGOT_PASSWORD": "שכחתי סיסמה",
   "CLICK_LOGIN": "התחברות",
@@ -208,5 +212,9 @@
   "DOWNLOAD_ERROR": "אירעה שגיאה בעת הורדת הקובץ",
   "UNABLE_TO_DISPLAY_MESSAGE": "לא ניתן להציג את ההודעה",
   "LANGUAGE": "שפה",
-  "AUTHORIZE": "לאשר"
+  "AUTHORIZE": "לאשר",
+  "LINK_BY": "קישור באמצעות",
+  "LINK_BY_QR": "קוד QR",
+  "FIRST_GET_QR_DATA": "לחץ על כפתור קבלת קוד QR כדי להציג תמונה עם קוד QR עדכני",
+  "REFRESH_QR": "קבל QR"
 }

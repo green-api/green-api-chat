@@ -7,30 +7,47 @@ import { useTranslation } from 'react-i18next';
 import GroupContactListItem from './group-contact-list-item.component';
 import { useAppSelector } from 'hooks';
 import { useIsMaxInstance } from 'hooks/use-is-max-instance';
-import { useAddGroupParticipantMutation } from 'services/green-api/endpoints';
+import { useIsTelegramInstance } from 'hooks/use-is-telegram-instance';
+import { useAddGroupParticipantMutation, useGetGroupDataQuery } from 'services/green-api/endpoints';
 import { selectActiveChat } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
-import { ActiveChat } from 'types';
+import { ActiveChat, GroupParticipantInterface } from 'types';
 import { isContactInfo } from 'utils';
 
 const GroupContactList: FC = () => {
   const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
   const instanceCredentials = useAppSelector(selectInstance);
   const { t } = useTranslation();
+  const isMax = useIsMaxInstance();
+  const isTelegram = useIsTelegramInstance();
+
+  const { data: groupData } = useGetGroupDataQuery(
+    {
+      ...instanceCredentials,
+      ...(isMax || isTelegram ? { chatId: activeChat.chatId } : { groupId: activeChat.chatId }),
+    },
+    {
+      skip:
+        !activeChat?.chatId ||
+        !instanceCredentials?.idInstance ||
+        !instanceCredentials?.apiTokenInstance ||
+        !isTelegram,
+    }
+  );
 
   const [addParticipant] = useAddGroupParticipantMutation();
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState('');
 
-  const isMax = useIsMaxInstance();
+  if (!isTelegram) {
+    if (!activeChat.contactInfo || typeof activeChat.contactInfo === 'string') {
+      return null;
+    }
 
-  if (!activeChat.contactInfo || typeof activeChat.contactInfo === 'string') {
-    return null;
-  }
-
-  if (isContactInfo(activeChat.contactInfo, isMax)) {
-    return null;
+    if (isContactInfo(activeChat.contactInfo, isMax)) {
+      return null;
+    }
   }
 
   const showModal = () => setIsModalVisible(true);
@@ -47,7 +64,7 @@ const GroupContactList: FC = () => {
 
     try {
       const res = await addParticipant({
-        ...(isMax ? { chatId: activeChat.chatId } : { groupId: activeChat.chatId }),
+        ...(isMax || isTelegram ? { chatId: activeChat.chatId } : { groupId: activeChat.chatId }),
         participantChatId,
         ...instanceCredentials,
       });
@@ -71,11 +88,26 @@ const GroupContactList: FC = () => {
     setPhoneNumber('');
   };
 
+  const getParticipantsFromData = (data: unknown): GroupParticipantInterface[] => {
+    if (data && typeof data === 'object' && 'participants' in data) {
+      return data.participants as GroupParticipantInterface[];
+    }
+    return [];
+  };
+
+  const participants = isTelegram
+    ? getParticipantsFromData(groupData)
+    : getParticipantsFromData(activeChat.contactInfo);
+
+  if (participants.length === 0) {
+    return null;
+  }
+
   return (
     <>
-      <List
+      <List<GroupParticipantInterface>
         className="group-contact-list p-10"
-        dataSource={activeChat.contactInfo.participants}
+        dataSource={participants}
         pagination={{
           pageSize: 4,
           showLessItems: true,

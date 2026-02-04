@@ -85,6 +85,10 @@
   "INPUT_USER_PASSWORD_HINT": "Please enter your password!",
   "E_MAIL": "Email",
   "INPUT_USER_PASSWORD": "Password",
+  "ENTER_PASSWORD": "Enter password",
+  "PASSWORD_REQUIRED": "Please enter your password",
+  "ERROR_SENDING_PASSWORD": "Failed to send password",
+  "SUBMIT": "Send",
   "CHECK_REMEMBER_ME": "Remember me",
   "CLICK_FORGOT_PASSWORD": "Forgot your password?",
   "CLICK_LOGIN": "Login",
@@ -211,5 +215,9 @@
   "DOWNLOAD_ERROR": "An error occurred while downloading the file",
   "UNABLE_TO_DISPLAY_MESSAGE": "Unable to display message",
   "LANGUAGE": "Language",
-  "AUTHORIZE": "Authorize"
+  "AUTHORIZE": "Authorize",
+  "LINK_BY": "Link by",
+  "LINK_BY_QR": "QR code",
+  "FIRST_GET_QR_DATA": "Click the Get QR button to display the current QR code image",
+  "REFRESH_QR": "Get QR"
 }

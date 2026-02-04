@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { useAppSelector } from './redux.hook';
 import { useIsMaxInstance } from './use-is-max-instance';
 import { useGetWaSettingsQuery, useGetAccountSettingsQuery } from 'services/green-api/endpoints';
-import { selectInstance } from 'store/slices/instances.slice';
+import { selectInstance, selectTypeInstance } from 'store/slices/instances.slice';
 import { GetWaSettingsResponseInterface } from 'types';
 import { isPageInIframe } from 'utils';
 
@@ -23,12 +23,17 @@ export const useInstanceSettings = ({
 }: UseInstanceSettingsOptions = {}): UseInstanceSettingsResult => {
   const isMax = useIsMaxInstance();
   const selectedInstance = useAppSelector(selectInstance);
+  const typeInstance = useAppSelector(selectTypeInstance);
 
-  const skipWa = !selectedInstance?.idInstance || !selectedInstance?.apiTokenInstance || isMax;
+  const isAccountSettingsInstance = isMax || typeInstance === 'telegram';
+  const skipWa =
+    !selectedInstance?.idInstance ||
+    !selectedInstance?.apiTokenInstance ||
+    isAccountSettingsInstance;
   const skipAccount =
     !selectedInstance?.idInstance ||
     !selectedInstance?.apiTokenInstance ||
-    (!isMax && isPageInIframe());
+    (!isAccountSettingsInstance && isPageInIframe());
 
   const {
     data: waSettings,

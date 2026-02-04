@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 
 import { formItemMethodApiLayout } from 'configs';
 import { useActions, useAppDispatch, useAppSelector, useFormWithLanguageValidation } from 'hooks';
+import { useIsTelegramInstance } from 'hooks/use-is-telegram-instance';
 import { useSendContactMutation } from 'services/green-api/endpoints';
 import { journalsGreenApiEndpoints } from 'services/green-api/endpoints/journals.green-api.endpoints';
 import { selectActiveChat, selectMessageCount } from 'store/slices/chat.slice';
@@ -22,20 +23,37 @@ const SendContactForm: FC = () => {
 
   const { t } = useTranslation();
 
+  const isTelegram = useIsTelegramInstance();
+
   const [sendContact, { isLoading }] = useSendContactMutation();
 
   const [form] = useFormWithLanguageValidation<SendContactFormValues>();
 
   const onFinish = async (values: SendContactFormValues) => {
-    const body = {
-      ...instanceCredentials,
-      chatId: activeChat.chatId,
-      contact: {
-        ...values,
-        quotedMessageId: undefined,
-      },
-      quotedMessageId: values.quotedMessageId,
-    };
+    const contact = isTelegram
+      ? {
+          phoneContact: Number.parseInt(values.phoneContact, 10),
+          firstName: values.firstName ?? '',
+          ...(values.lastName ? { lastName: values.lastName } : {}),
+          ...(values.company ? { company: values.company } : {}),
+        }
+      : {
+          ...values,
+          quotedMessageId: undefined,
+        };
+
+    const body = isTelegram
+      ? {
+          ...instanceCredentials,
+          chatId: activeChat.chatId,
+          contact,
+        }
+      : {
+          ...instanceCredentials,
+          chatId: activeChat.chatId,
+          contact,
+          quotedMessageId: values.quotedMessageId,
+        };
 
     form.setFields([{ name: 'response', errors: [], warnings: [] }]);
 
@@ -109,21 +127,29 @@ const SendContactForm: FC = () => {
       >
         <Input type="tel" placeholder={t('CONTACT_PHONE_LABEL')} />
       </Form.Item>
-      <Form.Item name="firstName" label={t('NAME_LABEL')}>
+      <Form.Item
+        name="firstName"
+        label={t('NAME_LABEL')}
+        rules={isTelegram ? [{ required: true, message: t('EMPTY_FIELD_ERROR') }] : undefined}
+      >
         <Input placeholder={t('NAME_LABEL')} />
       </Form.Item>
       <Form.Item name="lastName" label={t('LASTNAME_LABEL')}>
         <Input placeholder={t('LASTNAME_LABEL')} />
       </Form.Item>
-      <Form.Item name="middleName" label={t('MIDDLENAME_LABEL')}>
-        <Input placeholder={t('MIDDLENAME_LABEL')} />
-      </Form.Item>
+      {!isTelegram && (
+        <Form.Item name="middleName" label={t('MIDDLENAME_LABEL')}>
+          <Input placeholder={t('MIDDLENAME_LABEL')} />
+        </Form.Item>
+      )}
       <Form.Item name="company" label={t('COMPANY_LABEL')}>
         <Input placeholder={t('COMPANY_LABEL')} />
       </Form.Item>
-      <Form.Item name="quotedMessageId" label={t('QUOTED_MESSAGE_ID_LABEL')}>
-        <Input placeholder={t('QUOTED_MESSAGE_ID_LABEL')} />
-      </Form.Item>
+      {!isTelegram && (
+        <Form.Item name="quotedMessageId" label={t('QUOTED_MESSAGE_ID_LABEL')}>
+          <Input placeholder={t('QUOTED_MESSAGE_ID_LABEL')} />
+        </Form.Item>
+      )}
       <Form.Item
         style={{ marginBottom: 0 }}
         wrapperCol={{

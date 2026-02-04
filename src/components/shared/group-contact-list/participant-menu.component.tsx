@@ -7,11 +7,13 @@ import { useTranslation } from 'react-i18next';
 import { useActions, useAppSelector } from 'hooks';
 import { useInstanceSettings } from 'hooks/use-instance-settings.hook';
 import { useIsMaxInstance } from 'hooks/use-is-max-instance';
+import { useIsTelegramInstance } from 'hooks/use-is-telegram-instance';
 import {
   useRemoveAdminMutation,
   useRemoveParticipantMutation,
   useSetGroupAdminMutation,
 } from 'services/green-api/endpoints';
+import { useGetGroupDataQuery } from 'services/green-api/endpoints';
 import { selectActiveChat } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
 import { GroupParticipantInterface, GetGroupDataSuccessResponseInterface } from 'types';
@@ -31,6 +33,7 @@ const isGroupData = (contactInfo: unknown): contactInfo is GetGroupDataSuccessRe
 
 const ParticipantMenu: FC<ParticipantMenuProps> = ({ participant }) => {
   const isMax = useIsMaxInstance();
+  const isTelegram = useIsTelegramInstance();
   const { t } = useTranslation();
   const { setActiveChat } = useActions();
 
@@ -38,6 +41,20 @@ const ParticipantMenu: FC<ParticipantMenuProps> = ({ participant }) => {
   const instanceCredentials = useAppSelector(selectInstance);
 
   const { settings, isLoading } = useInstanceSettings();
+
+  const { data: groupData } = useGetGroupDataQuery(
+    {
+      ...instanceCredentials,
+      chatId: activeChat?.chatId ?? '',
+    },
+    {
+      skip:
+        !isTelegram ||
+        !activeChat?.chatId ||
+        !instanceCredentials?.idInstance ||
+        !instanceCredentials?.apiTokenInstance,
+    }
+  );
 
   const [removeParticipant] = useRemoveParticipantMutation();
   const [setGroupAdmin] = useSetGroupAdminMutation();
@@ -48,17 +65,28 @@ const ParticipantMenu: FC<ParticipantMenuProps> = ({ participant }) => {
       isLoading ||
       (!isMax && !settings?.phone) ||
       (isMax && !settings?.chatId) ||
+      (isTelegram && !settings?.chatId) ||
       !activeChat ||
-      !isGroupData(activeChat.contactInfo)
+      (!isTelegram && !isGroupData(activeChat.contactInfo))
     ) {
       return false;
     }
 
-    const currentUserId = isMax ? settings?.chatId : `${settings?.phone}@c.us`;
-    return activeChat.contactInfo.participants.some((p) =>
-      isMax ? p.chatId === currentUserId && p.isAdmin : p.id === currentUserId && p.isAdmin
+    const currentUserId = isMax || isTelegram ? settings?.chatId : `${settings?.phone}@c.us`;
+    const participants = isTelegram
+      ? isGroupData(groupData)
+        ? groupData.participants
+        : []
+      : isGroupData(activeChat.contactInfo)
+        ? activeChat.contactInfo.participants
+        : [];
+
+    return participants.some((p) =>
+      isMax || isTelegram
+        ? p.chatId === currentUserId && p.isAdmin
+        : p.id === currentUserId && p.isAdmin
     );
-  }, [settings, isLoading, activeChat]);
+  }, [settings, isLoading, activeChat, isTelegram, isMax, groupData]);
 
   if (!activeChat) {
     return null;
@@ -67,8 +95,8 @@ const ParticipantMenu: FC<ParticipantMenuProps> = ({ participant }) => {
   const handleRemoveParticipant = async () => {
     try {
       const res = await removeParticipant({
-        ...(isMax ? { chatId: activeChat.chatId } : { groupId: activeChat.chatId }),
-        participantChatId: isMax ? participant.chatId ?? '' : participant.id,
+        ...(isMax || isTelegram ? { chatId: activeChat.chatId } : { groupId: activeChat.chatId }),
+        participantChatId: isMax || isTelegram ? participant.chatId ?? '' : participant.id,
         ...instanceCredentials,
       }).unwrap();
       if (!!res.removeParticipant) {
@@ -83,12 +111,12 @@ const ParticipantMenu: FC<ParticipantMenuProps> = ({ participant }) => {
   const handleSetAdmin = async () => {
     try {
       const res = await setGroupAdmin({
-        ...(isMax ? { chatId: activeChat.chatId } : { groupId: activeChat.chatId }),
-        participantChatId: isMax ? participant.chatId ?? '' : participant.id,
+        ...(isMax || isTelegram ? { chatId: activeChat.chatId } : { groupId: activeChat.chatId }),
+        participantChatId: isMax || isTelegram ? participant.chatId ?? '' : participant.id,
         ...instanceCredentials,
       }).unwrap();
 
-      if (activeChat && isGroupData(activeChat.contactInfo)) {
+      if (!isTelegram && activeChat && isGroupData(activeChat.contactInfo)) {
         const updatedParticipants = activeChat.contactInfo.participants.map((p) =>
           p.chatId === participant.chatId ? { ...p, isAdmin: true } : p
         );
@@ -112,12 +140,12 @@ const ParticipantMenu: FC<ParticipantMenuProps> = ({ participant }) => {
   const handleRemoveAdmin = async () => {
     try {
       const res = await removeAdmin({
-        ...(isMax ? { chatId: activeChat.chatId } : { groupId: activeChat.chatId }),
-        participantChatId: isMax ? participant.chatId ?? '' : participant.id,
+        ...(isMax || isTelegram ? { chatId: activeChat.chatId } : { groupId: activeChat.chatId }),
+        participantChatId: isMax || isTelegram ? participant.chatId ?? '' : participant.id,
         ...instanceCredentials,
       }).unwrap();
 
-      if (activeChat && isGroupData(activeChat.contactInfo)) {
+      if (!isTelegram && activeChat && isGroupData(activeChat.contactInfo)) {
         const updatedParticipants = activeChat.contactInfo.participants.map((p) =>
           p.chatId === participant.chatId ? { ...p, isAdmin: false } : p
         );

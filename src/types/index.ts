@@ -75,7 +75,7 @@ export interface InstancesState {
   isAuthorizingInstance: boolean;
 }
 
-export type TypeInstance = 'whatsapp' | 'v3';
+export type TypeInstance = 'whatsapp' | 'v3' | 'telegram';
 
 export interface InstanceInterface {
   idInstance: number;

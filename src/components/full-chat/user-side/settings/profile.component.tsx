@@ -9,6 +9,7 @@ import AuthorizationStatus from 'components/instance-auth/authorization-status.c
 import { useActions, useAppSelector } from 'hooks';
 import { useInstanceSettings } from 'hooks/use-instance-settings.hook';
 import { useIsMaxInstance } from 'hooks/use-is-max-instance';
+import { useIsTelegramInstance } from 'hooks/use-is-telegram-instance';
 import { useGetAvatarQuery } from 'services/green-api/endpoints';
 import { selectInstance } from 'store/slices/instances.slice';
 
@@ -19,6 +20,8 @@ export const Profile = () => {
   const { t } = useTranslation();
 
   const { settings } = useInstanceSettings();
+
+  const isTelegram = useIsTelegramInstance();
 
   const isMax = useIsMaxInstance();
 
@@ -51,7 +54,13 @@ export const Profile = () => {
         style={{ height: 150, backgroundColor: 'var(--profile-background)', position: 'relative' }}
       >
         <Avatar
-          src={avatar?.urlAvatar?.trim() ? avatar.urlAvatar : emptyAvatarButAvailable}
+          src={
+            isTelegram
+              ? settings?.avatar
+              : avatar?.urlAvatar?.trim()
+                ? avatar.urlAvatar
+                : emptyAvatarButAvailable
+          }
           size={115}
           style={{
             position: 'absolute',

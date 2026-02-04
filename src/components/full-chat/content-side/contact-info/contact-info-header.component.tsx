@@ -11,7 +11,10 @@ import GroupAvatarUpload from 'components/shared/chat-header/group-avatar-upload
 import LeaveGroupButton from 'components/shared/chat-header/leave-group.component';
 import { useActions, useAppSelector } from 'hooks';
 import { useIsGroupAdmin } from 'hooks/use-is-group-admin.hook';
+import { useIsTelegramInstance } from 'hooks/use-is-telegram-instance';
+import { useGetGroupDataQuery } from 'services/green-api/endpoints';
 import { selectActiveChat } from 'store/slices/chat.slice';
+import { selectInstance } from 'store/slices/instances.slice';
 import { ActiveChat, LanguageLiteral } from 'types';
 import { fillJsxString, isContactInfo, isWhatsAppOfficialChat, numWord } from 'utils';
 
@@ -23,13 +26,84 @@ const ContactInfoHeader: FC = () => {
   } = useTranslation();
 
   const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
+  const instanceCredentials = useAppSelector(selectInstance);
+  const isTelegram = useIsTelegramInstance();
   const isGroup = activeChat.chatId?.includes('@g.us') || activeChat.chatId?.startsWith('-');
   const info = activeChat.chatId?.includes('@c.us') ? t('CONTACT_INFO') : t('GROUP_INFO');
 
   const isAdmin = useIsGroupAdmin(activeChat);
   const isOfficial = isWhatsAppOfficialChat(activeChat.chatId);
 
+  const { data: groupData } = useGetGroupDataQuery(
+    {
+      ...instanceCredentials,
+      chatId: activeChat.chatId,
+    },
+    {
+      skip:
+        !isTelegram ||
+        !isGroup ||
+        !activeChat?.chatId ||
+        !instanceCredentials?.idInstance ||
+        !instanceCredentials?.apiTokenInstance,
+    }
+  );
+
+  const getParticipantsCount = (data: unknown) => {
+    if (data && typeof data === 'object' && 'participants' in data) {
+      const participants = (data as { participants: unknown }).participants;
+      return Array.isArray(participants) ? participants.length : 0;
+    }
+    return 0;
+  };
+
   const getHeaderBody = () => {
+    if (isTelegram && isGroup) {
+      if (!groupData || typeof groupData === 'string') {
+        return (
+          <Flex vertical gap={2} justify="center" align="center" className="w-100">
+            <Typography.Text style={{ fontSize: 15 }}>
+              id: {activeChat.chatId?.replace(/\@.*$/, '')}
+            </Typography.Text>
+          </Flex>
+        );
+      }
+
+      const groupSubject = 'subject' in groupData ? groupData.subject : activeChat.senderName;
+      const participantsCount = getParticipantsCount(groupData);
+      const groupCredentials = fillJsxString(t('GROUP_COUNT_MEMBERS'), [
+        participantsCount.toString(),
+        numWord(
+          participantsCount,
+          {
+            ru: ['участник', 'участника', 'участников'],
+            en: ['member', 'members', 'members'],
+            he: ['חברים', 'חברים', 'חָבֵר'],
+          },
+          resolvedLanguage as LanguageLiteral
+        ),
+      ]);
+
+      return (
+        <Flex vertical gap={2} justify="center" align="center" className="w-100">
+          <Flex gap={6} align="center">
+            {isGroup && <EditGroupName />}
+          </Flex>
+          <Typography.Text style={{ fontSize: 15 }}>
+            id: {activeChat.chatId?.replace(/\@.*$/, '')}
+          </Typography.Text>
+          <Typography.Title
+            level={2}
+            style={{ marginBottom: 'unset' }}
+            className="contact-info-name"
+          >
+            {groupSubject}
+          </Typography.Title>
+          <Typography.Text className="contact-info-credentials">{groupCredentials}</Typography.Text>
+        </Flex>
+      );
+    }
+
     if (!activeChat.contactInfo || typeof activeChat.contactInfo === 'string') {
       const contactName = activeChat.chatId?.replace(/\@.*$/, '');
 

@@ -51,6 +51,7 @@ export const {
   useGetAvatarQuery,
   useLazyGetAvatarQuery,
   useQrMutation,
+  useGetChatsQuery,
 } = {
   ...accountGreenApiEndpoints,
   ...sendingGreenApiEndpoints,

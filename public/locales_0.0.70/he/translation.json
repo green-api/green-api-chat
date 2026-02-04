@@ -212,5 +212,9 @@
   "DOWNLOAD_ERROR": "אירעה שגיאה בעת הורדת הקובץ",
   "UNABLE_TO_DISPLAY_MESSAGE": "לא ניתן להציג את ההודעה",
   "LANGUAGE": "שפה",
-  "AUTHORIZE": "לאשר"
+  "AUTHORIZE": "לאשר",
+  "LINK_BY": "קישור באמצעות",
+  "LINK_BY_QR": "קוד QR",
+  "FIRST_GET_QR_DATA": "לחץ על כפתור קבלת קוד QR כדי להציג תמונה עם קוד QR עדכני",
+  "REFRESH_QR": "קבל QR"
 }

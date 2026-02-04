@@ -4,6 +4,7 @@ import { Button, Flex, Form, Input, message, Tabs } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import QrErrorAlert from 'components/alerts/qr-error-alert.component';
+import QrInstructionCarouselEn from 'components/carousel/qr-instruction-carousel-en.component';
 import QrInstructionCarouselRu from 'components/carousel/qr-instruction-carousel-ru.component';
 import Progressbar from 'components/progressbar.component';
 import TutorialLink from 'components/tutorial-link.component';
@@ -50,6 +51,8 @@ export const TelegramAuth: FC<Properties> = ({
     useSendAuthorizationCodeMutation();
 
   const isQrError = showQrError;
+
+  const { i18n } = useTranslation();
 
   useEffect(() => {
     const intervalId = setInterval(async () => {
@@ -240,7 +243,11 @@ export const TelegramAuth: FC<Properties> = ({
                 </div>
               </div>
 
-              <QrInstructionCarouselRu />
+              {i18n.resolvedLanguage === 'ru' ? (
+                <QrInstructionCarouselRu />
+              ) : (
+                <QrInstructionCarouselEn />
+              )}
             </div>
           ),
         },

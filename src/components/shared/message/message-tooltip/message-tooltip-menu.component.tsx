@@ -4,9 +4,8 @@ import { List } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import { useActions, useAppSelector } from 'hooks';
-import { useGetProfileSettingsQuery } from 'services/app/endpoints';
+import { useIsWabaInstance } from 'hooks/use-is-waba-instance';
 import { selectMessageDataForRender } from 'store/slices/message-menu.slice';
-import { selectUser } from 'store/slices/user.slice';
 import { MessageTooltipMenuData } from 'types';
 import { isMessageEditable } from 'utils';
 
@@ -16,18 +15,11 @@ interface MessageTooltipMenuProps {
 
 const MessageTooltipMenu: FC<MessageTooltipMenuProps> = ({ onMenuItemClick }) => {
   const messageData = useAppSelector(selectMessageDataForRender);
-  const { idUser, apiTokenUser, projectId } = useAppSelector(selectUser);
+  const isWaba = useIsWabaInstance();
 
   const { t } = useTranslation();
 
   const { setMessageMenuActiveMode, setActiveServiceMethod, setReplyMessage } = useActions();
-
-  const { data: profileSettings } = useGetProfileSettingsQuery(
-    { idUser, apiTokenUser, projectId },
-    { skip: !idUser || !apiTokenUser }
-  );
-
-  const isWaba = profileSettings?.result && profileSettings.data.isWaba;
 
   const getMenuData = () => {
     if (!messageData) return [];

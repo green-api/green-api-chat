@@ -7,11 +7,10 @@ import Message from './message/message.component';
 import LeftGroupAlert from 'components/alerts/left-group-alert.component';
 import { useActions, useAppSelector } from 'hooks';
 import { useIsMaxInstance } from 'hooks/use-is-max-instance';
-import { useGetProfileSettingsQuery } from 'services/app/endpoints';
+import { useIsWabaInstance } from 'hooks/use-is-waba-instance';
 import { useGetChatHistoryQuery, useGetTemplatesQuery } from 'services/green-api/endpoints';
 import { selectActiveChat, selectMiniVersion } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
-import { selectUser } from 'store/slices/user.slice';
 import {
   ActiveChat,
   LanguageLiteral,
@@ -29,7 +28,6 @@ import {
 } from 'utils';
 
 const ChatView: FC = () => {
-  const { idUser, apiTokenUser, projectId } = useAppSelector(selectUser);
   const instanceCredentials = useAppSelector(selectInstance);
   const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
   const isMiniVersion = useAppSelector(selectMiniVersion);
@@ -37,6 +35,7 @@ const ChatView: FC = () => {
   const [count, setCount] = useState(50);
   const { setMessageCount } = useActions();
   const isMax = useIsMaxInstance();
+  const isWaba = useIsWabaInstance();
 
   let previousMessageAreOutgoing = false;
   let previousSenderName = '';
@@ -49,15 +48,10 @@ const ChatView: FC = () => {
   const chatViewRef = useRef<HTMLDivElement | null>(null);
   const scrollPositionRef = useRef<{ top: number; height: number } | null>(null);
 
-  const { data: profileSettings } = useGetProfileSettingsQuery(
-    { idUser, apiTokenUser, projectId },
-    { skip: !idUser || !apiTokenUser }
-  );
-
   const { data: templates, isLoading: templatesLoading } = useGetTemplatesQuery(
     instanceCredentials,
     {
-      skip: !(profileSettings && profileSettings.result && profileSettings.data.isWaba),
+      skip: !isWaba,
     }
   );
 

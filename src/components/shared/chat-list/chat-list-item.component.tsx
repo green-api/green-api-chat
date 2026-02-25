@@ -1,6 +1,6 @@
 import { FC, useEffect, useMemo } from 'react';
 
-import { Flex, List, Skeleton } from 'antd';
+import { Badge, Flex, List, Skeleton } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import emptyAvatar from 'assets/emptyAvatar.svg';
@@ -33,12 +33,18 @@ interface ContactListItemProps {
   lastMessage: MessageInterface;
   onNameExtracted?: (chatId: string, name: string) => void;
   showDescription?: boolean;
+  unreadCount?: number;
+  onClearUnread?: () => void;
 }
+
+const WABA_POOLS = ['7835', '9908'];
 
 const ChatListItem: FC<ContactListItemProps> = ({
   lastMessage,
   onNameExtracted,
   showDescription = true,
+  unreadCount,
+  onClearUnread,
 }) => {
   const {
     t,
@@ -173,6 +179,10 @@ const ChatListItem: FC<ContactListItemProps> = ({
     });
 
     setSearchQuery('');
+
+    if (onClearUnread) {
+      onClearUnread();
+    }
   };
 
   return (
@@ -218,7 +228,21 @@ const ChatListItem: FC<ContactListItemProps> = ({
           }
         />
         {showDescription && (
-          <span style={{ textAlign: 'end', alignSelf: 'start' }}>{messageDate}</span>
+          <Flex vertical align="end" style={{ alignSelf: 'start' }} gap={4}>
+            <span style={{ textAlign: 'end' }}>{messageDate}</span>
+            {unreadCount &&
+              unreadCount > 0 &&
+              WABA_POOLS.includes(instanceCredentials.idInstance.toString().slice(0, 4)) && (
+                <Badge
+                  count={unreadCount}
+                  style={{
+                    backgroundColor: 'var(--primary-color)',
+                    boxShadow: '0 0 0 1px #fff',
+                    textAlign: 'center',
+                  }}
+                />
+              )}
+          </Flex>
         )}
       </Skeleton>
     </List.Item>

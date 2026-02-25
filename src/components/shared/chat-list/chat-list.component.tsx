@@ -38,6 +38,10 @@ const ChatList: FC = () => {
   const [page, setPage] = useState(1);
   const [contactsPage, setContactsPage] = useState(1);
   const [messagesPage, setMessagesPage] = useState(1);
+  const [initialLoaded, setInitialLoaded] = useState(false);
+
+  const [initialMessageIds, setInitialMessageIds] = useState<Set<string>>(new Set());
+  const [unreadCounts, setUnreadCounts] = useState<Record<string, number>>({});
 
   const limit = isMiniVersion ? 5 : matchMedia ? 16 : 12;
 
@@ -58,6 +62,46 @@ const ChatList: FC = () => {
 
   const pagedFilteredContacts = filteredContacts.slice(0, contactsPage * limit);
   const pagedFilteredMessages = filteredMessages.slice(0, messagesPage * limit);
+
+  useEffect(() => {
+    if (!initialLoaded && allMessages.length > 0) {
+      const messageIds = new Set(
+        allMessages.map((msg) => msg.idMessage || `${msg.chatId}-${msg.timestamp}`)
+      );
+      setInitialMessageIds(messageIds);
+      setInitialLoaded(true);
+    }
+  }, [allMessages, initialLoaded]);
+
+  useEffect(() => {
+    if (!initialLoaded || allMessages.length === 0) return;
+
+    const prevIds = initialMessageIds;
+    const newIds = new Set(prevIds);
+
+    const newUnreadCounts: Record<string, number> = { ...unreadCounts };
+
+    allMessages.forEach((msg) => {
+      const messageId = msg.idMessage || `${msg.chatId}-${msg.timestamp}`;
+
+      if (!prevIds.has(messageId)) {
+        newUnreadCounts[msg.chatId] = (newUnreadCounts[msg.chatId] || 0) + 1;
+      }
+
+      newIds.add(messageId);
+    });
+
+    setInitialMessageIds(newIds);
+    setUnreadCounts(newUnreadCounts);
+  }, [allMessages, initialLoaded]);
+
+  const clearUnreadCount = (chatId: string) => {
+    setUnreadCounts((prev) => {
+      const updated = { ...prev };
+      delete updated[chatId];
+      return updated;
+    });
+  };
 
   useEffect(() => {
     if (!allMessages.length) return;
@@ -188,6 +232,8 @@ const ChatList: FC = () => {
                       key={`${msg.chatId}-${msg.idMessage}`}
                       lastMessage={msg}
                       onNameExtracted={handleNameExtracted}
+                      unreadCount={unreadCounts[msg.chatId]}
+                      onClearUnread={() => clearUnreadCount(msg.chatId)}
                     />
                   )}
                   split={false}
@@ -210,6 +256,8 @@ const ChatList: FC = () => {
                 key={message.chatId}
                 lastMessage={message}
                 onNameExtracted={handleNameExtracted}
+                unreadCount={unreadCounts[message.chatId]}
+                onClearUnread={() => clearUnreadCount(message.chatId)}
               />
             )}
             loading={{

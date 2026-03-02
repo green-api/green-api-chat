@@ -81,15 +81,17 @@ const ChatList: FC = () => {
 
     const newUnreadCounts: Record<string, number> = { ...unreadCounts };
 
-    allMessages.forEach((msg) => {
-      const messageId = msg.idMessage || `${msg.chatId}-${msg.timestamp}`;
+    allMessages
+      .filter((i) => i.type !== 'outgoing')
+      .forEach((msg) => {
+        const messageId = msg.idMessage || `${msg.chatId}-${msg.timestamp}`;
 
-      if (!prevIds.has(messageId)) {
-        newUnreadCounts[msg.chatId] = (newUnreadCounts[msg.chatId] || 0) + 1;
-      }
+        if (!prevIds.has(messageId)) {
+          newUnreadCounts[msg.chatId] = (newUnreadCounts[msg.chatId] || 0) + 1;
+        }
 
-      newIds.add(messageId);
-    });
+        newIds.add(messageId);
+      });
 
     setInitialMessageIds(newIds);
     setUnreadCounts(newUnreadCounts);

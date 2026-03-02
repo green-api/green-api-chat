@@ -12,28 +12,20 @@ import PollIcon from 'assets/poll-icon.svg?react';
 import PreviewIcon from 'assets/preview-icon.svg?react';
 import MessageServiceModal from 'components/modals/message-service-modal.component';
 import SendingModal from 'components/modals/sending-modal.component';
-import { useActions, useAppSelector } from 'hooks';
+import { useActions } from 'hooks';
 import { useIsMaxInstance } from 'hooks/use-is-max-instance';
+import { useIsWabaInstance } from 'hooks/use-is-waba-instance';
 import i18n from 'i18n';
-import { useGetProfileSettingsQuery } from 'services/app/endpoints';
-import { selectUser } from 'store/slices/user.slice';
 import { SendingMethodName } from 'types';
 
 const SelectSendingMode: FC = () => {
   const { t } = useTranslation();
-  const { idUser, apiTokenUser, projectId } = useAppSelector(selectUser);
   const { setActiveSendingMode } = useActions();
 
   const dir = i18n.dir();
 
   const isMax = useIsMaxInstance();
-
-  const { data: profileSettings } = useGetProfileSettingsQuery(
-    { idUser, apiTokenUser, projectId },
-    { skip: !idUser || !apiTokenUser }
-  );
-
-  const isWaba = profileSettings?.result && profileSettings.data.isWaba;
+  const isWaba = useIsWabaInstance();
 
   const items: MenuProps['items'] = [
     {

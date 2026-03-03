@@ -171,9 +171,7 @@ const BaseLayout: FC = () => {
         const language = searchParams.get('lng');
         const brandDescription = searchParams.get('dsc');
         const brandImageUrl = searchParams.get('logo');
-        const queryTypeInstance = getTypeInstanceFromQuery(
-          searchParams.get('typeInstance') ?? searchParams.get('instanceType')
-        );
+        const queryTypeInstance = getTypeInstanceFromQuery(searchParams.get('typeInstance'));
 
         const { data: instanceSettings } = await getSettings({
           idInstance: +idInstance,

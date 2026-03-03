@@ -73,6 +73,7 @@ export interface InstancesState {
   typeInstance: TypeInstance;
   instanceList: ExpandedInstanceInterface[] | null;
   isAuthorizingInstance: boolean;
+  isLastMessagesSyncingAfterAuthorization: boolean;
 }
 
 export type TypeInstance = 'whatsapp' | 'v3' | 'telegram';

@@ -21,6 +21,7 @@ export const {
   useSendLocationMutation,
   useSendPollMutation,
   useGetWaSettingsQuery,
+  useLazyGetSettingsQuery,
   useSendTemplateMutation,
   useGetTemplatesQuery,
   useGetTemplateByIdQuery,

@@ -146,7 +146,7 @@ export function getTypeInstanceFromQuery(
 
   const normalized = typeInstance.trim().toLowerCase();
 
-  if (normalized === 'max' || normalized === 'v3') return 'v3';
+  if (normalized === 'v3') return 'v3';
   if (normalized === 'telegram') return 'telegram';
   if (normalized === 'whatsapp') return 'whatsapp';
 

@@ -138,7 +138,7 @@ export function isPartnerChat(searchParams: URLSearchParams): boolean {
 }
 
 export function getSupportEmailByLanguage(language: LanguageLiteral) {
-  if (language === 'en' || language === 'he')
+  if (language === 'en' || language === 'he' || language === 'tr')
     return EXTERNAL_LINKS.supportEmail['console.greenapi.com'];
 
   return EXTERNAL_LINKS.supportEmail.default;

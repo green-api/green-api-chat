@@ -102,7 +102,7 @@ export interface MessageMenuState {
   messageDataForRender: MessageDataForRender | null;
 }
 
-export type LanguageLiteral = 'en' | 'ru' | 'he';
+export type LanguageLiteral = 'en' | 'ru' | 'he' | 'tr';
 
 export interface AuthFormValues {
   login: string;

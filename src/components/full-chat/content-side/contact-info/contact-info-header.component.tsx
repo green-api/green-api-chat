@@ -29,7 +29,7 @@ const ContactInfoHeader: FC = () => {
   const instanceCredentials = useAppSelector(selectInstance);
   const isTelegram = useIsTelegramInstance();
   const isGroup = activeChat.chatId?.includes('@g.us') || activeChat.chatId?.startsWith('-');
-  const info = activeChat.chatId?.includes('@c.us') ? t('CONTACT_INFO') : t('GROUP_INFO');
+  const info = !isGroup ? t('CONTACT_INFO') : t('GROUP_INFO');
 
   const isAdmin = useIsGroupAdmin(activeChat);
   const isOfficial = isWhatsAppOfficialChat(activeChat.chatId);

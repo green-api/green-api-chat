@@ -12,22 +12,22 @@ type Language = {
 export const LANGUAGES: Language[] = [
   {
     name: 'ru',
-    title: 'RUSSIAN',
+    title: 'Русский',
     icon: ruIcon,
   },
   {
     name: 'en',
-    title: 'ENGLISH',
+    title: 'English',
     icon: enIcon,
   },
   {
     name: 'he',
-    title: 'HEBREW',
+    title: 'עברית',
     icon: heIcon,
   },
   {
     name: 'tr',
-    title: 'TURKISH',
+    title: 'Türkçe',
     icon: trIcon,
   },
 ];

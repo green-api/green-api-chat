@@ -13,13 +13,19 @@ import { useInstanceSettings } from 'hooks/use-instance-settings.hook';
 import { useIsMaxInstance } from 'hooks/use-is-max-instance';
 import { useIsTelegramInstance } from 'hooks/use-is-telegram-instance';
 import { selectMiniVersion, selectType } from 'store/slices/chat.slice';
-import { selectInstance } from 'store/slices/instances.slice';
+import {
+  selectInstance,
+  selectIsLastMessagesSyncingAfterAuthorization,
+} from 'store/slices/instances.slice';
 import { StateInstanceEnum } from 'types';
 
 const Chats: FC = () => {
   const isMiniVersion = useAppSelector(selectMiniVersion);
   const type = useAppSelector(selectType);
   const instanceCredentials = useAppSelector(selectInstance);
+  const isLastMessagesSyncingAfterAuthorization = useAppSelector(
+    selectIsLastMessagesSyncingAfterAuthorization
+  );
   const { setIsAuthorizingInstance } = useActions();
 
   const { t } = useTranslation();
@@ -37,11 +43,12 @@ const Chats: FC = () => {
         <Flex gap={20} align="center">
           <p style={{ fontSize: '1.5rem' }}>{t('CHAT_HEADER')}</p>
           <AuthorizationStatus />
-          {settings?.stateInstance === StateInstanceEnum.NotAuthorized && (
-            <Button variant="outlined" onClick={() => setIsAuthorizingInstance(true)}>
-              {t('AUTHORIZE')}
-            </Button>
-          )}
+          {settings?.stateInstance === StateInstanceEnum.NotAuthorized &&
+            !isLastMessagesSyncingAfterAuthorization && (
+              <Button variant="outlined" onClick={() => setIsAuthorizingInstance(true)}>
+                {t('AUTHORIZE')}
+              </Button>
+            )}
         </Flex>
         <Flex gap={14} align="center">
           {!isMax && !isTelegram && <SelectStatusMode />}
@@ -58,7 +65,8 @@ const Chats: FC = () => {
         </Flex>
       </Flex>
       {(settings?.stateInstance === StateInstanceEnum.Authorized ||
-        settings?.stateInstance === StateInstanceEnum.Suspended) && (
+        settings?.stateInstance === StateInstanceEnum.Suspended ||
+        isLastMessagesSyncingAfterAuthorization) && (
         <ChatList key={instanceCredentials?.idInstance} />
       )}
       {!isMiniVersion &&

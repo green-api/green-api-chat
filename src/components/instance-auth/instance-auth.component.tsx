@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 import { Form, InputNumber, Button, Typography, Tabs, Flex } from 'antd';
 import { useTranslation } from 'react-i18next';
@@ -29,6 +29,11 @@ import { selectInstance } from 'store/slices/instances.slice';
 import { StateInstanceEnum } from 'types';
 import { fillJsxString, fillString, isPageInIframe } from 'utils';
 
+const LAST_MESSAGES_MINUTES_WINDOW = 26300;
+const LAST_MESSAGES_RETRY_LIMIT = 10;
+const LAST_MESSAGES_RETRY_INTERVAL = 3000;
+const LAST_MESSAGES_ERROR_RETRY_INTERVAL = 5000;
+
 export const AuthInstance = () => {
   const { t, i18n } = useTranslation();
   const [activeAuthorizationTabKey, setActiveAuthorizationTabKey] = useState('qr');
@@ -37,8 +42,9 @@ export const AuthInstance = () => {
   const [phone, setPhone] = useState('');
   const [showCodeInstruction, setShowCodeInstruction] = useState(false);
   const selectedInstance = useAppSelector(selectInstance);
+  const isRetryingLastMessagesRef = useRef(false);
 
-  const { setIsAuthorizingInstance } = useActions();
+  const { setIsAuthorizingInstance, setIsLastMessagesSyncingAfterAuthorization } = useActions();
 
   const isMax = useIsMaxInstance();
 
@@ -73,32 +79,60 @@ export const AuthInstance = () => {
   const refetch = maxRefetch ?? waRefetch;
   const stateInstance = maxData?.stateInstance ?? settings?.stateInstance;
 
-  const onAuthorized = () => {
-    refetch();
-    setIsAuthorizingInstance(false);
+  const startLastMessagesRetry = () => {
+    if (isRetryingLastMessagesRef.current) return;
 
-    const fetchChatsWithRetry = async () => {
+    const instanceCredentials = {
+      idInstance: selectedInstance.idInstance,
+      apiTokenInstance: selectedInstance.apiTokenInstance,
+      apiUrl: selectedInstance.apiUrl,
+      mediaUrl: selectedInstance.mediaUrl,
+    };
+
+    isRetryingLastMessagesRef.current = true;
+    setIsLastMessagesSyncingAfterAuthorization(true);
+
+    const finishRetry = () => {
+      isRetryingLastMessagesRef.current = false;
+      setIsLastMessagesSyncingAfterAuthorization(false);
+    };
+
+    const fetchChatsWithRetry = async (attempt = 1) => {
       try {
         const result = await fetchChats({
-          idInstance: selectedInstance.idInstance,
-          apiTokenInstance: selectedInstance.apiTokenInstance,
-          apiUrl: selectedInstance.apiUrl,
-          mediaUrl: selectedInstance.mediaUrl,
+          ...instanceCredentials,
           allMessages: true,
-          minutesToRefetch: 26300,
+          minutesToRefetch: LAST_MESSAGES_MINUTES_WINDOW,
         }).unwrap();
 
         if (Array.isArray(result) && result.length > 0) {
+          finishRetry();
           return;
         }
 
-        setTimeout(() => fetchChatsWithRetry(), 3000);
-      } catch (error) {
-        setTimeout(() => fetchChatsWithRetry(), 5000);
+        if (attempt >= LAST_MESSAGES_RETRY_LIMIT) {
+          finishRetry();
+          return;
+        }
+
+        setTimeout(() => fetchChatsWithRetry(attempt + 1), LAST_MESSAGES_RETRY_INTERVAL);
+      } catch {
+        if (attempt >= LAST_MESSAGES_RETRY_LIMIT) {
+          finishRetry();
+          return;
+        }
+
+        setTimeout(() => fetchChatsWithRetry(attempt + 1), LAST_MESSAGES_ERROR_RETRY_INTERVAL);
       }
     };
 
     fetchChatsWithRetry();
+  };
+
+  const onAuthorized = () => {
+    refetch();
+    setIsAuthorizingInstance(false);
+    startLastMessagesRetry();
   };
 
   const { openQrWebsocket, qrData, qrText, isQrLoading, isQrError } = useQrWebsocket(
@@ -130,6 +164,7 @@ export const AuthInstance = () => {
       setPhone('');
       refetch();
       setIsAuthorizingInstance(false);
+      startLastMessagesRetry();
     }
 
     return () => {

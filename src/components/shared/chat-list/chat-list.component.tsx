@@ -8,7 +8,10 @@ import ChatSearchInput from './chat-search-input.component';
 import { useAppSelector, useMediaQuery } from 'hooks';
 import { useLastMessagesQuery } from 'services/green-api/endpoints';
 import { selectMiniVersion, selectSearchQuery } from 'store/slices/chat.slice';
-import { selectInstance } from 'store/slices/instances.slice';
+import {
+  selectInstance,
+  selectIsLastMessagesSyncingAfterAuthorization,
+} from 'store/slices/instances.slice';
 import { MessageInterface } from 'types';
 import { filterContacts, filterMessagesByText, getErrorMessage, getLastChats } from 'utils';
 
@@ -18,6 +21,9 @@ const ChatList: FC = () => {
   const instanceCredentials = useAppSelector(selectInstance);
   const isMiniVersion = useAppSelector(selectMiniVersion);
   const searchQuery = useAppSelector(selectSearchQuery);
+  const isLastMessagesSyncingAfterAuthorization = useAppSelector(
+    selectIsLastMessagesSyncingAfterAuthorization
+  );
 
   const matchMedia = useMediaQuery('(min-height: 1200px)');
 
@@ -53,6 +59,8 @@ const ChatList: FC = () => {
   };
 
   const allMessages: MessageInterface[] = data ?? [];
+  const isChatListLoading =
+    isLoading || (!isMiniVersion && isLastMessagesSyncingAfterAuthorization && !data?.length);
 
   const lastMessages = getLastChats(allMessages, [], isMiniVersion ? limit : undefined);
   const filteredContacts = filterContacts(allMessages, contactNames, searchQuery);
@@ -263,7 +271,7 @@ const ChatList: FC = () => {
               />
             )}
             loading={{
-              spinning: isLoading || (!data?.length && !isMiniVersion),
+              spinning: isChatListLoading,
               className: `${isMiniVersion ? 'min-height-460' : 'height-720'}`,
               size: 'large',
             }}

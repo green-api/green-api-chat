@@ -1,6 +1,7 @@
 import enIcon from 'assets/en.svg';
 import heIcon from 'assets/he.svg';
 import ruIcon from 'assets/ru.svg';
+import trIcon from 'assets/tr.svg';
 
 type Language = {
   name: string;
@@ -23,5 +24,10 @@ export const LANGUAGES: Language[] = [
     name: 'he',
     title: 'HEBREW',
     icon: heIcon,
+  },
+  {
+    name: 'tr',
+    title: 'TURKISH',
+    icon: trIcon,
   },
 ];

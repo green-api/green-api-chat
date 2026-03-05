@@ -1,6 +1,10 @@
 import { FC } from 'react';
+
 import { useTranslation } from 'react-i18next';
+
+import { useAppSelector } from 'hooks';
 import { useInstanceSettings } from 'hooks/use-instance-settings.hook';
+import { selectIsLastMessagesSyncingAfterAuthorization } from 'store/slices/instances.slice';
 import { StateInstanceEnum } from 'types';
 
 interface Properties {
@@ -10,12 +14,16 @@ interface Properties {
 const AuthorizationStatus: FC<Properties> = ({ style }) => {
   const { t } = useTranslation();
   const { settings, isLoading } = useInstanceSettings();
+  const isLastMessagesSyncingAfterAuthorization = useAppSelector(
+    selectIsLastMessagesSyncingAfterAuthorization
+  );
 
   const state = settings?.stateInstance;
 
-  if (isLoading) return null;
+  if (isLoading && !isLastMessagesSyncingAfterAuthorization) return null;
 
-  const isAuthorized = state === StateInstanceEnum.Authorized;
+  const isAuthorized =
+    state === StateInstanceEnum.Authorized || isLastMessagesSyncingAfterAuthorization;
   const isSuspended = state === StateInstanceEnum.Suspended;
 
   let text = '';

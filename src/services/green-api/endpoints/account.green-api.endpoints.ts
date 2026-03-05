@@ -2,6 +2,7 @@ import { greenAPI } from 'services/green-api/green-api.service';
 import {
   CheckWhatsappParametersInterface,
   GetQRResponseInterface,
+  GetSettingsResponseInterface,
   GetStateInstanceResponseInterface,
   GetWaSettingsResponseInterface,
   InstanceInterface,
@@ -13,6 +14,12 @@ import {
 
 export const accountGreenApiEndpoints = greenAPI.injectEndpoints({
   endpoints: (builder) => ({
+    getSettings: builder.query<GetSettingsResponseInterface, InstanceInterface>({
+      query: ({ idInstance, apiTokenInstance, apiUrl }) => ({
+        url: `${apiUrl}waInstance${idInstance}/getSettings/${apiTokenInstance}`,
+      }),
+      keepUnusedDataFor: 1000,
+    }),
     getWaSettings: builder.query<
       GetWaSettingsResponseInterface,
       InstanceInterface & { rtkWaSettingsSessionKey?: number }

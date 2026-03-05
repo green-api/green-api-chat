@@ -73,6 +73,7 @@ export interface InstancesState {
   typeInstance: TypeInstance;
   instanceList: ExpandedInstanceInterface[] | null;
   isAuthorizingInstance: boolean;
+  isLastMessagesSyncingAfterAuthorization: boolean;
 }
 
 export type TypeInstance = 'whatsapp' | 'v3' | 'telegram';
@@ -102,7 +103,7 @@ export interface MessageMenuState {
   messageDataForRender: MessageDataForRender | null;
 }
 
-export type LanguageLiteral = 'en' | 'ru' | 'he';
+export type LanguageLiteral = 'en' | 'ru' | 'he' | 'tr';
 
 export interface AuthFormValues {
   login: string;

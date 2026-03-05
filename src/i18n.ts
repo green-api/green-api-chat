@@ -9,8 +9,11 @@ i18n
   .use(initReactI18next)
   .init({
     fallbackLng: 'en',
+    supportedLngs: ['en', 'ru', 'he', 'tr'],
+    nonExplicitSupportedLngs: true,
+    load: 'languageOnly',
     backend: {
-      loadPath: '/locales_0.0.70/{{lng}}/translation.json',
+      loadPath: '/locales_0.1.0/{{lng}}/translation.json',
       expirationTime: 24 * 60 * 60 * 1000,
     },
     detection: {

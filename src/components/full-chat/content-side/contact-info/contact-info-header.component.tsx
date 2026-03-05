@@ -79,6 +79,7 @@ const ContactInfoHeader: FC = () => {
             ru: ['участник', 'участника', 'участников'],
             en: ['member', 'members', 'members'],
             he: ['חברים', 'חברים', 'חָבֵר'],
+            tr: ['üye', 'üye', 'üye'],
           },
           resolvedLanguage as LanguageLiteral
         ),
@@ -144,6 +145,7 @@ const ContactInfoHeader: FC = () => {
               ru: ['участник', 'участника', 'участников'],
               en: ['member', 'members', 'members'],
               he: ['חברים', 'חברים', 'חָבֵר'],
+              tr: ['üye', 'üye', 'üye'],
             },
             resolvedLanguage as LanguageLiteral
           ),

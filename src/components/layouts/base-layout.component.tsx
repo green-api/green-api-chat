@@ -11,12 +11,11 @@ import emptyAvatarGroup from 'assets/emptyAvatarGroup.png';
 import FullChat from 'components/full-chat/chat.component';
 import MiniChat from 'components/mini-chat/chat.component';
 import { useActions, useAppSelector } from 'hooks';
-import { useIsMaxInstance } from 'hooks/use-is-max-instance';
-import { useIsTelegramInstance } from 'hooks/use-is-telegram-instance';
 import {
   useLazyGetAvatarQuery,
   useLazyGetContactInfoQuery,
   useLazyGetGroupDataQuery,
+  useLazyGetSettingsQuery,
 } from 'services/green-api/endpoints';
 import { selectMiniVersion } from 'store/slices/chat.slice';
 import { selectInstance, selectInstanceList } from 'store/slices/instances.slice';
@@ -31,6 +30,7 @@ import {
   isPageInIframe,
   getErrorMessage,
   getPhoneNumberFromChatId,
+  getTypeInstanceFromQuery,
 } from 'utils';
 
 const BaseLayout: FC = () => {
@@ -41,8 +41,6 @@ const BaseLayout: FC = () => {
   const [isEventAdded, setIsEventAdded] = useState(false);
   const [searchParams] = useSearchParams();
   const { t } = useTranslation();
-  const isMax = useIsMaxInstance();
-  const isTelegram = useIsTelegramInstance();
   const [isThemeSet, setIsThemeSet] = useState(false);
 
   const {
@@ -59,6 +57,7 @@ const BaseLayout: FC = () => {
   const [getContactInfo] = useLazyGetContactInfoQuery();
   const [getGroupData] = useLazyGetGroupDataQuery();
   const [getAvatar] = useLazyGetAvatarQuery();
+  const [getSettings] = useLazyGetSettingsQuery();
 
   useEffect(() => {
     if (window.parent && window.parent !== window) {
@@ -165,30 +164,47 @@ const BaseLayout: FC = () => {
 
       if (!idInstance || !apiTokenInstance || !apiUrl || !mediaUrl) return;
 
-      const language = searchParams.get('lng');
-      const brandDescription = searchParams.get('dsc');
-      const brandImageUrl = searchParams.get('logo');
+      const normalizedApiUrl = apiUrl + '/';
+      const normalizedMediaUrl = mediaUrl + '/';
 
-      setType('partner-iframe');
-      setSelectedInstance({
-        idInstance: +idInstance,
-        apiTokenInstance,
-        apiUrl: apiUrl + '/',
-        mediaUrl: mediaUrl + '/',
-        tariff: TariffsEnum.Business,
-        typeInstance: 'whatsapp',
-      });
+      (async () => {
+        const language = searchParams.get('lng');
+        const brandDescription = searchParams.get('dsc');
+        const brandImageUrl = searchParams.get('logo');
+        const queryTypeInstance = getTypeInstanceFromQuery(searchParams.get('typeInstance'));
 
-      language && i18n.changeLanguage(language);
-      brandDescription && setBrandData({ description: brandDescription });
-      brandImageUrl && setBrandData({ brandImageUrl });
+        const { data: instanceSettings } = await getSettings({
+          idInstance: +idInstance,
+          apiTokenInstance,
+          apiUrl: normalizedApiUrl,
+          mediaUrl: normalizedMediaUrl,
+        });
 
-      if (searchParams.has('chatId')) {
-        setType('one-chat-only');
-        const chatId = searchParams.get('chatId');
+        const typeInstance = getTypeInstanceFromQuery(
+          instanceSettings?.typeInstance,
+          queryTypeInstance
+        );
+        const isMaxOrTelegramInstance = typeInstance === 'v3' || typeInstance === 'telegram';
 
-        if (chatId) {
-          (async () => {
+        setType('partner-iframe');
+        setSelectedInstance({
+          idInstance: +idInstance,
+          apiTokenInstance,
+          apiUrl: normalizedApiUrl,
+          mediaUrl: normalizedMediaUrl,
+          tariff: TariffsEnum.Business,
+          typeInstance,
+        });
+
+        language && i18n.changeLanguage(language);
+        brandDescription && setBrandData({ description: brandDescription });
+        brandImageUrl && setBrandData({ brandImageUrl });
+
+        if (searchParams.has('chatId')) {
+          setType('one-chat-only');
+          const chatId = searchParams.get('chatId');
+
+          if (chatId) {
             let contactInfo = undefined;
             let groupInfo = undefined;
             let avatar = chatId.includes('g.us') ? emptyAvatarGroup : emptyAvatarButAvailable;
@@ -199,9 +215,9 @@ const BaseLayout: FC = () => {
               !idInstance.toString().startsWith('7835')
             ) {
               const { data, error: groupDataError } = await getGroupData({
-                ...(isMax || isTelegram ? { chatId } : { groupId: chatId }),
-                apiUrl: apiUrl + '/',
-                mediaUrl: mediaUrl + '/',
+                ...(isMaxOrTelegramInstance ? { chatId } : { groupId: chatId }),
+                apiUrl: normalizedApiUrl,
+                mediaUrl: normalizedMediaUrl,
                 apiTokenInstance,
                 idInstance: +idInstance,
               });
@@ -211,8 +227,8 @@ const BaseLayout: FC = () => {
 
               const { data: avatarData } = await getAvatar({
                 chatId,
-                apiUrl: apiUrl + '/',
-                mediaUrl: mediaUrl + '/',
+                apiUrl: normalizedApiUrl,
+                mediaUrl: normalizedMediaUrl,
                 apiTokenInstance,
                 idInstance: +idInstance,
               });
@@ -226,8 +242,8 @@ const BaseLayout: FC = () => {
             if (!chatId.includes('g.us') && !idInstance.toString().startsWith('7835')) {
               const { data, error: contactInfoError } = await getContactInfo({
                 chatId,
-                apiUrl: apiUrl + '/',
-                mediaUrl: mediaUrl + '/',
+                apiUrl: normalizedApiUrl,
+                mediaUrl: normalizedMediaUrl,
                 apiTokenInstance,
                 idInstance: +idInstance,
               });
@@ -257,9 +273,9 @@ const BaseLayout: FC = () => {
               avatar,
               contactInfo: groupInfo || contactInfo,
             });
-          })();
+          }
         }
-      }
+      })();
     }
   }, [searchParams]);
 

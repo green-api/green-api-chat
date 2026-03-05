@@ -8,6 +8,7 @@ import {
   CookieOptionsInterface,
   ExpandedInstanceInterface,
   LanguageLiteral,
+  TypeInstance,
   UserInterface,
 } from 'types';
 
@@ -135,6 +136,21 @@ export function isPartnerChat(searchParams: URLSearchParams): boolean {
     searchParams.has('apiUrl') &&
     searchParams.has('mediaUrl')
   );
+}
+
+export function getTypeInstanceFromQuery(
+  typeInstance?: string | null,
+  fallback: TypeInstance = 'whatsapp'
+): TypeInstance {
+  if (!typeInstance) return fallback;
+
+  const normalized = typeInstance.trim().toLowerCase();
+
+  if (normalized === 'v3') return 'v3';
+  if (normalized === 'telegram') return 'telegram';
+  if (normalized === 'whatsapp') return 'whatsapp';
+
+  return fallback;
 }
 
 export function getSupportEmailByLanguage(language: LanguageLiteral) {

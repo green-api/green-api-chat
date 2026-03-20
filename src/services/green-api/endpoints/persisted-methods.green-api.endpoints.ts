@@ -40,6 +40,12 @@ export const persistedMethods = createApi({
         method: 'POST',
         body,
       }),
+      transformResponse: (response: GetAvatarResponseInterface) => ({
+        ...response,
+        urlAvatar: response.base64Avatar
+          ? `data:image/png;base64,${response.base64Avatar}`
+          : response.urlAvatar,
+      }),
       providesTags: (result, error, { chatId }) => [{ type: 'avatar', id: chatId }],
     }),
   }),

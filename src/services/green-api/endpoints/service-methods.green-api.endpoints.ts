@@ -45,6 +45,12 @@ export const serviceMethodsGreenApiEndpoints = greenAPI.injectEndpoints({
         body,
       }),
       keepUnusedDataFor: 1000,
+      transformResponse: (response: GetContactInfoResponseInterface) => ({
+        ...response,
+        avatar: response.base64Avatar
+          ? `data:image/png;base64,${response.base64Avatar}`
+          : response.avatar,
+      }),
     }),
     deleteMessage: builder.mutation<void, GetChatInformationParameters>({
       query: ({ idInstance, apiTokenInstance, apiUrl, mediaUrl: _, ...body }) => ({

@@ -174,7 +174,7 @@ const ChatListItem: FC<ContactListItemProps> = ({
       chatId: lastMessage.chatId,
       senderName: chatName,
       senderContactName: lastMessage.senderContactName,
-      avatar,
+      avatar: contactInfo?.base64Avatar ?? avatar,
       contactInfo: info,
     });
 

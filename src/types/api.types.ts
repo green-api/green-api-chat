@@ -274,6 +274,7 @@ export interface GetAvatarResponseInterface {
   existsWhatsapp: boolean;
   available: boolean;
   urlAvatar: string;
+  base64Avatar?: string;
   reason: 'bad request data' | 'get avatar timeout limit exceeded';
 }
 
@@ -293,6 +294,7 @@ export interface GetContactInfoResponseInterface
   isMute: boolean;
   messageExpiration: number;
   muteExpiration: number | null;
+  base64Avatar?: string;
 }
 
 interface ProductInterface {
@@ -425,6 +427,7 @@ export interface GetWaSettingsResponseInterface {
   phone: string;
   deviceId: string;
   chatId?: string;
+  base64Avatar?: string;
 }
 
 export interface GetProfileBaseSettingsResponseInterface<T extends boolean> {

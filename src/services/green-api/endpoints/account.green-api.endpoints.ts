@@ -32,6 +32,12 @@ export const accountGreenApiEndpoints = greenAPI.injectEndpoints({
         if (result) return [{ type: 'waSettings', id: arguments_.idInstance }, 'lastMessages'];
         return [{ type: 'waSettings', id: 'waAccountSettings' }, 'lastMessages'];
       },
+      transformResponse: (response: GetWaSettingsResponseInterface) => ({
+        ...response,
+        avatar: response.base64Avatar
+          ? `data:image/png;base64,${response.base64Avatar}`
+          : response.avatar,
+      }),
     }),
     getAccountSettings: builder.query<
       GetWaSettingsResponseInterface,
@@ -45,6 +51,10 @@ export const accountGreenApiEndpoints = greenAPI.injectEndpoints({
         if (result) return [{ type: 'waSettings', id: arguments_.idInstance }, 'lastMessages'];
         return [{ type: 'waSettings', id: 'waAccountSettings' }, 'lastMessages'];
       },
+      transformResponse: (response: GetWaSettingsResponseInterface) => ({
+        ...response,
+        base64Avatar: response.base64Avatar ? `data:image/png;base64,${response.base64Avatar}` : '',
+      }),
     }),
     getStateInstance: builder.query<GetStateInstanceResponseInterface, InstanceInterface>({
       query: ({ idInstance, apiTokenInstance, apiUrl }) => ({

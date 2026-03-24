@@ -17,6 +17,7 @@ export * from './date.utils';
 export * from './chat-list.utils';
 export * from './type-guard.utils';
 export * from './message.utils';
+export * from './image.utils';
 
 export function getErrorMessage(error: unknown, t: i18n['t']): string | null {
   let errorMessage = '';

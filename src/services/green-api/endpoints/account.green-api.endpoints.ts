@@ -11,6 +11,12 @@ import {
   SendMaxAuthCodeParametersInterface,
   StartAuthorizationResponseInterface,
 } from 'types';
+import { normalizeAvatarSrc } from 'utils/image.utils';
+
+const transformWaSettingsResponse = (response: GetWaSettingsResponseInterface) => ({
+  ...response,
+  avatar: normalizeAvatarSrc(response.avatar),
+});
 
 export const accountGreenApiEndpoints = greenAPI.injectEndpoints({
   endpoints: (builder) => ({
@@ -27,6 +33,7 @@ export const accountGreenApiEndpoints = greenAPI.injectEndpoints({
       query: ({ idInstance, apiTokenInstance, apiUrl }) => ({
         url: `${apiUrl}waInstance${idInstance}/getWaSettings/${apiTokenInstance}`,
       }),
+      transformResponse: transformWaSettingsResponse,
       keepUnusedDataFor: 1000,
       providesTags: (result, _, arguments_) => {
         if (result) return [{ type: 'waSettings', id: arguments_.idInstance }, 'lastMessages'];
@@ -40,6 +47,7 @@ export const accountGreenApiEndpoints = greenAPI.injectEndpoints({
       query: ({ idInstance, apiTokenInstance, apiUrl }) => ({
         url: `${apiUrl}waInstance${idInstance}/getAccountSettings/${apiTokenInstance}`,
       }),
+      transformResponse: transformWaSettingsResponse,
       keepUnusedDataFor: 1000,
       providesTags: (result, _, arguments_) => {
         if (result) return [{ type: 'waSettings', id: arguments_.idInstance }, 'lastMessages'];

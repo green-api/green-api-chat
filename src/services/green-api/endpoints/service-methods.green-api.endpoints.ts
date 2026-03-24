@@ -12,6 +12,7 @@ import {
   SendingResponseInterface,
   UploadFileParametersInterface,
 } from 'types';
+import { normalizeAvatarSrc } from 'utils/image.utils';
 
 export const serviceMethodsGreenApiEndpoints = greenAPI.injectEndpoints({
   endpoints: (builder) => ({
@@ -43,6 +44,10 @@ export const serviceMethodsGreenApiEndpoints = greenAPI.injectEndpoints({
         url: `${apiUrl}waInstance${idInstance}/getContactInfo/${apiTokenInstance}`,
         method: 'POST',
         body,
+      }),
+      transformResponse: (response: GetContactInfoResponseInterface) => ({
+        ...response,
+        avatar: normalizeAvatarSrc(response.avatar),
       }),
       keepUnusedDataFor: 1000,
     }),

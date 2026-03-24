@@ -16,7 +16,13 @@ import { useGetGroupDataQuery } from 'services/green-api/endpoints';
 import { selectActiveChat } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
 import { ActiveChat, LanguageLiteral } from 'types';
-import { fillJsxString, isContactInfo, isWhatsAppOfficialChat, numWord } from 'utils';
+import {
+  fillJsxString,
+  isContactInfo,
+  isWhatsAppOfficialChat,
+  normalizeAvatarSrc,
+  numWord,
+} from 'utils';
 
 const ContactInfoHeader: FC = () => {
   const { setContactInfoOpen } = useActions();
@@ -210,7 +216,7 @@ const ContactInfoHeader: FC = () => {
             <Image
               preview={false}
               className="contact-info-avatar"
-              src={isOfficial ? waChatIcon : activeChat.avatar}
+              src={normalizeAvatarSrc(isOfficial ? waChatIcon : activeChat.avatar)}
             />
           </div>
           {isGroup && isAdmin && <GroupAvatarUpload activeChat={activeChat} />}

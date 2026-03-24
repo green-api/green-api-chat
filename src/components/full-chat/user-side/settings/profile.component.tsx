@@ -12,6 +12,7 @@ import { useIsMaxInstance } from 'hooks/use-is-max-instance';
 import { useIsTelegramInstance } from 'hooks/use-is-telegram-instance';
 import { useGetAvatarQuery } from 'services/green-api/endpoints';
 import { selectInstance } from 'store/slices/instances.slice';
+import { normalizeAvatarSrc } from 'utils';
 
 export const Profile = () => {
   const { setIsAuthorizingInstance } = useActions();
@@ -55,11 +56,13 @@ export const Profile = () => {
       >
         <Avatar
           src={
-            isTelegram
-              ? settings?.avatar
-              : avatar?.urlAvatar?.trim()
-                ? avatar.urlAvatar
-                : emptyAvatarButAvailable
+            normalizeAvatarSrc(
+              isTelegram
+                ? settings?.avatar
+                : avatar?.urlAvatar?.trim()
+                  ? avatar.urlAvatar
+                  : emptyAvatarButAvailable
+            )
           }
           size={115}
           style={{

@@ -15,7 +15,7 @@ import { normalizeAvatarSrc } from 'utils/image.utils';
 
 const transformWaSettingsResponse = (response: GetWaSettingsResponseInterface) => ({
   ...response,
-  avatar: normalizeAvatarSrc(response.avatar),
+  avatar: normalizeAvatarSrc(response.base64Avatar || response.avatar),
 });
 
 export const accountGreenApiEndpoints = greenAPI.injectEndpoints({

@@ -47,7 +47,7 @@ export const serviceMethodsGreenApiEndpoints = greenAPI.injectEndpoints({
       }),
       transformResponse: (response: GetContactInfoResponseInterface) => ({
         ...response,
-        avatar: normalizeAvatarSrc(response.avatar),
+        avatar: normalizeAvatarSrc(response.base64Avatar || response.avatar),
       }),
       keepUnusedDataFor: 1000,
     }),

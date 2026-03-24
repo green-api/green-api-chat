@@ -6,8 +6,8 @@ import {
   GroupBaseParametersInterface,
   RequestWithChatIdParameters,
 } from 'types';
-import { normalizeAvatarSrc } from 'utils/image.utils';
 import { isHydrateAction } from 'utils/hydrate';
+import { normalizeAvatarSrc } from 'utils/image.utils';
 
 export const persistedMethods = createApi({
   reducerPath: 'groupPersistentAPI',

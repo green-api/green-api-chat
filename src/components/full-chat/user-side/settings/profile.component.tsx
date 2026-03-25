@@ -55,15 +55,13 @@ export const Profile = () => {
         style={{ height: 150, backgroundColor: 'var(--profile-background)', position: 'relative' }}
       >
         <Avatar
-          src={
-            normalizeAvatarSrc(
-              isTelegram
-                ? settings?.avatar
-                : avatar?.urlAvatar?.trim()
-                  ? avatar.urlAvatar
-                  : emptyAvatarButAvailable
-            )
-          }
+          src={normalizeAvatarSrc(
+            isTelegram
+              ? settings?.avatar
+              : avatar?.urlAvatar?.trim()
+                ? avatar.urlAvatar
+                : emptyAvatarButAvailable
+          )}
           size={115}
           style={{
             position: 'absolute',

@@ -43,22 +43,27 @@ const SelectSendingMode: FC = () => {
       icon: <LocationIcon />,
       label: t('LOCATION'),
     },
-    {
-      key: 'sendButtons',
-      icon: <ButtonsIcon />,
-      label: t('BUTTONS'),
-    },
-    {
-      key: 'sendPoll',
-      icon: <PollIcon />,
-      label: t('POLL'),
-    },
-    {
-      key: 'sendPreview',
-      icon: <PreviewIcon />,
-      label: t('PREVIEW'),
-    },
   ];
+
+  if (!isMax) {
+    items.push(
+      {
+        key: 'sendButtons',
+        icon: <ButtonsIcon />,
+        label: t('BUTTONS'),
+      },
+      {
+        key: 'sendPoll',
+        icon: <PollIcon />,
+        label: t('POLL'),
+      },
+      {
+        key: 'sendPreview',
+        icon: <PreviewIcon />,
+        label: t('PREVIEW'),
+      }
+    );
+  }
 
   if (isWaba) {
     items.push({
@@ -66,8 +71,6 @@ const SelectSendingMode: FC = () => {
       label: <span>{t('TEMPLATE')}</span>,
     });
   }
-
-  if (isMax) return null;
 
   return (
     <>

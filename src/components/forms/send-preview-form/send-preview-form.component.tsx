@@ -15,7 +15,7 @@ import { journalsGreenApiEndpoints } from 'services/green-api/endpoints/journals
 import { selectActiveChat, selectMessageCount, selectMiniVersion } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
 import { ActiveChat, ChatFormValues, MessageInterface } from 'types';
-import { getLastChats } from 'utils';
+import { updateAllChats } from 'utils';
 
 const PreviewedMessageForm: FC = () => {
   const instanceCredentials = useAppSelector(selectInstance);
@@ -112,7 +112,7 @@ const PreviewedMessageForm: FC = () => {
 
       const updateChatListThunk = journalsGreenApiEndpoints.util?.updateQueryData(
         'lastMessages',
-        instanceCredentials,
+        { allMessages: true, ...instanceCredentials },
         (draftChatHistory) => {
           const newMessage: MessageInterface = {
             type: 'outgoing',
@@ -126,7 +126,7 @@ const PreviewedMessageForm: FC = () => {
             statusMessage: 'sent',
           };
 
-          return getLastChats(draftChatHistory, [newMessage], isMiniVersion ? 5 : undefined);
+          return updateAllChats(draftChatHistory, [newMessage], []);
         }
       );
 

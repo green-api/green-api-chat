@@ -1,5 +1,16 @@
 import { GetChatHistoryResponse, MessageInterface, StatusMessage } from 'types';
 
+const getFilteredMessages = (messages: GetChatHistoryResponse): GetChatHistoryResponse =>
+  messages.filter(
+    (message) =>
+      message.typeMessage !== 'reactionMessage' &&
+      message.typeMessage !== 'deletedMessage' &&
+      message.typeMessage !== 'editedMessage'
+  );
+
+const getMessageKey = (message: MessageInterface): string =>
+  `${message.chatId}-${message.idMessage || `${message.chatId}-${message.timestamp}`}`;
+
 export function getLastChats(
   lastIncomingMessages: GetChatHistoryResponse,
   lastOutgoingMessages: GetChatHistoryResponse,
@@ -9,14 +20,10 @@ export function getLastChats(
     return [];
   }
 
-  const allMessagesFilteredAndSorted = [...lastIncomingMessages, ...lastOutgoingMessages]
-    .filter(
-      (message) =>
-        message.typeMessage !== 'reactionMessage' &&
-        message.typeMessage !== 'deletedMessage' &&
-        message.typeMessage !== 'editedMessage'
-    )
-    .sort((a, b) => b.timestamp - a.timestamp);
+  const allMessagesFilteredAndSorted = getFilteredMessages([
+    ...lastIncomingMessages,
+    ...lastOutgoingMessages,
+  ]).sort((a, b) => b.timestamp - a.timestamp);
 
   const resultMap = new Map<string, MessageInterface>();
 
@@ -95,16 +102,50 @@ export function getAllChats(
   lastIncomingMessages: GetChatHistoryResponse,
   lastOutgoingMessages: GetChatHistoryResponse
 ): GetChatHistoryResponse {
-  const allMessagesFilteredAndSorted = [...lastIncomingMessages, ...lastOutgoingMessages]
-    .filter(
-      (message) =>
-        message.typeMessage !== 'reactionMessage' &&
-        message.typeMessage !== 'deletedMessage' &&
-        message.typeMessage !== 'editedMessage'
-    )
-    .sort((a, b) => b.timestamp - a.timestamp);
+  const allMessagesFilteredAndSorted = getFilteredMessages([
+    ...lastIncomingMessages,
+    ...lastOutgoingMessages,
+  ]).sort((a, b) => b.timestamp - a.timestamp);
 
   return allMessagesFilteredAndSorted;
+}
+
+export function updateAllChats(
+  currentChats: MessageInterface[],
+  lastIncomingMessages: GetChatHistoryResponse,
+  lastOutgoingMessages: GetChatHistoryResponse
+): GetChatHistoryResponse {
+  const updates = getAllChats(lastIncomingMessages, lastOutgoingMessages);
+
+  if (!updates.length) {
+    return getFilteredMessages(currentChats).sort((a, b) => b.timestamp - a.timestamp);
+  }
+
+  const mergedMap = new Map<string, MessageInterface>();
+
+  getFilteredMessages(currentChats).forEach((message) => {
+    mergedMap.set(getMessageKey(message), message);
+  });
+
+  updates.forEach((message) => {
+    const key = getMessageKey(message);
+    const existingMessage = mergedMap.get(key);
+
+    if (!existingMessage) {
+      mergedMap.set(key, message);
+      return;
+    }
+
+    if (
+      isStatusUpdateNeeded(existingMessage, message) ||
+      isEditedOrDeletedMessageUpdateNeeded(existingMessage, message) ||
+      message.timestamp > existingMessage.timestamp
+    ) {
+      mergedMap.set(key, message);
+    }
+  });
+
+  return Array.from(mergedMap.values()).sort((a, b) => b.timestamp - a.timestamp);
 }
 
 export const extractTextFromMessage = (msg: MessageInterface): string => {

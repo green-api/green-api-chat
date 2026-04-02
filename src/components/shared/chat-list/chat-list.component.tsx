@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef, useState } from 'react';
+import { FC, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Empty, Flex, List, Spin, Typography } from 'antd';
 import { useTranslation } from 'react-i18next';
@@ -13,7 +13,14 @@ import {
   selectIsLastMessagesSyncingAfterAuthorization,
 } from 'store/slices/instances.slice';
 import { MessageInterface } from 'types';
-import { filterContacts, filterMessagesByText, getErrorMessage, getLastChats } from 'utils';
+import {
+  filterContacts,
+  filterMessagesByText,
+  getCachedGetChatHistoryMessages,
+  getErrorMessage,
+  getLastChats,
+  updateAllChats,
+} from 'utils';
 
 const { Title } = Typography;
 
@@ -24,6 +31,7 @@ const ChatList: FC = () => {
   const isLastMessagesSyncingAfterAuthorization = useAppSelector(
     selectIsLastMessagesSyncingAfterAuthorization
   );
+  const greenApiQueries = useAppSelector((state) => state.greenAPI.queries);
 
   const matchMedia = useMediaQuery('(min-height: 1200px)');
 
@@ -59,12 +67,25 @@ const ChatList: FC = () => {
   };
 
   const allMessages: MessageInterface[] = data ?? [];
+  const cachedGetChatHistoryMessages = useMemo(
+    () => getCachedGetChatHistoryMessages(greenApiQueries, instanceCredentials),
+    [
+      greenApiQueries,
+      instanceCredentials.idInstance,
+      instanceCredentials.apiTokenInstance,
+      instanceCredentials.apiUrl,
+    ]
+  );
+  const searchableMessages = useMemo(
+    () => updateAllChats(allMessages, cachedGetChatHistoryMessages, []),
+    [allMessages, cachedGetChatHistoryMessages]
+  );
   const isChatListLoading =
     isLoading || (!isMiniVersion && isLastMessagesSyncingAfterAuthorization && !data?.length);
 
   const lastMessages = getLastChats(allMessages, [], isMiniVersion ? limit : undefined);
   const filteredContacts = filterContacts(allMessages, contactNames, searchQuery);
-  const filteredMessages = filterMessagesByText(allMessages, searchQuery);
+  const filteredMessages = filterMessagesByText(searchableMessages, searchQuery);
 
   const showResults = searchQuery.trim() !== '';
 

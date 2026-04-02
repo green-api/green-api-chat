@@ -1,4 +1,10 @@
-import { GetChatHistoryResponse, MessageInterface, StatusMessage } from 'types';
+import {
+  GetChatHistoryParametersInterface,
+  GetChatHistoryResponse,
+  InstanceInterface,
+  MessageInterface,
+  StatusMessage,
+} from 'types';
 
 const getFilteredMessages = (messages: GetChatHistoryResponse): GetChatHistoryResponse =>
   messages.filter(
@@ -189,4 +195,41 @@ export const filterMessagesByText = (
 
 export const isWhatsAppOfficialChat = (chatId: string): boolean => {
   return chatId === '0@c.us';
+};
+
+type QueryStateData = {
+  endpointName?: string;
+  originalArgs?: unknown;
+  data?: unknown;
+};
+
+const isSameInstance = (
+  originalArgs: Partial<GetChatHistoryParametersInterface>,
+  instanceCredentials: Partial<InstanceInterface>
+): boolean =>
+  originalArgs.idInstance === instanceCredentials.idInstance &&
+  originalArgs.apiTokenInstance === instanceCredentials.apiTokenInstance &&
+  originalArgs.apiUrl === instanceCredentials.apiUrl;
+
+export const getCachedGetChatHistoryMessages = (
+  queries: Record<string, QueryStateData | undefined> | undefined,
+  instanceCredentials: Partial<InstanceInterface>
+): MessageInterface[] => {
+  if (!queries) return [];
+
+  return Object.values(queries).flatMap((query) => {
+    if (!query) return [];
+
+    if (query.endpointName !== 'getChatHistory') return [];
+
+    const originalArgs = query.originalArgs as Partial<GetChatHistoryParametersInterface>;
+
+    if (!originalArgs || !isSameInstance(originalArgs, instanceCredentials)) {
+      return [];
+    }
+
+    if (!Array.isArray(query.data)) return [];
+
+    return query.data as MessageInterface[];
+  });
 };

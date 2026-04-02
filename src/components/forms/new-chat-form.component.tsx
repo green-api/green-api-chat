@@ -6,6 +6,8 @@ import { useTranslation } from 'react-i18next';
 
 import TextArea from 'components/UI/text-area.component';
 import { useAppDispatch, useAppSelector, useFormWithLanguageValidation } from 'hooks';
+import { useIsMaxInstance } from 'hooks/use-is-max-instance';
+import { useIsTelegramInstance } from 'hooks/use-is-telegram-instance';
 import { useCheckWhatsappMutation, useSendMessageMutation } from 'services/green-api/endpoints';
 import { journalsGreenApiEndpoints } from 'services/green-api/endpoints/journals.green-api.endpoints';
 import { selectMiniVersion, selectType } from 'store/slices/chat.slice';
@@ -24,6 +26,8 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
   const isMiniVersion = useAppSelector(selectMiniVersion);
   const isChatWorking = useAppSelector(selectIsChatWorking);
   const type = useAppSelector(selectType);
+  const isMax = useIsMaxInstance();
+  const isTelegram = useIsTelegramInstance();
 
   const dispatch = useAppDispatch();
 
@@ -53,8 +57,14 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
       { name: 'chatId', errors: [], warnings: [] },
     ]);
 
-    const isGroupChat = /\d{17}/.test(chatId);
-    const fullChatId = isGroupChat ? `${chatId}@g.us` : `${chatId}@c.us`;
+    const isMaxOrTelegram = isMax || isTelegram;
+    const isGroupChat = /\d{17}/.test(chatId) || (isMaxOrTelegram && chatId.startsWith('-'));
+    const fullChatId =
+      isMaxOrTelegram && chatId.startsWith('-')
+        ? chatId
+        : isGroupChat
+          ? `${chatId}@g.us`
+          : `${chatId}@c.us`;
 
     let addNewChatInList = !isGroupChat;
 

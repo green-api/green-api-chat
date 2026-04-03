@@ -13,10 +13,15 @@ import {
 } from 'types';
 import { normalizeAvatarSrc } from 'utils/image.utils';
 
-const transformWaSettingsResponse = (response: GetWaSettingsResponseInterface) => ({
-  ...response,
-  avatar: normalizeAvatarSrc(response.base64Avatar || response.avatar),
-});
+const transformWaSettingsResponse = (response: GetWaSettingsResponseInterface) => {
+  const normalizedBase64Avatar = normalizeAvatarSrc(response.base64Avatar);
+  const normalizedAvatar = normalizeAvatarSrc(response.avatar);
+
+  return {
+    ...response,
+    avatar: normalizedBase64Avatar || normalizedAvatar,
+  };
+};
 
 export const accountGreenApiEndpoints = greenAPI.injectEndpoints({
   endpoints: (builder) => ({

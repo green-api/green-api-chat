@@ -43,7 +43,8 @@ export const persistedMethods = createApi({
       }),
       transformResponse: (response: GetAvatarResponseInterface) => ({
         ...response,
-        urlAvatar: normalizeAvatarSrc(response.base64Avatar || response.urlAvatar),
+        urlAvatar:
+          normalizeAvatarSrc(response.base64Avatar) || normalizeAvatarSrc(response.urlAvatar),
       }),
       providesTags: (result, error, { chatId }) => [{ type: 'avatar', id: chatId }],
     }),

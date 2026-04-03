@@ -233,7 +233,9 @@ const BaseLayout: FC = () => {
               });
 
               if (avatarData) {
-                avatar = avatarData.urlAvatar;
+                if (avatarData.urlAvatar) {
+                  avatar = avatarData.urlAvatar;
+                }
                 if (!avatarData.available && !chatId.includes('g.us')) avatar = emptyAvatar;
               }
             }

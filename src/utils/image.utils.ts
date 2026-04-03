@@ -34,6 +34,11 @@ export function normalizeAvatarSrc(value?: string | null): string {
     return '';
   }
 
+  const lowerCasedValue = trimmedValue.toLowerCase();
+  if (lowerCasedValue === 'undefined' || lowerCasedValue === 'null') {
+    return '';
+  }
+
   if (IMAGE_DATA_URI_PREFIX.test(trimmedValue)) {
     return trimmedValue;
   }

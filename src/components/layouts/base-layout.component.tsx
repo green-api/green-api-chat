@@ -166,13 +166,16 @@ const BaseLayout: FC = () => {
 
       const normalizedApiUrl = apiUrl + '/';
       const normalizedMediaUrl = mediaUrl + '/';
+      const language = searchParams.get('lng');
+      const brandDescription = searchParams.get('dsc');
+      const brandImageUrl = searchParams.get('logo');
+      const queryTypeInstance = getTypeInstanceFromQuery(searchParams.get('typeInstance'));
+
+      language && i18n.changeLanguage(language);
+      brandDescription && setBrandData({ description: brandDescription });
+      brandImageUrl && setBrandData({ brandImageUrl });
 
       (async () => {
-        const language = searchParams.get('lng');
-        const brandDescription = searchParams.get('dsc');
-        const brandImageUrl = searchParams.get('logo');
-        const queryTypeInstance = getTypeInstanceFromQuery(searchParams.get('typeInstance'));
-
         const { data: instanceSettings } = await getSettings({
           idInstance: +idInstance,
           apiTokenInstance,
@@ -195,10 +198,6 @@ const BaseLayout: FC = () => {
           tariff: TariffsEnum.Business,
           typeInstance,
         });
-
-        language && i18n.changeLanguage(language);
-        brandDescription && setBrandData({ description: brandDescription });
-        brandImageUrl && setBrandData({ brandImageUrl });
 
         if (searchParams.has('chatId')) {
           setType('one-chat-only');

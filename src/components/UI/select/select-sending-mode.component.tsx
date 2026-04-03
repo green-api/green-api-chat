@@ -43,31 +43,33 @@ const SelectSendingMode: FC = () => {
       icon: <LocationIcon />,
       label: t('LOCATION'),
     },
-    {
-      key: 'sendButtons',
-      icon: <ButtonsIcon />,
-      label: t('BUTTONS'),
-    },
-    {
-      key: 'sendPoll',
-      icon: <PollIcon />,
-      label: t('POLL'),
-    },
-    {
-      key: 'sendPreview',
-      icon: <PreviewIcon />,
-      label: t('PREVIEW'),
-    },
+    ...(isMax
+      ? []
+      : [
+          {
+            key: 'sendButtons',
+            icon: <ButtonsIcon />,
+            label: t('BUTTONS'),
+          },
+          {
+            key: 'sendPoll',
+            icon: <PollIcon />,
+            label: t('POLL'),
+          },
+          {
+            key: 'sendPreview',
+            icon: <PreviewIcon />,
+            label: t('PREVIEW'),
+          },
+        ]),
   ];
 
-  if (isWaba) {
+  if (isWaba && !isMax) {
     items.push({
       key: 'sendTemplate',
       label: <span>{t('TEMPLATE')}</span>,
     });
   }
-
-  if (isMax) return null;
 
   return (
     <>

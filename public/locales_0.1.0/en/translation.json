@@ -37,6 +37,7 @@
   "DESCRIPTION": "Description",
 
   "CONTACT_PHONE_LABEL": "Contact phone number",
+  "CONTACT_CHAT_ID_LABEL": "Chat ID",
   "CONTACT_PHONE_INVALID_MESSAGE": "Invalid value",
 
   "QUOTED_MESSAGE_ID_LABEL": "Quoted message ID",

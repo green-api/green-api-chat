@@ -47,6 +47,7 @@
   "DESCRIPTION": "Описание",
 
   "CONTACT_PHONE_LABEL": "Контактный номер",
+  "CONTACT_CHAT_ID_LABEL": "Идентификатор чата",
   "CONTACT_PHONE_INVALID_MESSAGE": "Некорректное значение",
 
   "QUOTED_MESSAGE_ID_LABEL": "Идентификатор цитируемого сообщения",

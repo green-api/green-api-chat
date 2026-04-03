@@ -34,6 +34,7 @@
   "FILENAME_LABEL": "Dosya adı",
   "DESCRIPTION": "Tanım",
   "CONTACT_PHONE_LABEL": "İletişim telefon numarası",
+  "CONTACT_CHAT_ID_LABEL": "Sohbet kimliği",
   "CONTACT_PHONE_INVALID_MESSAGE": "Geçersiz değer",
   "QUOTED_MESSAGE_ID_LABEL": "Alıntılanan mesaj kimliği",
   "NAME_LABEL": "İlk adı",

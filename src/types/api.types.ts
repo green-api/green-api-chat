@@ -330,13 +330,17 @@ export interface SendContactParametersInterface
   contact: ContactInterface;
 }
 
-export interface ContactInterface {
-  phoneContact: string | number;
-  firstName?: string;
-  middleName?: string;
-  lastName?: string;
-  company?: string;
-}
+export type ContactInterface =
+  | {
+      phoneContact: string | number;
+      firstName?: string;
+      middleName?: string;
+      lastName?: string;
+      company?: string;
+    }
+  | {
+      chatId: string;
+    };
 
 export interface SendLocationParametersInterface
   extends InstanceInterface,

@@ -1,4 +1,21 @@
-import { GetChatHistoryResponse, MessageInterface, StatusMessage } from 'types';
+import {
+  GetChatHistoryParametersInterface,
+  GetChatHistoryResponse,
+  InstanceInterface,
+  MessageInterface,
+  StatusMessage,
+} from 'types';
+
+const getFilteredMessages = (messages: GetChatHistoryResponse): GetChatHistoryResponse =>
+  messages.filter(
+    (message) =>
+      message.typeMessage !== 'reactionMessage' &&
+      message.typeMessage !== 'deletedMessage' &&
+      message.typeMessage !== 'editedMessage'
+  );
+
+const getMessageKey = (message: MessageInterface): string =>
+  `${message.chatId}-${message.idMessage || `${message.chatId}-${message.timestamp}`}`;
 
 export function getLastChats(
   lastIncomingMessages: GetChatHistoryResponse,
@@ -9,14 +26,10 @@ export function getLastChats(
     return [];
   }
 
-  const allMessagesFilteredAndSorted = [...lastIncomingMessages, ...lastOutgoingMessages]
-    .filter(
-      (message) =>
-        message.typeMessage !== 'reactionMessage' &&
-        message.typeMessage !== 'deletedMessage' &&
-        message.typeMessage !== 'editedMessage'
-    )
-    .sort((a, b) => b.timestamp - a.timestamp);
+  const allMessagesFilteredAndSorted = getFilteredMessages([
+    ...lastIncomingMessages,
+    ...lastOutgoingMessages,
+  ]).sort((a, b) => b.timestamp - a.timestamp);
 
   const resultMap = new Map<string, MessageInterface>();
 
@@ -95,16 +108,50 @@ export function getAllChats(
   lastIncomingMessages: GetChatHistoryResponse,
   lastOutgoingMessages: GetChatHistoryResponse
 ): GetChatHistoryResponse {
-  const allMessagesFilteredAndSorted = [...lastIncomingMessages, ...lastOutgoingMessages]
-    .filter(
-      (message) =>
-        message.typeMessage !== 'reactionMessage' &&
-        message.typeMessage !== 'deletedMessage' &&
-        message.typeMessage !== 'editedMessage'
-    )
-    .sort((a, b) => b.timestamp - a.timestamp);
+  const allMessagesFilteredAndSorted = getFilteredMessages([
+    ...lastIncomingMessages,
+    ...lastOutgoingMessages,
+  ]).sort((a, b) => b.timestamp - a.timestamp);
 
   return allMessagesFilteredAndSorted;
+}
+
+export function updateAllChats(
+  currentChats: MessageInterface[],
+  lastIncomingMessages: GetChatHistoryResponse,
+  lastOutgoingMessages: GetChatHistoryResponse
+): GetChatHistoryResponse {
+  const updates = getAllChats(lastIncomingMessages, lastOutgoingMessages);
+
+  if (!updates.length) {
+    return getFilteredMessages(currentChats).sort((a, b) => b.timestamp - a.timestamp);
+  }
+
+  const mergedMap = new Map<string, MessageInterface>();
+
+  getFilteredMessages(currentChats).forEach((message) => {
+    mergedMap.set(getMessageKey(message), message);
+  });
+
+  updates.forEach((message) => {
+    const key = getMessageKey(message);
+    const existingMessage = mergedMap.get(key);
+
+    if (!existingMessage) {
+      mergedMap.set(key, message);
+      return;
+    }
+
+    if (
+      isStatusUpdateNeeded(existingMessage, message) ||
+      isEditedOrDeletedMessageUpdateNeeded(existingMessage, message) ||
+      message.timestamp > existingMessage.timestamp
+    ) {
+      mergedMap.set(key, message);
+    }
+  });
+
+  return Array.from(mergedMap.values()).sort((a, b) => b.timestamp - a.timestamp);
 }
 
 export const extractTextFromMessage = (msg: MessageInterface): string => {
@@ -148,4 +195,41 @@ export const filterMessagesByText = (
 
 export const isWhatsAppOfficialChat = (chatId: string): boolean => {
   return chatId === '0@c.us';
+};
+
+type QueryStateData = {
+  endpointName?: string;
+  originalArgs?: unknown;
+  data?: unknown;
+};
+
+const isSameInstance = (
+  originalArgs: Partial<GetChatHistoryParametersInterface>,
+  instanceCredentials: Partial<InstanceInterface>
+): boolean =>
+  originalArgs.idInstance === instanceCredentials.idInstance &&
+  originalArgs.apiTokenInstance === instanceCredentials.apiTokenInstance &&
+  originalArgs.apiUrl === instanceCredentials.apiUrl;
+
+export const getCachedGetChatHistoryMessages = (
+  queries: Record<string, QueryStateData | undefined> | undefined,
+  instanceCredentials: Partial<InstanceInterface>
+): MessageInterface[] => {
+  if (!queries) return [];
+
+  return Object.values(queries).flatMap((query) => {
+    if (!query) return [];
+
+    if (query.endpointName !== 'getChatHistory') return [];
+
+    const originalArgs = query.originalArgs as Partial<GetChatHistoryParametersInterface>;
+
+    if (!originalArgs || !isSameInstance(originalArgs, instanceCredentials)) {
+      return [];
+    }
+
+    if (!Array.isArray(query.data)) return [];
+
+    return query.data as MessageInterface[];
+  });
 };

@@ -14,7 +14,7 @@ import { selectMiniVersion, selectType } from 'store/slices/chat.slice';
 import { selectInstance, selectIsChatWorking } from 'store/slices/instances.slice';
 import { selectUser } from 'store/slices/user.slice';
 import { MessageInterface, NewChatFormValues } from 'types';
-import { getLastChats, isAuth } from 'utils';
+import { isAuth, updateAllChats } from 'utils';
 
 interface NewChatFormProps {
   onSubmitCallback?: () => void;
@@ -117,7 +117,7 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
               statusMessage: 'sent',
             };
 
-            return getLastChats(draftChatHistory, [newMessage], isMiniVersion ? 5 : undefined);
+            return updateAllChats(draftChatHistory, [newMessage], []);
           }
         );
         dispatch(updateChatListThunk);

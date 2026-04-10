@@ -267,6 +267,30 @@ export interface CheckWhatsappResponseInterface {
   existsWhatsapp: boolean;
 }
 
+export interface GetContactsParametersInterface extends InstanceInterface {
+  group?: boolean;
+  count?: number;
+}
+
+export interface ContactListItemInterface {
+  id: string;
+  name: string;
+  contactName?: string;
+  type: 'user' | 'group';
+}
+
+export interface UpsertContactPayloadInterface {
+  chatId: string;
+  contactName: string;
+  contactSecondName?: string;
+  syncToPhone?: boolean;
+}
+
+export type AddContactParametersInterface = InstanceInterface & UpsertContactPayloadInterface;
+export type EditContactParametersInterface = InstanceInterface & UpsertContactPayloadInterface;
+export type DeleteContactParametersInterface = InstanceInterface &
+  Pick<UpsertContactPayloadInterface, 'chatId'>;
+
 export type RequestWithChatIdParameters = InstanceInterface &
   Pick<SendingBaseParametersInterface, 'chatId'>;
 

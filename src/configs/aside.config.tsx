@@ -1,8 +1,10 @@
 import { SettingOutlined } from '@ant-design/icons';
 
 import ChatIcon from 'assets/chat.svg?react';
+import ContactIcon from 'assets/contact-icon.svg?react';
 import InstanceIcon from 'assets/instance-icon.svg?react';
 import Chats from 'components/full-chat/user-side/chats/chats.component';
+import Contacts from 'components/full-chat/user-side/contacts/contacts.component';
 import { InstanceSettings } from 'components/full-chat/user-side/settings/instance.component';
 import { Language } from 'components/full-chat/user-side/settings/language.componet';
 import { Logout } from 'components/full-chat/user-side/settings/logout.component';
@@ -15,6 +17,7 @@ export const asideTopIconItems: (type: ChatType) => (AsideItem | null)[] = (type
     ? { item: 'instance', title: 'INSTANCE', icon: <InstanceIcon /> }
     : null,
   { item: 'chats', title: 'CHATS_TITLE', icon: <ChatIcon /> },
+  type !== 'one-chat-only' ? { item: 'contacts', title: 'CONTACTS', icon: <ContactIcon /> } : null,
   // { item: 'calls', title: 'CALLS_TITLE', icon: <PhoneIcon /> },
 ];
 
@@ -30,6 +33,7 @@ export const asideBottomIconItems: AsideItem[] = [
 
 export const USER_SIDE_ITEMS: UserSideItem[] = [
   { item: 'chats', element: <Chats /> },
+  { item: 'contacts', element: <Contacts /> },
   { item: 'instance', element: <InstanceSettings /> },
   { item: 'profile', element: <Profile /> },
   { item: 'language', element: <Language /> },

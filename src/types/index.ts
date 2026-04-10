@@ -260,6 +260,7 @@ export type MessageServiceMethodName = 'editMessage' | 'deleteMessage';
 
 export type UserSideActiveMode =
   | 'chats'
+  | 'contacts'
   | 'settings'
   | 'profile'
   | 'statuses'

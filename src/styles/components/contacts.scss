@@ -1,0 +1,75 @@
+.contacts-section {
+  height: 100%;
+  overflow: hidden;
+
+  &__header {
+    padding: 6px 20px;
+  }
+
+  &__title {
+    margin: 0 !important;
+    font-size: 1.5rem !important;
+    line-height: 1.2;
+  }
+
+  &__list-wrapper {
+    flex: 1;
+    overflow: hidden;
+    min-height: 0;
+  }
+
+  &__loader {
+    height: 100%;
+  }
+
+  &__list {
+    height: 100%;
+    overflow: auto;
+    padding: 0 8px 10px;
+    @include scrollBar();
+  }
+
+  &__list-item {
+    border-block-end: 1px solid var(--chat-border-color);
+    padding: 14px 12px !important;
+  }
+
+  &__actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  &__icon-btn {
+    width: 34px !important;
+    height: 34px !important;
+    min-width: 34px !important;
+    padding: 0 !important;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__icon-btn--danger {
+    color: var(--danger-color);
+    border-color: rgb(209 36 47 / 35%);
+  }
+
+  &__name {
+    display: inline-block;
+    max-width: 240px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  &__chat-id {
+    font-size: 12px;
+  }
+
+  .ant-list-item-action {
+    margin-left: 12px !important;
+  }
+}

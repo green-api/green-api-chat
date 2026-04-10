@@ -124,5 +124,6 @@ export const greenAPI = createApi({
     'chatHistory',
     'avatar',
     'statuses',
+    'contacts',
   ],
 });

@@ -1,8 +1,13 @@
 import { greenAPI } from 'services/green-api/green-api.service';
 import {
+  AddContactParametersInterface,
   CheckWhatsappParametersInterface,
   CheckWhatsappResponseInterface,
+  ContactListItemInterface,
+  DeleteContactParametersInterface,
+  EditContactParametersInterface,
   EditMessageParameters,
+  GetContactsParametersInterface,
   GetChatInformationParameters,
   GetChatsReponseInterface,
   GetContactInfoResponseInterface,
@@ -25,6 +30,43 @@ export const serviceMethodsGreenApiEndpoints = greenAPI.injectEndpoints({
         method: 'POST',
         body,
       }),
+    }),
+    getContacts: builder.query<ContactListItemInterface[], GetContactsParametersInterface>({
+      query: ({ idInstance, apiTokenInstance, apiUrl, mediaUrl: _, ...params }) => ({
+        url: `${apiUrl}waInstance${idInstance}/getContacts/${apiTokenInstance}`,
+        params,
+      }),
+      providesTags: ['contacts'],
+    }),
+    addContact: builder.mutation<Record<string, unknown>, AddContactParametersInterface>({
+      query: ({ idInstance, apiTokenInstance, apiUrl, mediaUrl: _, ...body }) => ({
+        url: `${apiUrl}waInstance${idInstance}/addContact/${apiTokenInstance}`,
+        method: 'POST',
+        body: {
+          ...body,
+          syncToPhone: body.syncToPhone ?? true,
+        },
+      }),
+      invalidatesTags: ['contacts'],
+    }),
+    editContact: builder.mutation<Record<string, unknown>, EditContactParametersInterface>({
+      query: ({ idInstance, apiTokenInstance, apiUrl, mediaUrl: _, ...body }) => ({
+        url: `${apiUrl}waInstance${idInstance}/editContact/${apiTokenInstance}`,
+        method: 'POST',
+        body: {
+          ...body,
+          syncToPhone: body.syncToPhone ?? true,
+        },
+      }),
+      invalidatesTags: ['contacts'],
+    }),
+    deleteContact: builder.mutation<Record<string, unknown>, DeleteContactParametersInterface>({
+      query: ({ idInstance, apiTokenInstance, apiUrl, mediaUrl: _, ...body }) => ({
+        url: `${apiUrl}waInstance${idInstance}/deleteContact/${apiTokenInstance}`,
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: ['contacts'],
     }),
     uploadFile: builder.mutation<
       Pick<SendFileByUrlParametersInterface, 'urlFile'>,

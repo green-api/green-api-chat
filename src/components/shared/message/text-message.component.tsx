@@ -89,6 +89,7 @@ const TextMessage: FC<
     return (
       <span>
         <div
+          ref={textRef}
           className={`${type === 'outgoing' ? 'outgoing' : 'incoming'} full`}
           style={{
             fontSize: isMiniVersion ? 16 : 14,

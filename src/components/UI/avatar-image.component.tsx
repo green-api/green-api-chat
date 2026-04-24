@@ -1,6 +1,6 @@
 import { FC, useEffect, useMemo, useState } from 'react';
 
-import { Avatar } from 'antd';
+import { Avatar, Image, Skeleton } from 'antd';
 import { AvatarProps } from 'antd/es/avatar/avatar';
 
 import emptyAvatarButAvailable from 'assets/emptyAvatarButAvailable.svg';
@@ -19,6 +19,7 @@ const AvatarImage: FC<AvatarImageProps> = ({
 }) => {
   const normalizedSrc = useMemo(() => normalizeAvatarSrc(src), [src]);
   const normalizedFallbackSrc = useMemo(() => normalizeAvatarSrc(fallbackSrc), [fallbackSrc]);
+  const [loaded, setLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
@@ -29,7 +30,25 @@ const AvatarImage: FC<AvatarImageProps> = ({
 
   return (
     <Avatar
-      src={resolvedSrc}
+      src={
+        <>
+          {!loaded && <Skeleton.Avatar active style={{ width: 30, height: 30 }} />}
+          <Image
+            src={resolvedSrc}
+            preview={false}
+            onLoad={() => {
+              setLoaded(true);
+            }}
+            style={{
+              width: '100%',
+              height: '100%',
+              opacity: loaded ? 1 : 0,
+              transition: 'opacity 0.3s',
+              objectFit: 'cover',
+            }}
+          />
+        </>
+      }
       size={size}
       alt="avatar"
       onError={() => {

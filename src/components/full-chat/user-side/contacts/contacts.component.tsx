@@ -16,7 +16,6 @@ import {
 import { useContactsFilter } from './use-contacts-filter.hook';
 import { Search } from 'components/UI/search.component';
 import { useAppSelector, useFormWithLanguageValidation } from 'hooks';
-import { useIsTelegramInstance } from 'hooks/use-is-telegram-instance';
 import {
   useAddContactMutation,
   useCheckWhatsappMutation,
@@ -24,7 +23,7 @@ import {
   useEditContactMutation,
   useGetContactsQuery,
 } from 'services/green-api/endpoints';
-import { selectInstance } from 'store/slices/instances.slice';
+import { selectInstance, selectTypeInstance } from 'store/slices/instances.slice';
 import { ContactListItemInterface } from 'types';
 import { getPhoneNumberFromChatId } from 'utils';
 
@@ -32,7 +31,8 @@ const Contacts = () => {
   const { t } = useTranslation();
 
   const instanceCredentials = useAppSelector(selectInstance);
-  const isTelegram = useIsTelegramInstance();
+  const typeInstance = useAppSelector(selectTypeInstance);
+  const isWhatsApp = typeInstance === 'whatsapp';
 
   const [searchQuery, setSearchQuery] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -47,7 +47,7 @@ const Contacts = () => {
   const [deleteContact] = useDeleteContactMutation();
 
   const skipGetContactsQuery =
-    !instanceCredentials?.idInstance || !instanceCredentials.apiTokenInstance || isTelegram;
+    !instanceCredentials?.idInstance || !instanceCredentials.apiTokenInstance || !isWhatsApp;
 
   const {
     data: contactsData = [],
@@ -256,7 +256,7 @@ const Contacts = () => {
     );
   }
 
-  if (isTelegram) {
+  if (!isWhatsApp) {
     return (
       <Empty
         className="empty p-10"

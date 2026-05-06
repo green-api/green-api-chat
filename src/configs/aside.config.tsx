@@ -10,14 +10,19 @@ import { Language } from 'components/full-chat/user-side/settings/language.compo
 import { Logout } from 'components/full-chat/user-side/settings/logout.component';
 import { Profile } from 'components/full-chat/user-side/settings/profile.component';
 import { SettingsSelect } from 'components/UI/select/select-settigs.component';
-import { AsideItem, ChatType, UserSideItem } from 'types';
+import { AsideItem, ChatType, TypeInstance, UserSideItem } from 'types';
 
-export const asideTopIconItems: (type: ChatType) => (AsideItem | null)[] = (type) => [
+export const asideTopIconItems: (
+  type: ChatType,
+  typeInstance: TypeInstance
+) => (AsideItem | null)[] = (type, typeInstance) => [
   type !== 'partner-iframe' && type !== 'one-chat-only'
     ? { item: 'instance', title: 'INSTANCE', icon: <InstanceIcon /> }
     : null,
   { item: 'chats', title: 'CHATS_TITLE', icon: <ChatIcon /> },
-  type !== 'one-chat-only' ? { item: 'contacts', title: 'CONTACTS', icon: <ContactIcon /> } : null,
+  type !== 'one-chat-only' && typeInstance === 'whatsapp'
+    ? { item: 'contacts', title: 'CONTACTS', icon: <ContactIcon /> }
+    : null,
   // { item: 'calls', title: 'CALLS_TITLE', icon: <PhoneIcon /> },
 ];
 

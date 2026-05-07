@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ChangeEvent } from 'react';
 
 import { PlusOutlined, ReloadOutlined } from '@ant-design/icons';
@@ -38,6 +38,8 @@ const Contacts = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editedContact, setEditedContact] = useState<ContactListItemInterface | null>(null);
   const [pendingDeleteChatId, setPendingDeleteChatId] = useState<string | null>(null);
+  const [localContacts, setLocalContacts] = useState<ContactListItemInterface[]>([]);
+  const refetchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [form] = useFormWithLanguageValidation<ContactFormValues>();
 
@@ -73,7 +75,32 @@ const Contacts = () => {
     [contactsData]
   );
 
-  const filteredContacts = useContactsFilter(contacts, searchQuery);
+  useEffect(() => {
+    setLocalContacts(contacts);
+  }, [contacts]);
+
+  useEffect(() => {
+    return () => {
+      if (refetchTimeoutRef.current) {
+        clearTimeout(refetchTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const refetchContactsWithDelay = useCallback(async () => {
+    if (refetchTimeoutRef.current) {
+      clearTimeout(refetchTimeoutRef.current);
+    }
+
+    await new Promise<void>((resolve) => {
+      refetchTimeoutRef.current = setTimeout(async () => {
+        await refetch();
+        resolve();
+      }, 500);
+    });
+  }, [refetch]);
+
+  const filteredContacts = useContactsFilter(localContacts, searchQuery);
 
   useEffect(() => {
     if (!isModalOpen) {
@@ -163,7 +190,7 @@ const Contacts = () => {
       return;
     }
 
-    const isContactAlreadyInList = contacts.some((contact) => contact.id === normalizedChatId);
+    const isContactAlreadyInList = localContacts.some((contact) => contact.id === normalizedChatId);
 
     if (!isEditMode && isContactAlreadyInList) {
       form.setFields([{ name: 'chatId', errors: [t('CONTACT_ALREADY_EXISTS')] }]);
@@ -186,16 +213,33 @@ const Contacts = () => {
     const requestBody = {
       ...instanceCredentials,
       chatId: normalizedChatId,
-      contactName: values.contactName.trim(),
-      ...(values.contactSecondName?.trim()
-        ? { contactSecondName: values.contactSecondName.trim() }
-        : {}),
-      syncToPhone: true,
+      firstName: values.contactName.trim(),
+      ...(values.contactSecondName?.trim() ? { lastName: values.contactSecondName.trim() } : {}),
+      saveInAddressbook: true,
     };
+
+    const previousContacts = localContacts;
+    const optimisticContact: ContactListItemInterface = {
+      id: normalizedChatId,
+      name: values.contactName.trim(),
+      contactName: values.contactName.trim(),
+      type: 'user',
+    };
+
+    setLocalContacts((prev) => {
+      if (isEditMode) {
+        return prev.map((contact) =>
+          contact.id === normalizedChatId ? { ...contact, ...optimisticContact } : contact
+        );
+      }
+
+      return [optimisticContact, ...prev.filter((contact) => contact.id !== normalizedChatId)];
+    });
 
     const response = isEditMode ? await editContact(requestBody) : await addContact(requestBody);
 
     if (response.error) {
+      setLocalContacts(previousContacts);
       const errorDetails = getContactApiErrorDetails(response.error, t);
 
       if (errorDetails.field) {
@@ -207,19 +251,22 @@ const Contacts = () => {
       return;
     }
 
+    await refetchContactsWithDelay();
     message.success(t(isEditMode ? 'CONTACT_UPDATED_SUCCESS' : 'CONTACT_CREATED_SUCCESS'));
     closeModal();
   };
 
   const handleDelete = useCallback(
     async (chatId: string) => {
-      if (!contacts.some((contact) => contact.id === chatId)) {
+      if (!localContacts.some((contact) => contact.id === chatId)) {
         message.error(t('CONTACT_NOT_FOUND'));
 
         return;
       }
 
       setPendingDeleteChatId(chatId);
+      const previousContacts = localContacts;
+      setLocalContacts((prev) => prev.filter((contact) => contact.id !== chatId));
 
       try {
         const response = await deleteContact({
@@ -228,18 +275,20 @@ const Contacts = () => {
         });
 
         if (response.error) {
+          setLocalContacts(previousContacts);
           const errorDetails = getContactApiErrorDetails(response.error, t);
           message.error(errorDetails.message);
 
           return;
         }
 
+        await refetchContactsWithDelay();
         message.success(t('CONTACT_DELETED_SUCCESS'));
       } finally {
         setPendingDeleteChatId(null);
       }
     },
-    [contacts, deleteContact, instanceCredentials, t]
+    [deleteContact, instanceCredentials, localContacts, refetchContactsWithDelay, t]
   );
 
   const handleSearchChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {

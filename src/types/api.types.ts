@@ -281,9 +281,9 @@ export interface ContactListItemInterface {
 
 export interface UpsertContactPayloadInterface {
   chatId: string;
-  contactName: string;
-  contactSecondName?: string;
-  syncToPhone?: boolean;
+  firstName: string;
+  lastName?: string;
+  saveInAddressbook?: boolean;
 }
 
 export type AddContactParametersInterface = InstanceInterface & UpsertContactPayloadInterface;

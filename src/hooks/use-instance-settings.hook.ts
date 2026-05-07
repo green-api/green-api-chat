@@ -3,8 +3,9 @@ import { useEffect } from 'react';
 import { useAppSelector } from './redux.hook';
 import { useIsMaxInstance } from './use-is-max-instance';
 import { useGetWaSettingsQuery, useGetAccountSettingsQuery } from 'services/green-api/endpoints';
-import { selectInstance } from 'store/slices/instances.slice';
+import { selectInstance, selectTypeInstance } from 'store/slices/instances.slice';
 import { GetWaSettingsResponseInterface } from 'types';
+import { isPageInIframe } from 'utils';
 
 interface UseInstanceSettingsOptions {
   pollingInterval?: number;
@@ -22,10 +23,17 @@ export const useInstanceSettings = ({
 }: UseInstanceSettingsOptions = {}): UseInstanceSettingsResult => {
   const isMax = useIsMaxInstance();
   const selectedInstance = useAppSelector(selectInstance);
+  const typeInstance = useAppSelector(selectTypeInstance);
 
-  const skipWa = !selectedInstance?.idInstance || !selectedInstance?.apiTokenInstance || isMax;
+  const isAccountSettingsInstance = isMax || typeInstance === 'telegram';
+  const skipWa =
+    !selectedInstance?.idInstance ||
+    !selectedInstance?.apiTokenInstance ||
+    isAccountSettingsInstance;
   const skipAccount =
-    !selectedInstance?.idInstance || !selectedInstance?.apiTokenInstance || !isMax;
+    !selectedInstance?.idInstance ||
+    !selectedInstance?.apiTokenInstance ||
+    (!isAccountSettingsInstance && isPageInIframe());
 
   const {
     data: waSettings,
@@ -41,10 +49,10 @@ export const useInstanceSettings = ({
     refetch: refetchAccount,
   } = useGetAccountSettingsQuery({ ...selectedInstance }, { skip: skipAccount, pollingInterval });
 
-  const settings = isMax ? accountSettings : waSettings;
-  const isLoading = isMax ? isAccountLoading : isWaLoading;
-  const error = isMax ? accountError : waError;
-  const refetch = isMax ? refetchAccount : refetchWa;
+  const settings = accountSettings ?? waSettings;
+  const isLoading = isAccountLoading ?? isWaLoading;
+  const error = accountError ?? waError;
+  const refetch = refetchAccount ?? refetchWa;
 
   useEffect(() => {
     if (error && typeof error === 'object' && 'status' in error) {

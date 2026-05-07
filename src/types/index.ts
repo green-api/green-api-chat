@@ -74,9 +74,10 @@ export interface InstancesState {
   instanceList: ExpandedInstanceInterface[] | null;
   isAuthorizingInstance: boolean;
   isSendingStatus: 'text' | 'voice' | 'media' | null;
+  isLastMessagesSyncingAfterAuthorization: boolean;
 }
 
-export type TypeInstance = 'whatsapp' | 'v3';
+export type TypeInstance = 'whatsapp' | 'v3' | 'telegram';
 
 export interface InstanceInterface {
   idInstance: number;
@@ -103,7 +104,7 @@ export interface MessageMenuState {
   messageDataForRender: MessageDataForRender | null;
 }
 
-export type LanguageLiteral = 'en' | 'ru' | 'he';
+export type LanguageLiteral = 'en' | 'ru' | 'he' | 'tr';
 
 export interface AuthFormValues {
   login: string;
@@ -201,6 +202,7 @@ export enum MessageEventTypeEnum {
   LOCALE_CHANGE = 'localeChange',
   SET_CREDENTIALS = 'setCredentials',
   SET_THEME = 'setTheme',
+  IFRAME_READY = 'IFRAME_READY',
 }
 
 export interface MessageDataInit {
@@ -259,6 +261,7 @@ export type MessageServiceMethodName = 'editMessage' | 'deleteMessage';
 
 export type UserSideActiveMode =
   | 'chats'
+  | 'contacts'
   | 'settings'
   | 'profile'
   | 'statuses'

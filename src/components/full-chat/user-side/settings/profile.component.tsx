@@ -9,8 +9,10 @@ import AuthorizationStatus from 'components/instance-auth/authorization-status.c
 import { useActions, useAppSelector } from 'hooks';
 import { useInstanceSettings } from 'hooks/use-instance-settings.hook';
 import { useIsMaxInstance } from 'hooks/use-is-max-instance';
+import { useIsTelegramInstance } from 'hooks/use-is-telegram-instance';
 import { useGetAvatarQuery } from 'services/green-api/endpoints';
 import { selectInstance } from 'store/slices/instances.slice';
+import { normalizeAvatarSrc } from 'utils';
 
 export const Profile = () => {
   const { setIsAuthorizingInstance } = useActions();
@@ -19,6 +21,8 @@ export const Profile = () => {
   const { t } = useTranslation();
 
   const { settings } = useInstanceSettings();
+
+  const isTelegram = useIsTelegramInstance();
 
   const isMax = useIsMaxInstance();
 
@@ -43,15 +47,21 @@ export const Profile = () => {
   }, []);
 
   return (
-    <Flex gap={20} vertical>
+    <Flex className="height-720" gap={20} vertical>
       <Flex className="settings" vertical style={{ flex: '0 0 auto' }}>
-        <p style={{ fontSize: '1.5rem' }}>{t('PROFILE_TITLE')}</p>
+        <p style={{ fontSize: '1.5rem', padding: '10px 20px' }}>{t('PROFILE_TITLE')}</p>
       </Flex>
       <div
         style={{ height: 150, backgroundColor: 'var(--profile-background)', position: 'relative' }}
       >
         <Avatar
-          src={avatar?.urlAvatar?.trim() ? avatar.urlAvatar : emptyAvatarButAvailable}
+          src={normalizeAvatarSrc(
+            isTelegram
+              ? settings?.avatar
+              : avatar?.urlAvatar?.trim()
+                ? avatar.urlAvatar
+                : emptyAvatarButAvailable
+          )}
           size={115}
           style={{
             position: 'absolute',

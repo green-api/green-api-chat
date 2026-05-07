@@ -7,7 +7,8 @@ import { useTranslation } from 'react-i18next';
 import { useActions, useAppSelector } from 'hooks';
 import { useIsGroupAdmin } from 'hooks/use-is-group-admin.hook';
 import { useIsMaxInstance } from 'hooks/use-is-max-instance';
-import { useUpdateGroupNameMutation } from 'services/green-api/endpoints';
+import { useIsTelegramInstance } from 'hooks/use-is-telegram-instance';
+import { useGetGroupDataQuery, useUpdateGroupNameMutation } from 'services/green-api/endpoints';
 import { selectActiveChat } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
 import { ActiveChat } from 'types';
@@ -24,15 +25,33 @@ const EditGroupName: FC = () => {
   const isAdmin = useIsGroupAdmin(activeChat);
 
   const isMax = useIsMaxInstance();
+  const isTelegram = useIsTelegramInstance();
+
+  const { data: groupData } = useGetGroupDataQuery(
+    {
+      ...instanceCredentials,
+      chatId: activeChat?.chatId ?? '',
+    },
+    {
+      skip:
+        !isTelegram ||
+        !activeChat?.chatId ||
+        !instanceCredentials?.idInstance ||
+        !instanceCredentials?.apiTokenInstance,
+    }
+  );
 
   const initialName = useMemo(() => {
+    if (isTelegram && groupData && typeof groupData === 'object' && 'subject' in groupData) {
+      return groupData.subject;
+    }
     return activeChat?.contactInfo !== 'Error: forbidden' &&
       activeChat?.contactInfo &&
       typeof activeChat.contactInfo === 'object' &&
       'subject' in activeChat.contactInfo
       ? activeChat.contactInfo.subject
       : activeChat?.senderName || '';
-  }, [activeChat]);
+  }, [activeChat, groupData, isTelegram]);
 
   const [groupName, setGroupName] = useState(initialName);
   const [isEditing, setIsEditing] = useState(false);
@@ -42,24 +61,26 @@ const EditGroupName: FC = () => {
 
     try {
       await updateGroupName({
-        ...(isMax ? { chatId: activeChat.chatId } : { groupId: activeChat.chatId }),
+        ...(isMax || isTelegram ? { chatId: activeChat.chatId } : { groupId: activeChat.chatId }),
         groupName,
         ...instanceCredentials,
       });
 
-      setActiveChat({
-        ...activeChat,
-        senderName: groupName,
-        contactInfo:
-          typeof activeChat.contactInfo === 'object' &&
-          activeChat.contactInfo !== null &&
-          'subject' in activeChat.contactInfo
-            ? {
-                ...activeChat.contactInfo,
-                subject: groupName,
-              }
-            : activeChat.contactInfo,
-      });
+      if (!isTelegram) {
+        setActiveChat({
+          ...activeChat,
+          senderName: groupName,
+          contactInfo:
+            typeof activeChat.contactInfo === 'object' &&
+            activeChat.contactInfo !== null &&
+            'subject' in activeChat.contactInfo
+              ? {
+                  ...activeChat.contactInfo,
+                  subject: groupName,
+                }
+              : activeChat.contactInfo,
+        });
+      }
 
       setIsEditing(false);
     } catch (error) {

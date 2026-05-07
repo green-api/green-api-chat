@@ -47,6 +47,7 @@
   "DESCRIPTION": "Описание",
 
   "CONTACT_PHONE_LABEL": "Контактный номер",
+  "CONTACT_CHAT_ID_LABEL": "Идентификатор чата",
   "CONTACT_PHONE_INVALID_MESSAGE": "Некорректное значение",
 
   "QUOTED_MESSAGE_ID_LABEL": "Идентификатор цитируемого сообщения",
@@ -86,6 +87,7 @@
   "ENGLISH": "English",
 
   "HEBREW": "עִבְרִית",
+  "TURKISH": "Türkçe",
 
   "FULL_VERSION": "Открыть чаты",
   "FULL_VERSION_TITLE": "Открыть в отдельном окне",
@@ -96,6 +98,10 @@
   "INPUT_USER_PASSWORD_HINT": "Пожалуйста, введите пароль!",
   "E_MAIL": "Электронная почта",
   "INPUT_USER_PASSWORD": "Пароль",
+  "ENTER_PASSWORD": "Введите пароль",
+  "PASSWORD_REQUIRED": "Введите пароль",
+  "ERROR_SENDING_PASSWORD": "Не удалось отправить пароль",
+  "SUBMIT": "Отправить",
   "CHECK_REMEMBER_ME": "Запомнить меня",
   "CLICK_FORGOT_PASSWORD": "Забыли пароль?",
   "CLICK_LOGIN": "Войти",
@@ -237,8 +243,25 @@
   "DOWNLOAD_ERROR": "Произошла ошибка при скачивании файла",
   "UNABLE_TO_DISPLAY_MESSAGE": "Невозможно отобразить сообщение",
   "LANGUAGE": "Язык",
-  "ERROR_DELETING_MESSAGE": "Произошла ошибка при удалении сообщения",
   "MY_STATUS": "Мой статус",
   "ADD_STATUS": "Нажмите, чтобы добавить обновление статуса",
-  "STATUSES": "Статус"
+  "STATUSES": "Статус",
+  "ADD_CONTACT": "Добавить контакт",
+  "EDIT_CONTACT": "Редактировать контакт",
+  "EDIT_CONTACT_ACTION": "Изменить",
+  "DELETE_CONTACT_ACTION": "Удалить",
+  "CONTACT_NAME_LABEL": "Имя контакта",
+  "CONTACT_SECOND_NAME_LABEL": "Фамилия контакта",
+  "CONTACTS_EMPTY": "Контакты не найдены",
+  "CONTACT_CREATED_SUCCESS": "Контакт добавлен",
+  "CONTACT_UPDATED_SUCCESS": "Контакт обновлен",
+  "CONTACT_DELETED_SUCCESS": "Контакт удален",
+  "CONTACT_ALREADY_EXISTS": "Контакт уже существует",
+  "CONTACT_NOT_FOUND": "Контакт не найден",
+  "CONTACT_SERVER_ERROR": "Ошибка сервера при обработке контакта",
+  "CONTACT_REQUEST_ERROR": "Не удалось выполнить запрос по контакту",
+  "DELETE_CONTACT_CONFIRM_TITLE": "Удалить контакт?",
+  "DELETE_CONTACT_CONFIRM_DESCRIPTION": "Действие нельзя отменить",
+  "SAVE_CONTACT_CHANGES": "Сохранить",
+  "CONTACTS_UNAVAILABLE_TELEGRAM": "Управление контактами недоступно для Telegram-инстансов"
 }

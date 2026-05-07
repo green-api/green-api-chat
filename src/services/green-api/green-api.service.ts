@@ -8,7 +8,13 @@ import {
 
 import { RootState } from 'store';
 import { InstanceInterface, MessageInterface } from 'types';
-import { getIsMiniVersion, getLastChats, updateLastChats, getAllChats } from 'utils';
+import {
+  getIsMiniVersion,
+  getLastChats,
+  updateAllChats,
+  updateLastChats,
+  getAllChats,
+} from 'utils';
 
 const baseQuery = fetchBaseQuery({
   baseUrl: '',
@@ -78,11 +84,10 @@ const customQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError>
             lastIncomingMessages.data as MessageInterface[],
             lastOutgoingMessages.data as MessageInterface[]
           ))
-        : (lastIncomingMessages.data = updateLastChats(
+        : (lastIncomingMessages.data = updateAllChats(
             currentChats as MessageInterface[],
             lastIncomingMessages.data as MessageInterface[],
-            lastOutgoingMessages.data as MessageInterface[],
-            getIsMiniVersion(type) ? 5 : undefined
+            lastOutgoingMessages.data as MessageInterface[]
           ));
     } else {
       lastIncomingMessages.data = !currentChats
@@ -119,5 +124,6 @@ export const greenAPI = createApi({
     'chatHistory',
     'avatar',
     'statuses',
+    'contacts',
   ],
 });

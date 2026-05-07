@@ -4,6 +4,7 @@ import { List } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import { useActions, useAppSelector } from 'hooks';
+import { useIsWabaInstance } from 'hooks/use-is-waba-instance';
 import { selectMessageDataForRender } from 'store/slices/message-menu.slice';
 import { MessageTooltipMenuData } from 'types';
 import { isMessageEditable } from 'utils';
@@ -14,6 +15,7 @@ interface MessageTooltipMenuProps {
 
 const MessageTooltipMenu: FC<MessageTooltipMenuProps> = ({ onMenuItemClick }) => {
   const messageData = useAppSelector(selectMessageDataForRender);
+  const isWaba = useIsWabaInstance();
 
   const { t } = useTranslation();
 
@@ -42,7 +44,7 @@ const MessageTooltipMenu: FC<MessageTooltipMenuProps> = ({ onMenuItemClick }) =>
       return menuData;
     }
 
-    if (isMessageEditable(messageData)) {
+    if (!isWaba && isMessageEditable(messageData)) {
       menuData.push({
         key: 'editMessage',
         label: t('EDIT_MESSAGE'),
@@ -53,7 +55,7 @@ const MessageTooltipMenu: FC<MessageTooltipMenuProps> = ({ onMenuItemClick }) =>
       });
     }
 
-    if (!messageData.isDeleted) {
+    if (!isWaba && !messageData.isDeleted) {
       menuData.push({
         key: 'deleteMessage',
         label: t('DELETE_MESSAGE'),

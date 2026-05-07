@@ -7,6 +7,7 @@ import {
   RequestWithChatIdParameters,
 } from 'types';
 import { isHydrateAction } from 'utils/hydrate';
+import { normalizeAvatarSrc } from 'utils/image.utils';
 
 export const persistedMethods = createApi({
   reducerPath: 'groupPersistentAPI',
@@ -39,6 +40,11 @@ export const persistedMethods = createApi({
         url: `${apiUrl}waInstance${idInstance}/getAvatar/${apiTokenInstance}`,
         method: 'POST',
         body,
+      }),
+      transformResponse: (response: GetAvatarResponseInterface) => ({
+        ...response,
+        urlAvatar:
+          normalizeAvatarSrc(response.base64Avatar) || normalizeAvatarSrc(response.urlAvatar),
       }),
       providesTags: (result, error, { chatId }) => [{ type: 'avatar', id: chatId }],
     }),

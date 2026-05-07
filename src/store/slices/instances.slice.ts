@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { RootState } from 'store';
 import { InstancesState, TariffsEnum, TypeInstance } from 'types';
+import { getTypeInstanceFromQuery } from 'utils';
 
 const getInitialStateFromStorage = (): Partial<InstancesState> | null => {
   try {
@@ -11,27 +12,30 @@ const getInitialStateFromStorage = (): Partial<InstancesState> | null => {
     const apiTokenInstance = params.get('apiTokenInstance');
     const apiUrl = params.get('apiUrl');
     const mediaUrl = params.get('mediaUrl');
+    const typeInstanceFromQuery = params.get('typeInstance') ?? params.get('instanceType');
 
     const initialStateFromStorage = localStorage.getItem('selectedInstance');
     const parsed = initialStateFromStorage
       ? (JSON.parse(initialStateFromStorage) as Partial<InstancesState>)
       : {};
 
-    const selectedInstance =
-      idInstance && apiTokenInstance && apiUrl && mediaUrl
-        ? {
-            idInstance: Number(idInstance),
-            apiTokenInstance,
-            apiUrl,
-            mediaUrl,
-          }
-        : parsed.selectedInstance ?? undefined;
+    const isQueryCredentialsProvided = !!(idInstance && apiTokenInstance && apiUrl && mediaUrl);
+    const selectedInstance = isQueryCredentialsProvided
+      ? {
+          idInstance: Number(idInstance),
+          apiTokenInstance,
+          apiUrl,
+          mediaUrl,
+        }
+      : parsed.selectedInstance ?? undefined;
 
     return {
       selectedInstance,
       tariff: parsed.tariff,
       isChatWorking: parsed.isChatWorking ?? null,
-      typeInstance: parsed.typeInstance ?? 'whatsapp',
+      typeInstance: isQueryCredentialsProvided
+        ? getTypeInstanceFromQuery(typeInstanceFromQuery)
+        : (parsed.typeInstance as TypeInstance) ?? 'whatsapp',
       instanceList: parsed.instanceList ?? null,
     };
   } catch {
@@ -52,6 +56,7 @@ const initialState: InstancesState = {
   instanceList: null,
   isAuthorizingInstance: false,
   isSendingStatus: null,
+  isLastMessagesSyncingAfterAuthorization: false,
   ...getInitialStateFromStorage(),
 };
 
@@ -81,6 +86,8 @@ export const instancesSlice = createSlice({
       if (typeInstance) {
         state.typeInstance = typeInstance;
       }
+
+      state.isLastMessagesSyncingAfterAuthorization = false;
     },
     setIsChatWorking: (state, action: PayloadAction<InstancesState['isChatWorking']>) => {
       state.isChatWorking = action.payload;
@@ -99,6 +106,12 @@ export const instancesSlice = createSlice({
     setIsSendingStatus: (state, action: PayloadAction<InstancesState['isSendingStatus']>) => {
       state.isSendingStatus = action.payload;
     },
+    setIsLastMessagesSyncingAfterAuthorization: (
+      state,
+      action: PayloadAction<InstancesState['isLastMessagesSyncingAfterAuthorization']>
+    ) => {
+      state.isLastMessagesSyncingAfterAuthorization = action.payload;
+    },
   },
 });
 
@@ -113,3 +126,5 @@ export const selectIsChatWorking = (state: RootState) => state.instancesReducer.
 export const selectIsAuthorizingInstance = (state: RootState) =>
   state.instancesReducer.isAuthorizingInstance;
 export const selectIsSendingStatus = (state: RootState) => state.instancesReducer.isSendingStatus;
+export const selectIsLastMessagesSyncingAfterAuthorization = (state: RootState) =>
+  state.instancesReducer.isLastMessagesSyncingAfterAuthorization;

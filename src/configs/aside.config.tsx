@@ -2,18 +2,30 @@ import { SettingOutlined } from '@ant-design/icons';
 
 import ChatIcon from 'assets/chat.svg?react';
 import StatusIcon from 'assets/status.svg?react';
+import ContactIcon from 'assets/contact-icon.svg?react';
+import InstanceIcon from 'assets/instance-icon.svg?react';
 import Chats from 'components/full-chat/user-side/chats/chats.component';
+import Contacts from 'components/full-chat/user-side/contacts/contacts.component';
 import { InstanceSettings } from 'components/full-chat/user-side/settings/instance.component';
 import { Language } from 'components/full-chat/user-side/settings/language.componet';
 import { Logout } from 'components/full-chat/user-side/settings/logout.component';
 import { Profile } from 'components/full-chat/user-side/settings/profile.component';
 import { Statuses } from 'components/full-chat/user-side/statuses/statuses.component';
 import { SettingsSelect } from 'components/UI/select/select-settigs.component';
-import { AsideItem, UserSideItem } from 'types';
+import { AsideItem, ChatType, TypeInstance, UserSideItem } from 'types';
 
-export const asideTopIconItems: AsideItem[] = [
+export const asideTopIconItems: (
+  type: ChatType,
+  typeInstance: TypeInstance
+) => (AsideItem | null)[] = (type, typeInstance) => [
+  type !== 'partner-iframe' && type !== 'one-chat-only'
+    ? { item: 'instance', title: 'INSTANCE', icon: <InstanceIcon /> }
+    : null,
   { item: 'chats', title: 'CHATS_TITLE', icon: <ChatIcon /> },
   { item: 'statuses', title: 'STATUSES', icon: <StatusIcon />, waOnly: true },
+  type !== 'one-chat-only' && typeInstance === 'whatsapp'
+    ? { item: 'contacts', title: 'CONTACTS', icon: <ContactIcon /> }
+    : null,
   // { item: 'calls', title: 'CALLS_TITLE', icon: <PhoneIcon /> },
 ];
 
@@ -29,6 +41,7 @@ export const asideBottomIconItems: AsideItem[] = [
 
 export const USER_SIDE_ITEMS: UserSideItem[] = [
   { item: 'chats', element: <Chats /> },
+  { item: 'contacts', element: <Contacts /> },
   { item: 'instance', element: <InstanceSettings /> },
   { item: 'profile', element: <Profile /> },
   { item: 'language', element: <Language /> },

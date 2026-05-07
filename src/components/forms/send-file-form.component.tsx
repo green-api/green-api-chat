@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import UploadOneFile from 'components/UI/upload-one-file.components';
 import { formItemMethodApiLayout } from 'configs';
 import { useActions, useAppDispatch, useAppSelector, useFormWithLanguageValidation } from 'hooks';
+import { useIsMaxInstance } from 'hooks/use-is-max-instance';
 import { useSendFileByUploadMutation } from 'services/green-api/endpoints';
 import { journalsGreenApiEndpoints } from 'services/green-api/endpoints/journals.green-api.endpoints';
 import { selectActiveChat, selectMessageCount } from 'store/slices/chat.slice';
@@ -23,6 +24,7 @@ const SendFileForm: FC = () => {
   const { setActiveSendingMode } = useActions();
 
   const { t } = useTranslation();
+  const isMax = useIsMaxInstance();
 
   const [sendFileByUpload, { isLoading }] = useSendFileByUploadMutation();
 
@@ -31,8 +33,11 @@ const SendFileForm: FC = () => {
   const onFinish = async (values: SendFileFormValues) => {
     const body = {
       ...instanceCredentials,
-      ...values,
       chatId: activeChat.chatId,
+      file: values.file,
+      ...(values.fileName ? { fileName: values.fileName } : {}),
+      ...(values.caption ? { caption: values.caption } : {}),
+      ...(!isMax && values.quotedMessageId ? { quotedMessageId: values.quotedMessageId } : {}),
     };
 
     form.setFields([{ name: 'response', errors: [], warnings: [] }]);
@@ -109,9 +114,11 @@ const SendFileForm: FC = () => {
       <Form.Item name="caption" label={t('DESCRIPTION')}>
         <TextArea placeholder={t('DESCRIPTION')} autoSize={{ minRows: 2, maxRows: 5 }} />
       </Form.Item>
-      <Form.Item name="quotedMessageId" label={t('QUOTED_MESSAGE_ID_LABEL')}>
-        <Input placeholder={t('QUOTED_MESSAGE_ID_LABEL')} />
-      </Form.Item>
+      {!isMax && (
+        <Form.Item name="quotedMessageId" label={t('QUOTED_MESSAGE_ID_LABEL')}>
+          <Input placeholder={t('QUOTED_MESSAGE_ID_LABEL')} />
+        </Form.Item>
+      )}
       <Form.Item
         style={{ marginBottom: 0 }}
         wrapperCol={{

@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef, useState } from 'react';
+import { FC, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Empty, Flex, List, Spin, Typography } from 'antd';
 import { useTranslation } from 'react-i18next';
@@ -8,9 +8,19 @@ import ChatSearchInput from './chat-search-input.component';
 import { useAppSelector, useMediaQuery } from 'hooks';
 import { useLastMessagesQuery } from 'services/green-api/endpoints';
 import { selectMiniVersion, selectSearchQuery } from 'store/slices/chat.slice';
-import { selectInstance } from 'store/slices/instances.slice';
+import {
+  selectInstance,
+  selectIsLastMessagesSyncingAfterAuthorization,
+} from 'store/slices/instances.slice';
 import { MessageInterface } from 'types';
-import { filterContacts, filterMessagesByText, getErrorMessage, getLastChats } from 'utils';
+import {
+  filterContacts,
+  filterMessagesByText,
+  getCachedGetChatHistoryMessages,
+  getErrorMessage,
+  getLastChats,
+  updateAllChats,
+} from 'utils';
 
 const { Title } = Typography;
 
@@ -18,6 +28,10 @@ const ChatList: FC = () => {
   const instanceCredentials = useAppSelector(selectInstance);
   const isMiniVersion = useAppSelector(selectMiniVersion);
   const searchQuery = useAppSelector(selectSearchQuery);
+  const isLastMessagesSyncingAfterAuthorization = useAppSelector(
+    selectIsLastMessagesSyncingAfterAuthorization
+  );
+  const greenApiQueries = useAppSelector((state) => state.greenAPI.queries);
 
   const matchMedia = useMediaQuery('(min-height: 1200px)');
 
@@ -38,6 +52,10 @@ const ChatList: FC = () => {
   const [page, setPage] = useState(1);
   const [contactsPage, setContactsPage] = useState(1);
   const [messagesPage, setMessagesPage] = useState(1);
+  const [initialLoaded, setInitialLoaded] = useState(false);
+
+  const [initialMessageIds, setInitialMessageIds] = useState<Set<string>>(new Set());
+  const [unreadCounts, setUnreadCounts] = useState<Record<string, number>>({});
 
   const limit = isMiniVersion ? 5 : matchMedia ? 16 : 12;
 
@@ -49,15 +67,72 @@ const ChatList: FC = () => {
   };
 
   const allMessages: MessageInterface[] = data ?? [];
+  const cachedGetChatHistoryMessages = useMemo(
+    () => getCachedGetChatHistoryMessages(greenApiQueries, instanceCredentials),
+    [
+      greenApiQueries,
+      instanceCredentials.idInstance,
+      instanceCredentials.apiTokenInstance,
+      instanceCredentials.apiUrl,
+    ]
+  );
+  const searchableMessages = useMemo(
+    () => updateAllChats(allMessages, cachedGetChatHistoryMessages, []),
+    [allMessages, cachedGetChatHistoryMessages]
+  );
+  const isChatListLoading =
+    isLoading || (!isMiniVersion && isLastMessagesSyncingAfterAuthorization && !data?.length);
 
   const lastMessages = getLastChats(allMessages, [], isMiniVersion ? limit : undefined);
   const filteredContacts = filterContacts(allMessages, contactNames, searchQuery);
-  const filteredMessages = filterMessagesByText(allMessages, searchQuery);
+  const filteredMessages = filterMessagesByText(searchableMessages, searchQuery);
 
   const showResults = searchQuery.trim() !== '';
 
   const pagedFilteredContacts = filteredContacts.slice(0, contactsPage * limit);
   const pagedFilteredMessages = filteredMessages.slice(0, messagesPage * limit);
+
+  useEffect(() => {
+    if (!initialLoaded && allMessages.length > 0) {
+      const messageIds = new Set(
+        allMessages.map((msg) => msg.idMessage || `${msg.chatId}-${msg.timestamp}`)
+      );
+      setInitialMessageIds(messageIds);
+      setInitialLoaded(true);
+    }
+  }, [allMessages, initialLoaded]);
+
+  useEffect(() => {
+    if (!initialLoaded || allMessages.length === 0) return;
+
+    const prevIds = initialMessageIds;
+    const newIds = new Set(prevIds);
+
+    const newUnreadCounts: Record<string, number> = { ...unreadCounts };
+
+    allMessages
+      .filter((i) => i.type !== 'outgoing')
+      .forEach((msg) => {
+        const messageId = msg.idMessage || `${msg.chatId}-${msg.timestamp}`;
+
+        if (!prevIds.has(messageId)) {
+          newUnreadCounts[msg.chatId] = (newUnreadCounts[msg.chatId] || 0) + 1;
+        }
+
+        newIds.add(messageId);
+      });
+
+    setInitialMessageIds(newIds);
+    setUnreadCounts(newUnreadCounts);
+  }, [allMessages, initialLoaded]);
+
+  const clearUnreadCount = (chatId: string) => {
+    setUnreadCounts((prev) => {
+      const updated = { ...prev };
+      delete updated[chatId];
+      return updated;
+    });
+  };
 
   useEffect(() => {
     if (!allMessages.length) return;
@@ -188,6 +263,8 @@ const ChatList: FC = () => {
                       key={`${msg.chatId}-${msg.idMessage}`}
                       lastMessage={msg}
                       onNameExtracted={handleNameExtracted}
+                      unreadCount={unreadCounts[msg.chatId]}
+                      onClearUnread={() => clearUnreadCount(msg.chatId)}
                     />
                   )}
                   split={false}
@@ -210,10 +287,12 @@ const ChatList: FC = () => {
                 key={message.chatId}
                 lastMessage={message}
                 onNameExtracted={handleNameExtracted}
+                unreadCount={unreadCounts[message.chatId]}
+                onClearUnread={() => clearUnreadCount(message.chatId)}
               />
             )}
             loading={{
-              spinning: isLoading || (!data?.length && !isMiniVersion),
+              spinning: isChatListLoading,
               className: `${isMiniVersion ? 'min-height-460' : 'height-720'}`,
               size: 'large',
             }}

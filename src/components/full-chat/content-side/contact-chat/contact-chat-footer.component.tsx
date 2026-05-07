@@ -16,7 +16,9 @@ const ContactChatFooter: FC = () => {
 
   const isMax = useIsMaxInstance();
 
-  if (activeChat.contactInfo === (isMax ? undefined : 'Error: forbidden')) {
+  const isNotInMaxGroup = isMax && activeChat.chatId.startsWith('-') && !activeChat.contactInfo;
+
+  if (isNotInMaxGroup || activeChat.contactInfo === 'Error: forbidden') {
     return (
       <Flex align="center" justify="center" className="chat-form-container text-center p-10">
         <Typography.Paragraph style={{ margin: 'initial' }}>

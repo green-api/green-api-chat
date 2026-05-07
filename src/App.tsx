@@ -18,6 +18,9 @@ function App() {
   const { idUser, apiTokenUser, projectId } = useAppSelector(selectUser);
 
   const { i18n } = useTranslation();
+  const languageCode = (i18n.resolvedLanguage || i18n.language || 'en')
+    .toLowerCase()
+    .split(/[-_]/)[0];
 
   useGetProfileSettingsQuery(
     { idUser, apiTokenUser, projectId },
@@ -65,7 +68,7 @@ function App() {
   return (
     <ConfigProvider
       direction={i18n.dir()}
-      locale={localisation[i18n.resolvedLanguage as keyof typeof localisation] || en_US}
+      locale={localisation[languageCode as keyof typeof localisation] || en_US}
       theme={themesList[currentTheme as keyof typeof themesList].theme}
     >
       <RouterProvider router={router} />

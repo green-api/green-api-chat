@@ -37,6 +37,7 @@
   "DESCRIPTION": "Description",
 
   "CONTACT_PHONE_LABEL": "Contact phone number",
+  "CONTACT_CHAT_ID_LABEL": "Chat ID",
   "CONTACT_PHONE_INVALID_MESSAGE": "Invalid value",
 
   "QUOTED_MESSAGE_ID_LABEL": "Quoted message ID",
@@ -75,6 +76,7 @@
   "ENGLISH": "English",
 
   "HEBREW": "עִבְרִית",
+  "TURKISH": "Türkçe",
 
   "FULL_VERSION": "Open chats",
   "FULL_VERSION_TITLE": "Open in a separate window",
@@ -85,6 +87,10 @@
   "INPUT_USER_PASSWORD_HINT": "Please enter your password!",
   "E_MAIL": "Email",
   "INPUT_USER_PASSWORD": "Password",
+  "ENTER_PASSWORD": "Enter password",
+  "PASSWORD_REQUIRED": "Please enter your password",
+  "ERROR_SENDING_PASSWORD": "Failed to send password",
+  "SUBMIT": "Send",
   "CHECK_REMEMBER_ME": "Remember me",
   "CLICK_FORGOT_PASSWORD": "Forgot your password?",
   "CLICK_LOGIN": "Login",
@@ -211,5 +217,27 @@
   "DOWNLOAD_ERROR": "An error occurred while downloading the file",
   "UNABLE_TO_DISPLAY_MESSAGE": "Unable to display message",
   "LANGUAGE": "Language",
-  "AUTHORIZE": "Authorize"
+  "AUTHORIZE": "Authorize",
+  "LINK_BY": "Link by",
+  "LINK_BY_QR": "QR code",
+  "FIRST_GET_QR_DATA": "Click the Get QR button to display the current QR code image",
+  "REFRESH_QR": "Get QR",
+  "ADD_CONTACT": "Add contact",
+  "EDIT_CONTACT": "Edit contact",
+  "EDIT_CONTACT_ACTION": "Edit",
+  "DELETE_CONTACT_ACTION": "Delete",
+  "CONTACT_NAME_LABEL": "Contact name",
+  "CONTACT_SECOND_NAME_LABEL": "Contact second name",
+  "CONTACTS_EMPTY": "No contacts found",
+  "CONTACT_CREATED_SUCCESS": "Contact has been added",
+  "CONTACT_UPDATED_SUCCESS": "Contact has been updated",
+  "CONTACT_DELETED_SUCCESS": "Contact has been deleted",
+  "CONTACT_ALREADY_EXISTS": "This contact already exists",
+  "CONTACT_NOT_FOUND": "Contact not found",
+  "CONTACT_SERVER_ERROR": "Server error while processing contact",
+  "CONTACT_REQUEST_ERROR": "Unable to process contact request",
+  "DELETE_CONTACT_CONFIRM_TITLE": "Delete contact?",
+  "DELETE_CONTACT_CONFIRM_DESCRIPTION": "This action cannot be undone",
+  "SAVE_CONTACT_CHANGES": "Save",
+  "CONTACTS_UNAVAILABLE_TELEGRAM": "Contact management is unavailable for Telegram instances"
 }

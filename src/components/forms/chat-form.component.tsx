@@ -19,7 +19,7 @@ import {
 import { selectInstance } from 'store/slices/instances.slice';
 import { selectPlatform } from 'store/slices/user.slice';
 import { ActiveChat, ChatFormValues, MessageInterface } from 'types';
-import { getLastChats } from 'utils';
+import { updateAllChats } from 'utils';
 
 const ChatForm: FC = () => {
   const instanceCredentials = useAppSelector(selectInstance);
@@ -138,7 +138,7 @@ const ChatForm: FC = () => {
             statusMessage: 'sent',
           };
 
-          return getLastChats(draftChatHistory, [newMessage], isMiniVersion ? 5 : undefined);
+          return updateAllChats(draftChatHistory, [newMessage], []);
         }
       );
 

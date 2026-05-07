@@ -77,7 +77,7 @@ const DeleteMessageForm: FC = () => {
 
       const updateChatListThunk = journalsGreenApiEndpoints.util?.updateQueryData(
         'lastMessages',
-        instanceCredentials,
+        { allMessages: true, ...instanceCredentials },
         (draftChatList) => {
           const existingChat = draftChatList.find(
             (msg) => msg.idMessage === deletedMessageData.idMessage

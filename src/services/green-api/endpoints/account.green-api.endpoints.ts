@@ -2,16 +2,35 @@ import { greenAPI } from 'services/green-api/green-api.service';
 import {
   CheckWhatsappParametersInterface,
   GetQRResponseInterface,
+  GetSettingsResponseInterface,
   GetStateInstanceResponseInterface,
   GetWaSettingsResponseInterface,
   InstanceInterface,
   LogoutResponseInterface,
+  QRResponseInterface,
   SendMaxAuthCodeParametersInterface,
   StartAuthorizationResponseInterface,
 } from 'types';
+import { normalizeAvatarSrc } from 'utils/image.utils';
+
+const transformWaSettingsResponse = (response: GetWaSettingsResponseInterface) => {
+  const normalizedBase64Avatar = normalizeAvatarSrc(response.base64Avatar);
+  const normalizedAvatar = normalizeAvatarSrc(response.avatar);
+
+  return {
+    ...response,
+    avatar: normalizedBase64Avatar || normalizedAvatar,
+  };
+};
 
 export const accountGreenApiEndpoints = greenAPI.injectEndpoints({
   endpoints: (builder) => ({
+    getSettings: builder.query<GetSettingsResponseInterface, InstanceInterface>({
+      query: ({ idInstance, apiTokenInstance, apiUrl }) => ({
+        url: `${apiUrl}waInstance${idInstance}/getSettings/${apiTokenInstance}`,
+      }),
+      keepUnusedDataFor: 1000,
+    }),
     getWaSettings: builder.query<
       GetWaSettingsResponseInterface,
       InstanceInterface & { rtkWaSettingsSessionKey?: number }
@@ -19,6 +38,7 @@ export const accountGreenApiEndpoints = greenAPI.injectEndpoints({
       query: ({ idInstance, apiTokenInstance, apiUrl }) => ({
         url: `${apiUrl}waInstance${idInstance}/getWaSettings/${apiTokenInstance}`,
       }),
+      transformResponse: transformWaSettingsResponse,
       keepUnusedDataFor: 1000,
       providesTags: (result, _, arguments_) => {
         if (result) return [{ type: 'waSettings', id: arguments_.idInstance }, 'lastMessages'];
@@ -32,6 +52,7 @@ export const accountGreenApiEndpoints = greenAPI.injectEndpoints({
       query: ({ idInstance, apiTokenInstance, apiUrl }) => ({
         url: `${apiUrl}waInstance${idInstance}/getAccountSettings/${apiTokenInstance}`,
       }),
+      transformResponse: transformWaSettingsResponse,
       keepUnusedDataFor: 1000,
       providesTags: (result, _, arguments_) => {
         if (result) return [{ type: 'waSettings', id: arguments_.idInstance }, 'lastMessages'];
@@ -83,6 +104,11 @@ export const accountGreenApiEndpoints = greenAPI.injectEndpoints({
       invalidatesTags: (_, __, arguments_) => {
         return [{ type: 'waSettings', id: arguments_.idInstance }];
       },
+    }),
+    qr: builder.mutation<QRResponseInterface, InstanceInterface>({
+      query: ({ idInstance, apiTokenInstance, apiUrl }) => ({
+        url: `${apiUrl}waInstance${idInstance}/qr/${apiTokenInstance}`,
+      }),
     }),
   }),
 });

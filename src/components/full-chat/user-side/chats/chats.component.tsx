@@ -6,18 +6,27 @@ import { useTranslation } from 'react-i18next';
 import AddNewChat from './add-new-chat.component';
 import ChatsHeader from './chats-header.component';
 import NewChatIcon from 'assets/newChat.svg?react';
+import SelectStatusMode from 'components/UI/select/select-status.component';
 import AuthorizationStatus from 'components/instance-auth/authorization-status.component';
 import ChatList from 'components/shared/chat-list/chat-list.component';
 import { useActions, useAppSelector } from 'hooks';
 import { useInstanceSettings } from 'hooks/use-instance-settings.hook';
+import { useIsMaxInstance } from 'hooks/use-is-max-instance';
+import { useIsTelegramInstance } from 'hooks/use-is-telegram-instance';
 import { selectMiniVersion, selectType } from 'store/slices/chat.slice';
-import { selectInstance } from 'store/slices/instances.slice';
+import {
+  selectInstance,
+  selectIsLastMessagesSyncingAfterAuthorization,
+} from 'store/slices/instances.slice';
 import { StateInstanceEnum } from 'types';
 
 const Chats: FC = () => {
   const isMiniVersion = useAppSelector(selectMiniVersion);
   const type = useAppSelector(selectType);
   const instanceCredentials = useAppSelector(selectInstance);
+  const isLastMessagesSyncingAfterAuthorization = useAppSelector(
+    selectIsLastMessagesSyncingAfterAuthorization
+  );
   const { setIsAuthorizingInstance } = useActions();
 
   const { t } = useTranslation();
@@ -26,44 +35,46 @@ const Chats: FC = () => {
 
   const [isVisible, setIsVisible] = useState(false);
 
+  const isMax = useIsMaxInstance();
+  const isTelegram = useIsTelegramInstance();
+
   return (
     <Flex className="chats" vertical>
       {!isMiniVersion && type === 'tab' && <ChatsHeader />}
-
-      <Flex
-        align="center"
-        gap={8}
-        style={{ padding: '20px' }}
-        justify={type === 'partner-iframe' ? 'end' : 'space-between'}
-      >
-        <Flex gap={20} align="center" style={{ width: '100%' }}>
+      <Flex align="center" gap={8} style={{ padding: '6px 20px' }} justify={'space-between'}>
+        <Flex gap={20} align="center">
           <p style={{ fontSize: '1.5rem' }}>{t('CHAT_HEADER')}</p>
           <AuthorizationStatus />
-          {settings?.stateInstance === StateInstanceEnum.NotAuthorized && (
-            <Button variant="outlined" onClick={() => setIsAuthorizingInstance(true)}>
-              {t('AUTHORIZE')}
-            </Button>
-          )}
+          {settings?.stateInstance === StateInstanceEnum.NotAuthorized &&
+            !isLastMessagesSyncingAfterAuthorization && (
+              <Button variant="outlined" onClick={() => setIsAuthorizingInstance(true)}>
+                {t('AUTHORIZE')}
+              </Button>
+            )}
         </Flex>
         <Flex gap={14} align="center">
-          {!isMiniVersion && (type === 'console-page' || type === 'partner-iframe') && (
-            <a className={type === 'partner-iframe' ? 'p-10' : undefined}>
-              <NewChatIcon
-                style={{ fontSize: 20 }}
-                onClick={() => setIsVisible(true)}
-                title={t('ADD_NEW_CHAT_HEADER')}
-              />
-            </a>
-          )}
+          {!isMax && !isTelegram && <SelectStatusMode />}
+          {!isMiniVersion &&
+            (type === 'console-page' || type === 'partner-iframe' || type === 'tab') && (
+              <a className={type === 'partner-iframe' ? 'p-10' : undefined}>
+                <NewChatIcon
+                  style={{ fontSize: 20 }}
+                  onClick={() => setIsVisible(true)}
+                  title={t('ADD_NEW_CHAT_HEADER')}
+                />
+              </a>
+            )}
         </Flex>
       </Flex>
       {(settings?.stateInstance === StateInstanceEnum.Authorized ||
-        settings?.stateInstance === StateInstanceEnum.Suspended) && (
+        settings?.stateInstance === StateInstanceEnum.Suspended ||
+        isLastMessagesSyncingAfterAuthorization) && (
         <ChatList key={instanceCredentials?.idInstance} />
       )}
-      {!isMiniVersion && (type === 'console-page' || type === 'partner-iframe') && (
-        <AddNewChat isVisible={isVisible} setIsVisible={setIsVisible} />
-      )}
+      {!isMiniVersion &&
+        (type === 'console-page' || type === 'partner-iframe' || type === 'tab') && (
+          <AddNewChat isVisible={isVisible} setIsVisible={setIsVisible} />
+        )}
     </Flex>
   );
 };

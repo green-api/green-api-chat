@@ -5,22 +5,22 @@ import i18n from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 
-import emptyAvatar from '../../assets/emptyAvatar.svg';
+import emptyAvatar from 'assets/emptyAvatar.svg';
 import emptyAvatarButAvailable from 'assets/emptyAvatarButAvailable.svg';
 import emptyAvatarGroup from 'assets/emptyAvatarGroup.png';
 import FullChat from 'components/full-chat/chat.component';
 import MiniChat from 'components/mini-chat/chat.component';
 import { useActions, useAppSelector } from 'hooks';
-import { useIsMaxInstance } from 'hooks/use-is-max-instance';
 import {
   useLazyGetAvatarQuery,
   useLazyGetContactInfoQuery,
   useLazyGetGroupDataQuery,
+  useLazyGetSettingsQuery,
 } from 'services/green-api/endpoints';
-import { selectMiniVersion, selectType } from 'store/slices/chat.slice';
+import { selectMiniVersion } from 'store/slices/chat.slice';
 import { selectInstance, selectInstanceList } from 'store/slices/instances.slice';
 import { selectUser } from 'store/slices/user.slice';
-import { MessageData, MessageEventTypeEnum, TariffsEnum } from 'types';
+import { MessageEventTypeEnum, TariffsEnum } from 'types';
 import {
   isAuth,
   isPartnerChat,
@@ -30,19 +30,18 @@ import {
   isPageInIframe,
   getErrorMessage,
   getPhoneNumberFromChatId,
+  getTypeInstanceFromQuery,
 } from 'utils';
 
 const BaseLayout: FC = () => {
   const isMiniVersion = useAppSelector(selectMiniVersion);
-  const type = useAppSelector(selectType);
   const user = useAppSelector(selectUser);
   const selectedInstance = useAppSelector(selectInstance);
   const instanceList = useAppSelector(selectInstanceList);
-
   const [isEventAdded, setIsEventAdded] = useState(false);
   const [searchParams] = useSearchParams();
   const { t } = useTranslation();
-  const isMax = useIsMaxInstance();
+  const [isThemeSet, setIsThemeSet] = useState(false);
 
   const {
     setType,
@@ -58,9 +57,21 @@ const BaseLayout: FC = () => {
   const [getContactInfo] = useLazyGetContactInfoQuery();
   const [getGroupData] = useLazyGetGroupDataQuery();
   const [getAvatar] = useLazyGetAvatarQuery();
+  const [getSettings] = useLazyGetSettingsQuery();
 
   useEffect(() => {
-    function handleMessage(event: MessageEvent<MessageData>) {
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage(
+        {
+          type: MessageEventTypeEnum.IFRAME_READY,
+        },
+        '*'
+      );
+    }
+  }, []);
+
+  useEffect(() => {
+    function handleMessage(event: MessageEvent) {
       if (!isConsoleMessageData(event.data)) return;
 
       switch (event.data.type) {
@@ -76,7 +87,6 @@ const BaseLayout: FC = () => {
             }
 
             setInstanceList(event.data.payload.instanceList);
-
             setSelectedInstance({
               idInstance: event.data.payload.idInstance,
               apiTokenInstance: event.data.payload.apiTokenInstance,
@@ -86,7 +96,6 @@ const BaseLayout: FC = () => {
               isChatWorking: isChatWorking,
               typeInstance: event.data.payload.typeInstance,
             });
-
             setIsEventAdded(true);
 
             login({
@@ -111,7 +120,9 @@ const BaseLayout: FC = () => {
           return i18n.changeLanguage(event.data.payload.locale);
 
         case MessageEventTypeEnum.SET_THEME:
-          return setTheme(event.data.payload.theme);
+          setIsThemeSet(true);
+          setTheme(event.data.payload.theme);
+          return;
 
         default:
           return;
@@ -125,7 +136,6 @@ const BaseLayout: FC = () => {
   useEffect(() => {
     if (!selectedInstance?.idInstance && Array.isArray(instanceList) && instanceList.length > 0) {
       const firstInstance = instanceList[0];
-
       setSelectedInstance({
         idInstance: firstInstance.idInstance,
         apiTokenInstance: firstInstance.apiTokenInstance,
@@ -154,30 +164,46 @@ const BaseLayout: FC = () => {
 
       if (!idInstance || !apiTokenInstance || !apiUrl || !mediaUrl) return;
 
+      const normalizedApiUrl = apiUrl + '/';
+      const normalizedMediaUrl = mediaUrl + '/';
       const language = searchParams.get('lng');
       const brandDescription = searchParams.get('dsc');
       const brandImageUrl = searchParams.get('logo');
-
-      setType('partner-iframe');
-      setSelectedInstance({
-        idInstance: +idInstance,
-        apiTokenInstance,
-        apiUrl: apiUrl + '/',
-        mediaUrl: mediaUrl + '/',
-        tariff: TariffsEnum.Business,
-        typeInstance: 'whatsapp',
-      });
+      const queryTypeInstance = getTypeInstanceFromQuery(searchParams.get('typeInstance'));
 
       language && i18n.changeLanguage(language);
       brandDescription && setBrandData({ description: brandDescription });
       brandImageUrl && setBrandData({ brandImageUrl });
 
-      if (searchParams.has('chatId')) {
-        setType('one-chat-only');
-        const chatId = searchParams.get('chatId');
+      (async () => {
+        const { data: instanceSettings } = await getSettings({
+          idInstance: +idInstance,
+          apiTokenInstance,
+          apiUrl: normalizedApiUrl,
+          mediaUrl: normalizedMediaUrl,
+        });
 
-        if (chatId) {
-          (async () => {
+        const typeInstance = getTypeInstanceFromQuery(
+          instanceSettings?.typeInstance,
+          queryTypeInstance
+        );
+        const isMaxOrTelegramInstance = typeInstance === 'v3' || typeInstance === 'telegram';
+
+        setType('partner-iframe');
+        setSelectedInstance({
+          idInstance: +idInstance,
+          apiTokenInstance,
+          apiUrl: normalizedApiUrl,
+          mediaUrl: normalizedMediaUrl,
+          tariff: TariffsEnum.Business,
+          typeInstance,
+        });
+
+        if (searchParams.has('chatId')) {
+          setType('one-chat-only');
+          const chatId = searchParams.get('chatId');
+
+          if (chatId) {
             let contactInfo = undefined;
             let groupInfo = undefined;
             let avatar = chatId.includes('g.us') ? emptyAvatarGroup : emptyAvatarButAvailable;
@@ -188,9 +214,9 @@ const BaseLayout: FC = () => {
               !idInstance.toString().startsWith('7835')
             ) {
               const { data, error: groupDataError } = await getGroupData({
-                ...(isMax ? { chatId } : { groupId: chatId }),
-                apiUrl: apiUrl + '/',
-                mediaUrl: mediaUrl + '/',
+                ...(isMaxOrTelegramInstance ? { chatId } : { groupId: chatId }),
+                apiUrl: normalizedApiUrl,
+                mediaUrl: normalizedMediaUrl,
                 apiTokenInstance,
                 idInstance: +idInstance,
               });
@@ -200,14 +226,16 @@ const BaseLayout: FC = () => {
 
               const { data: avatarData } = await getAvatar({
                 chatId,
-                apiUrl: apiUrl + '/',
-                mediaUrl: mediaUrl + '/',
+                apiUrl: normalizedApiUrl,
+                mediaUrl: normalizedMediaUrl,
                 apiTokenInstance,
                 idInstance: +idInstance,
               });
 
               if (avatarData) {
-                avatar = avatarData.urlAvatar;
+                if (avatarData.urlAvatar) {
+                  avatar = avatarData.urlAvatar;
+                }
                 if (!avatarData.available && !chatId.includes('g.us')) avatar = emptyAvatar;
               }
             }
@@ -215,8 +243,8 @@ const BaseLayout: FC = () => {
             if (!chatId.includes('g.us') && !idInstance.toString().startsWith('7835')) {
               const { data, error: contactInfoError } = await getContactInfo({
                 chatId,
-                apiUrl: apiUrl + '/',
-                mediaUrl: mediaUrl + '/',
+                apiUrl: normalizedApiUrl,
+                mediaUrl: normalizedMediaUrl,
                 apiTokenInstance,
                 idInstance: +idInstance,
               });
@@ -246,9 +274,9 @@ const BaseLayout: FC = () => {
               avatar,
               contactInfo: groupInfo || contactInfo,
             });
-          })();
+          }
         }
-      }
+      })();
     }
   }, [searchParams]);
 
@@ -258,12 +286,14 @@ const BaseLayout: FC = () => {
     const isNotIframe = !isPageInIframe();
 
     const shouldThrowOnMini = isNotAuthorized && !isMiniVersion && isNotPartner && isEventAdded;
-    const shouldThrowOnTab = isNotAuthorized && isNotPartner && isNotIframe && type === 'tab';
+    const shouldThrowOnTab = isNotAuthorized && isNotPartner && isNotIframe && !selectedInstance;
 
     if (shouldThrowOnMini || shouldThrowOnTab) {
       throw new Error('NO_INSTANCE_CREDENTIALS');
     }
-  }, [user, isMiniVersion, searchParams, isEventAdded, type]);
+  }, [user, isMiniVersion, searchParams, isEventAdded, selectedInstance]);
+
+  if (!isThemeSet && isPageInIframe() && !isPartnerChat(searchParams)) return null;
 
   return (
     <Layout className={`app ${!isMiniVersion ? 'bg' : ''}`}>

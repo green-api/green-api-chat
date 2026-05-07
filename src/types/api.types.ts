@@ -254,6 +254,7 @@ export type GetGroupDataErrorResponse = 'Error: item-not-found' | 'Error: forbid
 export interface GroupParticipantInterface {
   id: string;
   chatId?: string;
+  name?: string;
   isAdmin: boolean;
   isSuperAdmin: boolean;
 }
@@ -266,6 +267,30 @@ export interface CheckWhatsappResponseInterface {
   existsWhatsapp: boolean;
 }
 
+export interface GetContactsParametersInterface extends InstanceInterface {
+  group?: boolean;
+  count?: number;
+}
+
+export interface ContactListItemInterface {
+  id: string;
+  name: string;
+  contactName?: string;
+  type: 'user' | 'group';
+}
+
+export interface UpsertContactPayloadInterface {
+  chatId: string;
+  firstName: string;
+  lastName?: string;
+  saveInAddressbook?: boolean;
+}
+
+export type AddContactParametersInterface = InstanceInterface & UpsertContactPayloadInterface;
+export type EditContactParametersInterface = InstanceInterface & UpsertContactPayloadInterface;
+export type DeleteContactParametersInterface = InstanceInterface &
+  Pick<UpsertContactPayloadInterface, 'chatId'>;
+
 export type RequestWithChatIdParameters = InstanceInterface &
   Pick<SendingBaseParametersInterface, 'chatId'>;
 
@@ -273,6 +298,7 @@ export interface GetAvatarResponseInterface {
   existsWhatsapp: boolean;
   available: boolean;
   urlAvatar: string;
+  base64Avatar?: string;
   reason: 'bad request data' | 'get avatar timeout limit exceeded';
 }
 
@@ -292,6 +318,7 @@ export interface GetContactInfoResponseInterface
   isMute: boolean;
   messageExpiration: number;
   muteExpiration: number | null;
+  base64Avatar?: string;
 }
 
 interface ProductInterface {
@@ -327,21 +354,25 @@ export interface SendContactParametersInterface
   contact: ContactInterface;
 }
 
-export interface ContactInterface {
-  phoneContact: string;
-  firstName?: string;
-  middleName?: string;
-  lastName?: string;
-  company?: string;
-}
+export type ContactInterface =
+  | {
+      phoneContact: string | number;
+      firstName?: string;
+      middleName?: string;
+      lastName?: string;
+      company?: string;
+    }
+  | {
+      chatId: string;
+    };
 
 export interface SendLocationParametersInterface
   extends InstanceInterface,
     Pick<SendingBaseParametersInterface, 'chatId' | 'quotedMessageId'> {
   nameLocation?: string;
   address?: string;
-  latitude: string;
-  longitude: string;
+  latitude: number;
+  longitude: number;
 }
 
 export interface SendPollParametersInterface
@@ -424,6 +455,7 @@ export interface GetWaSettingsResponseInterface {
   phone: string;
   deviceId: string;
   chatId?: string;
+  base64Avatar?: string;
 }
 
 export interface GetProfileBaseSettingsResponseInterface<T extends boolean> {
@@ -534,6 +566,7 @@ export interface StartAuthorizationResponseInterface {
 
 export interface SendMaxAuthCodeParametersInterface extends InstanceInterface {
   code: string;
+  password?: string;
 }
 
 export type FlagRequest = 'yes' | 'no';
@@ -588,3 +621,15 @@ export type InstanceData = ExpandedGetSettingsInterface &
     | 'typeInstance'
   > &
   Pick<InstanceInterface, 'apiTokenInstance' | 'apiUrl' | 'mediaUrl'>;
+
+export interface QRResponseInterface {
+  type: 'qrCode' | 'error' | 'alreadyLogged' | 'pending_password';
+  message: 'string';
+}
+
+export interface GetChatsReponseInterface {
+  chatId: string;
+  name: string;
+  type: string;
+  phoneNumber?: string;
+}

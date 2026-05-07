@@ -1,6 +1,6 @@
 import { FC, useEffect, useMemo } from 'react';
 
-import { Flex, List, Skeleton } from 'antd';
+import { Badge, Flex, List, Skeleton } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import emptyAvatar from 'assets/emptyAvatar.svg';
@@ -10,8 +10,10 @@ import waChatIcon from 'assets/wa-chat.svg';
 import AvatarImage from 'components/UI/avatar-image.component';
 import { useActions, useAppSelector } from 'hooks';
 import { useIsMaxInstance } from 'hooks/use-is-max-instance';
+import { useIsTelegramInstance } from 'hooks/use-is-telegram-instance';
 import {
   useGetAvatarQuery,
+  useGetChatsQuery,
   useGetContactInfoQuery,
   useGetGroupDataQuery,
 } from 'services/green-api/endpoints';
@@ -31,12 +33,18 @@ interface ContactListItemProps {
   lastMessage: MessageInterface;
   onNameExtracted?: (chatId: string, name: string) => void;
   showDescription?: boolean;
+  unreadCount?: number;
+  onClearUnread?: () => void;
 }
+
+const WABA_POOLS = ['7835', '9908'];
 
 const ChatListItem: FC<ContactListItemProps> = ({
   lastMessage,
   onNameExtracted,
   showDescription = true,
+  unreadCount,
+  onClearUnread,
 }) => {
   const {
     t,
@@ -47,19 +55,31 @@ const ChatListItem: FC<ContactListItemProps> = ({
   const activeChat = useAppSelector(selectActiveChat);
   const { setActiveChat, setSearchQuery } = useActions();
   const isMax = useIsMaxInstance();
+  const isTelegram = useIsTelegramInstance();
+  const isMaxGroup = isMax && lastMessage.chatId?.startsWith('-');
+
   const messageDate = getMessageDate(
     lastMessage.timestamp * 1000,
     'chatList',
     resolvedLanguage as LanguageLiteral
   );
 
+  const { data: chats } = useGetChatsQuery(
+    { ...instanceCredentials },
+    {
+      skip:
+        !instanceCredentials?.idInstance || !instanceCredentials?.apiTokenInstance || !isTelegram,
+    }
+  );
+
   const { data: groupData, isLoading: isGroupDataLoading } = useGetGroupDataQuery(
     {
       ...instanceCredentials,
-      ...(isMax ? { chatId: lastMessage.chatId } : { groupId: lastMessage.chatId }),
+      ...(isMax || isTelegram ? { chatId: lastMessage.chatId } : { groupId: lastMessage.chatId }),
     },
     {
       skip:
+        isTelegram ||
         (!lastMessage.chatId?.includes('g.us') && !lastMessage.chatId?.startsWith('-')) ||
         instanceCredentials?.idInstance.toString().startsWith('7835'),
     }
@@ -110,6 +130,10 @@ const ChatListItem: FC<ContactListItemProps> = ({
   let chatName: string | undefined;
 
   switch (true) {
+    case Boolean(chats && isTelegram):
+      const chat = chats?.find((c) => c.chatId === lastMessage.chatId);
+      chatName = chat ? chat.name : lastMessage.chatId;
+      break;
     case typeof groupData === 'object' &&
       groupData !== null &&
       'subject' in groupData &&
@@ -119,6 +143,10 @@ const ChatListItem: FC<ContactListItemProps> = ({
 
     case Boolean(groupData) && typeof groupData !== 'object':
       chatName = lastMessage.chatId;
+      break;
+
+    case isMaxGroup && !contactInfo?.contactName && !contactInfo?.name:
+      chatName = lastMessage?.chatId;
       break;
 
     default:
@@ -151,6 +179,10 @@ const ChatListItem: FC<ContactListItemProps> = ({
     });
 
     setSearchQuery('');
+
+    if (onClearUnread) {
+      onClearUnread();
+    }
   };
 
   return (
@@ -196,7 +228,21 @@ const ChatListItem: FC<ContactListItemProps> = ({
           }
         />
         {showDescription && (
-          <span style={{ textAlign: 'end', alignSelf: 'start' }}>{messageDate}</span>
+          <Flex vertical align="end" style={{ alignSelf: 'start' }} gap={4}>
+            <span style={{ textAlign: 'end' }}>{messageDate}</span>
+            {unreadCount &&
+              unreadCount > 0 &&
+              WABA_POOLS.includes(instanceCredentials.idInstance.toString().slice(0, 4)) && (
+                <Badge
+                  count={unreadCount}
+                  style={{
+                    backgroundColor: 'var(--primary-color)',
+                    boxShadow: '0 0 0 1px #fff',
+                    textAlign: 'center',
+                  }}
+                />
+              )}
+          </Flex>
         )}
       </Skeleton>
     </List.Item>

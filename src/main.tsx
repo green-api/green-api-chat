@@ -1,4 +1,5 @@
 import { StrictMode, Suspense } from 'react';
+
 import { setupListeners } from '@reduxjs/toolkit/query';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';

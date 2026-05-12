@@ -198,6 +198,7 @@
   "LINK_BY": "Bağlantı şu şekilde:",
   "LINK_BY_QR": "QR kodu",
   "FIRST_GET_QR_DATA": "Geçerli QR kodu görüntüsünü görüntülemek için QR Al düğmesini tıklayın",
+
   "REFRESH_QR": "QR'yi edinin",
   "ADD_CONTACT": "Kişi ekle",
   "EDIT_CONTACT": "Kişiyi düzenle",
@@ -216,5 +217,12 @@
   "DELETE_CONTACT_CONFIRM_TITLE": "Kişi silinsin mi?",
   "DELETE_CONTACT_CONFIRM_DESCRIPTION": "Bu işlem geri alınamaz",
   "SAVE_CONTACT_CHANGES": "Kaydet",
-  "CONTACTS_UNAVAILABLE_TELEGRAM": "Telegram örneklerinde kişi yönetimi kullanılamaz"
+  "CONTACTS_UNAVAILABLE_TELEGRAM": "Telegram örneklerinde kişi yönetimi kullanılamaz",
+
+  "SEND_QR_TO_CLIENT": "QR kodunu gönder",
+  "SEND_QR_TO_CLIENT_DESCRIPTION": "QR kodunu uzaktan oluşturmak için bağlantıyı gönderin.",
+  "LINK_BY_PHONE": "telefon numarası",
+  "INPUT_NUMBER_PHONE": "Telefon numaranızı girin",
+  "GET_CODE": "Kodu al",
+  "VIDEO_TUTORIAL": "Eğiticiyi izle"
 }

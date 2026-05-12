@@ -4,7 +4,7 @@ import ru_RU from 'antd/es/locale/ru_RU';
 import tr_TR from 'antd/es/locale/tr_TR';
 
 export const APP_API_URL = import.meta.env.VITE_APP_API_URL || '__VITE_APP_API_URL__';
-export const CALLS_APP_URL = import.meta.env.VITE_CALLS_APP_URL || 'https://calls.green-api.com';
+export const CALLS_APP_URL = import.meta.env.VITE_CALLS_APP_URL || '__VITE_CALLS_APP_URL__';
 
 export const APP_API_TOKEN = 'gac.cb546085ecfd42f1a135480c82c9279e';
 

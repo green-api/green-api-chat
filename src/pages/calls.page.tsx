@@ -38,13 +38,14 @@ const CallsPage: FC = () => {
     const handleMessage = (event: MessageEvent) => {
       if (event.data?.type === MessageEventTypeEnum.IFRAME_READY) {
         setIsIframeReady(true);
-        console.log('calls ready');
       }
     };
 
     window.addEventListener('message', handleMessage);
     return () => window.removeEventListener('message', handleMessage);
   }, []);
+
+  console.log(CALLS_APP_URL);
 
   useEffect(() => {
     if (isIframeReady && iframeReference.current?.contentWindow) {

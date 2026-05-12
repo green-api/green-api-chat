@@ -538,6 +538,42 @@ export interface SendVoiceStatusInterface extends InstanceInterface {
   participants?: string[];
 }
 
+export interface StatusesJournalParametersInterface extends InstanceInterface {
+  minutes?: number;
+}
+
+export interface StatusJournalTextMessage {
+  text: string;
+  backgroundColor?: string;
+  font?: FontType;
+}
+
+export interface StatusJournalItemInterface {
+  type: 'incoming' | 'outgoing';
+  idMessage: string;
+  timestamp: number;
+  typeMessage:
+    | 'extendedTextMessage'
+    | 'imageMessage'
+    | 'videoMessage'
+    | 'audioMessage'
+    | 'deletedMessage';
+  chatId: string;
+  statusMessage?: StatusMessage;
+  sendByApi?: boolean;
+  participants?: string[];
+  senderId?: string;
+  senderName?: string;
+  senderContactName?: string;
+  textMessage?: string;
+  downloadUrl?: string;
+  caption?: string;
+  fileName?: string;
+  jpegThumbnail?: string;
+  mimeType?: string;
+  extendedTextMessage?: StatusJournalTextMessage;
+}
+
 export interface DownloadFileResponseInterface {
   downloadUrl: string;
 }

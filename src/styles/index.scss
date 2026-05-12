@@ -286,6 +286,10 @@ Button.ant-btn-primary:focus {
   padding-top: 22px;
 }
 
+.status-viewer .ant-modal-content .ant-modal-body {
+  padding-top: 0;
+}
+
 .chat-border {
   border-left: 1px solid var(--chat-border-color);
 }

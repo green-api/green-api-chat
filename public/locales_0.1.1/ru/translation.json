@@ -263,5 +263,18 @@
   "DELETE_CONTACT_CONFIRM_TITLE": "Удалить контакт?",
   "DELETE_CONTACT_CONFIRM_DESCRIPTION": "Действие нельзя отменить",
   "SAVE_CONTACT_CHANGES": "Сохранить",
-  "CONTACTS_UNAVAILABLE_TELEGRAM": "Управление контактами недоступно для Telegram-инстансов"
+  "CONTACTS_UNAVAILABLE_TELEGRAM": "Управление контактами недоступно для Telegram-инстансов",
+  "STATUS_LIST": "Список статусов",
+  "STATUS_HISTORY_ERROR": "Не удалось загрузить статусы",
+  "NO_STATUSES_FOUND": "Статусы не найдены",
+  "STATUS_VIEWER": "Просмотр статуса",
+  "PREVIOUS": "Назад",
+  "NEXT": "Далее",
+  "ALL": "Все",
+  "INCOMING": "Входящие",
+  "OUTGOING": "Исходящие",
+  "SENT_STATUS_SUCCESS": "Статус успешно отправлен",
+  "SENT_STATUS_FAILED": "Не удалось отправить статус",
+  "SENT_STATUS_ERROR": "Ошибка при отправке статуса",
+  "UPLOAD_FAILED": "Ошибка загрузки"
 }

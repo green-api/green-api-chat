@@ -12,7 +12,7 @@ export default defineConfig({
   server: {
     host: true,
     port: 5174,
-    https: true,
+    // https: true,
   },
   build: {
     assetsDir: assetsDirectory,
@@ -28,7 +28,6 @@ export default defineConfig({
     svgr(),
     react(),
     tsconfigPaths(),
-    mkcert(),
     viteCompression({
       verbose: true, // Output compression results
       disable: false, // Enable compression

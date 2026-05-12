@@ -216,5 +216,21 @@
   "DELETE_CONTACT_CONFIRM_TITLE": "Kişi silinsin mi?",
   "DELETE_CONTACT_CONFIRM_DESCRIPTION": "Bu işlem geri alınamaz",
   "SAVE_CONTACT_CHANGES": "Kaydet",
-  "CONTACTS_UNAVAILABLE_TELEGRAM": "Telegram örneklerinde kişi yönetimi kullanılamaz"
+  "CONTACTS_UNAVAILABLE_TELEGRAM": "Telegram örneklerinde kişi yönetimi kullanılamaz",
+  "STATUS_LIST": "Durum listesi",
+  "STATUS_HISTORY_ERROR": "Durumlar yüklenemedi",
+  "NO_STATUSES_FOUND": "Durum bulunamadı",
+  "STATUS_VIEWER": "Durum görüntüleyici",
+  "PREVIOUS": "Önceki",
+  "NEXT": "Sonraki",
+  "ALL": "Tümü",
+  "INCOMING": "Gelen",
+  "OUTGOING": "Giden",
+  "MY_STATUS": "Durumum",
+  "ADD_STATUS": "Durum güncellemesi eklemek için dokunun",
+  "STATUSES": "Durum",
+  "SENT_STATUS_SUCCESS": "Durum başarıyla gönderildi",
+  "SENT_STATUS_FAILED": "Durum gönderilemedi",
+  "SENT_STATUS_ERROR": "Durum gönderilirken hata oluştu",
+  "UPLOAD_FAILED": "Yükleme başarısız oldu"
 }

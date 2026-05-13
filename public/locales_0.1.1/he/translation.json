@@ -252,5 +252,6 @@
   "SENT_STATUS_SUCCESS": "הסטטוס נשלח בהצלחה",
   "SENT_STATUS_FAILED": "שליחת הסטטוס נכשלה",
   "SENT_STATUS_ERROR": "שגיאה בשליחת הסטטוס",
-  "UPLOAD_FAILED": "ההעלאה נכשלה"
+  "UPLOAD_FAILED": "ההעלאה נכשלה",
+  "MAX_FILES_LIMIT_WARNING": "לא ניתן להוסיף יותר מ-100 קבצים"
 }

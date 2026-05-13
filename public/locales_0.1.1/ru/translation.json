@@ -276,5 +276,6 @@
   "SENT_STATUS_SUCCESS": "Статус успешно отправлен",
   "SENT_STATUS_FAILED": "Не удалось отправить статус",
   "SENT_STATUS_ERROR": "Ошибка при отправке статуса",
-  "UPLOAD_FAILED": "Ошибка загрузки"
+  "UPLOAD_FAILED": "Ошибка загрузки",
+  "MAX_FILES_LIMIT_WARNING": "Вы не можете добавить больше 100 файлов"
 }

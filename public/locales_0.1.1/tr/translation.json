@@ -232,5 +232,6 @@
   "SENT_STATUS_SUCCESS": "Durum başarıyla gönderildi",
   "SENT_STATUS_FAILED": "Durum gönderilemedi",
   "SENT_STATUS_ERROR": "Durum gönderilirken hata oluştu",
-  "UPLOAD_FAILED": "Yükleme başarısız oldu"
+  "UPLOAD_FAILED": "Yükleme başarısız oldu",
+  "MAX_FILES_LIMIT_WARNING": "100 dosyadan fazla ekleyemezsiniz"
 }

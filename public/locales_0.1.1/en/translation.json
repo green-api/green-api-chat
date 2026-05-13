@@ -255,5 +255,6 @@
   "SENT_STATUS_SUCCESS": "Status sent successfully",
   "SENT_STATUS_FAILED": "Failed to send status",
   "SENT_STATUS_ERROR": "Error sending status",
-  "UPLOAD_FAILED": "Upload failed"
+  "UPLOAD_FAILED": "Upload failed",
+  "MAX_FILES_LIMIT_WARNING": "You cannot add more than 100 files"
 }

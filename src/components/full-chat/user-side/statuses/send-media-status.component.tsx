@@ -51,7 +51,7 @@ const SendMediaStatusComponent: FC = () => {
       const availableSlots = MAX_PREVIEWS - prev.length;
 
       if (availableSlots <= 0) {
-        message.warning(t('Вы не можете добавить больше 100 файлов'));
+        message.warning(t('MAX_FILES_LIMIT_WARNING'));
         e.target.value = '';
         return prev;
       }

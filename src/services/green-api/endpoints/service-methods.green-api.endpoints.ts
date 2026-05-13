@@ -9,7 +9,7 @@ import {
   EditMessageParameters,
   GetContactsParametersInterface,
   GetChatInformationParameters,
-  GetChatsReponseInterface,
+  GetChatsResponseInterface,
   GetContactInfoResponseInterface,
   InstanceInterface,
   RequestWithChatIdParameters,
@@ -114,7 +114,7 @@ export const serviceMethodsGreenApiEndpoints = greenAPI.injectEndpoints({
         body,
       }),
     }),
-    getChats: builder.query<GetChatsReponseInterface[], InstanceInterface>({
+    getChats: builder.query<GetChatsResponseInterface[], InstanceInterface>({
       query: ({ idInstance, apiTokenInstance, apiUrl, mediaUrl: _ }) => ({
         url: `${apiUrl}waInstance${idInstance}/getChats/${apiTokenInstance}`,
       }),

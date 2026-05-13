@@ -45,8 +45,6 @@ const CallsPage: FC = () => {
     return () => window.removeEventListener('message', handleMessage);
   }, []);
 
-  console.log(CALLS_APP_URL);
-
   useEffect(() => {
     if (isIframeReady && iframeReference.current?.contentWindow) {
       iframeReference.current.contentWindow.postMessage(

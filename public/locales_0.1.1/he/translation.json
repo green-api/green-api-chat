@@ -243,5 +243,22 @@
   "DELETE_CONTACT_CONFIRM_TITLE": "למחוק את איש הקשר?",
   "DELETE_CONTACT_CONFIRM_DESCRIPTION": "לא ניתן לבטל פעולה זו",
   "SAVE_CONTACT_CHANGES": "שמור",
-  "CONTACTS_UNAVAILABLE_TELEGRAM": "ניהול אנשי קשר אינו זמין עבור אינסטנסים של Telegram"
+  "CONTACTS_UNAVAILABLE_TELEGRAM": "ניהול אנשי קשר אינו זמין עבור אינסטנסים של Telegram",
+  "STATUS_LIST": "רשימת סטטוסים",
+  "STATUS_HISTORY_ERROR": "טעינת הסטטוסים נכשלה",
+  "NO_STATUSES_FOUND": "לא נמצאו סטטוסים",
+  "STATUS_VIEWER": "צפייה בסטטוס",
+  "PREVIOUS": "הקודם",
+  "NEXT": "הבא",
+  "ALL": "הכל",
+  "INCOMING": "נכנסים",
+  "OUTGOING": "יוצאים",
+  "MY_STATUS": "הסטטוס שלי",
+  "ADD_STATUS": "לחץ כדי להוסיף עדכון סטטוס",
+  "STATUSES": "סטטוס",
+  "SENT_STATUS_SUCCESS": "הסטטוס נשלח בהצלחה",
+  "SENT_STATUS_FAILED": "שליחת הסטטוס נכשלה",
+  "SENT_STATUS_ERROR": "שגיאה בשליחת הסטטוס",
+  "UPLOAD_FAILED": "ההעלאה נכשלה",
+  "MAX_FILES_LIMIT_WARNING": "לא ניתן להוסיף יותר מ-100 קבצים"
 }

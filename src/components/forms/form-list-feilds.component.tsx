@@ -1,7 +1,7 @@
 import { CSSProperties, FC } from 'react';
 
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Form, Space } from 'antd';
+import { Button, Flex, Form, Space } from 'antd';
 import { FormListProps } from 'antd/es/form';
 import { useTranslation } from 'react-i18next';
 
@@ -33,16 +33,18 @@ const FormListFields: FC<FormListFieldsProperties> = ({
   return (
     <Form.List {...listProperties} initialValue={initialValue}>
       {(fields, { add, remove }) => (
-        <>
+        <Flex vertical gap={20} style={{ margin: '0 30px' }}>
           {fields.map(({ key, name: subGroupIndex, ...restField }) => (
-            <Space
+            <Flex
               key={key}
               style={{ display: 'flex', marginBottom: 8, ...containerStyles }}
               className={containerClassNames}
-              align="baseline"
+              align="center"
+              gap={10}
             >
               {items.map(({ children, key: groupKey, name = '', ...properties }) => (
                 <Form.Item
+                  noStyle
                   {...restField}
                   {...properties}
                   key={groupKey + key}
@@ -61,7 +63,7 @@ const FormListFields: FC<FormListFieldsProperties> = ({
               {fields.length > minFields && (
                 <MinusCircleOutlined onClick={() => remove(subGroupIndex)} />
               )}
-            </Space>
+            </Flex>
           ))}
 
           {(!maxFields || fields.length < maxFields) && (
@@ -71,7 +73,7 @@ const FormListFields: FC<FormListFieldsProperties> = ({
               </Button>
             </Form.Item>
           )}
-        </>
+        </Flex>
       )}
     </Form.List>
   );

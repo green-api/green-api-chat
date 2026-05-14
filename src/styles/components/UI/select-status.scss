@@ -1,8 +1,11 @@
 .status-icon {
-  fill: var(--text-color);
-  width: 24px;
-  height: 24px;
+  color: var(--primary-color);
+  background-color: var(--background-main);
+
   transition: fill 0.2s ease;
+  position: 'absolute';
+  bottom: 0;
+  right: 2;
 }
 
 .status-icon-wrapper:hover .status-icon {

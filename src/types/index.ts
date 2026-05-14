@@ -73,6 +73,7 @@ export interface InstancesState {
   typeInstance: TypeInstance;
   instanceList: ExpandedInstanceInterface[] | null;
   isAuthorizingInstance: boolean;
+  isSendingStatus: 'text' | 'voice' | 'media' | null;
   isLastMessagesSyncingAfterAuthorization: boolean;
 }
 
@@ -301,6 +302,7 @@ export interface AsideItem {
   item: UserSideActiveMode;
   title: string;
   icon: ReactElement;
+  waOnly?: boolean;
 }
 
 export interface UserSideItem {

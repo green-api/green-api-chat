@@ -246,5 +246,22 @@
   "DELETE_CONTACT_CONFIRM_TITLE": "Delete contact?",
   "DELETE_CONTACT_CONFIRM_DESCRIPTION": "This action cannot be undone",
   "SAVE_CONTACT_CHANGES": "Save",
-  "CONTACTS_UNAVAILABLE_TELEGRAM": "Contact management is unavailable for Telegram instances"
+  "CONTACTS_UNAVAILABLE_TELEGRAM": "Contact management is unavailable for Telegram instances",
+  "STATUS_LIST": "Status list",
+  "STATUS_HISTORY_ERROR": "Failed to load statuses",
+  "NO_STATUSES_FOUND": "No statuses found",
+  "STATUS_VIEWER": "Status viewer",
+  "PREVIOUS": "Previous",
+  "NEXT": "Next",
+  "ALL": "All",
+  "INCOMING": "Incoming",
+  "OUTGOING": "Outgoing",
+  "MY_STATUS": "My status",
+  "ADD_STATUS": "Tap to add a status update",
+  "STATUSES": "Status",
+  "SENT_STATUS_SUCCESS": "Status sent successfully",
+  "SENT_STATUS_FAILED": "Failed to send status",
+  "SENT_STATUS_ERROR": "Error sending status",
+  "UPLOAD_FAILED": "Upload failed",
+  "MAX_FILES_LIMIT_WARNING": "You cannot add more than 100 files"
 }

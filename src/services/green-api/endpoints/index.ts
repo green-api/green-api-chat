@@ -44,6 +44,8 @@ export const {
   useSendTextStatusMutation,
   useSendVoiceStatusMutation,
   useSendMediaStatusMutation,
+  useGetIncomingStatusesQuery,
+  useGetOutgoingStatusesQuery,
   useGetAccountSettingsQuery,
   useGetAuthorizationCodeMutation,
   useLazyLastMessagesQuery,

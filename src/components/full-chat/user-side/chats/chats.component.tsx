@@ -4,14 +4,12 @@ import { Button, Flex } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import AddNewChat from './add-new-chat.component';
+import ChatsHeader from './chats-header.component';
 import NewChatIcon from 'assets/newChat.svg?react';
 import AuthorizationStatus from 'components/instance-auth/authorization-status.component';
 import ChatList from 'components/shared/chat-list/chat-list.component';
-import SelectStatusMode from 'components/UI/select/select-status.component';
 import { useActions, useAppSelector } from 'hooks';
 import { useInstanceSettings } from 'hooks/use-instance-settings.hook';
-import { useIsMaxInstance } from 'hooks/use-is-max-instance';
-import { useIsTelegramInstance } from 'hooks/use-is-telegram-instance';
 import { selectMiniVersion, selectType } from 'store/slices/chat.slice';
 import {
   selectInstance,
@@ -34,11 +32,9 @@ const Chats: FC = () => {
 
   const [isVisible, setIsVisible] = useState(false);
 
-  const isMax = useIsMaxInstance();
-  const isTelegram = useIsTelegramInstance();
-
   return (
     <Flex className="chats" vertical>
+      {!isMiniVersion && type === 'tab' && <ChatsHeader />}
       <Flex align="center" gap={8} style={{ padding: '6px 20px' }} justify={'space-between'}>
         <Flex gap={20} align="center">
           <p style={{ fontSize: '1.5rem' }}>{t('CHAT_HEADER')}</p>
@@ -51,7 +47,6 @@ const Chats: FC = () => {
             )}
         </Flex>
         <Flex gap={14} align="center">
-          {!isMax && !isTelegram && <SelectStatusMode />}
           {!isMiniVersion &&
             (type === 'console-page' || type === 'partner-iframe' || type === 'tab') && (
               <a className={type === 'partner-iframe' ? 'p-10' : undefined}>

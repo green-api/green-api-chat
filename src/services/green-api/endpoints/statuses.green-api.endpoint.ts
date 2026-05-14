@@ -1,5 +1,11 @@
 import { greenAPI } from 'services/green-api/green-api.service';
-import { SendTextStatusInterface, SendVoiceStatusInterface, SendingResponseInterface } from 'types';
+import {
+  SendTextStatusInterface,
+  SendVoiceStatusInterface,
+  SendingResponseInterface,
+  StatusesJournalParametersInterface,
+  StatusJournalItemInterface,
+} from 'types';
 
 export const statusesGreenApiEndpoints = greenAPI.injectEndpoints({
   endpoints: (builder) => ({
@@ -32,6 +38,26 @@ export const statusesGreenApiEndpoints = greenAPI.injectEndpoints({
       invalidatesTags: () => {
         return ['statuses'];
       },
+    }),
+    getIncomingStatuses: builder.query<
+      StatusJournalItemInterface[],
+      StatusesJournalParametersInterface
+    >({
+      query: ({ idInstance, apiTokenInstance, apiUrl, mediaUrl: _, ...params }) => ({
+        url: `${apiUrl}waInstance${idInstance}/getIncomingStatuses/${apiTokenInstance}`,
+        params,
+      }),
+      providesTags: ['statuses'],
+    }),
+    getOutgoingStatuses: builder.query<
+      StatusJournalItemInterface[],
+      StatusesJournalParametersInterface
+    >({
+      query: ({ idInstance, apiTokenInstance, apiUrl, mediaUrl: _, ...params }) => ({
+        url: `${apiUrl}waInstance${idInstance}/getOutgoingStatuses/${apiTokenInstance}`,
+        params,
+      }),
+      providesTags: ['statuses'],
     }),
   }),
 });

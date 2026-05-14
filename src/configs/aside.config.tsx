@@ -1,6 +1,7 @@
 import { SettingOutlined } from '@ant-design/icons';
 
 import ChatIcon from 'assets/chat.svg?react';
+import StatusIcon from 'assets/status.svg?react';
 import ContactIcon from 'assets/contact-icon.svg?react';
 import InstanceIcon from 'assets/instance-icon.svg?react';
 import PhoneIcon from 'assets/phone.svg?react';
@@ -10,6 +11,7 @@ import { InstanceSettings } from 'components/full-chat/user-side/settings/instan
 import { Language } from 'components/full-chat/user-side/settings/language.componet';
 import { Logout } from 'components/full-chat/user-side/settings/logout.component';
 import { Profile } from 'components/full-chat/user-side/settings/profile.component';
+import { Statuses } from 'components/full-chat/user-side/statuses/statuses.component';
 import { SettingsSelect } from 'components/UI/select/select-settigs.component';
 import { AsideItem, ChatType, TypeInstance, UserSideItem } from 'types';
 
@@ -21,6 +23,7 @@ export const asideTopIconItems: (
     ? { item: 'instance', title: 'INSTANCE', icon: <InstanceIcon /> }
     : null,
   { item: 'chats', title: 'CHATS_TITLE', icon: <ChatIcon /> },
+  { item: 'statuses', title: 'STATUSES', icon: <StatusIcon />, waOnly: true },
   typeInstance === 'whatsapp' ? { item: 'calls', title: 'CALLS_TITLE', icon: <PhoneIcon /> } : null,
   type !== 'one-chat-only' && typeInstance === 'whatsapp'
     ? { item: 'contacts', title: 'CONTACTS', icon: <ContactIcon /> }
@@ -44,4 +47,5 @@ export const USER_SIDE_ITEMS: UserSideItem[] = [
   { item: 'profile', element: <Profile /> },
   { item: 'language', element: <Language /> },
   { item: 'logout', element: <Logout /> },
+  { item: 'statuses', element: <Statuses /> },
 ];

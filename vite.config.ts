@@ -1,5 +1,6 @@
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
+import mkcert from 'vite-plugin-mkcert';
 import viteCompression from 'vite-plugin-compression';
 import svgr from 'vite-plugin-svgr';
 import tsconfigPaths from 'vite-tsconfig-paths';
@@ -7,8 +8,12 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 const assetsDirectory = 'assets_0.1.2';
 const hash = Math.floor(Math.random() * 90_000) + 10_000;
 
-// https://vitejs.dev/config/
 export default defineConfig({
+  server: {
+    host: true,
+    port: 5174,
+    // https: true,
+  },
   build: {
     assetsDir: assetsDirectory,
     rollupOptions: {

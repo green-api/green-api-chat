@@ -55,6 +55,7 @@ const initialState: InstancesState = {
   typeInstance: 'whatsapp',
   instanceList: null,
   isAuthorizingInstance: false,
+  isSendingStatus: null,
   isLastMessagesSyncingAfterAuthorization: false,
   ...getInitialStateFromStorage(),
 };
@@ -102,6 +103,9 @@ export const instancesSlice = createSlice({
     ) => {
       state.isAuthorizingInstance = action.payload;
     },
+    setIsSendingStatus: (state, action: PayloadAction<InstancesState['isSendingStatus']>) => {
+      state.isSendingStatus = action.payload;
+    },
     setIsLastMessagesSyncingAfterAuthorization: (
       state,
       action: PayloadAction<InstancesState['isLastMessagesSyncingAfterAuthorization']>
@@ -121,5 +125,6 @@ export const selectInstanceTariff = (state: RootState) => state.instancesReducer
 export const selectIsChatWorking = (state: RootState) => state.instancesReducer.isChatWorking;
 export const selectIsAuthorizingInstance = (state: RootState) =>
   state.instancesReducer.isAuthorizingInstance;
+export const selectIsSendingStatus = (state: RootState) => state.instancesReducer.isSendingStatus;
 export const selectIsLastMessagesSyncingAfterAuthorization = (state: RootState) =>
   state.instancesReducer.isLastMessagesSyncingAfterAuthorization;

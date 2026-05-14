@@ -219,6 +219,13 @@
   "LINK_BY_QR": "קוד QR",
   "FIRST_GET_QR_DATA": "לחץ על כפתור קבלת קוד QR כדי להציג תמונה עם קוד QR עדכני",
   "REFRESH_QR": "קבל QR",
+  "SEND_QR_TO_CLIENT": "שלח קוד QR",
+  "SEND_QR_TO_CLIENT_DESCRIPTION": "שלח את הקישור ליצירת קוד QR מרחוק.",
+  "LINK_BY_PHONE": "מספר הטלפון",
+  "INPUT_NUMBER_PHONE": "הזנת הקוד בטלפון",
+  "GET_CODE": "קבל קוד",
+
+  "VIDEO_TUTORIAL": "צפו בהדרכה",
   "ADD_CONTACT": "הוסף איש קשר",
   "EDIT_CONTACT": "ערוך איש קשר",
   "EDIT_CONTACT_ACTION": "עריכה",

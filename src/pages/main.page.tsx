@@ -1,7 +1,5 @@
 import { FC, useEffect } from 'react';
 
-import { useTranslation } from 'react-i18next';
-
 import ContactChat from 'components/full-chat/content-side/contact-chat/contact-chat.component';
 import HomeView from 'components/full-chat/content-side/home-view.component';
 import { SendMediaStatus } from 'components/full-chat/user-side/statuses/send-media-status.component';
@@ -12,6 +10,7 @@ import { TelegramAuth } from 'components/telegram-auth/telegram-auth.component';
 import { useAppSelector } from 'hooks';
 import { useIsMaxInstance } from 'hooks/use-is-max-instance';
 import { useIsTelegramInstance } from 'hooks/use-is-telegram-instance';
+import { useTranslation } from 'react-i18next';
 import { useGetAccountSettingsQuery } from 'services/green-api/endpoints';
 import { selectActiveChat } from 'store/slices/chat.slice';
 import {

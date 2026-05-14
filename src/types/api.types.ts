@@ -663,7 +663,7 @@ export interface QRResponseInterface {
   message: 'string';
 }
 
-export interface GetChatsReponseInterface {
+export interface GetChatsResponseInterface {
   chatId: string;
   name: string;
   type: string;

@@ -4,6 +4,7 @@ import ChatIcon from 'assets/chat.svg?react';
 import StatusIcon from 'assets/status.svg?react';
 import ContactIcon from 'assets/contact-icon.svg?react';
 import InstanceIcon from 'assets/instance-icon.svg?react';
+import PhoneIcon from 'assets/phone.svg?react';
 import Chats from 'components/full-chat/user-side/chats/chats.component';
 import Contacts from 'components/full-chat/user-side/contacts/contacts.component';
 import { InstanceSettings } from 'components/full-chat/user-side/settings/instance.component';
@@ -23,10 +24,10 @@ export const asideTopIconItems: (
     : null,
   { item: 'chats', title: 'CHATS_TITLE', icon: <ChatIcon /> },
   { item: 'statuses', title: 'STATUSES', icon: <StatusIcon />, waOnly: true },
+  typeInstance === 'whatsapp' ? { item: 'calls', title: 'CALLS_TITLE', icon: <PhoneIcon /> } : null,
   type !== 'one-chat-only' && typeInstance === 'whatsapp'
     ? { item: 'contacts', title: 'CONTACTS', icon: <ContactIcon /> }
     : null,
-  // { item: 'calls', title: 'CALLS_TITLE', icon: <PhoneIcon /> },
 ];
 
 export const asideBottomIconItems: AsideItem[] = [

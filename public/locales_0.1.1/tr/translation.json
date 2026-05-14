@@ -198,6 +198,7 @@
   "LINK_BY": "Bağlantı şu şekilde:",
   "LINK_BY_QR": "QR kodu",
   "FIRST_GET_QR_DATA": "Geçerli QR kodu görüntüsünü görüntülemek için QR Al düğmesini tıklayın",
+
   "REFRESH_QR": "QR'yi edinin",
   "ADD_CONTACT": "Kişi ekle",
   "EDIT_CONTACT": "Kişiyi düzenle",
@@ -233,5 +234,11 @@
   "SENT_STATUS_FAILED": "Durum gönderilemedi",
   "SENT_STATUS_ERROR": "Durum gönderilirken hata oluştu",
   "UPLOAD_FAILED": "Yükleme başarısız oldu",
-  "MAX_FILES_LIMIT_WARNING": "100 dosyadan fazla ekleyemezsiniz"
+  "MAX_FILES_LIMIT_WARNING": "100 dosyadan fazla ekleyemezsiniz",
+  "SEND_QR_TO_CLIENT": "QR kodunu gönder",
+  "SEND_QR_TO_CLIENT_DESCRIPTION": "QR kodunu uzaktan oluşturmak için bağlantıyı gönderin.",
+  "LINK_BY_PHONE": "telefon numarası",
+  "INPUT_NUMBER_PHONE": "Telefon numaranızı girin",
+  "GET_CODE": "Kodu al",
+  "VIDEO_TUTORIAL": "Eğiticiyi izle"
 }

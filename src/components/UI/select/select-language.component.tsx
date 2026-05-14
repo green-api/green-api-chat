@@ -1,6 +1,7 @@
 import { Select, Typography } from 'antd';
 import { useTranslation } from 'react-i18next';
 
+import { MessageEventTypeEnum } from '../../../types';
 import { LANGUAGES } from 'configs';
 
 const SelectLanguage = () => {
@@ -32,6 +33,16 @@ const SelectLanguage = () => {
 
   function handlerSelect(value: string) {
     i18n.changeLanguage(value);
+
+    window.parent.postMessage(
+      {
+        type: MessageEventTypeEnum.LOCALE_CHANGE,
+        payload: {
+          locale: value,
+        },
+      },
+      '*'
+    );
   }
 };
 

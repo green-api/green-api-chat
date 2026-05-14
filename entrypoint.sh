@@ -12,7 +12,7 @@ echo "Найдена директория: $ASSETS_DIR"
 BUILD_DIR="$ASSETS_DIR"
 
 # Перечисляем переменные, которые хотим подставить в JS-файлы
-VARIABLES="VITE_APP_API_URL"
+VARIABLES="VITE_APP_API_URL VITE_CALLS_APP_URL"
 
 for VAR in $VARIABLES; do
   # Получаем значение переменной окружения

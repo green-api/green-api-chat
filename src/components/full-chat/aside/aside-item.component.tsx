@@ -3,13 +3,13 @@ import { FC, useMemo } from 'react';
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
 
-import emptyAvatar from 'assets/emptyAvatar-first.png';
+import emptyAvatar from 'assets/emptyAvatarButAvailable.svg';
 import AvatarImage from 'components/UI/avatar-image.component';
 import { useActions, useAppSelector } from 'hooks';
+import { useBreakpoint } from 'hooks/use-breakpoint.hook';
 import { useInstanceSettings } from 'hooks/use-instance-settings.hook';
 import { selectUserSideActiveMode } from 'store/slices/chat.slice';
 import type { AsideItem } from 'types';
-import { useBreakpoint } from 'hooks/use-breakpoint.hook';
 
 interface AsideItemProps {
   asideItem: AsideItem;

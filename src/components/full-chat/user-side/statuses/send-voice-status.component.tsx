@@ -9,6 +9,7 @@ import {
 } from '@ant-design/icons';
 import { Avatar, Button, Flex, Form, message } from 'antd';
 import { AudioVisualizer } from 'react-audio-visualize';
+import { useTranslation } from 'react-i18next';
 
 import { CloseStatus } from './close-status.component';
 import { flattenFloat32Arrays, encodeWAV } from './utils';
@@ -18,6 +19,8 @@ import { useUploadFileMutation, useSendVoiceStatusMutation } from 'services/gree
 import { selectInstance } from 'store/slices/instances.slice';
 
 export const SendVoiceStatus = () => {
+  const { t } = useTranslation();
+
   const [blob, setBlob] = useState<Blob | null>(null);
   const [isRecording, setIsRecording] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -49,7 +52,7 @@ export const SendVoiceStatus = () => {
     const audio = new Audio(URL.createObjectURL(file));
     audio.addEventListener('loadedmetadata', () => {
       if (audio.duration > 600) {
-        message.error('Файл не должен быть длиннее 10 минут');
+        message.error(t('VOICE_STATUS_FILE_TOO_LONG'));
         e.target.value = '';
         return;
       }
@@ -61,25 +64,48 @@ export const SendVoiceStatus = () => {
   };
 
   const startRecord = async () => {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    const audioContext = new AudioContext({ sampleRate: 44100 });
-    const source = audioContext.createMediaStreamSource(stream);
-    const processor = audioContext.createScriptProcessor(4096, 1, 1);
+    if (!navigator.mediaDevices?.getUserMedia) {
+      message.error(t('MICROPHONE_NOT_SUPPORTED'));
+      return;
+    }
 
-    audioContextRef.current = audioContext;
-    processorRef.current = processor;
-    streamRef.current = stream;
-    wavDataRef.current = [];
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const audioContext = new AudioContext({ sampleRate: 44100 });
+      const source = audioContext.createMediaStreamSource(stream);
+      const processor = audioContext.createScriptProcessor(4096, 1, 1);
 
-    processor.onaudioprocess = (e) => {
-      const channel = e.inputBuffer.getChannelData(0);
-      wavDataRef.current.push(new Float32Array(channel));
-    };
+      audioContextRef.current = audioContext;
+      processorRef.current = processor;
+      streamRef.current = stream;
+      wavDataRef.current = [];
 
-    source.connect(processor);
-    processor.connect(audioContext.destination);
+      processor.onaudioprocess = (e) => {
+        const channel = e.inputBuffer.getChannelData(0);
+        wavDataRef.current.push(new Float32Array(channel));
+      };
 
-    setIsRecording(true);
+      source.connect(processor);
+      processor.connect(audioContext.destination);
+
+      setIsRecording(true);
+    } catch (error) {
+      console.error(error);
+
+      if (error instanceof DOMException) {
+        if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
+          message.error(t('MICROPHONE_PERMISSION_DENIED'));
+          return;
+        }
+
+        if (error.name === 'SecurityError') {
+          message.error(t('MICROPHONE_BLOCKED_BY_POLICY'));
+          return;
+        }
+      }
+
+      message.error(t('VOICE_STATUS_RECORDING_START_FAILED'));
+    }
   };
 
   const stopRecord = () => {
@@ -182,13 +208,13 @@ export const SendVoiceStatus = () => {
           mappedParticipants && mappedParticipants.length > 0 ? mappedParticipants : undefined,
       }).unwrap();
 
-      message.success('WAV статус отправлен');
+      message.success(t('VOICE_STATUS_SENT_SUCCESS'));
       form.resetFields();
       setBlob(null);
       setProgress(0);
     } catch (e) {
       console.error(e);
-      message.error('Ошибка отправки WAV статуса');
+      message.error(t('VOICE_STATUS_SENT_ERROR'));
     } finally {
       setIsProcessing(false);
     }

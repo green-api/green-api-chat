@@ -276,6 +276,13 @@
   "SENT_STATUS_SUCCESS": "Статус успешно отправлен",
   "SENT_STATUS_FAILED": "Не удалось отправить статус",
   "SENT_STATUS_ERROR": "Ошибка при отправке статуса",
+  "VOICE_STATUS_FILE_TOO_LONG": "Файл не должен быть длиннее 10 минут",
+  "MICROPHONE_NOT_SUPPORTED": "Браузер не поддерживает доступ к микрофону",
+  "MICROPHONE_PERMISSION_DENIED": "Нет доступа к микрофону. Разрешите использование микрофона в браузере.",
+  "MICROPHONE_BLOCKED_BY_POLICY": "Доступ к микрофону заблокирован политикой безопасности страницы (iframe).",
+  "VOICE_STATUS_RECORDING_START_FAILED": "Не удалось начать запись голоса",
+  "VOICE_STATUS_SENT_SUCCESS": "Голосовой статус отправлен",
+  "VOICE_STATUS_SENT_ERROR": "Ошибка отправки голосового статуса",
   "UPLOAD_FAILED": "Ошибка загрузки",
   "MAX_FILES_LIMIT_WARNING": "Вы не можете добавить больше 100 файлов"
 }

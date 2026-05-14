@@ -262,6 +262,13 @@
   "SENT_STATUS_SUCCESS": "Status sent successfully",
   "SENT_STATUS_FAILED": "Failed to send status",
   "SENT_STATUS_ERROR": "Error sending status",
+  "VOICE_STATUS_FILE_TOO_LONG": "File must be no longer than 10 minutes",
+  "MICROPHONE_NOT_SUPPORTED": "Microphone access is not supported in this browser",
+  "MICROPHONE_PERMISSION_DENIED": "No access to microphone. Allow microphone access in your browser.",
+  "MICROPHONE_BLOCKED_BY_POLICY": "Microphone access is blocked by page security policy (iframe).",
+  "VOICE_STATUS_RECORDING_START_FAILED": "Failed to start voice recording",
+  "VOICE_STATUS_SENT_SUCCESS": "Voice status sent",
+  "VOICE_STATUS_SENT_ERROR": "Error sending voice status",
   "UPLOAD_FAILED": "Upload failed",
   "MAX_FILES_LIMIT_WARNING": "You cannot add more than 100 files"
 }

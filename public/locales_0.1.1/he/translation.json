@@ -259,6 +259,13 @@
   "SENT_STATUS_SUCCESS": "הסטטוס נשלח בהצלחה",
   "SENT_STATUS_FAILED": "שליחת הסטטוס נכשלה",
   "SENT_STATUS_ERROR": "שגיאה בשליחת הסטטוס",
+  "VOICE_STATUS_FILE_TOO_LONG": "הקובץ לא יכול להיות ארוך מ-10 דקות",
+  "MICROPHONE_NOT_SUPPORTED": "הדפדפן אינו תומך בגישה למיקרופון",
+  "MICROPHONE_PERMISSION_DENIED": "אין גישה למיקרופון. יש לאפשר גישה למיקרופון בדפדפן.",
+  "MICROPHONE_BLOCKED_BY_POLICY": "הגישה למיקרופון נחסמה על ידי מדיניות האבטחה של הדף (iframe).",
+  "VOICE_STATUS_RECORDING_START_FAILED": "לא ניתן להתחיל הקלטה קולית",
+  "VOICE_STATUS_SENT_SUCCESS": "הסטטוס הקולי נשלח",
+  "VOICE_STATUS_SENT_ERROR": "שגיאה בשליחת סטטוס קולי",
   "UPLOAD_FAILED": "ההעלאה נכשלה",
   "MAX_FILES_LIMIT_WARNING": "לא ניתן להוסיף יותר מ-100 קבצים"
 }

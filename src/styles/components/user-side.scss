@@ -254,7 +254,16 @@
     font-size: 38px;
     line-height: 1;
     cursor: pointer;
-    padding: 0 6px;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__actions {
+    font-size: 28px;
   }
 
   &__control {
@@ -267,7 +276,7 @@
     border: 0;
     background: rgba(0, 0, 0, 0.28);
     color: #fff;
-    font-size: 26px;
+    font-size: 22px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -278,6 +287,14 @@
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.18s ease;
+  }
+
+  &__control .anticon {
+    font-size: 22px;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
 
   &__stage:hover &__control {
@@ -292,20 +309,18 @@
 
   &__control--left {
     left: 16px;
-    padding-left: 2px;
   }
 
   &__control--right {
     right: 16px;
-    padding-left: 2px;
   }
 
   &__control--pause {
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 18px;
-    letter-spacing: 1px;
-    padding-left: 1px;
+    font-size: 22px;
+    letter-spacing: 0;
+    padding: 0;
   }
 
   &__text {

@@ -100,7 +100,7 @@ export const useStatusesHistory = () => {
     error: incomingError,
   } = useGetIncomingStatusesQuery(statusQueryArgs, {
     skip: skipQuery,
-    pollingInterval: 5000,
+    pollingInterval: 30000,
     skipPollingIfUnfocused: true,
     refetchOnFocus: true,
     refetchOnReconnect: true,
@@ -113,7 +113,7 @@ export const useStatusesHistory = () => {
     error: outgoingError,
   } = useGetOutgoingStatusesQuery(statusQueryArgs, {
     skip: skipQuery,
-    pollingInterval: 10000,
+    pollingInterval: 30000,
     skipPollingIfUnfocused: true,
     refetchOnFocus: true,
     refetchOnReconnect: true,

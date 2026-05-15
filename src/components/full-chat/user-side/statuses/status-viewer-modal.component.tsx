@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 
+import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { Modal } from 'antd';
 
 import { normalizeStatusBackgroundColor } from './status-history.utils';
@@ -24,6 +25,8 @@ interface StatusViewerModalProps {
   statuses: StatusJournalItemInterface[];
   nextLabel: string;
   previousLabel: string;
+  onStatusDeleteFailed: (status: StatusJournalItemInterface, index: number) => void;
+  onStatusDeleteOptimistic: (statusId: string) => number;
 }
 
 const StatusViewerModal = ({
@@ -42,6 +45,8 @@ const StatusViewerModal = ({
   statuses,
   nextLabel,
   previousLabel,
+  onStatusDeleteFailed,
+  onStatusDeleteOptimistic,
 }: StatusViewerModalProps) => {
   const activeStatus = statuses[activeIndex] || null;
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -112,7 +117,12 @@ const StatusViewerModal = ({
               progressMs={progressMs}
               statuses={statuses}
             />
-            <StatusViewerHeader status={activeStatus} onClose={onClose} />
+            <StatusViewerHeader
+              status={activeStatus}
+              onClose={onClose}
+              onStatusDeleteFailed={onStatusDeleteFailed}
+              onStatusDeleteOptimistic={onStatusDeleteOptimistic}
+            />
           </div>
 
           <button
@@ -121,7 +131,7 @@ const StatusViewerModal = ({
             disabled={activeIndex === 0}
             aria-label={previousLabel}
           >
-            ‹
+            <LeftOutlined />
           </button>
 
           <button
@@ -138,7 +148,7 @@ const StatusViewerModal = ({
             disabled={activeIndex === statuses.length - 1}
             aria-label={nextLabel}
           >
-            ›
+            <RightOutlined />
           </button>
 
           <StatusViewerContent

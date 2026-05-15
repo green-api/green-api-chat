@@ -21,6 +21,15 @@ interface PreviewItem {
   description?: string;
 }
 
+const isQuotaExceededError = (error: unknown): boolean => {
+  if (!error || typeof error !== 'object') return false;
+  const e = error as {
+    status?: number;
+    data?: { invokeStatus?: { status?: string } };
+  };
+  return e.status === 466 || e.data?.invokeStatus?.status === 'QUOTE_EXCEEDED';
+};
+
 const SendMediaStatusComponent: FC = () => {
   const { t } = useTranslation();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -163,6 +172,7 @@ const SendMediaStatusComponent: FC = () => {
       }
 
       let totalSent = 0;
+      let hasQuotaExceeded = false;
 
       const mappedParticipants = participants?.map((participant: string) => {
         const cleaned = participant.trim();
@@ -179,19 +189,33 @@ const SendMediaStatusComponent: FC = () => {
             caption: previews[batchIndex * SEND_BATCH_SIZE + idx].description,
             participants:
               mappedParticipants && mappedParticipants.length > 0 ? mappedParticipants : undefined,
-          })
+          }).unwrap()
         );
 
         const sendResults = await Promise.allSettled(sendPromises);
         totalSent += sendResults.filter((r) => r.status === 'fulfilled').length;
+        hasQuotaExceeded = hasQuotaExceeded || sendResults.some(
+          (r) => r.status === 'rejected' && isQuotaExceededError(r.reason)
+        );
 
         if (batch !== sendBatches[sendBatches.length - 1]) {
           await new Promise((resolve) => setTimeout(resolve, 1000));
         }
       }
+      const totalAttempted = uploadedUrls.length;
+      const totalFailed = totalAttempted - totalSent;
 
-      if (totalSent > 0) {
+      if (totalAttempted > 1 && totalFailed > 0) {
+        message.warning(
+          t('STATUS_BULK_NOT_SENT', {
+            failed: totalFailed,
+            total: totalAttempted,
+          })
+        );
+      } else if (totalSent > 0) {
         message.success(t('SENT_STATUS_SUCCESS'));
+      } else if (hasQuotaExceeded) {
+        message.error(t('STATUS_QUOTE_EXCEEDED'));
       } else {
         message.error(t('SENT_STATUS_FAILED'));
       }

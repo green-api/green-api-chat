@@ -250,5 +250,7 @@
   "STATUS_DESCRIPTION_OPTIONAL": "הזן תיאור (אופציונלי)",
   "STATUS_IMAGE_FALLBACK": "סטטוס תמונה",
   "STATUS_VIDEO_FALLBACK": "סטטוס וידאו",
-  "STATUS_AUDIO_FALLBACK": "סטטוס אודיו"
+  "STATUS_AUDIO_FALLBACK": "סטטוס אודיו",
+  "STATUS_QUOTE_EXCEEDED": "חריגה ממכסת התעריף. הסטטוס לא נשלח",
+  "STATUS_BULK_NOT_SENT": "לא נשלחו {failed} מתוך {total} סטטוסים"
 }

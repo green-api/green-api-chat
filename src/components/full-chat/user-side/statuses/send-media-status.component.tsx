@@ -52,7 +52,7 @@ const SendMediaStatusComponent: FC = () => {
     }
   }, []);
 
-  const MAX_PREVIEWS = 100;
+  const MAX_PREVIEWS = 5;
   const DEVELOPER_IMAGE_LIMIT = 10;
   const isDeveloperTariff = tariff === TariffsEnum.Developer;
 

@@ -32,10 +32,11 @@ export const formatStatusDate = (timestamp?: number) => {
 
 export const getAvatarTitle = (chatId?: string) => (chatId || '').replace('@c.us', '');
 
-export const getStatusTitle = (status: StatusJournalItemInterface) =>
+export const getStatusTitle = (status: StatusJournalItemInterface): string =>
   status.senderContactName ||
   status.senderName ||
-  (status.chatId && !status.chatId.startsWith('optimistic-') ? status.chatId : status.senderId);
+  (status.chatId && !status.chatId.startsWith('optimistic-') ? status.chatId : status.senderId) ||
+  '';
 
 export const getStatusFontFamily = (font?: string) => {
   if (!font) return STATUS_FONTS.SANS_SERIF;

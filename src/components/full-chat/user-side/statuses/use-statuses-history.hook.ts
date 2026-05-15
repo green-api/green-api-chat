@@ -1,5 +1,6 @@
 import { useMemo, useRef } from 'react';
 
+import { getStatusTitle, isRenderableStatus } from './status-history.utils';
 import { useAppSelector } from 'hooks';
 import {
   useGetIncomingStatusesQuery,
@@ -7,8 +8,6 @@ import {
 } from 'services/green-api/endpoints';
 import { selectInstance } from 'store/slices/instances.slice';
 import type { StatusJournalItemInterface } from 'types';
-
-import { getStatusTitle, isRenderableStatus } from './status-history.utils';
 
 const OPTIMISTIC_TTL_MS = 30000;
 const DUPLICATE_TIME_WINDOW_SEC = 90;
@@ -22,7 +21,9 @@ const isSameStatus = (
 ) => {
   if (server.idMessage === optimistic.idMessage) return true;
   if (server.typeMessage !== optimistic.typeMessage) return false;
-  if (server.chatId !== optimistic.chatId) return false;
+  const optimisticChatId = (optimistic.chatId || optimistic.senderId || '').trim();
+  const serverChatId = (server.chatId || server.senderId || '').trim();
+  if (optimisticChatId && serverChatId && serverChatId !== optimisticChatId) return false;
   if (Math.abs(server.timestamp - optimistic.timestamp) > DUPLICATE_TIME_WINDOW_SEC) return false;
 
   if (optimistic.typeMessage === 'extendedTextMessage') {
@@ -59,7 +60,11 @@ const groupStatusesByContact = (statuses: StatusJournalItemInterface[]): StatusC
   const map = new Map<string, StatusJournalItemInterface[]>();
 
   statuses.forEach((status) => {
-    const chatId = status.chatId || status.senderId || status.idMessage;
+    const fallbackChatId =
+      typeof status.idMessage === 'string' && status.idMessage.startsWith('optimistic-')
+        ? 'self-statuses'
+        : status.idMessage;
+    const chatId = status.chatId || status.senderId || fallbackChatId;
     const existing = map.get(chatId) || [];
     existing.push(status);
     map.set(chatId, existing);

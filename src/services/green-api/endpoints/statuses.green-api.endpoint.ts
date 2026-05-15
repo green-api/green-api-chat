@@ -1,3 +1,5 @@
+import { ThunkAction, ThunkDispatch, UnknownAction } from '@reduxjs/toolkit';
+
 import { greenAPI } from 'services/green-api/green-api.service';
 import {
   DeleteStatusParametersInterface,
@@ -58,6 +60,55 @@ const getInstanceStatusOwnerChatId = (
   return '';
 };
 
+const resolveInstanceStatusOwnerChatId = async (
+  dispatch: ThunkDispatch<unknown, unknown, UnknownAction>,
+  getState: () => unknown,
+  args: Pick<
+    StatusesJournalParametersInterface,
+    'idInstance' | 'apiTokenInstance' | 'apiUrl' | 'mediaUrl'
+  >
+) => {
+  type Dispatchable = UnknownAction | ThunkAction<unknown, unknown, unknown, UnknownAction>;
+  const endpointInitiators = greenAPI.endpoints as unknown as {
+    getWaSettings?: {
+      initiate: (arg: typeof args, options?: { forceRefetch?: boolean }) => Dispatchable;
+    };
+    getAccountSettings?: {
+      initiate: (arg: typeof args, options?: { forceRefetch?: boolean }) => Dispatchable;
+    };
+    getSettings?: {
+      initiate: (arg: typeof args, options?: { forceRefetch?: boolean }) => Dispatchable;
+    };
+  };
+
+  const cached = getInstanceStatusOwnerChatId(getState(), args);
+  if (cached) return cached;
+
+  try {
+    if (endpointInitiators.getWaSettings) {
+      await dispatch(endpointInitiators.getWaSettings.initiate(args, { forceRefetch: true }));
+    }
+  } catch {}
+  const waResolved = getInstanceStatusOwnerChatId(getState(), args);
+  if (waResolved) return waResolved;
+
+  try {
+    if (endpointInitiators.getAccountSettings) {
+      await dispatch(endpointInitiators.getAccountSettings.initiate(args, { forceRefetch: true }));
+    }
+  } catch {}
+  const accountResolved = getInstanceStatusOwnerChatId(getState(), args);
+  if (accountResolved) return accountResolved;
+
+  try {
+    if (endpointInitiators.getSettings) {
+      await dispatch(endpointInitiators.getSettings.initiate(args, { forceRefetch: true }));
+    }
+  } catch {}
+
+  return getInstanceStatusOwnerChatId(getState(), args);
+};
+
 export const statusesGreenApiEndpoints = greenAPI.injectEndpoints({
   endpoints: (builder) => ({
     sendTextStatus: builder.mutation<SendingResponseInterface, SendTextStatusInterface>({
@@ -72,7 +123,7 @@ export const statusesGreenApiEndpoints = greenAPI.injectEndpoints({
       async onQueryStarted(arg, { dispatch, queryFulfilled, getState }) {
         const now = Math.floor(Date.now() / 1000);
         const optimisticId = `optimistic-text-${Date.now()}`;
-        const ownerChatId = getInstanceStatusOwnerChatId(getState(), arg);
+        const ownerChatId = await resolveInstanceStatusOwnerChatId(dispatch, getState, arg);
         const patchResult = dispatch(
           greenAPI.util.updateQueryData(
             'getOutgoingStatuses' as never,
@@ -124,7 +175,7 @@ export const statusesGreenApiEndpoints = greenAPI.injectEndpoints({
       async onQueryStarted(arg, { dispatch, queryFulfilled, getState }) {
         const now = Math.floor(Date.now() / 1000);
         const optimisticId = `optimistic-voice-${Date.now()}`;
-        const ownerChatId = getInstanceStatusOwnerChatId(getState(), arg);
+        const ownerChatId = await resolveInstanceStatusOwnerChatId(dispatch, getState, arg);
         const patchResult = dispatch(
           greenAPI.util.updateQueryData(
             'getOutgoingStatuses' as never,
@@ -173,7 +224,7 @@ export const statusesGreenApiEndpoints = greenAPI.injectEndpoints({
       async onQueryStarted(arg, { dispatch, queryFulfilled, getState }) {
         const now = Math.floor(Date.now() / 1000);
         const optimisticId = `optimistic-media-${Date.now()}`;
-        const ownerChatId = getInstanceStatusOwnerChatId(getState(), arg);
+        const ownerChatId = await resolveInstanceStatusOwnerChatId(dispatch, getState, arg);
         const isVideo =
           typeof arg.fileName === 'string' &&
           ['.mp4', '.mov', '.webm', '.mkv', '.avi'].some((ext) =>

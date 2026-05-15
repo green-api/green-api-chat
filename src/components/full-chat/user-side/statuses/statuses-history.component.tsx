@@ -10,12 +10,13 @@ const StatusesHistory = () => {
   const { t } = useTranslation();
   const { groupedStatuses, hasError, isFetching, isLoading } = useStatusesHistory();
   const viewer = useStatusViewer();
+  const showInitialLoader = groupedStatuses.length === 0 && (isLoading || isFetching);
 
   return (
     <Flex vertical gap={12} className="status-history">
       <p className="status-history__title">{t('STATUS_LIST')}</p>
 
-      {(isLoading || isFetching) && (
+      {showInitialLoader && (
         <Flex justify="center" className="status-history__loading">
           <Spin />
         </Flex>
@@ -23,11 +24,11 @@ const StatusesHistory = () => {
 
       {hasError && <p className="status-history__error">{t('STATUS_HISTORY_ERROR')}</p>}
 
-      {!isLoading && !hasError && groupedStatuses.length === 0 && (
+      {!showInitialLoader && !hasError && groupedStatuses.length === 0 && (
         <Empty description={t('NO_STATUSES_FOUND')} image={Empty.PRESENTED_IMAGE_SIMPLE} />
       )}
 
-      {!isLoading && !hasError && groupedStatuses.length > 0 && (
+      {!hasError && groupedStatuses.length > 0 && (
         <StatusesHistoryList groups={groupedStatuses} onOpenGroup={viewer.openViewerForContact} />
       )}
 

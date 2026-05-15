@@ -533,6 +533,7 @@ export interface SendTextStatusInterface extends InstanceInterface {
 
 export interface SendVoiceStatusInterface extends InstanceInterface {
   urlFile: string;
+  optimisticDownloadUrl?: string;
   caption?: string;
   fileName: string;
   participants?: string[];

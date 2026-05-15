@@ -22,23 +22,30 @@ const buildStatusesQueryArgs = (
 
 const getInstanceStatusOwnerChatId = (
   state: unknown,
-  args: Pick<StatusesJournalParametersInterface, 'idInstance' | 'apiTokenInstance' | 'apiUrl' | 'mediaUrl'>
+  args: Pick<
+    StatusesJournalParametersInterface,
+    'idInstance' | 'apiTokenInstance' | 'apiUrl' | 'mediaUrl'
+  >
 ) => {
-  const waSettings = greenAPI.endpoints.getWaSettings.select(args as never)(state as never);
+  const endpoints = greenAPI.endpoints as any;
+
+  const waSettings = endpoints.getWaSettings?.select(args as never)(state as never);
   const waSettingsChatId = waSettings.data?.chatId?.trim();
   if (waSettingsChatId) return waSettingsChatId;
 
   const waSettingsPhone = waSettings.data?.phone?.trim();
   if (waSettingsPhone) return `${waSettingsPhone}@c.us`;
 
-  const settings = greenAPI.endpoints.getSettings.select(args as never)(state as never);
+  const settings = endpoints.getSettings?.select(args as never)(state as never);
   const settingsWid = settings.data?.wid?.trim();
   if (settingsWid) return settingsWid;
 
-  const outgoingStatuses = greenAPI.endpoints.getOutgoingStatuses.select(
+  const outgoingStatuses = endpoints.getOutgoingStatuses?.select(
     buildStatusesQueryArgs(args) as never
   )(state as never);
-  const fallbackChatId = outgoingStatuses.data?.find((item) => !!item.chatId)?.chatId?.trim();
+  const fallbackChatId = outgoingStatuses.data
+    ?.find((item: StatusJournalItemInterface) => !!item.chatId)
+    ?.chatId?.trim();
   if (fallbackChatId) return fallbackChatId;
 
   return '';

@@ -41,6 +41,12 @@ const getInstanceStatusOwnerChatId = (
   const settingsWid = settings.data?.wid?.trim();
   if (settingsWid) return settingsWid;
 
+  const accountSettings = endpoints.getAccountSettings?.select(args as never)(state as never);
+  const accountChatId = accountSettings.data?.chatId?.trim();
+  if (accountChatId) return accountChatId;
+  const accountPhone = accountSettings.data?.phone?.trim();
+  if (accountPhone) return `${accountPhone}@c.us`;
+
   const outgoingStatuses = endpoints.getOutgoingStatuses?.select(
     buildStatusesQueryArgs(args) as never
   )(state as never);
@@ -77,8 +83,8 @@ export const statusesGreenApiEndpoints = greenAPI.injectEndpoints({
                 idMessage: optimisticId,
                 timestamp: now,
                 typeMessage: 'extendedTextMessage',
-                chatId: ownerChatId || arg.participants?.[0] || optimisticId,
-                senderId: ownerChatId || undefined,
+                chatId: ownerChatId || arg.participants?.[0] || '',
+                senderId: ownerChatId || arg.participants?.[0] || undefined,
                 textMessage: arg.message,
                 extendedTextMessage: {
                   text: arg.message,
@@ -129,8 +135,8 @@ export const statusesGreenApiEndpoints = greenAPI.injectEndpoints({
                 idMessage: optimisticId,
                 timestamp: now,
                 typeMessage: 'audioMessage',
-                chatId: ownerChatId || arg.participants?.[0] || optimisticId,
-                senderId: ownerChatId || undefined,
+                chatId: ownerChatId || arg.participants?.[0] || '',
+                senderId: ownerChatId || arg.participants?.[0] || undefined,
                 fileName: arg.fileName,
                 downloadUrl: arg.optimisticDownloadUrl || arg.urlFile,
                 caption: arg.caption,
@@ -183,8 +189,8 @@ export const statusesGreenApiEndpoints = greenAPI.injectEndpoints({
                 idMessage: optimisticId,
                 timestamp: now,
                 typeMessage: isVideo ? 'videoMessage' : 'imageMessage',
-                chatId: ownerChatId || arg.participants?.[0] || optimisticId,
-                senderId: ownerChatId || undefined,
+                chatId: ownerChatId || arg.participants?.[0] || '',
+                senderId: ownerChatId || arg.participants?.[0] || undefined,
                 fileName: arg.fileName,
                 downloadUrl: arg.optimisticDownloadUrl || arg.urlFile,
                 caption: arg.caption,

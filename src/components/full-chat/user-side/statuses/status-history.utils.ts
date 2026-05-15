@@ -33,7 +33,9 @@ export const formatStatusDate = (timestamp?: number) => {
 export const getAvatarTitle = (chatId?: string) => (chatId || '').replace('@c.us', '');
 
 export const getStatusTitle = (status: StatusJournalItemInterface) =>
-  status.senderContactName || status.senderName || status.chatId;
+  status.senderContactName ||
+  status.senderName ||
+  (status.chatId && !status.chatId.startsWith('optimistic-') ? status.chatId : status.senderId);
 
 export const getStatusFontFamily = (font?: string) => {
   if (!font) return STATUS_FONTS.SANS_SERIF;

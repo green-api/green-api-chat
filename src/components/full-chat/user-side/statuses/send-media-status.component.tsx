@@ -151,6 +151,7 @@ const SendMediaStatusComponent: FC = () => {
           sendMediaStatus({
             ...instanceCredentials,
             urlFile: url,
+            optimisticDownloadUrl: url,
             fileName: previews[batchIndex * SEND_BATCH_SIZE + idx].name,
             caption: previews[batchIndex * SEND_BATCH_SIZE + idx].description,
             participants:

@@ -203,6 +203,7 @@ export const SendVoiceStatus = () => {
       await sendVoiceStatus({
         ...instanceCredentials,
         urlFile: uploadResult.urlFile,
+        optimisticDownloadUrl: uploadResult.urlFile,
         fileName: file.name,
         participants:
           mappedParticipants && mappedParticipants.length > 0 ? mappedParticipants : undefined,

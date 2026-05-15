@@ -15,10 +15,10 @@ export const getStatusText = (status: StatusJournalItemInterface) => {
     return status.extendedTextMessage?.text || status.textMessage || '';
   }
 
-  if (status.typeMessage === 'imageMessage') return status.caption || 'Image status';
-  if (status.typeMessage === 'videoMessage') return status.caption || 'Video status';
+  if (status.typeMessage === 'imageMessage') return status.caption || 'STATUS_IMAGE_FALLBACK';
+  if (status.typeMessage === 'videoMessage') return status.caption || 'STATUS_VIDEO_FALLBACK';
 
-  return status.caption || 'Audio status';
+  return status.caption || 'STATUS_AUDIO_FALLBACK';
 };
 
 export const formatStatusDate = (timestamp?: number) => {

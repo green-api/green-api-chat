@@ -19,7 +19,6 @@
   "QUOTE_REACHED": "מכסת המכס מוצתה",
   "CHECK_WHATSAPP_QUOTE_REACHED": "מכסה מותשת לשיטת CheckWhatsApp",
   "LOGO_TITLE": "GREEN-API: שלח וקבל הודעות ווטסאפ",
-
   "FILE": "קוֹבֶץ",
   "CONTACT": "מַגָע",
   "LOCATION": "מַגָע",
@@ -30,57 +29,43 @@
   "PARAMS_LABEL": "פרמטרים",
   "PARAM_LABEL": "פרמטר",
   "PREVIEW": "תצוגה מקדימה",
-
   "SELECT_FILE": "בחר קובץ",
   "FILE_LABEL": "קובץ",
   "FILENAME_LABEL": "שם הקובץ",
   "DESCRIPTION": "תיאור",
-
   "CONTACT_PHONE_LABEL": "מספר קשר",
   "CONTACT_CHAT_ID_LABEL": "מזהה צ'אט",
   "CONTACT_PHONE_INVALID_MESSAGE": "משמעות שגויה",
-
   "QUOTED_MESSAGE_ID_LABEL": "מזהה ההודעה המצוטטת",
-
   "NAME_LABEL": "שם",
   "LASTNAME_LABEL": "שם משפחה",
   "MIDDLENAME_LABEL": "שם פטרונימי",
   "COMPANY_LABEL": "החברה",
-
   "LATITUDE_LABEL": "רוחב המיקום",
   "LONGITUDE_LABEL": "מיקום קו אורך",
   "LOCATION_NAME_LABEL": "שם המיקום",
   "ADDRESS_LABEL": "כתובת",
-
   "OPTIONS_LABEL": "אפשרויות תשובה",
   "OPTION_PLACEHOLDER": "תשובה",
   "MULTIPLE_ANSWERS_LABEL": "אפשר תשובות מרובות",
-
   "ADD_NEW_CHAT_HEADER": "צ'אט חדש",
   "LOGIN": "כְּנִיסָה לַמַעֲרֶכֶת",
   "LOGOUT": "התנתק",
-
   "ADD": "הוסף",
   "MESSAGE_LABEL": "הודעה",
-
   "ERROR": "אירעה שגיאה",
   "WARNING": "אַזהָרָה",
   "WARNING_DESCRIPTION_BANNED": "החשבון נאסר",
   "WARNING_DESCRIPTION_NOT_AUTHORIZED": "החשבון אינו מורשה",
   "WARNING_DESCRIPTION_STARTING": "מופע בתהליך ההשקה",
   "WARNING_DESCRIPTION_YELLOW_CARD": "המופע השעה חלקית או מלאה את שליחת ההודעות עקב פעילות ספאם",
-
   "AUTHORIZATION": "הַרשָׁאָה",
-
   "RUSSIAN": "Русский",
   "ENGLISH": "English",
-
   "HEBREW": "עִבְרִית",
   "TURKISH": "Türkçe",
-
   "FULL_VERSION": "פתח צ'אטים",
   "FULL_VERSION_TITLE": "פתח בחלון נפרד",
-
   "LOGIN_TITLE": "היכנס",
   "INPUT_EMAIL_INVALID": "הכתובת שהוזנה אינה אימייל, נסה שנית",
   "INPUT_EMAIL_HINT": "הכנס כתובת אימייל",
@@ -97,15 +82,12 @@
   "CLICK_REGISTER_NOW": "הירשם",
   "USER_NOT_FOUND": "המשתמש לא נמצא",
   "PASSWORD_INCORRECT": "כניסה/סיסמה שגויה",
-
   "CHATS_TITLE": "צ'אטים",
   "SETTINGS_TITLE": "הגדרות",
   "PROFILE_TITLE": "פּרוֹפִיל",
   "CALLS_TITLE": "שיחות",
-
   "INSTANCE": "מופע",
   "SELECT_INSTANCE_PLACEHOLDER": "בחר מופע",
-
   "CONTACT_INFO": "פרטי יצירת קשר",
   "GROUP_INFO": "מידע על הקבוצה",
   "GROUP_COUNT_MEMBERS": "קְבוּצָה  ·  {0} {1}",
@@ -113,23 +95,18 @@
   "GROUP_INVITE_LINK": "קישור להזמנה לקבוצה",
   "CANT_SEND_IN_GROUP": "אינך יכול לשלוח הודעות לקבוצה זו כי אינך חבר עוד.",
   "BUSINESS_ACCOUNT_DESC": "זה חשבון עסקי",
-
   "LEFT_THE_GROUP_ALERT_MESSAGE": "עזבת את הקבוצה",
-
   "BLOCKED_OR_PRIVATE_CHAT": "משתתף הצ'אט חסם אותך או הפעיל את הגדרות הפרטיות",
-
   "DEVELOPER_INSTANCE_ALERT": "להפעלת הצ'אט, המופע ישלח בקשות רקע לשיטות יומן, שהשימוש בהן מוגבל בתוכנית החינמית. להראות צ'אטים בכל זאת?",
   "TURNED_OFF_CHATS_ALERT": "תצוגת הצ'אט הושבתה עבור מופע זה.",
   "TURN_ON_CHAT": "הפעל את הצ'אט",
   "TURN_OFF_CHAT": "כבה את הצ'אט",
   "YES": "כֵּן",
   "NO": "לֹא",
-
   "DELETED_MESSAGE": "ההודעה נמחקה",
   "DELETED": "נמחק",
   "EDITED": "עָרוּך",
   "SHOW": "לְהַצִיג",
-
   "MESSAGE_INFO": "מידע על הודעה",
   "EDIT_MESSAGE": "ערוך הודעה",
   "DELETE_MESSAGE": "מחק הודעה",
@@ -225,7 +202,6 @@
   "LINK_BY_PHONE": "מספר הטלפון",
   "INPUT_NUMBER_PHONE": "הזנת הקוד בטלפון",
   "GET_CODE": "קבל קוד",
-
   "VIDEO_TUTORIAL": "צפו בהדרכה",
   "ADD_CONTACT": "הוסף איש קשר",
   "EDIT_CONTACT": "ערוך איש קשר",
@@ -268,5 +244,10 @@
   "VOICE_STATUS_SENT_SUCCESS": "הסטטוס הקולי נשלח",
   "VOICE_STATUS_SENT_ERROR": "שגיאה בשליחת סטטוס קולי",
   "UPLOAD_FAILED": "ההעלאה נכשלה",
-  "MAX_FILES_LIMIT_WARNING": "לא ניתן להוסיף יותר מ-100 קבצים"
+  "MAX_FILES_LIMIT_WARNING": "לא ניתן להוסיף יותר מ-100 קבצים",
+  "SELECT_IMAGE_OR_VIDEO": "בחר תמונה או וידאו",
+  "STATUS_DESCRIPTION_OPTIONAL": "הזן תיאור (אופציונלי)",
+  "STATUS_IMAGE_FALLBACK": "סטטוס תמונה",
+  "STATUS_VIDEO_FALLBACK": "סטטוס וידאו",
+  "STATUS_AUDIO_FALLBACK": "סטטוס אודיו"
 }

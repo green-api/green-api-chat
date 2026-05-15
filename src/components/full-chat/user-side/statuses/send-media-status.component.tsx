@@ -220,7 +220,7 @@ const SendMediaStatusComponent: FC = () => {
           </div>
         ) : (
           <div className="send-media__empty" onClick={() => fileInputRef.current?.click()}>
-            {t('Выберите изображение или видео')}
+            {t('SELECT_IMAGE_OR_VIDEO')}
           </div>
         )}
 
@@ -274,7 +274,7 @@ const SendMediaStatusComponent: FC = () => {
         <Flex justify="center" align="center" gap={10}>
           {activePreview && (
             <Input
-              placeholder={t('Введите описание (опционально)') || 'Введите описание (опционально)'}
+              placeholder={t('STATUS_DESCRIPTION_OPTIONAL')}
               value={activePreview.description || ''}
               onChange={(e) => handleDescriptionChange(e.target.value)}
             />

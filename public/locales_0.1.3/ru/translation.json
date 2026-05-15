@@ -19,7 +19,6 @@
   "QUOTE_REACHED": "Исчерпана квота тарифа",
   "CHECK_WHATSAPP_QUOTE_REACHED": "Исчерпана квота для метода CheckWhatsApp",
   "LOGO_TITLE": "GREEN-API для отправки и получения сообщений WhatsApp",
-
   "FILE": "Файл",
   "CONTACT": "Контакт",
   "LOCATION": "Локация",
@@ -30,9 +29,7 @@
   "PARAM_LABEL": "Параметр",
   "PARAMS_LABEL": "Параметры",
   "PREVIEW": "Превью",
-
   "SELECT_FILE": "Выберите файл",
-
   "FILE_LABEL": "Файл",
   "MESSAGE": "Сообщение",
   "QUOTED_MESSAGE_ID": "Идентификатор цитируемого сообщения",
@@ -45,53 +42,39 @@
   "CUSTOM_PREVIEW_TOOLTIP": "Используйте файл или ссылку на файл для формирования пользовательского превью.",
   "FILENAME_LABEL": "Название файла",
   "DESCRIPTION": "Описание",
-
   "CONTACT_PHONE_LABEL": "Контактный номер",
   "CONTACT_CHAT_ID_LABEL": "Идентификатор чата",
   "CONTACT_PHONE_INVALID_MESSAGE": "Некорректное значение",
-
   "QUOTED_MESSAGE_ID_LABEL": "Идентификатор цитируемого сообщения",
-
   "NAME_LABEL": "Имя",
   "LASTNAME_LABEL": "Фамилия",
   "MIDDLENAME_LABEL": "Отчество",
-
   "COMPANY_LABEL": "Компания",
-
   "LATITUDE_LABEL": "Широта локации",
   "LONGITUDE_LABEL": "Долгота локации",
   "LOCATION_NAME_LABEL": "Название локации",
   "ADDRESS_LABEL": "Адрес",
-
   "OPTIONS_LABEL": "Варианты ответов",
   "OPTION_PLACEHOLDER": "Ответ",
   "MULTIPLE_ANSWERS_LABEL": "Разрешить несколько ответов",
-
   "ADD_NEW_CHAT_HEADER": "Новый чат",
   "LOGIN": "Войти",
   "LOGOUT": "Выйти",
-
   "ADD": "Добавить",
   "MESSAGE_LABEL": "Сообщение",
-
   "ERROR": "Произошла ошибка",
   "WARNING": "Предупреждение",
   "WARNING_DESCRIPTION_BANNED": "Инстанс забанен",
   "WARNING_DESCRIPTION_NOT_AUTHORIZED": "Инстанс не авторизован",
   "WARNING_DESCRIPTION_STARTING": "Инстанс в процессе запуска",
   "WARNING_DESCRIPTION_YELLOW_CARD": "The instance has partially or completely suspended sending messages due to spam activity",
-
   "AUTHORIZATION": "Авторизация",
-
   "RUSSIAN": "Русский",
   "ENGLISH": "English",
-
   "HEBREW": "עִבְרִית",
   "TURKISH": "Türkçe",
-
   "FULL_VERSION": "Открыть чаты",
   "FULL_VERSION_TITLE": "Открыть в отдельном окне",
-
   "LOGIN_TITLE": "Вход",
   "INPUT_EMAIL_INVALID": "Введенный адрес не является E-mail!",
   "INPUT_EMAIL_HINT": "Введите адрес электронной почты!",
@@ -108,15 +91,12 @@
   "CLICK_REGISTER_NOW": "Зарегистрироваться",
   "USER_NOT_FOUND": "Пользователь не найден",
   "PASSWORD_INCORRECT": "Неправильный логин/пароль",
-
   "CHATS_TITLE": "Чаты",
   "SETTINGS_TITLE": "Настройки",
   "PROFILE_TITLE": "Профиль",
   "CALLS_TITLE": "Звонки",
-
   "INSTANCE": "Инстанс",
   "SELECT_INSTANCE_PLACEHOLDER": "Выберите инстанс",
-
   "CONTACT_INFO": "Информация о контакте",
   "GROUP_INFO": "Информация о группе",
   "GROUP_COUNT_MEMBERS": "Группа  ·  {0} {1}",
@@ -124,23 +104,18 @@
   "GROUP_INVITE_LINK": "Ссылка на приглашение в группу",
   "CANT_SEND_IN_GROUP": "Вы не можете отправлять сообщения в эту группу, так как больше не являетесь ее участником.",
   "BUSINESS_ACCOUNT_DESC": "Это бизнес аккаунт",
-
   "LEFT_THE_GROUP_ALERT_MESSAGE": "Вы покинули группу",
-
   "BLOCKED_OR_PRIVATE_CHAT": "Собеседник вас заблокировал или включил настройку приватности",
-
   "DEVELOPER_INSTANCE_ALERT": "Для работы чата инстанс будет производить фоновую отправку запросов журнальных методов, использование которых на бесплатном тарифе ограничено. Показать чаты в любом случае?",
   "TURNED_OFF_CHATS_ALERT": "Отображение чатов было выключено для данного инстанса.",
   "TURN_ON_CHAT": "Включить чат",
   "TURN_OFF_CHAT": "Выключить чат",
   "YES": "Да",
   "NO": "Нет",
-
   "DELETED_MESSAGE": "Сообщение удалено",
   "DELETED": "Удалено",
   "EDITED": "Изменено",
   "SHOW": "Показать",
-
   "MESSAGE_INFO": "Информация о сообщении",
   "EDIT_MESSAGE": "Редактировать сообщение",
   "DELETE_MESSAGE": "Удалить сообщение",
@@ -285,5 +260,10 @@
   "VOICE_STATUS_SENT_SUCCESS": "Голосовой статус отправлен",
   "VOICE_STATUS_SENT_ERROR": "Ошибка отправки голосового статуса",
   "UPLOAD_FAILED": "Ошибка загрузки",
-  "MAX_FILES_LIMIT_WARNING": "Вы не можете добавить больше 100 файлов"
+  "MAX_FILES_LIMIT_WARNING": "Вы не можете добавить больше 100 файлов",
+  "SELECT_IMAGE_OR_VIDEO": "Выберите изображение или видео",
+  "STATUS_DESCRIPTION_OPTIONAL": "Введите описание (опционально)",
+  "STATUS_IMAGE_FALLBACK": "Статус с изображением",
+  "STATUS_VIDEO_FALLBACK": "Видео-статус",
+  "STATUS_AUDIO_FALLBACK": "Аудио-статус"
 }

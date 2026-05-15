@@ -48,7 +48,7 @@ const SendVoiceStatus: FC<SendVoiceStatusProperties> = ({ isMedia }) => {
     if (isApiError(error)) {
       switch (error.status) {
         case 466:
-          return form.setFields([{ name: 'response', errors: [t('QUOTE_EXCEEDED')] }]);
+          return form.setFields([{ name: 'response', errors: [t('STATUS_QUOTE_EXCEEDED')] }]);
         default:
           const errorData = error.data;
           const errorMessage =

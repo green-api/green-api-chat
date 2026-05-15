@@ -252,5 +252,7 @@
   "STATUS_DESCRIPTION_OPTIONAL": "Açıklama girin (isteğe bağlı)",
   "STATUS_IMAGE_FALLBACK": "Görsel durumu",
   "STATUS_VIDEO_FALLBACK": "Video durumu",
-  "STATUS_AUDIO_FALLBACK": "Ses durumu"
+  "STATUS_AUDIO_FALLBACK": "Ses durumu",
+  "STATUS_QUOTE_EXCEEDED": "Tarife kotası aşıldı. Durum gönderilmedi",
+  "STATUS_BULK_NOT_SENT": "{total} durumdan {failed} tanesi gönderilemedi"
 }

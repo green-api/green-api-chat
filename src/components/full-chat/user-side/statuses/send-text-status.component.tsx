@@ -57,7 +57,7 @@ export const SendTextStatus = () => {
       antdMessage.error(t('SENT_STATUS_ERROR'));
       switch (error.status) {
         case 466:
-          return form.setFields([{ name: 'response', errors: [t('QUOTE_EXCEEDED')] }]);
+          return form.setFields([{ name: 'response', errors: [t('STATUS_QUOTE_EXCEEDED')] }]);
         default:
           return form.setFields([
             { name: 'response', errors: [getErrorMessage(error, t) || t('UNKNOWN_ERROR')] },

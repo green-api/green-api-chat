@@ -1,5 +1,6 @@
 import { greenAPI } from 'services/green-api/green-api.service';
 import {
+  DeleteStatusParametersInterface,
   SendTextStatusInterface,
   SendVoiceStatusInterface,
   SendingResponseInterface,
@@ -200,6 +201,40 @@ export const statusesGreenApiEndpoints = greenAPI.injectEndpoints({
           patchResult.undo();
         }
       },
+    }),
+    deleteStatus: builder.mutation<void, DeleteStatusParametersInterface>({
+      query: ({ idInstance, apiTokenInstance, apiUrl, mediaUrl: _, ...body }) => ({
+        url: `${apiUrl}waInstance${idInstance}/deleteStatus/${apiTokenInstance}`,
+        method: 'POST',
+        body,
+      }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        const queryArgs = buildStatusesQueryArgs(arg);
+        const incomingPatch = dispatch(
+          greenAPI.util.updateQueryData(
+            'getIncomingStatuses',
+            queryArgs,
+            (draft: StatusJournalItemInterface[]) =>
+              draft.filter((item) => item.idMessage !== arg.idMessage)
+          )
+        );
+        const outgoingPatch = dispatch(
+          greenAPI.util.updateQueryData(
+            'getOutgoingStatuses',
+            queryArgs,
+            (draft: StatusJournalItemInterface[]) =>
+              draft.filter((item) => item.idMessage !== arg.idMessage)
+          )
+        );
+
+        try {
+          await queryFulfilled;
+        } catch {
+          incomingPatch.undo();
+          outgoingPatch.undo();
+        }
+      },
+      invalidatesTags: ['statuses'],
     }),
     getIncomingStatuses: builder.query<
       StatusJournalItemInterface[],

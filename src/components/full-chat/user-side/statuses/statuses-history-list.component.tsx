@@ -79,7 +79,7 @@ const StatusesHistoryList = ({ groups, onOpenGroup }: StatusesHistoryListProps) 
             title={group.title}
             description={
               <Flex vertical>
-                <span className="status-history__preview">{getStatusText(group.latestStatus)}</span>
+                <span className="status-history__preview">{t(getStatusText(group.latestStatus))}</span>
                 <span className="status-history__date">
                   {formatStatusDate(group.latestStatus.timestamp)}
                 </span>

@@ -199,7 +199,6 @@
   "LINK_BY": "Bağlantı şu şekilde:",
   "LINK_BY_QR": "QR kodu",
   "FIRST_GET_QR_DATA": "Geçerli QR kodu görüntüsünü görüntülemek için QR Al düğmesini tıklayın",
-
   "REFRESH_QR": "QR'yi edinin",
   "ADD_CONTACT": "Kişi ekle",
   "EDIT_CONTACT": "Kişiyi düzenle",
@@ -248,5 +247,10 @@
   "LINK_BY_PHONE": "telefon numarası",
   "INPUT_NUMBER_PHONE": "Telefon numaranızı girin",
   "GET_CODE": "Kodu al",
-  "VIDEO_TUTORIAL": "Eğiticiyi izle"
+  "VIDEO_TUTORIAL": "Eğiticiyi izle",
+  "SELECT_IMAGE_OR_VIDEO": "Görsel veya video seçin",
+  "STATUS_DESCRIPTION_OPTIONAL": "Açıklama girin (isteğe bağlı)",
+  "STATUS_IMAGE_FALLBACK": "Görsel durumu",
+  "STATUS_VIDEO_FALLBACK": "Video durumu",
+  "STATUS_AUDIO_FALLBACK": "Ses durumu"
 }

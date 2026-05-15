@@ -64,6 +64,34 @@ export const useStatusViewer = () => {
     setIsPaused((prev) => !prev);
   }, []);
 
+  const removeStatusOptimistically = useCallback((statusId: string) => {
+    let removedIndex = -1;
+
+    setViewerStatuses((prev) => {
+      removedIndex = prev.findIndex((item) => item.idMessage === statusId);
+      if (removedIndex < 0) return prev;
+      return prev.filter((item) => item.idMessage !== statusId);
+    });
+
+    setActiveIndex((prev) => {
+      if (removedIndex < 0) return prev;
+      if (viewerStatuses.length <= 1) return 0;
+      if (prev > removedIndex) return prev - 1;
+      if (prev >= viewerStatuses.length - 1) return Math.max(viewerStatuses.length - 2, 0);
+      return prev;
+    });
+
+    return removedIndex;
+  }, [viewerStatuses.length]);
+
+  const restoreDeletedStatus = useCallback((status: StatusJournalItemInterface, index: number) => {
+    setViewerStatuses((prev) => {
+      const next = [...prev];
+      next.splice(Math.max(index, 0), 0, status);
+      return next;
+    });
+  }, []);
+
   const handleMediaDurationChange = useCallback((durationMs: number) => {
     setActiveDurationMs(durationMs);
   }, []);
@@ -128,6 +156,13 @@ export const useStatusViewer = () => {
 
   useEffect(() => {
     if (!isViewerOpen) return;
+    if (viewerStatuses.length === 0) {
+      closeViewer();
+    }
+  }, [viewerStatuses.length, isViewerOpen, closeViewer]);
+
+  useEffect(() => {
+    if (!isViewerOpen) return;
     setProgressMs(0);
     setActiveDurationMs(isActiveMedia ? Number.MAX_SAFE_INTEGER : VIEW_TIMEOUT_MS);
   }, [activeIndex, isViewerOpen, isActiveMedia]);
@@ -171,6 +206,8 @@ export const useStatusViewer = () => {
     isViewerOpen,
     openViewerForContact,
     progressMs,
+    removeStatusOptimistically,
+    restoreDeletedStatus,
     togglePause,
     viewerStatuses,
   };

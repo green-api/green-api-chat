@@ -11,6 +11,8 @@ export interface SendingResponseInterface {
   idMessage: string;
 }
 
+export type DeleteStatusParametersInterface = InstanceInterface & Pick<SendingResponseInterface, 'idMessage'>;
+
 export interface SendingBaseParametersInterface {
   chatId: string;
   message: string;

@@ -19,7 +19,6 @@
   "QUOTE_REACHED": "Tariff quota has been exhausted",
   "CHECK_WHATSAPP_QUOTE_REACHED": "The quota for the CheckWhatsApp method has been exhausted",
   "LOGO_TITLE": "GREEN-API: send and receive WhatsApp messages",
-
   "FILE": "File",
   "CONTACT": "Contact",
   "LOCATION": "Location",
@@ -30,57 +29,43 @@
   "PARAMS_LABEL": "Parameters",
   "PARAM_LABEL": "Parameter",
   "PREVIEW": "Preview",
-
   "SELECT_FILE": "Select file",
   "FILE_LABEL": "File",
   "FILENAME_LABEL": "File name",
   "DESCRIPTION": "Description",
-
   "CONTACT_PHONE_LABEL": "Contact phone number",
   "CONTACT_CHAT_ID_LABEL": "Chat ID",
   "CONTACT_PHONE_INVALID_MESSAGE": "Invalid value",
-
   "QUOTED_MESSAGE_ID_LABEL": "Quoted message ID",
-
   "NAME_LABEL": "First Name",
   "LASTNAME_LABEL": "Last Name",
   "MIDDLENAME_LABEL": "Middle Name",
   "COMPANY_LABEL": "Company",
-
   "LATITUDE_LABEL": "Location latitude",
   "LONGITUDE_LABEL": "Location longitude",
   "LOCATION_NAME_LABEL": "Location name",
   "ADDRESS_LABEL": "Address",
-
   "OPTIONS_LABEL": "Answer options",
   "OPTION_PLACEHOLDER": "Answer",
   "MULTIPLE_ANSWERS_LABEL": "Allow multiple answers",
-
   "ADD_NEW_CHAT_HEADER": "New chat",
   "LOGIN": "Login",
   "LOGOUT": "Logout",
-
   "ADD": "Add",
   "MESSAGE_LABEL": "Message",
-
   "ERROR": "An error has occurred",
   "WARNING": "Warning",
   "WARNING_DESCRIPTION_BANNED": "Instance banned",
   "WARNING_DESCRIPTION_NOT_AUTHORIZED": "Instance is not authorized",
   "WARNING_DESCRIPTION_STARTING": "Instance in the process of launching",
   "WARNING_DESCRIPTION_YELLOW_CARD": "The instance has partially or completely suspended sending messages due to spam activity",
-
   "AUTHORIZATION": "Authorization",
-
   "RUSSIAN": "Русский",
   "ENGLISH": "English",
-
   "HEBREW": "עִבְרִית",
   "TURKISH": "Türkçe",
-
   "FULL_VERSION": "Open chats",
   "FULL_VERSION_TITLE": "Open in a separate window",
-
   "LOGIN_TITLE": "Login",
   "INPUT_EMAIL_INVALID": "Entered address is not an E-mail!",
   "INPUT_EMAIL_HINT": "Enter email address!",
@@ -97,15 +82,12 @@
   "CLICK_REGISTER_NOW": "Register",
   "USER_NOT_FOUND": "The user not found",
   "PASSWORD_INCORRECT": "The login/password is incorrect",
-
   "CHATS_TITLE": "Chats",
   "SETTINGS_TITLE": "Settings",
   "PROFILE_TITLE": "Profile",
   "CALLS_TITLE": "Calls",
-
   "INSTANCE": "Instance",
   "SELECT_INSTANCE_PLACEHOLDER": "Select an instance",
-
   "CONTACT_INFO": "Contact info",
   "GROUP_INFO": "Group info",
   "GROUP_COUNT_MEMBERS": "Group  ·  {0} {1}",
@@ -113,23 +95,18 @@
   "GROUP_INVITE_LINK": "Group invite link",
   "CANT_SEND_IN_GROUP": "You can't send messages to this group because you're no longer a member.",
   "BUSINESS_ACCOUNT_DESC": "This is business account",
-
   "LEFT_THE_GROUP_ALERT_MESSAGE": "You left the group",
-
   "BLOCKED_OR_PRIVATE_CHAT": "Chat participant has blocked you or turned on privacy settings",
-
   "DEVELOPER_INSTANCE_ALERT": "To operate the chat, the instance will send background requests for journal methods, the use of which is limited in the free plan. Show chats anyway?",
   "TURNED_OFF_CHATS_ALERT": "Chat display has been disabled for this instance.",
   "TURN_ON_CHAT": "Turn on chat",
   "TURN_OFF_CHAT": "Turn off chat",
   "YES": "Yes",
   "NO": "No",
-
   "DELETED_MESSAGE": "Message deleted",
   "DELETED": "Deleted",
   "EDITED": "Edited",
   "SHOW": "Show",
-
   "MESSAGE_INFO": "Message info",
   "EDIT_MESSAGE": "Edit message",
   "DELETE_MESSAGE": "Delete message",
@@ -228,7 +205,6 @@
   "SEND_QR_TO_CLIENT": "Send QR code",
   "SEND_QR_TO_CLIENT_DESCRIPTION": "Send the link to remotely generate the QR code.",
   "GET_CODE": "Get code",
-
   "VIDEO_TUTORIAL": "Watch tutorial",
   "ADD_CONTACT": "Add contact",
   "EDIT_CONTACT": "Edit contact",
@@ -271,5 +247,10 @@
   "VOICE_STATUS_SENT_SUCCESS": "Voice status sent",
   "VOICE_STATUS_SENT_ERROR": "Error sending voice status",
   "UPLOAD_FAILED": "Upload failed",
-  "MAX_FILES_LIMIT_WARNING": "You cannot add more than 100 files"
+  "MAX_FILES_LIMIT_WARNING": "You cannot add more than 100 files",
+  "SELECT_IMAGE_OR_VIDEO": "Select image or video",
+  "STATUS_DESCRIPTION_OPTIONAL": "Enter description (optional)",
+  "STATUS_IMAGE_FALLBACK": "Image status",
+  "STATUS_VIDEO_FALLBACK": "Video status",
+  "STATUS_AUDIO_FALLBACK": "Audio status"
 }

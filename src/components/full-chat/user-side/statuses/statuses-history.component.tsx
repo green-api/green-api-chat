@@ -48,6 +48,8 @@ const StatusesHistory = () => {
         onMediaEnded={viewer.goNext}
         previousLabel={t('PREVIOUS')}
         nextLabel={t('NEXT')}
+        onStatusDeleteOptimistic={viewer.removeStatusOptimistically}
+        onStatusDeleteFailed={viewer.restoreDeletedStatus}
       />
     </Flex>
   );

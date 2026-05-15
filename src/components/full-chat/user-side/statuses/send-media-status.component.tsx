@@ -10,7 +10,8 @@ import Participants from 'components/forms/statuses/participants.component';
 import LizardLoader from 'components/UI/lizard-loader.component';
 import { useAppSelector } from 'hooks';
 import { useSendMediaStatusMutation, useUploadFileMutation } from 'services/green-api/endpoints';
-import { selectInstance } from 'store/slices/instances.slice';
+import { selectInstance, selectInstanceTariff } from 'store/slices/instances.slice';
+import { TariffsEnum } from 'types';
 
 interface PreviewItem {
   file: File;
@@ -33,6 +34,7 @@ const SendMediaStatusComponent: FC = () => {
   const [uploadFile] = useUploadFileMutation();
   const [sendMediaStatus] = useSendMediaStatusMutation();
   const instanceCredentials = useAppSelector(selectInstance);
+  const tariff = useAppSelector(selectInstanceTariff);
 
   useEffect(() => {
     if (!hasOpenedRef.current) {
@@ -42,6 +44,8 @@ const SendMediaStatusComponent: FC = () => {
   }, []);
 
   const MAX_PREVIEWS = 100;
+  const DEVELOPER_IMAGE_LIMIT = 10;
+  const isDeveloperTariff = tariff === TariffsEnum.Developer;
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = e.target.files ? Array.from(e.target.files) : [];
@@ -49,6 +53,7 @@ const SendMediaStatusComponent: FC = () => {
 
     setPreviews((prev) => {
       const availableSlots = MAX_PREVIEWS - prev.length;
+      const currentImagesCount = prev.filter((item) => item.type.startsWith('image/')).length;
 
       if (availableSlots <= 0) {
         message.warning(t('MAX_FILES_LIMIT_WARNING'));
@@ -56,7 +61,25 @@ const SendMediaStatusComponent: FC = () => {
         return prev;
       }
 
-      const allowedFiles = selectedFiles.slice(0, availableSlots);
+      const allowedByTotal = selectedFiles.slice(0, availableSlots);
+      const allowedFiles: File[] = [];
+      let nextImagesCount = currentImagesCount;
+
+      for (const file of allowedByTotal) {
+        const isImage = file.type.startsWith('image/');
+        if (isDeveloperTariff && isImage && nextImagesCount >= DEVELOPER_IMAGE_LIMIT) continue;
+        if (isImage) nextImagesCount += 1;
+        allowedFiles.push(file);
+      }
+
+      const blockedByDeveloperLimit =
+        isDeveloperTariff &&
+        allowedByTotal.some((file) => file.type.startsWith('image/')) &&
+        allowedFiles.length < allowedByTotal.length;
+
+      if (blockedByDeveloperLimit) {
+        message.warning('На тарифе DEVELOPER можно добавить не более 10 изображений');
+      }
 
       const newPreviews = allowedFiles.map((file) => ({
         file,
@@ -220,7 +243,7 @@ const SendMediaStatusComponent: FC = () => {
           </div>
         ) : (
           <div className="send-media__empty" onClick={() => fileInputRef.current?.click()}>
-            {t('Выберите изображение или видео')}
+            {t('SELECT_IMAGE_OR_VIDEO')}
           </div>
         )}
 
@@ -260,7 +283,12 @@ const SendMediaStatusComponent: FC = () => {
               icon={<PlusOutlined />}
               onClick={() => fileInputRef.current?.click()}
               className="send-media__add-btn"
-              disabled={previews.length >= MAX_PREVIEWS}
+              disabled={
+                previews.length >= MAX_PREVIEWS ||
+                (isDeveloperTariff &&
+                  previews.filter((item) => item.type.startsWith('image/')).length >=
+                    DEVELOPER_IMAGE_LIMIT)
+              }
             />
           </Flex>
         )}
@@ -274,7 +302,7 @@ const SendMediaStatusComponent: FC = () => {
         <Flex justify="center" align="center" gap={10}>
           {activePreview && (
             <Input
-              placeholder={t('Введите описание (опционально)') || 'Введите описание (опционально)'}
+              placeholder={t('STATUS_DESCRIPTION_OPTIONAL')}
               value={activePreview.description || ''}
               onChange={(e) => handleDescriptionChange(e.target.value)}
             />

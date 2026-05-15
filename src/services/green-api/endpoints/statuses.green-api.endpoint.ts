@@ -212,16 +212,16 @@ export const statusesGreenApiEndpoints = greenAPI.injectEndpoints({
         const queryArgs = buildStatusesQueryArgs(arg);
         const incomingPatch = dispatch(
           greenAPI.util.updateQueryData(
-            'getIncomingStatuses',
-            queryArgs,
+            'getIncomingStatuses' as never,
+            queryArgs as never,
             (draft: StatusJournalItemInterface[]) =>
               draft.filter((item) => item.idMessage !== arg.idMessage)
           )
         );
         const outgoingPatch = dispatch(
           greenAPI.util.updateQueryData(
-            'getOutgoingStatuses',
-            queryArgs,
+            'getOutgoingStatuses' as never,
+            queryArgs as never,
             (draft: StatusJournalItemInterface[]) =>
               draft.filter((item) => item.idMessage !== arg.idMessage)
           )

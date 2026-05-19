@@ -9,7 +9,6 @@ import {
 const getFilteredMessages = (messages: GetChatHistoryResponse): GetChatHistoryResponse =>
   messages.filter(
     (message) =>
-      message.typeMessage !== 'reactionMessage' &&
       message.typeMessage !== 'deletedMessage' &&
       message.typeMessage !== 'editedMessage'
   );

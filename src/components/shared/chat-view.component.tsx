@@ -120,10 +120,19 @@ const ChatView: FC = () => {
     if (!messages) return [];
 
     const allFormatted = formatMessages(messages, resolvedLanguage as LanguageLiteral);
+    const reactionMap = new Map<string, string>();
 
     const pollUpdateMap = new Map<string, (typeof messages)[number]>();
 
     for (const msg of allFormatted) {
+      if ('typeMessage' in msg && msg.typeMessage === 'reactionMessage') {
+        const targetId = msg.quotedMessage?.stanzaId || msg.quotedMessageId;
+        const reaction =
+          msg.extendedTextMessageData?.text || msg.extendedTextMessage?.text || msg.textMessage;
+        if (targetId && reaction) reactionMap.set(targetId, reaction);
+        continue;
+      }
+
       if ('typeMessage' in msg && msg.typeMessage === 'pollUpdateMessage') {
         const stanzaId = msg.pollMessageData?.stanzaId;
         if (!stanzaId) continue;
@@ -136,7 +145,10 @@ const ChatView: FC = () => {
 
     const processedMessages = allFormatted
       .filter((msg) => {
-        return !('typeMessage' in msg) || msg.typeMessage !== 'pollUpdateMessage';
+        return (
+          !('typeMessage' in msg) ||
+          (msg.typeMessage !== 'pollUpdateMessage' && msg.typeMessage !== 'reactionMessage')
+        );
       })
       .map((msg) => {
         if ('typeMessage' in msg && msg.typeMessage === 'pollMessage') {
@@ -153,7 +165,10 @@ const ChatView: FC = () => {
             };
           }
         }
-        return msg;
+        return {
+          ...msg,
+          reactionEmoji: reactionMap.get(msg.idMessage),
+        };
       });
 
     return processedMessages;
@@ -331,6 +346,7 @@ const ChatView: FC = () => {
               isDeleted: message.isDeleted,
               isEdited: message.isEdited,
               pollMessageData: message.pollMessageData,
+              reactionEmoji: message.reactionEmoji,
             }}
           />
         );

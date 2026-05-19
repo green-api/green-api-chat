@@ -17,7 +17,6 @@ export const journalsGreenApiEndpoints = greenAPI.injectEndpoints({
         res
           .filter(
             (msg) =>
-              msg.typeMessage !== 'reactionMessage' &&
               msg.typeMessage !== 'deletedMessage' &&
               msg.typeMessage !== 'editedMessage'
           )

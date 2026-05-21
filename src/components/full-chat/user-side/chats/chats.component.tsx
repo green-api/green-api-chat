@@ -48,6 +48,7 @@ const Chats: FC = () => {
         </Flex>
         <Flex gap={14} align="center">
           {!isMiniVersion &&
+            settings?.stateInstance === StateInstanceEnum.Authorized &&
             (type === 'console-page' || type === 'partner-iframe' || type === 'tab') && (
               <a className={type === 'partner-iframe' ? 'p-10' : undefined}>
                 <NewChatIcon

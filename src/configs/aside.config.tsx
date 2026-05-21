@@ -1,10 +1,11 @@
 import { SettingOutlined } from '@ant-design/icons';
 
+import { CALLS_APP_URL } from './service.config';
 import ChatIcon from 'assets/chat.svg?react';
-import StatusIcon from 'assets/status.svg?react';
 import ContactIcon from 'assets/contact-icon.svg?react';
 import InstanceIcon from 'assets/instance-icon.svg?react';
 import PhoneIcon from 'assets/phone.svg?react';
+import StatusIcon from 'assets/status.svg?react';
 import Chats from 'components/full-chat/user-side/chats/chats.component';
 import Contacts from 'components/full-chat/user-side/contacts/contacts.component';
 import { InstanceSettings } from 'components/full-chat/user-side/settings/instance.component';
@@ -24,7 +25,9 @@ export const asideTopIconItems: (
     : null,
   { item: 'chats', title: 'CHATS_TITLE', icon: <ChatIcon /> },
   { item: 'statuses', title: 'STATUSES', icon: <StatusIcon />, waOnly: true },
-  typeInstance === 'whatsapp' ? { item: 'calls', title: 'CALLS_TITLE', icon: <PhoneIcon /> } : null,
+  typeInstance === 'whatsapp' && CALLS_APP_URL !== '__VITE_CALLS_APP_URL__'
+    ? { item: 'calls', title: 'CALLS_TITLE', icon: <PhoneIcon /> }
+    : null,
   type !== 'one-chat-only' && typeInstance === 'whatsapp'
     ? { item: 'contacts', title: 'CONTACTS', icon: <ContactIcon /> }
     : null,

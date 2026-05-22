@@ -118,16 +118,13 @@ export interface MessageInterface
   pollMessageData?: PollMessageData;
 }
 
-export interface QuotedMessageInterface {
+export interface QuotedMessageInterface extends Partial<MessageInterface> {
   stanzaId: string;
   participant?: string;
-  type?: string;
-  typeMessage?: string;
-  deletedMessageId?: string;
-  editedMessageId?: string;
-  isEdited: boolean;
-  isDeleted: boolean;
-  senderName?: string;
+  type?: TypeConnectionMessage;
+  typeMessage?: TypeMessage;
+  isEdited?: boolean;
+  isDeleted?: boolean;
 }
 
 export type GetChatHistoryResponse = MessageInterface[];

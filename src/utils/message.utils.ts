@@ -1,6 +1,8 @@
 import { MessageInterface } from 'types';
 
-export function getTextMessage(message: MessageInterface) {
+type MessageLike = Partial<MessageInterface> & Pick<MessageInterface, 'typeMessage'>;
+
+export function getTextMessage(message: MessageLike) {
   if (message.typeMessage === 'reactionMessage') {
     return (
       message.extendedTextMessageData?.text ||
@@ -22,9 +24,9 @@ export function getPhoneNumberFromChatId(chatId: string) {
   return chatId?.replace(/\@.*$/, '');
 }
 
-export function getJSONMessage(message: MessageInterface): string {
+export function getJSONMessage(message: Partial<MessageInterface>): string {
   try {
-    let copyMessage: MessageInterface;
+    let copyMessage: Partial<MessageInterface>;
 
     if ('structuredClone' in window) {
       copyMessage = structuredClone(message);

@@ -167,7 +167,7 @@ const ChatView: FC = () => {
         }
         return {
           ...msg,
-          reactionEmoji: reactionMap.get(msg.idMessage),
+          reactionEmoji: 'idMessage' in msg ? reactionMap.get(msg.idMessage) : undefined,
         };
       });
 
@@ -346,7 +346,7 @@ const ChatView: FC = () => {
               isDeleted: message.isDeleted,
               isEdited: message.isEdited,
               pollMessageData: message.pollMessageData,
-              reactionEmoji: message.reactionEmoji,
+              reactionEmoji: 'reactionEmoji' in message ? message.reactionEmoji : undefined,
             }}
           />
         );

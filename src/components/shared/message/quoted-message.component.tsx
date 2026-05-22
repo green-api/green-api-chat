@@ -22,7 +22,8 @@ interface QuotedMessageProps {
 }
 
 const QuotedMessage: FC<QuotedMessageProps> = ({ quotedMessage, type, messageDataForRender }) => {
-  const { typeMessage, downloadUrl } = quotedMessage;
+  const typeMessage = quotedMessage.typeMessage ?? 'textMessage';
+  const downloadUrl = 'downloadUrl' in quotedMessage ? quotedMessage.downloadUrl : undefined;
 
   const { i18n } = useTranslation();
 
@@ -31,7 +32,10 @@ const QuotedMessage: FC<QuotedMessageProps> = ({ quotedMessage, type, messageDat
   const participant = quotedMessage.participant
     ? getPhoneNumberFromChatId(quotedMessage.participant)
     : null;
-  const textMessage = getTextMessage(quotedMessage);
+  const textMessage = getTextMessage({
+    ...quotedMessage,
+    typeMessage,
+  });
   const jsonMessage = getJSONMessage(quotedMessage);
   const formattedMessage = getFormattedMessage(textMessage);
 
@@ -56,7 +60,7 @@ const QuotedMessage: FC<QuotedMessageProps> = ({ quotedMessage, type, messageDat
           >
             {formattedMessage}
           </Typography.Paragraph>
-          {quotedMessage.jpegThumbnail && (
+          {typeof quotedMessage.jpegThumbnail === 'string' && quotedMessage.jpegThumbnail && (
             <img
               src={`data:image/jpeg;base64,${quotedMessage.jpegThumbnail}`}
               alt="thumbnail"

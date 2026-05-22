@@ -11,7 +11,8 @@ export interface SendingResponseInterface {
   idMessage: string;
 }
 
-export type DeleteStatusParametersInterface = InstanceInterface & Pick<SendingResponseInterface, 'idMessage'>;
+export type DeleteStatusParametersInterface = InstanceInterface &
+  Pick<SendingResponseInterface, 'idMessage'>;
 
 export interface SendingBaseParametersInterface {
   chatId: string;
@@ -117,9 +118,16 @@ export interface MessageInterface
   pollMessageData?: PollMessageData;
 }
 
-export interface QuotedMessageInterface extends MessageInterface {
+export interface QuotedMessageInterface {
+  stanzaId: string;
   participant?: string;
-  senderName: string;
+  type?: string;
+  typeMessage?: string;
+  deletedMessageId?: string;
+  editedMessageId?: string;
+  isEdited: boolean;
+  isDeleted: boolean;
+  senderName?: string;
 }
 
 export type GetChatHistoryResponse = MessageInterface[];

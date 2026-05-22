@@ -125,6 +125,14 @@ const ChatView: FC = () => {
     const pollUpdateMap = new Map<string, (typeof messages)[number]>();
 
     for (const msg of allFormatted) {
+      if ('typeMessage' in msg && msg.typeMessage === 'reactionMessage') {
+        const targetId = msg.quotedMessage?.stanzaId;
+        const reaction =
+          msg.extendedTextMessageData?.text || msg.extendedTextMessage?.text || msg.textMessage;
+        if (targetId && reaction) reactionMap.set(targetId, reaction);
+        continue;
+      }
+
       if ('typeMessage' in msg && msg.typeMessage === 'pollUpdateMessage') {
         const stanzaId = msg.pollMessageData?.stanzaId;
         if (!stanzaId) continue;

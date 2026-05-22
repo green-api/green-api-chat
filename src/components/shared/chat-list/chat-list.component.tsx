@@ -24,6 +24,16 @@ import {
 
 const { Title } = Typography;
 
+const isNotReaction = (msg: MessageInterface) => {
+  if (msg.typeMessage === 'reactionMessage') {
+    return false;
+  }
+  if ('reactionText' in msg || 'reaction' in msg) {
+    return false;
+  }
+  return true;
+};
+
 const ChatList: FC = () => {
   const instanceCredentials = useAppSelector(selectInstance);
   const isMiniVersion = useAppSelector(selectMiniVersion);
@@ -66,7 +76,11 @@ const ChatList: FC = () => {
     }));
   };
 
-  const allMessages: MessageInterface[] = data ?? [];
+  const allMessages: MessageInterface[] = useMemo(() => {
+    const rawMessages = data ?? [];
+    return rawMessages.filter(isNotReaction);
+  }, [data]);
+
   const cachedGetChatHistoryMessages = useMemo(
     () => getCachedGetChatHistoryMessages(greenApiQueries, instanceCredentials),
     [
@@ -76,13 +90,16 @@ const ChatList: FC = () => {
       instanceCredentials.apiUrl,
     ]
   );
+
   const searchableMessages = useMemo(
     () => updateAllChats(allMessages, cachedGetChatHistoryMessages, []),
     [allMessages, cachedGetChatHistoryMessages]
   );
+
   const isChatListLoading =
     isLoading || (!isMiniVersion && isLastMessagesSyncingAfterAuthorization && !data?.length);
 
+  // Теперь эти функции автоматически работают с "чистой" историей без реакций
   const lastMessages = getLastChats(allMessages, [], isMiniVersion ? limit : undefined);
   const filteredContacts = filterContacts(allMessages, contactNames, searchQuery);
   const filteredMessages = filterMessagesByText(searchableMessages, searchQuery);

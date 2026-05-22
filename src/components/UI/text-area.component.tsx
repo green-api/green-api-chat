@@ -28,7 +28,7 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
           height: isMiniVersion ? '' : '42px !important',
         }}
         autoSize={{ minRows: computedMinRows, maxRows: 5 }}
-        maxLength={500}
+        maxLength={20_000}
         placeholder={t('MESSAGE_PLACEHOLDER')}
         onKeyDown={(e) => {
           if (e.ctrlKey && e.key === 'Enter') {

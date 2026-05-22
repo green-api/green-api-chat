@@ -43,7 +43,7 @@ const Message: FC<MessageProps> = ({ messageDataForRender, preview }) => {
     isDeleted,
     isEdited,
     pollMessageData,
-    reactionEmoji,
+    reactions,
   } = messageDataForRender;
 
   const isMiniVersion = useAppSelector(selectMiniVersion);
@@ -186,9 +186,16 @@ const Message: FC<MessageProps> = ({ messageDataForRender, preview }) => {
         {getOutgoingStatusMessageIcon(statusMessage)}
       </Space>
 
-      {reactionEmoji && (
-        <span className={clsx('reaction-message__emoji', type === 'outgoing' && 'outgoing')}>
-          {reactionEmoji}
+      {!!reactions?.length && (
+        <span className={clsx('reaction-message', type === 'outgoing' && 'outgoing')}>
+          {reactions.map((reaction) => (
+            <span key={reaction.emoji} className="reaction-message__item">
+              {reaction.emoji}
+              {reaction.count > 1 ? (
+                <span className="reaction-message__count">{reaction.count}</span>
+              ) : null}
+            </span>
+          ))}
         </span>
       )}
     </div>

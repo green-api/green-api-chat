@@ -372,7 +372,10 @@ export interface MessageDataForRender {
   isDeleted?: boolean;
   isEdited?: boolean;
   pollMessageData?: PollMessageData;
-  reactionEmoji?: string;
+  reactions?: {
+    emoji: string;
+    count: number;
+  }[];
 }
 
 export interface MessageTooltipMenuData {

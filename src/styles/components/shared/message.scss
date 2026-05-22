@@ -85,19 +85,34 @@
   color: var(--deleted-message-text-color);
 }
 
-.reaction-message__emoji {
+.reaction-message {
   position: absolute;
   left: 14px;
   bottom: -8px;
-  font-size: 16px;
-  line-height: 1;
-  padding: 1px 5px;
+  font-size: 15px;
+  line-height: 1.1;
+  padding: 2px 6px;
   border-radius: 999px;
   background: #d9d9d9;
   box-shadow: 0 1px 1px rgb(0 0 0 / 16%);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 
   &.outgoing {
     left: auto;
     right: 14px;
+  }
+
+  &__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+  }
+
+  &__count {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-color);
   }
 }

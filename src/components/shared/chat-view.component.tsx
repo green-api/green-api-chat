@@ -116,20 +116,80 @@ const ChatView: FC = () => {
 
   const loaderVisible = !isMiniVersion && isFetching;
 
+  const getReactionTargetId = (msg: Record<string, unknown>): string | undefined => {
+    const quoted = msg.quotedMessage as { stanzaId?: string } | undefined;
+    const templateReply = msg.templateButtonReplyMessage as { stanzaId?: string } | undefined;
+    const ext = msg.extendedTextMessage as
+      | { contextInfo?: { stanzaId?: string; quotedMessage?: { stanzaId?: string } } }
+      | undefined;
+
+    return (
+      quoted?.stanzaId ||
+      templateReply?.stanzaId ||
+      ext?.contextInfo?.stanzaId ||
+      ext?.contextInfo?.quotedMessage?.stanzaId
+    );
+  };
+
+  const getReactionEmoji = (msg: Record<string, unknown>): string | undefined => {
+    const extData = msg.extendedTextMessageData as { text?: string } | undefined;
+    const ext = msg.extendedTextMessage as { text?: string } | undefined;
+    const text = msg.textMessage;
+
+    if (typeof extData?.text === 'string' && extData.text.trim()) return extData.text.trim();
+    if (typeof ext?.text === 'string' && ext.text.trim()) return ext.text.trim();
+    if (typeof text === 'string' && text.trim()) return text.trim();
+    return undefined;
+  };
+
+  const getReactionKeysForMessage = (msg: Record<string, unknown>): string[] => {
+    const keys = new Set<string>();
+    const addKey = (value: unknown) => {
+      if (typeof value === 'string') {
+        const normalized = value.trim();
+        if (normalized) keys.add(normalized);
+      }
+    };
+
+    const idMessage = msg.idMessage;
+    addKey(idMessage);
+
+    const ext = msg.extendedTextMessage as { stanzaId?: string } | undefined;
+    addKey(ext?.stanzaId);
+
+    const quoted = msg.quotedMessage as { stanzaId?: string } | undefined;
+    addKey(quoted?.stanzaId);
+
+    const templateReply = msg.templateButtonReplyMessage as { stanzaId?: string } | undefined;
+    addKey(templateReply?.stanzaId);
+
+    return Array.from(keys);
+  };
+
   const formattedMessages = useMemo(() => {
     if (!messages) return [];
 
     const allFormatted = formatMessages(messages, resolvedLanguage as LanguageLiteral);
-    const reactionMap = new Map<string, string>();
+    const reactionMap = new Map<string, Map<string, string>>();
 
     const pollUpdateMap = new Map<string, (typeof messages)[number]>();
 
     for (const msg of allFormatted) {
       if ('typeMessage' in msg && msg.typeMessage === 'reactionMessage') {
-        const targetId = msg.quotedMessage?.stanzaId;
-        const reaction =
-          msg.extendedTextMessageData?.text || msg.extendedTextMessage?.text || msg.textMessage;
-        if (targetId && reaction) reactionMap.set(targetId, reaction);
+        const targetId = getReactionTargetId(msg as unknown as Record<string, unknown>);
+        const reaction = getReactionEmoji(msg as unknown as Record<string, unknown>);
+        const senderId =
+          typeof msg.senderId === 'string' && msg.senderId.trim()
+            ? msg.senderId.trim()
+            : msg.type === 'outgoing'
+              ? 'outgoing:self'
+              : undefined;
+        const normalizedTarget = targetId?.trim();
+        if (normalizedTarget && reaction && senderId) {
+          const existingReactions = reactionMap.get(normalizedTarget) ?? new Map<string, string>();
+          existingReactions.set(senderId, reaction);
+          reactionMap.set(normalizedTarget, existingReactions);
+        }
         continue;
       }
 
@@ -167,7 +227,26 @@ const ChatView: FC = () => {
         }
         return {
           ...msg,
-          reactionEmoji: 'idMessage' in msg ? reactionMap.get(msg.idMessage) : undefined,
+          reactions:
+            'idMessage' in msg
+              ? (() => {
+                  const aggregated = new Map<string, number>();
+                  for (const key of getReactionKeysForMessage(
+                    msg as unknown as Record<string, unknown>
+                  )) {
+                    const keyReactions = reactionMap.get(key);
+                    if (!keyReactions) continue;
+                    for (const emoji of keyReactions.values()) {
+                      aggregated.set(emoji, (aggregated.get(emoji) ?? 0) + 1);
+                    }
+                  }
+
+                  return Array.from(aggregated.entries()).map(([emoji, count]) => ({
+                    emoji,
+                    count,
+                  }));
+                })()
+              : undefined,
         };
       });
 
@@ -346,7 +425,7 @@ const ChatView: FC = () => {
               isDeleted: message.isDeleted,
               isEdited: message.isEdited,
               pollMessageData: message.pollMessageData,
-              reactionEmoji: 'reactionEmoji' in message ? message.reactionEmoji : undefined,
+              reactions: 'reactions' in message ? message.reactions : undefined,
             }}
           />
         );

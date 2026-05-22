@@ -102,6 +102,7 @@ export interface MessageInterface
   caption?: string;
   contact?: Contact;
   extendedTextMessage?: ExtendedTextMessage;
+  extendedTextMessageData?: ExtendedTextMessageData;
   quotedMessage?: QuotedMessageInterface;
   templateMessage?: TemplateMessageInterface;
   templateButtonReplyMessage?: TemplateButtonReplyMessage;
@@ -137,6 +138,10 @@ export interface ExtendedTextMessage {
   title: string;
   previewType: string;
   jpegThumbnail: string;
+}
+
+export interface ExtendedTextMessageData {
+  text?: string;
 }
 
 export type TemplateMessageInterface = IncomingTemplateMessage | OutgoingTemplateMessage;

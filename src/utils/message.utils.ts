@@ -1,6 +1,15 @@
 import { MessageInterface } from 'types';
 
 export function getTextMessage(message: MessageInterface) {
+  if (message.typeMessage === 'reactionMessage') {
+    return (
+      message.extendedTextMessageData?.text ||
+      message.extendedTextMessage?.text ||
+      message.textMessage ||
+      'Reaction'
+    );
+  }
+
   return (
     message.extendedTextMessage?.text ||
     message.textMessage ||

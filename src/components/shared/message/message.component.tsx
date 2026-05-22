@@ -43,6 +43,7 @@ const Message: FC<MessageProps> = ({ messageDataForRender, preview }) => {
     isDeleted,
     isEdited,
     pollMessageData,
+    reactionEmoji,
   } = messageDataForRender;
 
   const isMiniVersion = useAppSelector(selectMiniVersion);
@@ -63,7 +64,6 @@ const Message: FC<MessageProps> = ({ messageDataForRender, preview }) => {
   }, [isLastMessage, isMiniVersion]);
 
   const [showDeletedMessage, setShowDeletedMessage] = useState(false);
-
   let messageBody;
 
   try {
@@ -185,6 +185,12 @@ const Message: FC<MessageProps> = ({ messageDataForRender, preview }) => {
         <span style={{ fontSize: 13 }}>{messageDate}</span>
         {getOutgoingStatusMessageIcon(statusMessage)}
       </Space>
+
+      {reactionEmoji && (
+        <span className={clsx('reaction-message__emoji', type === 'outgoing' && 'outgoing')}>
+          {reactionEmoji}
+        </span>
+      )}
     </div>
   );
 };

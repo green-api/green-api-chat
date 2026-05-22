@@ -126,10 +126,14 @@ const ChatView: FC = () => {
 
     for (const msg of allFormatted) {
       if ('typeMessage' in msg && msg.typeMessage === 'reactionMessage') {
-        const targetId = msg.quotedMessage?.stanzaId || msg.quotedMessageId;
+        const targetId =
+          ('quotedMessageId' in msg ? msg.quotedMessageId : undefined) ||
+          msg.quotedMessage?.idMessage;
         const reaction =
           msg.extendedTextMessageData?.text || msg.extendedTextMessage?.text || msg.textMessage;
-        if (targetId && reaction) reactionMap.set(targetId, reaction);
+        if (typeof targetId === 'string' && typeof reaction === 'string') {
+          reactionMap.set(targetId, reaction);
+        }
         continue;
       }
 
@@ -167,7 +171,7 @@ const ChatView: FC = () => {
         }
         return {
           ...msg,
-          reactionEmoji: reactionMap.get(msg.idMessage),
+          reactionEmoji: 'idMessage' in msg ? reactionMap.get(msg.idMessage) : undefined,
         };
       });
 
@@ -346,7 +350,7 @@ const ChatView: FC = () => {
               isDeleted: message.isDeleted,
               isEdited: message.isEdited,
               pollMessageData: message.pollMessageData,
-              reactionEmoji: message.reactionEmoji,
+              reactionEmoji: 'reactionEmoji' in message ? message.reactionEmoji : undefined,
             }}
           />
         );

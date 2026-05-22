@@ -125,18 +125,6 @@ const ChatView: FC = () => {
     const pollUpdateMap = new Map<string, (typeof messages)[number]>();
 
     for (const msg of allFormatted) {
-      if ('typeMessage' in msg && msg.typeMessage === 'reactionMessage') {
-        const targetId =
-          ('quotedMessageId' in msg ? msg.quotedMessageId : undefined) ||
-          msg.quotedMessage?.idMessage;
-        const reaction =
-          msg.extendedTextMessageData?.text || msg.extendedTextMessage?.text || msg.textMessage;
-        if (typeof targetId === 'string' && typeof reaction === 'string') {
-          reactionMap.set(targetId, reaction);
-        }
-        continue;
-      }
-
       if ('typeMessage' in msg && msg.typeMessage === 'pollUpdateMessage') {
         const stanzaId = msg.pollMessageData?.stanzaId;
         if (!stanzaId) continue;
@@ -171,7 +159,7 @@ const ChatView: FC = () => {
         }
         return {
           ...msg,
-          reactionEmoji: 'idMessage' in msg ? reactionMap.get(msg.idMessage) : undefined,
+          reactionEmoji: reactionMap.get(msg.idMessage),
         };
       });
 
@@ -350,7 +338,7 @@ const ChatView: FC = () => {
               isDeleted: message.isDeleted,
               isEdited: message.isEdited,
               pollMessageData: message.pollMessageData,
-              reactionEmoji: 'reactionEmoji' in message ? message.reactionEmoji : undefined,
+              reactionEmoji: message.reactionEmoji,
             }}
           />
         );

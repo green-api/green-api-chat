@@ -45,6 +45,7 @@ export interface ChatState {
   searchQuery: string;
   description?: string;
   brandImgUrl?: string;
+  isCallsIframeReady: boolean;
   replyMessage: MessageDataForRender | null;
 }
 

@@ -14,6 +14,7 @@ const initialState: ChatState = {
   isContactInfoOpen: false,
   activeTemplate: null,
   templateMessagesLoading: false,
+  isCallsIframeReady: false,
   searchQuery: '',
   replyMessage: null,
 };
@@ -69,6 +70,10 @@ const chatSlice = createSlice({
     setSearchQuery: (state, action: PayloadAction<string>) => {
       state.searchQuery = action.payload;
     },
+
+    setIsCallsIframeReady: (state, action: PayloadAction<ChatState['isCallsIframeReady']>) => {
+      state.isCallsIframeReady = action.payload;
+    },
   },
 });
 
@@ -87,3 +92,4 @@ export const selectDescription = (state: RootState) => state.chatReducer.descrip
 export const selectBrandImgUrl = (state: RootState) => state.chatReducer.brandImgUrl;
 export const selectSearchQuery = (state: RootState) => state.chatReducer.searchQuery;
 export const selectReplyMessage = (state: RootState) => state.chatReducer.replyMessage;
+export const selectIsCallsIframeReady = (state: RootState) => state.chatReducer.isCallsIframeReady;

@@ -1,6 +1,5 @@
 import { SettingOutlined } from '@ant-design/icons';
 
-import { CALLS_APP_URL } from './service.config';
 import ChatIcon from 'assets/chat.svg?react';
 import ContactIcon from 'assets/contact-icon.svg?react';
 import InstanceIcon from 'assets/instance-icon.svg?react';
@@ -18,14 +17,15 @@ import { AsideItem, ChatType, TypeInstance, UserSideItem } from 'types';
 
 export const asideTopIconItems: (
   type: ChatType,
-  typeInstance: TypeInstance
-) => (AsideItem | null)[] = (type, typeInstance) => [
+  typeInstance: TypeInstance,
+  isCallsIframeReady: boolean
+) => (AsideItem | null)[] = (type, typeInstance, isCallsIframeReady) => [
   type !== 'partner-iframe' && type !== 'one-chat-only'
     ? { item: 'instance', title: 'INSTANCE', icon: <InstanceIcon /> }
     : null,
   { item: 'chats', title: 'CHATS_TITLE', icon: <ChatIcon /> },
   { item: 'statuses', title: 'STATUSES', icon: <StatusIcon />, waOnly: true },
-  typeInstance === 'whatsapp' && CALLS_APP_URL !== '__VITE_CALLS_APP_URL__'
+  typeInstance === 'whatsapp' && isCallsIframeReady
     ? { item: 'calls', title: 'CALLS_TITLE', icon: <PhoneIcon /> }
     : null,
   type !== 'one-chat-only' && typeInstance === 'whatsapp'

@@ -1,10 +1,14 @@
-import { FC, useEffect, useRef, useState } from 'react';
+import { FC, useEffect, useRef } from 'react';
 
 import { useTranslation } from 'react-i18next';
 
 import { CALLS_APP_URL } from 'configs';
-import { useAppSelector } from 'hooks';
-import { selectType, selectUserSideActiveMode } from 'store/slices/chat.slice';
+import { useActions, useAppSelector } from 'hooks';
+import {
+  selectIsCallsIframeReady,
+  selectType,
+  selectUserSideActiveMode,
+} from 'store/slices/chat.slice';
 import {
   selectInstance,
   selectInstanceList,
@@ -29,15 +33,19 @@ const CallsPage: FC = () => {
   const tariff = useAppSelector(selectInstanceTariff);
   const typeInstance = useAppSelector(selectTypeInstance);
   const activeMode = useAppSelector(selectUserSideActiveMode);
+  const isCallsIframeReady = useAppSelector(selectIsCallsIframeReady);
 
   const iframeReference = useRef<HTMLIFrameElement>(null);
 
-  const [isIframeReady, setIsIframeReady] = useState(false);
+  const { setIsCallsIframeReady } = useActions();
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
-      if (event.data?.type === MessageEventTypeEnum.IFRAME_READY) {
-        setIsIframeReady(true);
+      if (
+        event.data?.type === MessageEventTypeEnum.IFRAME_READY &&
+        event.origin !== window.origin
+      ) {
+        setIsCallsIframeReady(true);
       }
     };
 
@@ -46,7 +54,7 @@ const CallsPage: FC = () => {
   }, []);
 
   useEffect(() => {
-    if (isIframeReady && iframeReference.current?.contentWindow) {
+    if (isCallsIframeReady && iframeReference.current?.contentWindow) {
       iframeReference.current.contentWindow.postMessage(
         {
           type: MessageEventTypeEnum.INIT,
@@ -70,10 +78,10 @@ const CallsPage: FC = () => {
         CALLS_APP_URL
       );
     }
-  }, [isIframeReady, instanceData]);
+  }, [isCallsIframeReady, instanceData]);
 
   useEffect(() => {
-    if (resolvedLanguage && isIframeReady) {
+    if (resolvedLanguage && isCallsIframeReady) {
       iframeReference.current?.contentWindow?.postMessage(
         {
           type: MessageEventTypeEnum.LOCALE_CHANGE,
@@ -84,10 +92,10 @@ const CallsPage: FC = () => {
         CALLS_APP_URL
       );
     }
-  }, [resolvedLanguage, isIframeReady]);
+  }, [resolvedLanguage, isCallsIframeReady]);
 
   useEffect(() => {
-    if (isIframeReady) {
+    if (isCallsIframeReady) {
       iframeReference.current?.contentWindow?.postMessage(
         {
           type: MessageEventTypeEnum.SET_THEME,
@@ -98,7 +106,7 @@ const CallsPage: FC = () => {
         CALLS_APP_URL
       );
     }
-  }, [currentTheme, isIframeReady]);
+  }, [currentTheme, isCallsIframeReady]);
 
   return (
     <iframe
@@ -106,7 +114,7 @@ const CallsPage: FC = () => {
       frameBorder="0"
       className="w-100 h-100"
       style={{
-        display: isIframeReady && activeMode === 'calls' ? 'initial' : 'none',
+        display: isCallsIframeReady && activeMode === 'calls' ? 'initial' : 'none',
       }}
       name="calls"
       ref={iframeReference}

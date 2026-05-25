@@ -5,7 +5,6 @@ import { Flex } from 'antd';
 import Aside from './aside/aside.component';
 import ContentSide from './content-side/content-side.component';
 import UserSide from './user-side/user-side.component';
-import { CALLS_APP_URL } from 'configs';
 import { useAppSelector } from 'hooks';
 import CallsPage from 'pages/calls.page';
 import { selectType, selectUserSideActiveMode } from 'store/slices/chat.slice';
@@ -16,10 +15,7 @@ const Chat: FC = () => {
   const typeInstance = useAppSelector(selectTypeInstance);
   const activeMode = useAppSelector(selectUserSideActiveMode);
   const isCallsNeedToRender =
-    type !== 'one-chat-only' &&
-    type !== 'instance-view-page' &&
-    typeInstance === 'whatsapp' &&
-    CALLS_APP_URL !== '__VITE_CALLS_APP_URL__';
+    type !== 'one-chat-only' && type !== 'instance-view-page' && typeInstance === 'whatsapp';
 
   return (
     <Flex

@@ -44,21 +44,36 @@ const markdownToText = (textInput: string) => {
 
 const transformMarkdown = (markdownText: string) => {
   let transformedText = markdownText;
-  // Bold: *text*
-  transformedText = transformedText.replace(/\B\*(\S(?:.*?\S)?)\*\B/g, '<b>$1</b>');
-  // Italic: _text_
-  transformedText = transformedText.replace(/\b_(\S(?:.*?\S)?)_\b/g, '<i>$1</i>');
-  // Strikethrough: ~text~
-  transformedText = transformedText.replace(/\B~(\S(?:.*?\S)?)~\B/g, '<s>$1</s>');
-  // Code block (triple backticks): ```code```
+
+  // Code block (triple backticks): ```code``` — process first to protect code from other formatting
   transformedText = transformedText.replace(/```([^`]+)```/g, '<samp>$1</samp>');
   // Inline code: `code`
   transformedText = transformedText.replace(/`([^`]+)`/g, '<code>$1</code>');
+
+  // Bold: *text* — recursively process inner content
+  transformedText = transformedText.replace(
+    /(?<!\w)\*((?:[^*\n])+)\*(?!\w)/g,
+    (_, inner) => `<b>${transformMarkdown(inner)}</b>`
+  );
+
+  // Italic: _text_ — recursively process inner content
+  transformedText = transformedText.replace(
+    /(?<!\w)_((?:[^_\n])+)_(?!\w)/g,
+    (_, inner) => `<i>${transformMarkdown(inner)}</i>`
+  );
+
+  // Strikethrough: ~text~ — recursively process inner content
+  transformedText = transformedText.replace(
+    /(?<!\w)~((?:[^~\n])+)~(?!\w)/g,
+    (_, inner) => `<s>${transformMarkdown(inner)}</s>`
+  );
+
   // Bulleted list: * text or - text (only if there is a space after * or -)
   transformedText = transformedText.replace(/^(?:\s*[*-]\s+)(.+)$/gm, '<ul><li>$1</li></ul>');
   // Quote block: > text
   transformedText = transformedText.replace(/^\s*>\s*(.+)$/gm, '<blockquote>$1</blockquote>');
   // Replace newline characters with <br> tags
   transformedText = transformedText.replace(/(\n)(?!<\/?(ul|li)>)/g, '<br>');
+
   return transformedText;
 };

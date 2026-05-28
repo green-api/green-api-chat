@@ -219,6 +219,56 @@ html {
   color: var(--primary-color);
 }
 
+.message-format-menu {
+  position: fixed;
+  z-index: 3000;
+  display: flex;
+  align-items: flex-start;
+  color: #f0f0f0;
+  font-size: 16px;
+  line-height: 1.2;
+  user-select: none;
+
+  &__main,
+  &__submenu {
+    min-width: 170px;
+    padding: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 8px;
+    background: #1f1f1f;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.38);
+  }
+
+  &__submenu {
+    min-width: 210px;
+    margin-left: 2px;
+    background: #203c2e;
+  }
+
+  &__item {
+    width: 100%;
+    min-height: 34px;
+    padding: 7px 12px;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+
+    &:hover,
+    &--active {
+      background: #15935b;
+      color: #fff;
+    }
+  }
+}
+
 .copy-massage-code-button {
   margin-left: auto;
   font-size: 20px;

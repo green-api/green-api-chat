@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect, useRef, useState } from 'react';
+import { FC, MouseEvent, useCallback, useEffect, useRef, useState } from 'react';
 
 import { SendOutlined } from '@ant-design/icons';
 import { Button, Flex, Form } from 'antd';
@@ -19,7 +19,33 @@ import {
 import { selectInstance } from 'store/slices/instances.slice';
 import { selectPlatform } from 'store/slices/user.slice';
 import { ActiveChat, ChatFormValues, MessageInterface } from 'types';
-import { updateAllChats } from 'utils';
+import { applyMessageFormat, MessageFormat, updateAllChats } from 'utils';
+
+type MessageFormatMenuState = {
+  isOpen: boolean;
+  x: number;
+  y: number;
+  selectionStart: number;
+  selectionEnd: number;
+};
+
+const initialFormatMenuState: MessageFormatMenuState = {
+  isOpen: false,
+  x: 0,
+  y: 0,
+  selectionStart: 0,
+  selectionEnd: 0,
+};
+
+const messageFormatOptions: { key: MessageFormat; translationKey: string }[] = [
+  { key: 'bold', translationKey: 'MESSAGE_FORMAT_BOLD' },
+  { key: 'italic', translationKey: 'MESSAGE_FORMAT_ITALIC' },
+  { key: 'strikethrough', translationKey: 'MESSAGE_FORMAT_STRIKETHROUGH' },
+  { key: 'monospace', translationKey: 'MESSAGE_FORMAT_MONOSPACE' },
+];
+
+const getMessageTextAreaElement = () =>
+  document.querySelector<HTMLTextAreaElement>('textarea.chat-form__message-textarea');
 
 const ChatForm: FC = () => {
   const instanceCredentials = useAppSelector(selectInstance);
@@ -30,9 +56,7 @@ const ChatForm: FC = () => {
   const replyMessage = useAppSelector(selectReplyMessage);
 
   const { setReplyMessage } = useActions();
-
   const dispatch = useAppDispatch();
-
   const { t } = useTranslation();
 
   const [sendMessage, { isLoading: isSendMessageLoading }] = useSendMessageMutation();
@@ -40,9 +64,14 @@ const ChatForm: FC = () => {
   const [form] = useFormWithLanguageValidation<ChatFormValues>();
   const responseTimerReference = useRef<number | null>(null);
 
-  const textAreaRef = useRef<HTMLTextAreaElement>(null);
-
   const [inputValue, setInputValue] = useState('');
+  const [formatMenu, setFormatMenu] = useState<MessageFormatMenuState>(initialFormatMenuState);
+
+  const closeFormatMenu = useCallback(() => {
+    setFormatMenu((currentFormatMenu) =>
+      currentFormatMenu.isOpen ? initialFormatMenuState : currentFormatMenu
+    );
+  }, []);
 
   const onSendMessage = async (values: ChatFormValues) => {
     const { message } = values;
@@ -63,7 +92,6 @@ const ChatForm: FC = () => {
 
     if (responseTimerReference.current) {
       clearTimeout(responseTimerReference.current);
-
       responseTimerReference.current = null;
     }
 
@@ -73,7 +101,6 @@ const ChatForm: FC = () => {
 
     if (error && 'status' in error && error.status === 466) {
       form.setFields([{ name: 'response', errors: [t('QUOTE_EXCEEDED')] }]);
-
       return;
     }
 
@@ -87,9 +114,9 @@ const ChatForm: FC = () => {
         },
         (draftChatHistory) => {
           const existingMessage = draftChatHistory.find((msg) => msg.idMessage === data.idMessage);
+
           if (existingMessage) {
             console.log('message already in chat history');
-
             return;
           }
 
@@ -146,11 +173,10 @@ const ChatForm: FC = () => {
       dispatch(updateChatListThunk);
 
       form.resetFields();
-
       setInputValue('');
       setReplyMessage(null);
 
-      setTimeout(() => textAreaRef.current?.focus(), 100);
+      setTimeout(() => getMessageTextAreaElement()?.focus(), 100);
 
       responseTimerReference.current = setTimeout(() => {
         form.setFields([{ name: 'response', errors: [], warnings: [] }]);
@@ -162,15 +188,101 @@ const ChatForm: FC = () => {
     setInputValue(value);
   }, []);
 
+  const onTextAreaContextMenu = useCallback(
+    (event: MouseEvent<HTMLTextAreaElement>) => {
+      const textArea = getMessageTextAreaElement();
+      const selectionStart = textArea?.selectionStart ?? 0;
+      const selectionEnd = textArea?.selectionEnd ?? 0;
+
+      if (selectionStart === selectionEnd) {
+        closeFormatMenu();
+        return;
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      const menuWidth = 210;
+      const menuHeight = 170;
+      const viewportPadding = 8;
+
+      setFormatMenu({
+        isOpen: true,
+        x: Math.max(
+          viewportPadding,
+          Math.min(event.clientX, window.innerWidth - menuWidth - viewportPadding)
+        ),
+        y: Math.max(
+          viewportPadding,
+          Math.min(event.clientY, window.innerHeight - menuHeight - viewportPadding)
+        ),
+        selectionStart,
+        selectionEnd,
+      });
+    },
+    [closeFormatMenu]
+  );
+
+  const onSelectMessageFormat = useCallback(
+    (event: MouseEvent<HTMLButtonElement>, format: MessageFormat) => {
+      event.preventDefault();
+      event.stopPropagation();
+
+      const textArea = getMessageTextAreaElement();
+      const currentValue = form.getFieldValue('message') || textArea?.value || '';
+
+      const formattedMessage = applyMessageFormat(
+        currentValue,
+        formatMenu.selectionStart,
+        formatMenu.selectionEnd,
+        format
+      );
+
+      form.setFieldValue('message', formattedMessage.value);
+      setInputValue(formattedMessage.value);
+      closeFormatMenu();
+
+      window.requestAnimationFrame(() => {
+        textArea?.focus();
+        textArea?.setSelectionRange(formattedMessage.selectionStart, formattedMessage.selectionEnd);
+      });
+    },
+    [closeFormatMenu, form, formatMenu.selectionEnd, formatMenu.selectionStart]
+  );
+
   useEffect(() => {
     form.setFields([{ name: 'message', errors: [] }]);
   }, [activeChat.chatId, form]);
 
   useEffect(() => {
     if (platform === 'web') {
-      textAreaRef.current?.focus();
+      getMessageTextAreaElement()?.focus();
     }
   });
+
+  useEffect(() => {
+    if (!formatMenu.isOpen) {
+      return;
+    }
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        closeFormatMenu();
+      }
+    };
+
+    window.addEventListener('mousedown', closeFormatMenu);
+    window.addEventListener('resize', closeFormatMenu);
+    window.addEventListener('scroll', closeFormatMenu, true);
+    window.addEventListener('keydown', onKeyDown);
+
+    return () => {
+      window.removeEventListener('mousedown', closeFormatMenu);
+      window.removeEventListener('resize', closeFormatMenu);
+      window.removeEventListener('scroll', closeFormatMenu, true);
+      window.removeEventListener('keydown', onKeyDown);
+    };
+  }, [closeFormatMenu, formatMenu.isOpen]);
 
   return (
     <Form
@@ -184,20 +296,25 @@ const ChatForm: FC = () => {
     >
       <Form.Item style={{ marginBottom: 0 }} name="response" className="response-form-item">
         <ReplyMessage />
+
         <Flex gap={10} align="center">
           <Flex align="center" justify="center">
             <SelectSendingMode />
           </Flex>
+
           <Form.Item
             style={{ marginBottom: 0, flex: '1 1 auto' }}
             name="message"
             normalize={(value) => {
               form.setFields([{ name: 'response', warnings: [] }]);
-
               return value;
             }}
           >
-            <TextArea ref={textAreaRef} onChange={onInputChange} />
+            <TextArea
+              className="chat-form__message-textarea"
+              onChange={onInputChange}
+              onContextMenu={onTextAreaContextMenu}
+            />
           </Form.Item>
 
           <Form.Item
@@ -218,6 +335,40 @@ const ChatForm: FC = () => {
           </Form.Item>
         </Flex>
       </Form.Item>
+
+      {formatMenu.isOpen && (
+        <div
+          className="message-format-menu"
+          style={{
+            position: 'fixed',
+            left: formatMenu.x,
+            top: formatMenu.y,
+            zIndex: 9999,
+          }}
+          onContextMenu={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+          }}
+          onMouseDown={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+          }}
+          onClick={(event) => event.stopPropagation()}
+        >
+          <div className="message-format-menu__main">
+            {messageFormatOptions.map((option) => (
+              <button
+                className="message-format-menu__item"
+                key={option.key}
+                type="button"
+                onClick={(event) => onSelectMessageFormat(event, option.key)}
+              >
+                {t(option.translationKey)}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
     </Form>
   );
 };

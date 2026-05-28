@@ -200,12 +200,12 @@ const ChatListItem: FC<ContactListItemProps> = ({
             />
           }
           title={
-            <h6
+            <span
               className="text-overflow message-signerData"
               style={{ fontSize: 14, maxWidth: 280 }}
             >
               {isWhatsAppOfficialChat(lastMessage.chatId) ? 'WhatsApp' : chatName}
-            </h6>
+            </span>
           }
           description={
             showDescription && (

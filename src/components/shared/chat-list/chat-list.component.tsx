@@ -7,7 +7,7 @@ import ChatListItem from './chat-list-item.component';
 import ChatSearchInput from './chat-search-input.component';
 import { useAppSelector, useMediaQuery } from 'hooks';
 import { useLastMessagesQuery } from 'services/green-api/endpoints';
-import { selectMiniVersion, selectSearchQuery } from 'store/slices/chat.slice';
+import { selectMiniVersion, selectSearchQuery, selectType } from 'store/slices/chat.slice';
 import {
   selectInstance,
   selectIsLastMessagesSyncingAfterAuthorization,
@@ -42,6 +42,7 @@ const ChatList: FC = () => {
     selectIsLastMessagesSyncingAfterAuthorization
   );
   const greenApiQueries = useAppSelector((state) => state.greenAPI.queries);
+  const type = useAppSelector(selectType);
 
   const matchMedia = useMediaQuery('(min-height: 1200px)');
 
@@ -240,7 +241,7 @@ const ChatList: FC = () => {
 
   return (
     <>
-      <ChatSearchInput setPage={setPage} />
+      {type !== 'mobile-mode' && <ChatSearchInput setPage={setPage} />}
 
       <div
         ref={chatListRef}

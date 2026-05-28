@@ -15,6 +15,7 @@ import {
   selectReplyMessage,
   selectMessageCount,
   selectMiniVersion,
+  selectType,
 } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
 import { selectPlatform } from 'store/slices/user.slice';
@@ -28,6 +29,7 @@ const ChatForm: FC = () => {
   const messageCount = useAppSelector(selectMessageCount);
   const platform = useAppSelector(selectPlatform);
   const replyMessage = useAppSelector(selectReplyMessage);
+  const type = useAppSelector(selectType);
 
   const { setReplyMessage } = useActions();
 
@@ -167,7 +169,7 @@ const ChatForm: FC = () => {
   }, [activeChat.chatId, form]);
 
   useEffect(() => {
-    if (platform === 'web') {
+    if (platform === 'web' && type !== 'mobile-mode') {
       textAreaRef.current?.focus();
     }
   });

@@ -22,7 +22,7 @@ const Chat: FC = () => {
       className={`full-chat ${type === 'console-page' ? 'console-page' : ''}`}
       style={{ overflowY: 'hidden' }}
     >
-      <Aside />
+      {type !== 'mobile-mode' && <Aside />}
       {isCallsNeedToRender && <CallsPage />}
       {activeMode !== 'calls' && (
         <>

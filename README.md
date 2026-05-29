@@ -129,12 +129,23 @@ http://localhost:5173/?idInstance=YOUR_ID&apiTokenInstance=YOUR_API_TOKEN&apiUrl
 
 #### Optional Customization Parameters
 
-| Parameter | Description                                              |
-|-----------|----------------------------------------------------------|
-| `lng`     | Language (`ru`, `en`, `he`)                              |
-| `dsc`     | Description text on home screen when no chat is selected |
-| `logo`    | Image/logo URL shown above the description               |
-| `chatId`  | If you need only one chat. In format XXXXXXXXXXX@c.us    |
+| Parameter | Description                                                                                                                  |
+|-----------|------------------------------------------------------------------------------------------------------------------------------|
+| `lng`     | Language (`ru`, `en`, `he`, `tr`)                                                                                            |
+| `dsc`     | Description text on home screen when no chat is selected                                                                     |
+| `logo`    | Image/logo URL shown above the description                                                                                   |
+| `chatId`  | If you need only one chat. In format XXXXXXXXXXX@c.us                                                                        |
+| `theme`   | Theme mode (see above)                                                                                                       |
+| `type`    | Hides some interface elements depending on the passed value. Values: 'mobile-mode', 'one-chat-only', 'tab', 'partner-iframe' |
+
+#### 'type' values description
+
+| Parameter        | Description                                                                   |
+|------------------|-------------------------------------------------------------------------------|
+| `tab`            | Default value. Renders every element of the interface                         |
+| `partner-iframe` | Hides instances list from aside menu                                          |
+| `one-chat-only`  | Renders only chat with chatId, if chatId is passed in query parameters in URL |
+| `mobile-mode`    | Hides aside menu and chat header                                              |
 
 ## 📄 License
 
@@ -273,12 +284,23 @@ http://localhost:5173/?idInstance=YOUR_ID&apiTokenInstance=YOUR_API_TOKEN&apiUrl
 
 #### Необязательные параметры кастомизации
 
-| Параметр | Описание                                                        |
-|----------|-----------------------------------------------------------------|
-| `lng`    | Язык интерфейса (`ru`, `en`, `he`)                              |
-| `dsc`    | Описание, отображаемое на главной странице, когда чат не выбран |
-| `logo`   | Ссылка на изображение/логотип, отображаемое над описанием       |
-| `chatId` | Если вам нужен только один чат. Формат XXXXXXXXXXX@c.us         |
+| Параметр | Описание                                                                                                                              |
+|----------|---------------------------------------------------------------------------------------------------------------------------------------|
+| `lng`    | Язык интерфейса (`ru`, `en`, `he`)                                                                                                    |
+| `dsc`    | Описание, отображаемое на главной странице, когда чат не выбран                                                                       |
+| `logo`   | Ссылка на изображение/логотип, отображаемое над описанием                                                                             |
+| `chatId` | Если вам нужен только один чат. Формат XXXXXXXXXXX@c.us                                                                               |
+| `theme`  | Тема интерфейса (см. выше)                                                                                                            |
+| `type`   | Скрывает элементы интерфейса в зависимости от переданного значения. Значения: 'mobile-mode', 'one-chat-only', 'tab', 'partner-iframe' |
+
+#### Описание значений параметра 'type'
+
+| Параметр         | Описание                                                                             |
+|------------------|--------------------------------------------------------------------------------------|
+| `tab`            | Значение по-умолчанию. Рендерит все элементы интерфейса                              |
+| `partner-iframe` | Скрывает список инстансев из бокового меню                                           |
+| `one-chat-only`  | Рендерит только чат с переданным chatId, если chatId передан в query параметры в URL |
+| `mobile-mode`    | Скрывает боковое меню and шапку чата                                                     
 
 ## 📄 Лицензия
 

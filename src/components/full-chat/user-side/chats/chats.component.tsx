@@ -1,10 +1,11 @@
 import { FC, useState } from 'react';
 
-import { PlusCircleFilled } from '@ant-design/icons';
+import { PlusOutlined } from '@ant-design/icons';
 import { Button, Flex } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import AddNewChat from './add-new-chat.component';
+import NewChatIcon from 'assets/newChat.svg?react';
 import AuthorizationStatus from 'components/instance-auth/authorization-status.component';
 import ChatList from 'components/shared/chat-list/chat-list.component';
 import { useActions, useAppSelector } from 'hooks';
@@ -31,6 +32,12 @@ const Chats: FC = () => {
 
   const [isVisible, setIsVisible] = useState(false);
 
+  const needToRenderNewChatBtn =
+    !isMiniVersion &&
+    settings?.stateInstance === StateInstanceEnum.Authorized &&
+    type !== 'instance-view-page' &&
+    type !== 'one-chat-only';
+
   return (
     <Flex className="chats" vertical>
       <Flex
@@ -52,18 +59,21 @@ const Chats: FC = () => {
           </Flex>
         )}
         <Flex gap={14} align="center">
-          {!isMiniVersion &&
-            settings?.stateInstance === StateInstanceEnum.Authorized &&
-            type !== 'instance-view-page' &&
-            type !== 'one-chat-only' && (
+          {needToRenderNewChatBtn &&
+            (type === 'mobile-mode' ? (
+              <Button
+                className="p-10"
+                onClick={() => setIsVisible(true)}
+                title={t('ADD_NEW_CHAT_HEADER')}
+                shape="circle"
+                type="primary"
+                icon={<PlusOutlined className="new-chat-btn" />}
+              />
+            ) : (
               <a className={type === 'partner-iframe' ? 'p-10' : undefined}>
-                <PlusCircleFilled
-                  style={{ fontSize: 40 }}
-                  onClick={() => setIsVisible(true)}
-                  title={t('ADD_NEW_CHAT_HEADER')}
-                />
+                <NewChatIcon onClick={() => setIsVisible(true)} title={t('ADD_NEW_CHAT_HEADER')} />
               </a>
-            )}
+            ))}
         </Flex>
       </Flex>
       {(settings?.stateInstance === StateInstanceEnum.Authorized ||

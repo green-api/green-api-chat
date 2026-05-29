@@ -1,12 +1,14 @@
-import { FC, MouseEvent, useCallback, useEffect, useRef, useState } from 'react';
+import { FC, KeyboardEvent, MouseEvent, useCallback, useEffect, useRef, useState } from 'react';
 
 import { SendOutlined } from '@ant-design/icons';
 import { Button, Flex, Form } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import { ReplyMessage } from 'components/full-chat/user-side/chats/reply-message.component';
+import ContentEditableTextArea, {
+  ContentEditableTextAreaRef,
+} from 'components/UI/content-editable-text-area.component';
 import SelectSendingMode from 'components/UI/select/select-sending-mode.component';
-import TextArea from 'components/UI/text-area.component';
 import { useActions, useAppDispatch, useAppSelector, useFormWithLanguageValidation } from 'hooks';
 import { useSendMessageMutation } from 'services/green-api/endpoints';
 import { journalsGreenApiEndpoints } from 'services/green-api/endpoints/journals.green-api.endpoints';
@@ -27,6 +29,7 @@ type MessageFormatMenuState = {
   y: number;
   selectionStart: number;
   selectionEnd: number;
+  activeFormats: MessageFormat[];
 };
 
 const initialFormatMenuState: MessageFormatMenuState = {
@@ -35,6 +38,7 @@ const initialFormatMenuState: MessageFormatMenuState = {
   y: 0,
   selectionStart: 0,
   selectionEnd: 0,
+  activeFormats: [],
 };
 
 const messageFormatOptions: { key: MessageFormat; translationKey: string }[] = [
@@ -43,9 +47,6 @@ const messageFormatOptions: { key: MessageFormat; translationKey: string }[] = [
   { key: 'strikethrough', translationKey: 'MESSAGE_FORMAT_STRIKETHROUGH' },
   { key: 'monospace', translationKey: 'MESSAGE_FORMAT_MONOSPACE' },
 ];
-
-const getMessageTextAreaElement = () =>
-  document.querySelector<HTMLTextAreaElement>('textarea.chat-form__message-textarea');
 
 const ChatForm: FC = () => {
   const instanceCredentials = useAppSelector(selectInstance);
@@ -63,6 +64,7 @@ const ChatForm: FC = () => {
 
   const [form] = useFormWithLanguageValidation<ChatFormValues>();
   const responseTimerReference = useRef<number | null>(null);
+  const messageEditorRef = useRef<ContentEditableTextAreaRef>(null);
 
   const [inputValue, setInputValue] = useState('');
   const [formatMenu, setFormatMenu] = useState<MessageFormatMenuState>(initialFormatMenuState);
@@ -176,7 +178,7 @@ const ChatForm: FC = () => {
       setInputValue('');
       setReplyMessage(null);
 
-      setTimeout(() => getMessageTextAreaElement()?.focus(), 100);
+      setTimeout(() => messageEditorRef.current?.focus(), 100);
 
       responseTimerReference.current = setTimeout(() => {
         form.setFields([{ name: 'response', errors: [], warnings: [] }]);
@@ -184,17 +186,22 @@ const ChatForm: FC = () => {
     }
   };
 
-  const onInputChange = useCallback((value: string) => {
-    setInputValue(value);
-  }, []);
+  const onInputChange = useCallback(
+    (value: string) => {
+      setInputValue(value);
+      form.setFieldValue('message', value);
+    },
+    [form]
+  );
 
   const onTextAreaContextMenu = useCallback(
-    (event: MouseEvent<HTMLTextAreaElement>) => {
-      const textArea = getMessageTextAreaElement();
-      const selectionStart = textArea?.selectionStart ?? 0;
-      const selectionEnd = textArea?.selectionEnd ?? 0;
+    (event: MouseEvent<HTMLDivElement>) => {
+      const { start, end } = messageEditorRef.current?.getSelectionRange() ?? {
+        start: 0,
+        end: 0,
+      };
 
-      if (selectionStart === selectionEnd) {
+      if (start === end) {
         closeFormatMenu();
         return;
       }
@@ -206,6 +213,8 @@ const ChatForm: FC = () => {
       const menuHeight = 170;
       const viewportPadding = 8;
 
+      const activeFormats = messageEditorRef.current?.getActiveFormats() || [];
+
       setFormatMenu({
         isOpen: true,
         x: Math.max(
@@ -216,8 +225,9 @@ const ChatForm: FC = () => {
           viewportPadding,
           Math.min(event.clientY, window.innerHeight - menuHeight - viewportPadding)
         ),
-        selectionStart,
-        selectionEnd,
+        selectionStart: start,
+        selectionEnd: end,
+        activeFormats,
       });
     },
     [closeFormatMenu]
@@ -228,26 +238,31 @@ const ChatForm: FC = () => {
       event.preventDefault();
       event.stopPropagation();
 
-      const textArea = getMessageTextAreaElement();
-      const currentValue = form.getFieldValue('message') || textArea?.value || '';
+      const nextValue = messageEditorRef.current?.applyFormat(format) || '';
 
-      const formattedMessage = applyMessageFormat(
-        currentValue,
-        formatMenu.selectionStart,
-        formatMenu.selectionEnd,
-        format
-      );
-
-      form.setFieldValue('message', formattedMessage.value);
-      setInputValue(formattedMessage.value);
+      form.setFieldValue('message', nextValue);
+      setInputValue(nextValue);
       closeFormatMenu();
-
-      window.requestAnimationFrame(() => {
-        textArea?.focus();
-        textArea?.setSelectionRange(formattedMessage.selectionStart, formattedMessage.selectionEnd);
-      });
     },
-    [closeFormatMenu, form, formatMenu.selectionEnd, formatMenu.selectionStart]
+    [closeFormatMenu, form]
+  );
+
+  const onEditorKeyDown = useCallback(
+    (event: KeyboardEvent<HTMLDivElement>) => {
+      if (event.key !== 'Enter') {
+        return;
+      }
+
+      if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) {
+        event.preventDefault();
+        messageEditorRef.current?.insertText('\n');
+        return;
+      }
+
+      event.preventDefault();
+      form.submit();
+    },
+    [form]
   );
 
   useEffect(() => {
@@ -256,7 +271,7 @@ const ChatForm: FC = () => {
 
   useEffect(() => {
     if (platform === 'web') {
-      getMessageTextAreaElement()?.focus();
+      messageEditorRef.current?.focus();
     }
   });
 
@@ -265,7 +280,7 @@ const ChatForm: FC = () => {
       return;
     }
 
-    const onKeyDown = (event: KeyboardEvent) => {
+    const onKeyDown = (event: globalThis.KeyboardEvent) => {
       if (event.key === 'Escape') {
         closeFormatMenu();
       }
@@ -291,7 +306,6 @@ const ChatForm: FC = () => {
       onFinish={onSendMessage}
       onSubmitCapture={() => form.setFields([{ name: 'response', errors: [], warnings: [] }])}
       form={form}
-      onKeyDown={(e) => !e.ctrlKey && e.key === 'Enter' && form.submit()}
       disabled={isSendMessageLoading}
     >
       <Form.Item style={{ marginBottom: 0 }} name="response" className="response-form-item">
@@ -310,10 +324,15 @@ const ChatForm: FC = () => {
               return value;
             }}
           >
-            <TextArea
+            <ContentEditableTextArea
+              ref={messageEditorRef}
               className="chat-form__message-textarea"
+              value={inputValue}
+              placeholder={t('MESSAGE_PLACEHOLDER')}
+              disabled={isSendMessageLoading}
               onChange={onInputChange}
               onContextMenu={onTextAreaContextMenu}
+              onKeyDown={onEditorKeyDown}
             />
           </Form.Item>
 
@@ -358,7 +377,11 @@ const ChatForm: FC = () => {
           <div className="message-format-menu__main">
             {messageFormatOptions.map((option) => (
               <button
-                className="message-format-menu__item"
+                className={`message-format-menu__item ${
+                  formatMenu.activeFormats.includes(option.key)
+                    ? 'message-format-menu__item--active'
+                    : ''
+                }`}
                 key={option.key}
                 type="button"
                 onClick={(event) => onSelectMessageFormat(event, option.key)}

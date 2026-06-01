@@ -38,6 +38,7 @@ const ChatForm: FC = () => {
   const isMax = useIsMaxInstance();
   const isTelegram = useIsTelegramInstance();
   const isLinkFeatureEnabled = isMax || isTelegram;
+  const monospaceFormatStyle = isMax ? 'max' : isTelegram ? 'telegram' : 'default';
 
   const { t } = useTranslation();
 
@@ -129,6 +130,7 @@ const ChatForm: FC = () => {
               placeholder={t('MESSAGE_PLACEHOLDER')}
               disabled={isSendMessageLoading}
               enableMarkdownLinks={isLinkFeatureEnabled}
+              monospaceFormatStyle={monospaceFormatStyle}
               onChange={onInputChange}
               onContextMenu={onTextAreaContextMenu}
               onKeyDown={onEditorKeyDown}

@@ -1,5 +1,6 @@
 type TextFormatterOptions = {
   enableMarkdownLinks?: boolean;
+  compact?: boolean;
 };
 
 type EditorTextFormatterOptions = {
@@ -12,9 +13,9 @@ export function TextFormatter(text: string, options: TextFormatterOptions = {}) 
   }
 
   const escaped = escapeMarkdownInUrl(text);
-  const { enableMarkdownLinks = true } = options;
+  const { enableMarkdownLinks = true, compact = false } = options;
 
-  return markdownToText(escaped, enableMarkdownLinks);
+  return markdownToText(escaped, enableMarkdownLinks, compact);
 }
 
 export const escapeMarkdownInUrl = (url: string) => {
@@ -35,6 +36,51 @@ const PLAIN_URL_REGEX = /(^|\s)((?<!\]\()https?:\/\/(?:www\.)?\S+|(?<!\]\()www\.
 const HTML_ANCHOR_REGEX = /(<a\b[^>]*>.*?<\/a>)/g;
 const TEXTAREA_LINK_CLASS_NAME = 'link link-blue link-hover-underline';
 const MESSAGE_LINK_CLASS_NAME = 'link link-blue link-hover-underline';
+
+const stashInlineCode = (
+  text: string,
+  tokenPrefix: string,
+  replacementFactory: (content: string, marker: string) => string
+) => {
+  const quadrupleBackticks = stashMatches(
+    text,
+    /````([\s\S]+?)````/g,
+    (content) => replacementFactory(content, '````'),
+    `${tokenPrefix}QUAD`
+  );
+
+  const doubleBackticks = stashMatches(
+    quadrupleBackticks.nextText,
+    /``([^`\n]+)``/g,
+    (content) => replacementFactory(content, '``'),
+    `${tokenPrefix}DOUBLE`
+  );
+
+  const singleBackticks = stashMatches(
+    doubleBackticks.nextText,
+    /`([^`\n]+)`/g,
+    (content) => replacementFactory(content, '`'),
+    `${tokenPrefix}SINGLE`
+  );
+
+  return {
+    nextText: singleBackticks.nextText,
+    restore: (currentText: string) => {
+      const withSingles = restoreStashedMatches(
+        currentText,
+        singleBackticks.chunks,
+        `${tokenPrefix}SINGLE`
+      );
+      const withDoubles = restoreStashedMatches(
+        withSingles,
+        doubleBackticks.chunks,
+        `${tokenPrefix}DOUBLE`
+      );
+
+      return restoreStashedMatches(withDoubles, quadrupleBackticks.chunks, `${tokenPrefix}QUAD`);
+    },
+  };
+};
 
 const normalizeLinkUrl = (url: string) => {
   return /^https?:\/\//i.test(url) ? url : `https://${url}`;
@@ -109,25 +155,27 @@ const restoreStashedMatches = (text: string, chunks: string[], tokenPrefix: stri
   return text.replace(tokenPattern, (_, index) => chunks[Number(index)] ?? '');
 };
 
-const markdownToText = (textInput: string, enableMarkdownLinks: boolean) => {
+const markdownToText = (textInput: string, enableMarkdownLinks: boolean, compact: boolean) => {
   const stashedMarkdownLinks = enableMarkdownLinks
-    ? stashMarkdownLinks(textInput, 'MDLINK')
+    ? stashMarkdownLinks(textInput, 'MDLINK', compact ? (_url, content) => content : undefined)
     : { nextText: textInput, chunks: [] };
-  const processedText = stashedMarkdownLinks.nextText.replace(PLAIN_URL_REGEX, (_, prefix, url) => {
-    return `${prefix}${buildAnchorTag(url, undefined, { className: MESSAGE_LINK_CLASS_NAME })}`;
-  });
+  const processedText = compact
+    ? stashedMarkdownLinks.nextText
+    : stashedMarkdownLinks.nextText.replace(PLAIN_URL_REGEX, (_, prefix, url) => {
+        return `${prefix}${buildAnchorTag(url, undefined, { className: MESSAGE_LINK_CLASS_NAME })}`;
+      });
 
   const parts = processedText.split(HTML_ANCHOR_REGEX);
   for (let i = 0; i < parts.length; i += 1) {
     if (!/^<a\b/i.test(parts[i])) {
-      parts[i] = transformMarkdown(parts[i]);
+      parts[i] = transformMarkdown(parts[i], compact);
     }
   }
 
   return restoreStashedMatches(parts.join(''), stashedMarkdownLinks.chunks, 'MDLINK');
 };
 
-const transformMarkdown = (markdownText: string) => {
+const transformMarkdown = (markdownText: string, compact = false) => {
   let transformedText = markdownText;
 
   // Protect code fragments from other regex transforms.
@@ -135,20 +183,21 @@ const transformMarkdown = (markdownText: string) => {
     transformedText,
     /```(?:([a-zA-Z0-9_+-]+)\n)?([\s\S]+?)```/g,
     (_language, content) =>
-      '<div class="message-code-block">' +
-      '<button type="button" class="message-code-block__copy copy-massage-code-button" data-code-copy="true" aria-label="Copy code"></button>' +
-      `<pre class="message-code-block__pre"><code>${content}</code></pre>` +
-      '</div>',
+      compact
+        ? `<code>${content.replace(/\s*\n+\s*/g, ' ')}</code>`
+        : '<div class="message-code-block">' +
+          '<button type="button" class="message-code-block__copy copy-massage-code-button" data-code-copy="true" aria-label="Copy code"></button>' +
+          `<pre class="message-code-block__pre"><code>${content}</code></pre>` +
+          '</div>',
     'MDCODEBLOCK'
   );
 
   transformedText = stashedCodeBlocks.nextText;
 
-  const stashedInlineCode = stashMatches(
+  const stashedInlineCode = stashInlineCode(
     transformedText,
-    /`([^`\n]+)`/g,
-    (content) => `<code>${content}</code>`,
-    'MDINLINECODE'
+    'MDINLINECODE',
+    (content) => `<code>${content}</code>`
   );
 
   transformedText = stashedInlineCode.nextText;
@@ -156,19 +205,19 @@ const transformMarkdown = (markdownText: string) => {
   // Bold: *text* — recursively process inner content
   transformedText = transformedText.replace(
     /(?<!\w)\*((?:[^*\n])+)\*(?!\w)/g,
-    (_, inner) => `<b>${transformMarkdown(inner)}</b>`
+    (_, inner) => `<b>${transformMarkdown(inner, compact)}</b>`
   );
 
   // Italic: _text_ — recursively process inner content
   transformedText = transformedText.replace(
     /(?<!\w)_((?:[^_\n])+)_(?!\w)/g,
-    (_, inner) => `<i>${transformMarkdown(inner)}</i>`
+    (_, inner) => `<i>${transformMarkdown(inner, compact)}</i>`
   );
 
   // Strikethrough: ~text~ — recursively process inner content
   transformedText = transformedText.replace(
     /(?<!\w)~((?:[^~\n])+)~(?!\w)/g,
-    (_, inner) => `<s>${transformMarkdown(inner)}</s>`
+    (_, inner) => `<s>${transformMarkdown(inner, compact)}</s>`
   );
 
   // Bulleted list: * text or - text (only if there is a space after * or -)
@@ -177,13 +226,9 @@ const transformMarkdown = (markdownText: string) => {
   transformedText = transformedText.replace(/^\s*>\s*(.+)$/gm, '<blockquote>$1</blockquote>');
   // Replace newline characters with <br> tags
   // Replace newline characters with <br> tags
-  transformedText = transformedText.replace(/(\n)(?!<\/?(ul|li)>)/g, '<br>');
+  transformedText = transformedText.replace(/(\n)(?!<\/?(ul|li)>)/g, compact ? ' ' : '<br>');
 
-  transformedText = restoreStashedMatches(
-    transformedText,
-    stashedInlineCode.chunks,
-    'MDINLINECODE'
-  );
+  transformedText = stashedInlineCode.restore(transformedText);
   transformedText = restoreStashedMatches(transformedText, stashedCodeBlocks.chunks, 'MDCODEBLOCK');
 
   return transformedText;
@@ -205,14 +250,16 @@ const transformMarkdownForEditor = (markdownText: string) => {
 
   transformedText = stashedCodeBlocks.nextText;
 
-  const stashedInlineCode = stashMatches(
+  const stashedInlineCode = stashInlineCode(
     transformedText,
-    /`([^`\n]+)`/g,
-    (content) =>
-      '<code><span class="message-format-marker">`</span>' +
+    'EDITORINLINECODE',
+    (content, marker) => {
+    return (
+      `<code><span class="message-format-marker">${marker}</span>` +
       content +
-      '<span class="message-format-marker">`</span></code>',
-    'EDITORINLINECODE'
+      `<span class="message-format-marker">${marker}</span></code>`
+    );
+    }
   );
 
   transformedText = stashedInlineCode.nextText;
@@ -251,11 +298,7 @@ const transformMarkdownForEditor = (markdownText: string) => {
   // Replace newline characters with <br> tags
   transformedText = transformedText.replace(/(\n)(?!<\/?(ul|li)>)/g, '<br>');
 
-  transformedText = restoreStashedMatches(
-    transformedText,
-    stashedInlineCode.chunks,
-    'EDITORINLINECODE'
-  );
+  transformedText = stashedInlineCode.restore(transformedText);
   transformedText = restoreStashedMatches(
     transformedText,
     stashedCodeBlocks.chunks,

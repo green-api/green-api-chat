@@ -22,6 +22,7 @@ const ChatLinkModal: FC<ChatLinkModalProps> = ({ isOpen, form, onCancel, onOk })
     <Modal
       open={isOpen}
       title={t('MESSAGE_FORMAT_LINK_MODAL_TITLE')}
+      rootClassName="chat-link-modal"
       okText={t('ADD')}
       cancelText={t('CANCEL')}
       onCancel={onCancel}

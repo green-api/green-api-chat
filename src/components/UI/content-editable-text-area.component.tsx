@@ -8,7 +8,12 @@ import {
   useRef,
 } from 'react';
 
-import { applyMessageFormat, getActiveFormats, MessageFormat } from 'utils/message-formatting.utils';
+import {
+  applyMessageFormat,
+  getActiveFormats,
+  MessageFormat,
+  MonospaceFormatStyle,
+} from 'utils/message-formatting.utils';
 import { EditorTextFormatter, TextFormatter } from 'utils/text-formatter';
 
 type SelectionRange = {
@@ -31,6 +36,7 @@ type ContentEditableTextAreaProps = {
   placeholder?: string;
   disabled?: boolean;
   enableMarkdownLinks?: boolean;
+  monospaceFormatStyle?: MonospaceFormatStyle;
   onChange?: (value: string) => void;
   onContextMenu?: (event: MouseEvent<HTMLDivElement>) => void;
   onKeyDown?: (event: KeyboardEvent<HTMLDivElement>) => void;
@@ -284,6 +290,7 @@ const ContentEditableTextArea = forwardRef<
       placeholder,
       disabled,
       enableMarkdownLinks = true,
+      monospaceFormatStyle = 'default',
       onChange,
       onContextMenu,
       onKeyDown,
@@ -406,7 +413,8 @@ const ContentEditableTextArea = forwardRef<
           currentValue,
           selectionRange.start,
           selectionRange.end,
-          format
+          format,
+          { monospaceFormatStyle }
         );
 
         lastValueRef.current = formatted.value;

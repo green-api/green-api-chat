@@ -31,6 +31,7 @@ import {
   getErrorMessage,
   getPhoneNumberFromChatId,
   getTypeInstanceFromQuery,
+  isValidTheme,
 } from 'utils';
 
 const BaseLayout: FC = () => {
@@ -169,11 +170,14 @@ const BaseLayout: FC = () => {
       const language = searchParams.get('lng');
       const brandDescription = searchParams.get('dsc');
       const brandImageUrl = searchParams.get('logo');
+      const theme = searchParams.get('theme');
+      const chatType = searchParams.get('type');
       const queryTypeInstance = getTypeInstanceFromQuery(searchParams.get('typeInstance'));
 
       language && i18n.changeLanguage(language);
       brandDescription && setBrandData({ description: brandDescription });
       brandImageUrl && setBrandData({ brandImageUrl });
+      theme && isValidTheme(theme) && setTheme(theme);
 
       (async () => {
         const { data: instanceSettings } = await getSettings({
@@ -189,7 +193,12 @@ const BaseLayout: FC = () => {
         );
         const isMaxOrTelegramInstance = typeInstance === 'v3' || typeInstance === 'telegram';
 
-        setType('partner-iframe');
+        if (chatType && isValidChatType(chatType)) {
+          setType(chatType);
+        } else {
+          setType('partner-iframe');
+        }
+
         setSelectedInstance({
           idInstance: +idInstance,
           apiTokenInstance,

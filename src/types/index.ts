@@ -54,7 +54,8 @@ export type ChatType =
   | 'console-page'
   | 'instance-view-page'
   | 'partner-iframe'
-  | 'one-chat-only';
+  | 'one-chat-only'
+  | 'mobile-mode';
 export type ChatPlatform = 'web' | 'ios' | 'android';
 
 export interface ActiveChat

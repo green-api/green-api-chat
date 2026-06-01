@@ -8,6 +8,7 @@ import {
   MessagesDate,
   OutgoingTemplateMessage,
   TemplateMessageInterface,
+  Themes,
   TypeConnectionMessage,
 } from 'types';
 
@@ -49,6 +50,11 @@ export function isValidChatType(type: string): type is ChatType {
     type === 'console-page' ||
     type === 'instance-view-page' ||
     type === 'partner-iframe' ||
-    type === 'one-chat-only'
+    type === 'one-chat-only' ||
+    type === 'mobile-mode'
   );
+}
+
+export function isValidTheme(theme: string): theme is Themes {
+  return theme === Themes.Default || theme === Themes.Dark;
 }

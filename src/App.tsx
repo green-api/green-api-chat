@@ -12,7 +12,6 @@ import router from 'router';
 import { selectTheme } from 'store/slices/theme.slice';
 import { selectUser } from 'store/slices/user.slice';
 import { Themes } from 'types';
-import { isPageInIframe } from 'utils';
 
 function App() {
   const { idUser, apiTokenUser, projectId } = useAppSelector(selectUser);
@@ -42,12 +41,6 @@ function App() {
   // Add theme for html
   useEffect(() => {
     const html = document.documentElement;
-
-    if (!isPageInIframe()) {
-      html.classList.add('default-theme');
-
-      return;
-    }
 
     for (const key in themesList) {
       if (

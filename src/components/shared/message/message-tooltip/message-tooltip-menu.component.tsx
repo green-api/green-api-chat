@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 
 import { useActions, useAppSelector } from 'hooks';
 import { useIsWabaInstance } from 'hooks/use-is-waba-instance';
+import { selectType } from 'store/slices/chat.slice';
 import { selectMessageDataForRender } from 'store/slices/message-menu.slice';
 import { MessageTooltipMenuData } from 'types';
 import { isMessageEditable } from 'utils';
@@ -15,6 +16,7 @@ interface MessageTooltipMenuProps {
 
 const MessageTooltipMenu: FC<MessageTooltipMenuProps> = ({ onMenuItemClick }) => {
   const messageData = useAppSelector(selectMessageDataForRender);
+  const type = useAppSelector(selectType);
   const isWaba = useIsWabaInstance();
 
   const { t } = useTranslation();
@@ -73,11 +75,13 @@ const MessageTooltipMenu: FC<MessageTooltipMenuProps> = ({ onMenuItemClick }) =>
     <List
       className="message-tooltip-menu"
       dataSource={getMenuData()}
-      renderItem={(item) => (
-        <List.Item className="message-tooltip-menu__item" onClick={item.onClick}>
-          {item.label}
-        </List.Item>
-      )}
+      renderItem={(item) =>
+        type === 'mobile-mode' && item.key === 'messageInfo' ? null : (
+          <List.Item className="message-tooltip-menu__item" onClick={item.onClick}>
+            {item.label}
+          </List.Item>
+        )
+      }
     />
   );
 };

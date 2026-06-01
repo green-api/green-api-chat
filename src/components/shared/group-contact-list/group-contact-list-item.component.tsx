@@ -64,12 +64,12 @@ const GroupContactListItem: FC<GroupContactListItemProps> = ({ participant }) =>
         <List.Item.Meta
           avatar={<AvatarImage src={avatar} size="large" />}
           title={
-            <h6
+            <span
               className="text-overflow message-signerData"
               style={{ fontSize: 14, maxWidth: 280, width: '100%' }}
             >
               {contactName}
-            </h6>
+            </span>
           }
           description={contactName === phoneNumber ? null : phoneNumber}
         />

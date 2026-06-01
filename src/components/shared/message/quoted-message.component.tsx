@@ -5,6 +5,8 @@ import { useTranslation } from 'react-i18next';
 
 import MessageTooltip from './message-tooltip/message-tooltip.component';
 import { useAppSelector } from 'hooks';
+import { useIsMaxInstance } from 'hooks/use-is-max-instance';
+import { useIsTelegramInstance } from 'hooks/use-is-telegram-instance';
 import { selectMiniVersion } from 'store/slices/chat.slice';
 import { MessageDataForRender, QuotedMessageInterface, TypeConnectionMessage } from 'types';
 import {
@@ -28,6 +30,9 @@ const QuotedMessage: FC<QuotedMessageProps> = ({ quotedMessage, type, messageDat
   const { i18n } = useTranslation();
 
   const isMiniVersion = useAppSelector(selectMiniVersion);
+  const isMax = useIsMaxInstance();
+  const isTelegram = useIsTelegramInstance();
+  const enableMarkdownLinks = isMax || isTelegram;
 
   const participant = quotedMessage.participant
     ? getPhoneNumberFromChatId(quotedMessage.participant)
@@ -37,7 +42,7 @@ const QuotedMessage: FC<QuotedMessageProps> = ({ quotedMessage, type, messageDat
     typeMessage,
   });
   const jsonMessage = getJSONMessage(quotedMessage);
-  const formattedMessage = getFormattedMessage(textMessage);
+  const formattedMessage = getFormattedMessage(textMessage, { enableMarkdownLinks });
 
   const dir = i18n.dir();
 

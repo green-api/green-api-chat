@@ -4,7 +4,7 @@ const MESSAGE_FORMAT_MARKERS: Record<MessageFormat, readonly [string, string]> =
   bold: ['*', '*'],
   italic: ['_', '_'],
   strikethrough: ['~', '~'],
-  monospace: ['```', '```'],
+  monospace: ['```\n', '\n```'],
 };
 
 export function applyMessageFormat(

@@ -1,11 +1,20 @@
-export function TextFormatter(text: string) {
+type TextFormatterOptions = {
+  enableMarkdownLinks?: boolean;
+};
+
+type EditorTextFormatterOptions = {
+  enableMarkdownLinks?: boolean;
+};
+
+export function TextFormatter(text: string, options: TextFormatterOptions = {}) {
   if (!text) {
     return null;
   }
 
   const escaped = escapeMarkdownInUrl(text);
+  const { enableMarkdownLinks = true } = options;
 
-  return markdownToText(escaped);
+  return markdownToText(escaped, enableMarkdownLinks);
 }
 
 export const escapeMarkdownInUrl = (url: string) => {
@@ -21,19 +30,68 @@ export const escapeMarkdownInUrl = (url: string) => {
   });
 };
 
+const MARKDOWN_LINK_REGEX = /\[\s*([^[\]]+?)\s*\]\(\s*((?:https?:\/\/|www\.)[^\s]+)\s*\)/gi;
+const PLAIN_URL_REGEX = /(^|\s)((?<!\]\()https?:\/\/(?:www\.)?\S+|(?<!\]\()www\.\S+)/gi;
+const HTML_ANCHOR_REGEX = /(<a\b[^>]*>.*?<\/a>)/g;
+const TEXTAREA_LINK_CLASS_NAME = 'link link-blue link-hover-underline';
+const MESSAGE_LINK_CLASS_NAME = 'link link-blue link-hover-underline';
+
+const normalizeLinkUrl = (url: string) => {
+  return /^https?:\/\//i.test(url) ? url : `https://${url}`;
+};
+
+const buildAnchorTag = (url: string, label?: string, options: { className?: string } = {}) => {
+  const normalizedUrl = normalizeLinkUrl(url);
+  const escapedUrl = escapeMarkdownInUrl(normalizedUrl);
+  const escapedLabel = escapeMarkdownInUrl(label || url);
+  const className = options.className ? ` class="${options.className}"` : '';
+
+  return `<a${className} href="${escapedUrl}" title="${escapedUrl}" target="_blank" rel="noreferrer">${escapedLabel}</a>`;
+};
+
+const buildEditorMarkdownLinkTag = (url: string, content: string) => {
+  const normalizedUrl = normalizeLinkUrl(url);
+  const escapedUrl = escapeMarkdownInUrl(normalizedUrl);
+  const escapedContent = escapeMarkdownInUrl(content);
+
+  return `<a class="${TEXTAREA_LINK_CLASS_NAME}" href="${escapedUrl}" title="${escapedUrl}" target="_blank" rel="noreferrer" data-md-link="true" data-md-url="${escapedUrl}">${escapedContent}</a>`;
+};
+
 const stashMatches = (
   text: string,
   pattern: RegExp,
-  replacementFactory: (content: string) => string,
+  replacementFactory: (...captures: string[]) => string,
   tokenPrefix: string
 ) => {
   const chunks: string[] = [];
 
-  const nextText = text.replace(pattern, (_, content: string) => {
+  const nextText = text.replace(pattern, (...args) => {
+    const maybeNamedGroups = typeof args[args.length - 1] === 'object' ? 3 : 2;
+    const captures = args.slice(1, args.length - maybeNamedGroups) as string[];
     const index = chunks.length;
     const token = `@@${tokenPrefix}${index}@@`;
 
-    chunks.push(replacementFactory(content));
+    chunks.push(replacementFactory(...captures));
+
+    return token;
+  });
+
+  return { nextText, chunks };
+};
+
+const stashMarkdownLinks = (
+  text: string,
+  tokenPrefix: string,
+  replacementFactory: (url: string, content: string) => string = (url, content) =>
+    buildAnchorTag(url, content, { className: MESSAGE_LINK_CLASS_NAME })
+) => {
+  const chunks: string[] = [];
+
+  const nextText = text.replace(MARKDOWN_LINK_REGEX, (_, content: string, url: string) => {
+    const index = chunks.length;
+    const token = `@@${tokenPrefix}${index}@@`;
+
+    chunks.push(replacementFactory(url, content));
 
     return token;
   });
@@ -51,25 +109,22 @@ const restoreStashedMatches = (text: string, chunks: string[], tokenPrefix: stri
   return text.replace(tokenPattern, (_, index) => chunks[Number(index)] ?? '');
 };
 
-const markdownToText = (textInput: string) => {
-  const processedText = textInput.replace(
-    /(^|\s)(https?:\/\/(?:www\.)?\S+|www\.\S+)/gi,
-    function (match, p1, p2) {
-      return ''
-        .concat(p1, '<a href="')
-        .concat(escapeMarkdownInUrl(p2), `" title=${p2} target="_blank"">`)
-        .concat(escapeMarkdownInUrl(p2), '</a>');
-    }
-  );
+const markdownToText = (textInput: string, enableMarkdownLinks: boolean) => {
+  const stashedMarkdownLinks = enableMarkdownLinks
+    ? stashMarkdownLinks(textInput, 'MDLINK')
+    : { nextText: textInput, chunks: [] };
+  const processedText = stashedMarkdownLinks.nextText.replace(PLAIN_URL_REGEX, (_, prefix, url) => {
+    return `${prefix}${buildAnchorTag(url, undefined, { className: MESSAGE_LINK_CLASS_NAME })}`;
+  });
 
-  const parts = processedText.split(/(<a href=".*?<\/a>)/g);
+  const parts = processedText.split(HTML_ANCHOR_REGEX);
   for (let i = 0; i < parts.length; i += 1) {
-    if (!parts[i].startsWith('<a href=')) {
+    if (!/^<a\b/i.test(parts[i])) {
       parts[i] = transformMarkdown(parts[i]);
     }
   }
 
-  return parts.join('');
+  return restoreStashedMatches(parts.join(''), stashedMarkdownLinks.chunks, 'MDLINK');
 };
 
 const transformMarkdown = (markdownText: string) => {
@@ -78,8 +133,12 @@ const transformMarkdown = (markdownText: string) => {
   // Protect code fragments from other regex transforms.
   const stashedCodeBlocks = stashMatches(
     transformedText,
-    /```([\s\S]+?)```/g,
-    (content) => `<samp>${content}</samp>`,
+    /```(?:([a-zA-Z0-9_+-]+)\n)?([\s\S]+?)```/g,
+    (_language, content) =>
+      '<div class="message-code-block">' +
+      '<button type="button" class="message-code-block__copy copy-massage-code-button" data-code-copy="true" aria-label="Copy code"></button>' +
+      `<pre class="message-code-block__pre"><code>${content}</code></pre>` +
+      '</div>',
     'MDCODEBLOCK'
   );
 
@@ -125,11 +184,7 @@ const transformMarkdown = (markdownText: string) => {
     stashedInlineCode.chunks,
     'MDINLINECODE'
   );
-  transformedText = restoreStashedMatches(
-    transformedText,
-    stashedCodeBlocks.chunks,
-    'MDCODEBLOCK'
-  );
+  transformedText = restoreStashedMatches(transformedText, stashedCodeBlocks.chunks, 'MDCODEBLOCK');
 
   return transformedText;
 };
@@ -210,33 +265,34 @@ const transformMarkdownForEditor = (markdownText: string) => {
   return transformedText;
 };
 
-const markdownToEditorText = (textInput: string) => {
-  const processedText = textInput.replace(
-    /(^|\s)(https?:\/\/(?:www\.)?\S+|www\.\S+)/gi,
-    function (match, p1, p2) {
-      return ''
-        .concat(p1, '<a href="')
-        .concat(escapeMarkdownInUrl(p2), `" title=${p2} target="_blank"">`)
-        .concat(escapeMarkdownInUrl(p2), '</a>');
-    }
-  );
+const markdownToEditorText = (textInput: string, enableMarkdownLinks: boolean) => {
+  const stashedMarkdownLinks = enableMarkdownLinks
+    ? stashMarkdownLinks(textInput, 'EDITORMDLINK', (url, content) =>
+        buildEditorMarkdownLinkTag(url, content)
+      )
+    : { nextText: textInput, chunks: [] };
 
-  const parts = processedText.split(/(<a href=".*?<\/a>)/g);
+  const processedText = stashedMarkdownLinks.nextText.replace(PLAIN_URL_REGEX, (_, prefix, url) => {
+    return `${prefix}${buildAnchorTag(url, undefined, { className: TEXTAREA_LINK_CLASS_NAME })}`;
+  });
+
+  const parts = processedText.split(HTML_ANCHOR_REGEX);
   for (let i = 0; i < parts.length; i += 1) {
-    if (!parts[i].startsWith('<a href=')) {
+    if (!/^<a\b/i.test(parts[i])) {
       parts[i] = transformMarkdownForEditor(parts[i]);
     }
   }
 
-  return parts.join('');
+  return restoreStashedMatches(parts.join(''), stashedMarkdownLinks.chunks, 'EDITORMDLINK');
 };
 
-export function EditorTextFormatter(text: string) {
+export function EditorTextFormatter(text: string, options: EditorTextFormatterOptions = {}) {
   if (!text) {
     return null;
   }
 
   const escaped = escapeMarkdownInUrl(text);
+  const { enableMarkdownLinks = true } = options;
 
-  return markdownToEditorText(escaped);
+  return markdownToEditorText(escaped, enableMarkdownLinks);
 }

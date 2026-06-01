@@ -223,7 +223,7 @@ html {
   position: fixed;
   z-index: 3000;
   display: flex;
-  align-items: flex-start;
+  align-items: stretch;
   color: #f0f0f0;
   font-size: 16px;
   line-height: 1.2;
@@ -231,7 +231,7 @@ html {
 
   &__main,
   &__submenu {
-    min-width: 170px;
+    min-width: 190px;
     padding: 6px;
     border: 1px solid rgba(255, 255, 255, 0.16);
     border-radius: 8px;
@@ -240,8 +240,7 @@ html {
   }
 
   &__submenu {
-    min-width: 210px;
-    margin-left: 2px;
+    min-width: 220px;
     background: #203c2e;
   }
 
@@ -266,6 +265,28 @@ html {
       background: #15935b;
       color: #fff;
     }
+
+    &:disabled {
+      background: transparent;
+      color: rgba(240, 240, 240, 0.45);
+      cursor: not-allowed;
+    }
+
+    &:disabled:hover {
+      background: transparent;
+      color: rgba(240, 240, 240, 0.45);
+    }
+  }
+
+  &__item--back {
+    margin-bottom: 6px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 0;
+    padding-bottom: 10px;
+  }
+
+  &__item--disabled {
+    color: rgba(240, 240, 240, 0.45);
   }
 }
 

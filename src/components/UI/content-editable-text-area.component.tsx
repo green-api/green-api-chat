@@ -20,7 +20,7 @@ export type ContentEditableTextAreaRef = {
   focus: () => void;
   getSelectionRange: () => SelectionRange;
   setSelectionRange: (start: number, end: number) => void;
-  insertText: (text: string) => void;
+  insertText: (text: string) => string;
   applyFormat: (format: MessageFormat) => string;
   getActiveFormats: () => MessageFormat[];
 };
@@ -30,10 +30,13 @@ type ContentEditableTextAreaProps = {
   className?: string;
   placeholder?: string;
   disabled?: boolean;
+  enableMarkdownLinks?: boolean;
   onChange?: (value: string) => void;
   onContextMenu?: (event: MouseEvent<HTMLDivElement>) => void;
   onKeyDown?: (event: KeyboardEvent<HTMLDivElement>) => void;
 };
+
+const TRAILING_BREAK_PLACEHOLDER_ATTR = 'data-trailing-break-placeholder';
 
 /**
  * Walks the DOM tree and collects text-bearing nodes along with <br> elements.
@@ -53,7 +56,10 @@ const getOffsetNodes = (root: Node) => {
       if (len > 0) {
         nodes.push({ node: current, length: len, isBr: false });
       }
-    } else if (current instanceof HTMLBRElement) {
+    } else if (
+      current instanceof HTMLBRElement &&
+      current.getAttribute(TRAILING_BREAK_PLACEHOLDER_ATTR) !== 'true'
+    ) {
       nodes.push({ node: current, length: 1, isBr: true });
     }
 
@@ -69,11 +75,33 @@ const getSelectionOffset = (root: HTMLElement, container: Node, offset: number) 
   range.setStart(root, 0);
   range.setEnd(container, offset);
 
-  // range.toString() doesn't account for <br>, so count them manually
-  const fragment = range.cloneContents();
-  const brs = fragment.querySelectorAll('br').length;
+  const getFragmentLength = (fragment: DocumentFragment) => {
+    const walker = document.createTreeWalker(fragment, NodeFilter.SHOW_ALL);
 
-  return range.toString().length + brs;
+    let current = walker.nextNode();
+    let length = 0;
+
+    while (current) {
+      if (current.nodeType === Node.TEXT_NODE) {
+        length += current.textContent?.length ?? 0;
+      } else if (
+        current instanceof HTMLBRElement &&
+        current.getAttribute(TRAILING_BREAK_PLACEHOLDER_ATTR) !== 'true'
+      ) {
+        length += 1;
+      }
+
+      current = walker.nextNode();
+    }
+
+    return length;
+  };
+
+  // Count length through DOM nodes instead of range.toString() so hidden formatting
+  // marker spans (used by the editor) are included in the text offset mapping.
+  const fragment = range.cloneContents();
+
+  return getFragmentLength(fragment);
 };
 
 const getSelectionRange = (root: HTMLElement): SelectionRange => {
@@ -179,11 +207,62 @@ const setSelectionRange = (root: HTMLElement, start: number, end: number) => {
 };
 
 const normalizeEditorText = (editor: HTMLElement) => {
-  return editor.innerText.replace(/\n$/, '');
+  const stringifyNode = (node: Node): string => {
+    if (node.nodeType === Node.TEXT_NODE) {
+      return node.textContent || '';
+    }
+
+    if (node instanceof HTMLBRElement) {
+      if (node.getAttribute(TRAILING_BREAK_PLACEHOLDER_ATTR) === 'true') {
+        return '';
+      }
+
+      return '\n';
+    }
+
+    if (node instanceof HTMLElement) {
+      if (node.tagName === 'A' && node.dataset.mdLink === 'true') {
+        const label = Array.from(node.childNodes).map(stringifyNode).join('');
+        const url = node.dataset.mdUrl || node.getAttribute('href') || '';
+
+        return `[${label}](${url})`;
+      }
+
+      return Array.from(node.childNodes).map(stringifyNode).join('');
+    }
+
+    return '';
+  };
+
+  const normalizedText = Array.from(editor.childNodes).map(stringifyNode).join('');
+  const hasSingleBrOnly =
+    editor.childNodes.length === 1 && editor.firstChild instanceof HTMLBRElement;
+
+  if (hasSingleBrOnly && normalizedText === '\n') {
+    return '';
+  }
+
+  return normalizedText;
 };
 
-const renderValue = (editor: HTMLElement, value: string, selectionRange?: SelectionRange) => {
-  const nextHtml = EditorTextFormatter(value) || '';
+const moveTextTypedInsideMarkdownLinkOutside = (value: string) => {
+  return value.replace(
+    /\[([^[\]\n]+?)\]([^\(\)\n]+)\(((?:https?:\/\/|www\.)[^\s)]+)\)/gi,
+    (_match, label: string, injectedText: string, url: string) =>
+      `[${label}](${url})${injectedText}`
+  );
+};
+
+const renderValue = (
+  editor: HTMLElement,
+  value: string,
+  enableMarkdownLinks: boolean,
+  selectionRange?: SelectionRange
+) => {
+  const baseHtml = EditorTextFormatter(value, { enableMarkdownLinks }) || '';
+  const nextHtml = value.endsWith('\n')
+    ? `${baseHtml}<br ${TRAILING_BREAK_PLACEHOLDER_ATTR}="true">`
+    : baseHtml;
 
   editor.innerHTML = nextHtml;
 
@@ -199,12 +278,22 @@ const ContentEditableTextArea = forwardRef<
   ContentEditableTextAreaProps
 >(
   (
-    { value = '', className = '', placeholder, disabled, onChange, onContextMenu, onKeyDown },
+    {
+      value = '',
+      className = '',
+      placeholder,
+      disabled,
+      enableMarkdownLinks = true,
+      onChange,
+      onContextMenu,
+      onKeyDown,
+    },
     ref
   ) => {
     const editorRef = useRef<HTMLDivElement>(null);
     const lastValueRef = useRef(value);
     const renderTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const getCurrentValue = () => lastValueRef.current;
 
     const debouncedRender = (editor: HTMLElement, text: string) => {
       if (renderTimerRef.current) {
@@ -218,7 +307,7 @@ const ContentEditableTextArea = forwardRef<
         if (document.activeElement === editor || editor.contains(document.activeElement)) {
           const selectionRange = getSelectionRange(editor);
 
-          renderValue(editor, text, selectionRange);
+          renderValue(editor, text, enableMarkdownLinks, selectionRange);
         }
       }, 300);
     };
@@ -230,7 +319,7 @@ const ContentEditableTextArea = forwardRef<
         return;
       }
 
-      const nextValue = normalizeEditorText(editor);
+      const nextValue = moveTextTypedInsideMarkdownLinkOutside(normalizeEditorText(editor));
 
       lastValueRef.current = nextValue;
       onChange?.(nextValue);
@@ -267,7 +356,7 @@ const ContentEditableTextArea = forwardRef<
         const editor = editorRef.current;
 
         if (!editor) {
-          return;
+          return getCurrentValue();
         }
 
         // Cancel any pending debounced render
@@ -277,7 +366,7 @@ const ContentEditableTextArea = forwardRef<
         }
 
         const selectionRange = getSelectionRange(editor);
-        const currentValue = lastValueRef.current || value || '';
+        const currentValue = getCurrentValue();
 
         const nextValue =
           currentValue.slice(0, selectionRange.start) +
@@ -289,17 +378,19 @@ const ContentEditableTextArea = forwardRef<
         lastValueRef.current = nextValue;
         onChange?.(nextValue);
 
-        renderValue(editor, nextValue, {
+        renderValue(editor, nextValue, enableMarkdownLinks, {
           start: nextCursorPosition,
           end: nextCursorPosition,
         });
+
+        return nextValue;
       },
 
       applyFormat: (format) => {
         const editor = editorRef.current;
 
         if (!editor) {
-          return lastValueRef.current || value || '';
+          return getCurrentValue();
         }
 
         // Cancel any pending debounced render
@@ -309,7 +400,7 @@ const ContentEditableTextArea = forwardRef<
         }
 
         const selectionRange = getSelectionRange(editor);
-        const currentValue = lastValueRef.current || value || '';
+        const currentValue = getCurrentValue();
 
         const formatted = applyMessageFormat(
           currentValue,
@@ -321,7 +412,7 @@ const ContentEditableTextArea = forwardRef<
         lastValueRef.current = formatted.value;
         onChange?.(formatted.value);
 
-        renderValue(editor, formatted.value, {
+        renderValue(editor, formatted.value, enableMarkdownLinks, {
           start: formatted.selectionStart,
           end: formatted.selectionEnd,
         });
@@ -337,7 +428,7 @@ const ContentEditableTextArea = forwardRef<
         }
 
         const selectionRange = getSelectionRange(editor);
-        const currentValue = lastValueRef.current || value || '';
+        const currentValue = getCurrentValue();
 
         return getActiveFormats(currentValue, selectionRange.start, selectionRange.end);
       },
@@ -364,8 +455,8 @@ const ContentEditableTextArea = forwardRef<
       }
 
       lastValueRef.current = value;
-      renderValue(editor, value);
-    }, [value]);
+      renderValue(editor, value, enableMarkdownLinks);
+    }, [value, enableMarkdownLinks]);
 
     useEffect(() => {
       return () => {
@@ -382,8 +473,8 @@ const ContentEditableTextArea = forwardRef<
         return;
       }
 
-      renderValue(editor, value);
-    }, []);
+      renderValue(editor, value, enableMarkdownLinks);
+    }, [enableMarkdownLinks, value]);
 
     return (
       <div
@@ -409,7 +500,7 @@ const ContentEditableTextArea = forwardRef<
           }
 
           const selectionRange = getSelectionRange(editor);
-          const currentValue = lastValueRef.current || value || '';
+          const currentValue = getCurrentValue();
 
           const nextValue =
             currentValue.slice(0, selectionRange.start) +
@@ -421,7 +512,7 @@ const ContentEditableTextArea = forwardRef<
           lastValueRef.current = nextValue;
           onChange?.(nextValue);
 
-          renderValue(editor, nextValue, {
+          renderValue(editor, nextValue, enableMarkdownLinks, {
             start: nextCursorPosition,
             end: nextCursorPosition,
           });
@@ -432,4 +523,3 @@ const ContentEditableTextArea = forwardRef<
 );
 
 export default ContentEditableTextArea;
-

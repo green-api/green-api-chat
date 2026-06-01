@@ -116,3 +116,81 @@
     color: var(--text-color);
   }
 }
+
+.message-code-block {
+  position: relative;
+  margin: 4px 0;
+  border-radius: 10px;
+  overflow: hidden;
+  border-left: var(--qouted-message-border-color) 5px solid;
+
+  &__pre {
+    margin: 0;
+    padding: 36px 12px 10px;
+    overflow-x: auto;
+    white-space: pre;
+    line-height: 1.45;
+  }
+
+  &__pre code {
+    color: inherit;
+    background: transparent;
+    padding: 0;
+    font-size: inherit;
+    white-space: inherit;
+  }
+
+  & .message-code-block__copy {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    margin: 0;
+    padding: 0;
+    width: 22px;
+    height: 22px;
+    border: 0;
+    border-radius: 4px;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    font-size: 0;
+
+    &::before,
+    &::after {
+      content: '';
+      position: absolute;
+      border: 1.5px solid currentColor;
+      border-radius: 2px;
+      width: 9px;
+      height: 11px;
+      box-sizing: border-box;
+    }
+
+    &::before {
+      top: 5px;
+      left: 7px;
+    }
+
+    &::after {
+      top: 3px;
+      left: 5px;
+      background: transparent;
+    }
+  }
+}
+
+.outgoing .message-code-block {
+  background-color: var(--qouted-message-outgoing-bg-color);
+  color: var(--text-color);
+}
+
+.incoming .message-code-block {
+  background-color: var(--qouted-message-incoming-bg-color);
+  color: var(--text-color);
+}
+
+.message-code-block .copy-massage-code-button {
+  &:hover {
+    color: var(--primary-color);
+  }
+}

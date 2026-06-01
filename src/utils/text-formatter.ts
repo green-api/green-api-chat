@@ -21,6 +21,36 @@ export const escapeMarkdownInUrl = (url: string) => {
   });
 };
 
+const stashMatches = (
+  text: string,
+  pattern: RegExp,
+  replacementFactory: (content: string) => string,
+  tokenPrefix: string
+) => {
+  const chunks: string[] = [];
+
+  const nextText = text.replace(pattern, (_, content: string) => {
+    const index = chunks.length;
+    const token = `@@${tokenPrefix}${index}@@`;
+
+    chunks.push(replacementFactory(content));
+
+    return token;
+  });
+
+  return { nextText, chunks };
+};
+
+const restoreStashedMatches = (text: string, chunks: string[], tokenPrefix: string) => {
+  if (!chunks.length) {
+    return text;
+  }
+
+  const tokenPattern = new RegExp(`@@${tokenPrefix}(\\d+)@@`, 'g');
+
+  return text.replace(tokenPattern, (_, index) => chunks[Number(index)] ?? '');
+};
+
 const markdownToText = (textInput: string) => {
   const processedText = textInput.replace(
     /(^|\s)(https?:\/\/(?:www\.)?\S+|www\.\S+)/gi,
@@ -45,10 +75,24 @@ const markdownToText = (textInput: string) => {
 const transformMarkdown = (markdownText: string) => {
   let transformedText = markdownText;
 
-  // Code block (triple backticks): ```code``` — process first to protect code from other formatting
-  transformedText = transformedText.replace(/```([^`]+)```/g, '<samp>$1</samp>');
-  // Inline code: `code`
-  transformedText = transformedText.replace(/`([^`]+)`/g, '<code>$1</code>');
+  // Protect code fragments from other regex transforms.
+  const stashedCodeBlocks = stashMatches(
+    transformedText,
+    /```([\s\S]+?)```/g,
+    (content) => `<samp>${content}</samp>`,
+    'MDCODEBLOCK'
+  );
+
+  transformedText = stashedCodeBlocks.nextText;
+
+  const stashedInlineCode = stashMatches(
+    transformedText,
+    /`([^`\n]+)`/g,
+    (content) => `<code>${content}</code>`,
+    'MDINLINECODE'
+  );
+
+  transformedText = stashedInlineCode.nextText;
 
   // Bold: *text* — recursively process inner content
   transformedText = transformedText.replace(
@@ -76,22 +120,47 @@ const transformMarkdown = (markdownText: string) => {
   // Replace newline characters with <br> tags
   transformedText = transformedText.replace(/(\n)(?!<\/?(ul|li)>)/g, '<br>');
 
+  transformedText = restoreStashedMatches(
+    transformedText,
+    stashedInlineCode.chunks,
+    'MDINLINECODE'
+  );
+  transformedText = restoreStashedMatches(
+    transformedText,
+    stashedCodeBlocks.chunks,
+    'MDCODEBLOCK'
+  );
+
   return transformedText;
 };
 
 const transformMarkdownForEditor = (markdownText: string) => {
   let transformedText = markdownText;
 
-  // Code block
-  transformedText = transformedText.replace(
-    /```([^`]+)```/g,
-    '<samp><span class="message-format-marker">```</span>$1<span class="message-format-marker">```</span></samp>'
+  // Protect code fragments from other regex transforms.
+  const stashedCodeBlocks = stashMatches(
+    transformedText,
+    /```([\s\S]+?)```/g,
+    (content) =>
+      '<samp><span class="message-format-marker">```</span>' +
+      content +
+      '<span class="message-format-marker">```</span></samp>',
+    'EDITORCODEBLOCK'
   );
-  // Inline code
-  transformedText = transformedText.replace(
-    /`([^`]+)`/g,
-    '<code><span class="message-format-marker">`</span>$1<span class="message-format-marker">`</span></code>'
+
+  transformedText = stashedCodeBlocks.nextText;
+
+  const stashedInlineCode = stashMatches(
+    transformedText,
+    /`([^`\n]+)`/g,
+    (content) =>
+      '<code><span class="message-format-marker">`</span>' +
+      content +
+      '<span class="message-format-marker">`</span></code>',
+    'EDITORINLINECODE'
   );
+
+  transformedText = stashedInlineCode.nextText;
 
   // Bold
   transformedText = transformedText.replace(
@@ -127,6 +196,17 @@ const transformMarkdownForEditor = (markdownText: string) => {
   // Replace newline characters with <br> tags
   transformedText = transformedText.replace(/(\n)(?!<\/?(ul|li)>)/g, '<br>');
 
+  transformedText = restoreStashedMatches(
+    transformedText,
+    stashedInlineCode.chunks,
+    'EDITORINLINECODE'
+  );
+  transformedText = restoreStashedMatches(
+    transformedText,
+    stashedCodeBlocks.chunks,
+    'EDITORCODEBLOCK'
+  );
+
   return transformedText;
 };
 
@@ -160,5 +240,3 @@ export function EditorTextFormatter(text: string) {
 
   return markdownToEditorText(escaped);
 }
-
-

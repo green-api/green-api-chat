@@ -472,6 +472,21 @@ html.dark-theme .ant-select-dropdown {
   cursor: text;
 }
 
+.chat-form__message-textarea .message-format-marker {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.chat-form__message-textarea code,
+.chat-form__message-textarea samp {
+  margin: 0;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  font-size: inherit;
+}
+
 .chat-form__message-textarea:empty::before {
   content: attr(data-placeholder);
   color: #bfbfbf;

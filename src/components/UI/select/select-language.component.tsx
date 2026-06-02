@@ -1,8 +1,8 @@
 import { Select, Typography } from 'antd';
 import { useTranslation } from 'react-i18next';
 
-import { MessageEventTypeEnum } from '../../../types';
 import { LANGUAGES } from 'configs';
+import { MessageEventTypeEnum } from 'types';
 
 const SelectLanguage = () => {
   const { i18n } = useTranslation();

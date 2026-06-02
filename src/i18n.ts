@@ -13,11 +13,11 @@ i18n
     nonExplicitSupportedLngs: true,
     load: 'languageOnly',
     backend: {
-      loadPath: '/locales_0.1.4/{{lng}}/translation.json',
+      loadPath: '/locales_0.1.5/{{lng}}/translation.json',
       expirationTime: 24 * 60 * 60 * 1000,
     },
     detection: {
-      order: ['localStorage', 'navigator', 'querystring', 'cookie', 'htmlTag', 'path', 'subdomain'],
+      order: ['querystring', 'localStorage', 'navigator', 'cookie', 'htmlTag', 'path', 'subdomain'],
       lookupQuerystring: 'lng',
       lookupCookie: 'i18next',
       lookupLocalStorage: 'i18nextLng',

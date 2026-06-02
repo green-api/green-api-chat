@@ -4,7 +4,7 @@ import viteCompression from 'vite-plugin-compression';
 import svgr from 'vite-plugin-svgr';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
-const assetsDirectory = 'assets_0.1.4';
+const assetsDirectory = 'assets_0.1.5';
 const hash = Math.floor(Math.random() * 90_000) + 10_000;
 
 export default defineConfig({

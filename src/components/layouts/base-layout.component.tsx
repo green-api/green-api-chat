@@ -1,7 +1,6 @@
 import { FC, useEffect, useLayoutEffect, useState } from 'react';
 
 import { Layout, message } from 'antd';
-import i18n from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 
@@ -43,6 +42,8 @@ const BaseLayout: FC = () => {
   const [searchParams] = useSearchParams();
   const { t } = useTranslation();
   const [isThemeSet, setIsThemeSet] = useState(false);
+
+  const { i18n } = useTranslation();
 
   const {
     setType,
@@ -174,12 +175,15 @@ const BaseLayout: FC = () => {
       const chatType = searchParams.get('type');
       const queryTypeInstance = getTypeInstanceFromQuery(searchParams.get('typeInstance'));
 
-      language && i18n.changeLanguage(language);
       brandDescription && setBrandData({ description: brandDescription });
       brandImageUrl && setBrandData({ brandImageUrl });
       theme && isValidTheme(theme) && setTheme(theme);
 
       (async () => {
+        if (language) {
+          await i18n.changeLanguage(language);
+        }
+
         const { data: instanceSettings } = await getSettings({
           idInstance: +idInstance,
           apiTokenInstance,

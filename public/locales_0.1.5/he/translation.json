@@ -217,6 +217,7 @@
   "CONTACT_ALREADY_EXISTS": "איש קשר זה כבר קיים",
   "CONTACT_NOT_FOUND": "איש הקשר לא נמצא",
   "CONTACT_SERVER_ERROR": "שגיאת שרת בעת עיבוד איש הקשר",
+  "BOT_LABEL": "בוט",
   "CONTACT_REQUEST_ERROR": "לא ניתן לעבד את הבקשה עבור איש הקשר",
   "DELETE_CONTACT_CONFIRM_TITLE": "למחוק את איש הקשר?",
   "DELETE_CONTACT_CONFIRM_DESCRIPTION": "לא ניתן לבטל פעולה זו",

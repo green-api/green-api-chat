@@ -213,6 +213,7 @@
   "CONTACT_ALREADY_EXISTS": "Bu kişi zaten mevcut",
   "CONTACT_NOT_FOUND": "Kişi bulunamadı",
   "CONTACT_SERVER_ERROR": "Kişi işlenirken sunucu hatası",
+  "BOT_LABEL": "bot",
   "CONTACT_REQUEST_ERROR": "Kişi isteği işlenemedi",
   "DELETE_CONTACT_CONFIRM_TITLE": "Kişi silinsin mi?",
   "DELETE_CONTACT_CONFIRM_DESCRIPTION": "Bu işlem geri alınamaz",

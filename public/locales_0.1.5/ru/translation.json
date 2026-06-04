@@ -238,6 +238,7 @@
   "CONTACT_ALREADY_EXISTS": "Контакт уже существует",
   "CONTACT_NOT_FOUND": "Контакт не найден",
   "CONTACT_SERVER_ERROR": "Ошибка сервера при обработке контакта",
+  "BOT_LABEL": "бот",
   "CONTACT_REQUEST_ERROR": "Не удалось выполнить запрос по контакту",
   "DELETE_CONTACT_CONFIRM_TITLE": "Удалить контакт?",
   "DELETE_CONTACT_CONFIRM_DESCRIPTION": "Действие нельзя отменить",

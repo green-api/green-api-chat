@@ -59,7 +59,7 @@ export type ChatType =
 export type ChatPlatform = 'web' | 'ios' | 'android';
 
 export interface ActiveChat
-  extends Pick<MessageInterface, 'chatId' | 'senderName' | 'senderContactName'> {
+  extends Pick<MessageInterface, 'chatId' | 'senderName' | 'senderContactName' | 'chatType'> {
   avatar: string;
   contactInfo?:
     | GetContactInfoResponseInterface
@@ -359,6 +359,7 @@ export interface MessageDataForRender {
   typeMessage: TypeMessage;
   textMessage: string;
   senderName: string;
+  senderType?: MessageInterface['senderType'];
   isLastMessage: boolean;
   timestamp: number;
   jsonMessage: string;

@@ -24,9 +24,11 @@ import {
   getMessageDate,
   getMessageTypeIcon,
   getPhoneNumberFromChatId,
+  getFirstNonEmptyString,
   getOutgoingStatusMessageIcon,
   getTextMessage,
   isWhatsAppOfficialChat,
+  isBotChatType,
 } from 'utils';
 
 interface ContactListItemProps {
@@ -128,11 +130,12 @@ const ChatListItem: FC<ContactListItemProps> = ({
   }, [contactInfo, avatarData, lastMessage]);
 
   let chatName: string | undefined;
+  const telegramChat = chats?.find((c) => c.chatId === lastMessage.chatId);
+  const isBotChat = isBotChatType(lastMessage.chatType) || isBotChatType(telegramChat?.type);
 
   switch (true) {
     case Boolean(chats && isTelegram):
-      const chat = chats?.find((c) => c.chatId === lastMessage.chatId);
-      chatName = chat ? chat.name : lastMessage.chatId;
+      chatName = telegramChat ? telegramChat.name : lastMessage.chatId;
       break;
     case typeof groupData === 'object' &&
       groupData !== null &&
@@ -150,12 +153,13 @@ const ChatListItem: FC<ContactListItemProps> = ({
       break;
 
     default:
-      chatName =
-        contactInfo?.contactName ||
-        contactInfo?.name ||
-        lastMessage.senderContactName ||
-        lastMessage.senderName ||
-        getPhoneNumberFromChatId(lastMessage.chatId);
+      chatName = getFirstNonEmptyString(
+        contactInfo?.contactName,
+        contactInfo?.name,
+        lastMessage.senderContactName,
+        lastMessage.senderName,
+        getPhoneNumberFromChatId(lastMessage.chatId)
+      );
   }
 
   useEffect(() => {
@@ -172,6 +176,7 @@ const ChatListItem: FC<ContactListItemProps> = ({
   const handleSelectChat = () => {
     setActiveChat({
       chatId: lastMessage.chatId,
+      chatType: lastMessage.chatType || telegramChat?.type,
       senderName: chatName,
       senderContactName: lastMessage.senderContactName,
       avatar,
@@ -200,12 +205,19 @@ const ChatListItem: FC<ContactListItemProps> = ({
             />
           }
           title={
-            <span
-              className="text-overflow message-signerData"
-              style={{ fontSize: 14, maxWidth: 280 }}
-            >
-              {isWhatsAppOfficialChat(lastMessage.chatId) ? 'WhatsApp' : chatName}
-            </span>
+            <Flex vertical gap={0}>
+              <span
+                className="text-overflow message-signerData"
+                style={{ fontSize: 14, maxWidth: 280 }}
+              >
+                {isWhatsAppOfficialChat(lastMessage.chatId) ? 'WhatsApp' : chatName}
+              </span>
+              {isBotChat && (
+                <span className="message-signerData" style={{ fontSize: 12, opacity: 0.7 }}>
+                  {t('BOT_LABEL')}
+                </span>
+              )}
+            </Flex>
           }
           description={
             showDescription && (

@@ -4,12 +4,14 @@ import { Typography } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import { useAppSelector } from 'hooks';
+import { useIsMaxInstance } from 'hooks/use-is-max-instance';
 import { selectActiveChat } from 'store/slices/chat.slice';
 import { ActiveChat, LanguageLiteral } from 'types';
 import { fillJsxString, formatDate, getFormattedMessage, isContactInfo } from 'utils';
 
 const ContactInfoDescription: FC = () => {
   const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
+  const isMax = useIsMaxInstance();
 
   const {
     t,
@@ -20,7 +22,7 @@ const ContactInfoDescription: FC = () => {
     return null;
   }
 
-  const description = isContactInfo(activeChat.contactInfo)
+  const description = isContactInfo(activeChat.contactInfo, isMax)
     ? activeChat.contactInfo.description
     : fillJsxString(t('GROUP_CREATED_BY'), [
         activeChat.contactInfo.owner.replace(/\@.*$/, ''),
@@ -35,11 +37,11 @@ const ContactInfoDescription: FC = () => {
     return null;
   }
 
-  const formattedDescription = isContactInfo(activeChat.contactInfo)
+  const formattedDescription = isContactInfo(activeChat.contactInfo, isMax)
     ? getFormattedMessage(description as string)
     : description;
 
-  const groupInviteLink = !isContactInfo(activeChat.contactInfo)
+  const groupInviteLink = !isContactInfo(activeChat.contactInfo, isMax)
     ? activeChat.contactInfo.groupInviteLink
     : null;
 

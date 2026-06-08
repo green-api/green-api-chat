@@ -1,0 +1,59 @@
+.audioMessageWrap {
+  padding: 6px 12px;
+  border-radius: 20px;
+  min-width: 260px;
+  height: 60px;
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  color: #8696a0;
+
+  &.outgoing {
+    background-color: #d9fdd3;
+  }
+
+  &.incoming {
+    background-color: #ffffff;
+  }
+}
+
+.playButtonContainer {
+  display: flex;
+  align-items: center;
+}
+
+.visualizerWrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  height: 40px;
+  overflow: hidden;
+  position: relative;
+  min-width: 140px;
+}
+
+.baseline {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  opacity: 0.5;
+  transform: translateY(-50%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.visualizerContainer {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+}
+
+.fallbackSvg {
+  position: relative;
+  z-index: 2;
+}

@@ -20,6 +20,7 @@ export * from './message.utils';
 export * from './image.utils';
 export * from './chat-type.utils';
 export * from './string.utils';
+export * from './message-formatting.utils';
 
 export function getErrorMessage(error: unknown, t: i18n['t']): string | null {
   let errorMessage = '';

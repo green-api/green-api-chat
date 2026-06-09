@@ -2,6 +2,8 @@ import { FC } from 'react';
 
 import { useTranslation } from 'react-i18next';
 
+import { useIsMaxInstance } from 'hooks/use-is-max-instance';
+import { useIsTelegramInstance } from 'hooks/use-is-telegram-instance';
 import { ParsedWabaTemplateInterface, TypeConnectionMessage } from 'types';
 import {
   fillTemplateString,
@@ -31,20 +33,29 @@ const TemplateMessage: FC<TemplateMessageProps> = ({
   interactiveButtonsMessage,
 }) => {
   const { t } = useTranslation();
+  const isMax = useIsMaxInstance();
+  const isTelegram = useIsTelegramInstance();
+  const enableMarkdownLinks = isMax || isTelegram;
 
   const message = interactiveButtonsMessage || templateMessage;
 
   const header = message.header
     ? message.params
-      ? getFormattedMessage(fillTemplateString(message.header, message.params))
-      : getFormattedMessage(message.header)
+      ? getFormattedMessage(fillTemplateString(message.header, message.params), {
+          enableMarkdownLinks,
+        })
+      : getFormattedMessage(message.header, { enableMarkdownLinks })
     : null;
 
   const content = message.params
-    ? getFormattedMessage(fillTemplateString(message.data, message.params))
-    : getFormattedMessage(message.data);
+    ? getFormattedMessage(fillTemplateString(message.data, message.params), {
+        enableMarkdownLinks,
+      })
+    : getFormattedMessage(message.data, { enableMarkdownLinks });
 
-  const footer = message.footer ? getFormattedMessage(message.footer) : null;
+  const footer = message.footer
+    ? getFormattedMessage(message.footer, { enableMarkdownLinks })
+    : null;
   const mediaUrl = message.mediaUrl;
   const buttons = message.buttons;
 

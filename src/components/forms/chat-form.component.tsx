@@ -4,12 +4,20 @@ import { SendOutlined } from '@ant-design/icons';
 import { Button, Flex, Form } from 'antd';
 import { useTranslation } from 'react-i18next';
 
+import ChatFormatMenu from 'components/forms/chat-form/chat-format-menu.component';
+import ChatLinkModal, {
+  LinkModalFormValues,
+} from 'components/forms/chat-form/chat-link-modal.component';
+import { useChatMessageFormatting } from 'components/forms/chat-form/use-chat-message-formatting.hook';
+import { useChatMessageSubmit } from 'components/forms/chat-form/use-chat-message-submit.hook';
 import { ReplyMessage } from 'components/full-chat/user-side/chats/reply-message.component';
+import ContentEditableTextArea, {
+  ContentEditableTextAreaRef,
+} from 'components/UI/content-editable-text-area.component';
 import SelectSendingMode from 'components/UI/select/select-sending-mode.component';
-import TextArea from 'components/UI/text-area.component';
-import { useActions, useAppDispatch, useAppSelector, useFormWithLanguageValidation } from 'hooks';
-import { useSendMessageMutation } from 'services/green-api/endpoints';
-import { journalsGreenApiEndpoints } from 'services/green-api/endpoints/journals.green-api.endpoints';
+import { useAppSelector, useFormWithLanguageValidation } from 'hooks';
+import { useIsMaxInstance } from 'hooks/use-is-max-instance';
+import { useIsTelegramInstance } from 'hooks/use-is-telegram-instance';
 import {
   selectActiveChat,
   selectReplyMessage,
@@ -19,8 +27,7 @@ import {
 } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
 import { selectPlatform } from 'store/slices/user.slice';
-import { ActiveChat, ChatFormValues, MessageInterface } from 'types';
-import { updateAllChats } from 'utils';
+import { ActiveChat, ChatFormValues } from 'types';
 
 const ChatForm: FC = () => {
   const instanceCredentials = useAppSelector(selectInstance);
@@ -30,139 +37,58 @@ const ChatForm: FC = () => {
   const platform = useAppSelector(selectPlatform);
   const replyMessage = useAppSelector(selectReplyMessage);
   const type = useAppSelector(selectType);
-
-  const { setReplyMessage } = useActions();
-
-  const dispatch = useAppDispatch();
+  const isMax = useIsMaxInstance();
+  const isTelegram = useIsTelegramInstance();
+  const isLinkFeatureEnabled = isMax || isTelegram;
+  const monospaceFormatStyle = isMax ? 'max' : isTelegram ? 'telegram' : 'default';
 
   const { t } = useTranslation();
 
-  const [sendMessage, { isLoading: isSendMessageLoading }] = useSendMessageMutation();
-
   const [form] = useFormWithLanguageValidation<ChatFormValues>();
-  const responseTimerReference = useRef<number | null>(null);
-
-  const textAreaRef = useRef<HTMLTextAreaElement>(null);
+  const messageEditorRef = useRef<ContentEditableTextAreaRef>(null);
 
   const [inputValue, setInputValue] = useState('');
+  const [linkForm] = Form.useForm<LinkModalFormValues>();
 
-  const onSendMessage = async (values: ChatFormValues) => {
-    const { message } = values;
+  const onInputChange = useCallback(
+    (value: string) => {
+      setInputValue(value);
+      form.setFieldValue('message', value);
+    },
+    [form]
+  );
 
-    if (!message) {
-      return;
-    }
+  const { onSendMessage, isSendMessageLoading } = useChatMessageSubmit({
+    form,
+    instanceCredentials,
+    activeChat,
+    isMiniVersion,
+    messageCount,
+    replyMessage,
+    setInputValue,
+    messageEditorRef,
+    t,
+  });
 
-    const body = {
-      ...instanceCredentials,
-      chatId: activeChat.chatId,
-      message,
-    };
-
-    if (replyMessage?.idMessage) {
-      Object.assign(body, { quotedMessageId: replyMessage.idMessage });
-    }
-
-    if (responseTimerReference.current) {
-      clearTimeout(responseTimerReference.current);
-
-      responseTimerReference.current = null;
-    }
-
-    form.setFields([{ name: 'response', errors: [], warnings: [] }]);
-
-    const { data, error } = await sendMessage(body);
-
-    if (error && 'status' in error && error.status === 466) {
-      form.setFields([{ name: 'response', errors: [t('QUOTE_EXCEEDED')] }]);
-
-      return;
-    }
-
-    if (data) {
-      const updateChatHistoryThunk = journalsGreenApiEndpoints.util?.updateQueryData(
-        'getChatHistory',
-        {
-          ...instanceCredentials,
-          chatId: activeChat.chatId,
-          count: isMiniVersion ? 10 : messageCount,
-        },
-        (draftChatHistory) => {
-          const existingMessage = draftChatHistory.find((msg) => msg.idMessage === data.idMessage);
-          if (existingMessage) {
-            console.log('message already in chat history');
-
-            return;
-          }
-
-          const newMessage = {
-            type: 'outgoing' as const,
-            typeMessage: 'textMessage' as const,
-            textMessage: message,
-            timestamp: Math.floor(Date.now() / 1000),
-            senderName: activeChat.senderName || '',
-            senderContactName: activeChat.senderContactName || '',
-            idMessage: data.idMessage,
-            chatId: activeChat.chatId,
-            statusMessage: 'sent' as const,
-          };
-
-          if (replyMessage?.idMessage) {
-            Object.assign(newMessage, {
-              quotedMessage: {
-                stanzaId: replyMessage.idMessage,
-                participant: JSON.parse(replyMessage?.jsonMessage).chatId,
-                textMessage: replyMessage.textMessage,
-              },
-              typeMessage: 'extendedTextMessage',
-            });
-          }
-
-          draftChatHistory.push(newMessage);
-
-          return draftChatHistory;
-        }
-      );
-
-      const updateChatListThunk = journalsGreenApiEndpoints.util?.updateQueryData(
-        'lastMessages',
-        { allMessages: true, ...instanceCredentials },
-        (draftChatHistory) => {
-          const newMessage: MessageInterface = {
-            type: 'outgoing',
-            typeMessage: 'textMessage',
-            textMessage: message,
-            timestamp: Math.floor(Date.now() / 1000),
-            senderName: activeChat.senderName || '',
-            senderContactName: activeChat.senderContactName || '',
-            idMessage: data.idMessage,
-            chatId: activeChat.chatId,
-            statusMessage: 'sent',
-          };
-
-          return updateAllChats(draftChatHistory, [newMessage], []);
-        }
-      );
-
-      dispatch(updateChatHistoryThunk);
-      dispatch(updateChatListThunk);
-
-      form.resetFields();
-
-      setInputValue('');
-      setReplyMessage(null);
-
-      setTimeout(() => textAreaRef.current?.focus(), 100);
-
-      responseTimerReference.current = setTimeout(() => {
-        form.setFields([{ name: 'response', errors: [], warnings: [] }]);
-      }, 5000);
-    }
-  };
-
-  const onInputChange = useCallback((value: string) => {
-    setInputValue(value);
-  }, []);
+  const {
+    formatMenu,
+    isLinkModalOpen,
+    onTextAreaContextMenu,
+    onSelectMessageFormat,
+    onOpenFormattingSubmenu,
+    onBackToFormatMenuRoot,
+    onOpenLinkModal,
+    onCancelLinkModal,
+    onInsertLink,
+    onEditorKeyDown,
+  } = useChatMessageFormatting({
+    form,
+    linkForm,
+    isLinkFeatureEnabled,
+    inputValue,
+    setInputValue,
+    messageEditorRef,
+  });
 
   useEffect(() => {
     form.setFields([{ name: 'message', errors: [] }]);
@@ -170,9 +96,9 @@ const ChatForm: FC = () => {
 
   useEffect(() => {
     if (platform === 'web' && type !== 'mobile-mode') {
-      textAreaRef.current?.focus();
+      messageEditorRef.current?.focus();
     }
-  });
+  }, [platform, type]);
 
   return (
     <Form
@@ -181,25 +107,36 @@ const ChatForm: FC = () => {
       onFinish={onSendMessage}
       onSubmitCapture={() => form.setFields([{ name: 'response', errors: [], warnings: [] }])}
       form={form}
-      onKeyDown={(e) => !e.ctrlKey && e.key === 'Enter' && form.submit()}
       disabled={isSendMessageLoading}
     >
       <Form.Item style={{ marginBottom: 0 }} name="response" className="response-form-item">
         <ReplyMessage />
+
         <Flex gap={10} align="center">
           <Flex align="center" justify="center">
             <SelectSendingMode />
           </Flex>
+
           <Form.Item
             style={{ marginBottom: 0, flex: '1 1 auto' }}
             name="message"
             normalize={(value) => {
               form.setFields([{ name: 'response', warnings: [] }]);
-
               return value;
             }}
           >
-            <TextArea ref={textAreaRef} onChange={onInputChange} />
+            <ContentEditableTextArea
+              ref={messageEditorRef}
+              className="chat-form__message-textarea"
+              value={inputValue}
+              placeholder={t('MESSAGE_PLACEHOLDER')}
+              disabled={isSendMessageLoading}
+              enableMarkdownLinks={isLinkFeatureEnabled}
+              monospaceFormatStyle={monospaceFormatStyle}
+              onChange={onInputChange}
+              onContextMenu={onTextAreaContextMenu}
+              onKeyDown={onEditorKeyDown}
+            />
           </Form.Item>
 
           <Form.Item
@@ -210,16 +147,33 @@ const ChatForm: FC = () => {
           >
             <Button
               type="link"
-              htmlType="submit"
+              htmlType="button"
               size="large"
               className="login-form-button"
               loading={isSendMessageLoading}
+              onClick={() => form.submit()}
             >
               <SendOutlined />
             </Button>
           </Form.Item>
         </Flex>
       </Form.Item>
+
+      <ChatFormatMenu
+        isLinkFeatureEnabled={isLinkFeatureEnabled}
+        formatMenu={formatMenu}
+        onOpenFormattingSubmenu={onOpenFormattingSubmenu}
+        onOpenLinkModal={onOpenLinkModal}
+        onBackToFormatMenuRoot={onBackToFormatMenuRoot}
+        onSelectMessageFormat={onSelectMessageFormat}
+      />
+
+      <ChatLinkModal
+        isOpen={isLinkFeatureEnabled && isLinkModalOpen}
+        form={linkForm}
+        onCancel={onCancelLinkModal}
+        onOk={onInsertLink}
+      />
     </Form>
   );
 };

@@ -4,6 +4,8 @@ import { useWatch } from 'antd/es/form/Form';
 import useFormInstance from 'antd/es/form/hooks/useFormInstance';
 import { useTranslation } from 'react-i18next';
 
+import { useIsMaxInstance } from 'hooks/use-is-max-instance';
+import { useIsTelegramInstance } from 'hooks/use-is-telegram-instance';
 import { LanguageLiteral, ParsedWabaTemplateInterface, WabaTemplateInterface } from 'types';
 import {
   fillTemplateString,
@@ -21,6 +23,9 @@ const TemplateMessagePreview: FC<MessagePreviewProps> = ({ template }) => {
     t,
     i18n: { resolvedLanguage },
   } = useTranslation();
+  const isMax = useIsMaxInstance();
+  const isTelegram = useIsTelegramInstance();
+  const enableMarkdownLinks = isMax || isTelegram;
 
   const form = useFormInstance();
 
@@ -33,13 +38,19 @@ const TemplateMessagePreview: FC<MessagePreviewProps> = ({ template }) => {
   const templateType = template.templateType;
   const header = parsedTemplateData.header
     ? params
-      ? getFormattedMessage(fillTemplateString(parsedTemplateData.header, params))
-      : getFormattedMessage(parsedTemplateData.header)
+      ? getFormattedMessage(fillTemplateString(parsedTemplateData.header, params), {
+          enableMarkdownLinks,
+        })
+      : getFormattedMessage(parsedTemplateData.header, { enableMarkdownLinks })
     : null;
   const content = params
-    ? getFormattedMessage(fillTemplateString(parsedTemplateData.data, params))
-    : getFormattedMessage(parsedTemplateData.data);
-  const footer = parsedTemplateData.footer ? getFormattedMessage(parsedTemplateData.footer) : null;
+    ? getFormattedMessage(fillTemplateString(parsedTemplateData.data, params), {
+        enableMarkdownLinks,
+      })
+    : getFormattedMessage(parsedTemplateData.data, { enableMarkdownLinks });
+  const footer = parsedTemplateData.footer
+    ? getFormattedMessage(parsedTemplateData.footer, { enableMarkdownLinks })
+    : null;
   const mediaUrl = parsedTemplateData.mediaUrl;
   const buttons = parsedTemplateData.buttons;
 

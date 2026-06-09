@@ -219,6 +219,77 @@ html {
   color: var(--primary-color);
 }
 
+.message-format-menu {
+  position: fixed;
+  z-index: 3000;
+  display: flex;
+  align-items: stretch;
+  color: var(--format-menu-text-color);
+  font-size: 16px;
+  line-height: 1.2;
+  user-select: none;
+
+  &__main,
+  &__submenu {
+    min-width: 190px;
+    padding: 6px;
+    border: 1px solid var(--format-menu-border-color);
+    border-radius: 8px;
+    background: var(--format-menu-bg);
+    box-shadow: 0 12px 28px var(--format-menu-shadow-color);
+  }
+
+  &__submenu {
+    min-width: 220px;
+    background: var(--format-submenu-bg);
+  }
+
+  &__item {
+    width: 100%;
+    min-height: 34px;
+    padding: 7px 12px;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+
+    &:hover,
+    &--active {
+      background: #15935b;
+      color: #fff;
+    }
+
+    &:disabled {
+      background: transparent;
+      color: var(--format-menu-disabled-text-color);
+      cursor: not-allowed;
+    }
+
+    &:disabled:hover {
+      background: transparent;
+      color: var(--format-menu-disabled-text-color);
+    }
+  }
+
+  &__item--back {
+    margin-bottom: 6px;
+    border-bottom: 1px solid var(--format-menu-divider-color);
+    border-radius: 0;
+    padding-bottom: 10px;
+  }
+
+  &__item--disabled {
+    color: var(--format-menu-disabled-text-color);
+  }
+}
+
 .copy-massage-code-button {
   margin-left: auto;
   font-size: 20px;
@@ -402,4 +473,83 @@ html.dark-theme .ant-select-dropdown .ant-select-item.ant-select-item-option {
 html.dark-theme .ant-select-dropdown {
   box-shadow: 0 0 0 2px var(--second-background) !important;
   background-color: var(--second-background) !important ;
+}
+
+.chat-form__message-textarea {
+  width: 100%;
+  min-height: 32px;
+  max-height: 120px;
+  padding: 4px 11px;
+  overflow-y: auto;
+
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  outline: none;
+  background: var(--input-bg);
+  color: var(--text-color);
+
+  line-height: 1.5715;
+  white-space: pre-wrap;
+  word-break: break-word;
+  cursor: text;
+}
+
+.chat-form__message-textarea .message-format-marker {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.chat-form__message-textarea code,
+.chat-form__message-textarea samp {
+  margin: 0;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  font-size: inherit;
+}
+
+.chat-form__message-textarea:empty::before {
+  content: attr(data-placeholder);
+  color: var(--input-placeholder-color);
+  pointer-events: none;
+}
+
+.chat-form__message-textarea[contenteditable='false'] {
+  cursor: not-allowed;
+  background: var(--input-disabled-bg);
+  color: var(--input-placeholder-color);
+  opacity: 1;
+}
+
+.chat-form__message-textarea:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px var(--focus-ring-color);
+}
+
+html.dark-theme .chat-link-modal .ant-modal-content,
+html.dark-theme .chat-link-modal .ant-modal-header {
+  background: var(--second-background);
+  color: var(--text-color);
+}
+
+html.dark-theme .chat-link-modal .ant-modal-title,
+html.dark-theme .chat-link-modal .ant-form-item-label > label {
+  color: var(--text-color);
+}
+
+html.dark-theme .chat-link-modal .ant-input {
+  border-color: var(--border-color);
+  background: var(--input-bg);
+  color: var(--text-color);
+}
+
+html.dark-theme .chat-link-modal .ant-input::placeholder {
+  color: var(--input-placeholder-color);
+}
+
+html.dark-theme .chat-link-modal .ant-input:focus,
+html.dark-theme .chat-link-modal .ant-input-focused {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px var(--focus-ring-color);
 }

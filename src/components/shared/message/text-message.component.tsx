@@ -5,6 +5,8 @@ import { useTranslation } from 'react-i18next';
 
 import { MessageProps } from './message.component';
 import { useAppDispatch, useAppSelector } from 'hooks';
+import { useIsMaxInstance } from 'hooks/use-is-max-instance';
+import { useIsTelegramInstance } from 'hooks/use-is-telegram-instance';
 import { useDownloadFileMutation } from 'services/green-api/endpoints';
 import { journalsGreenApiEndpoints } from 'services/green-api/endpoints/journals.green-api.endpoints';
 import { selectActiveChat, selectMessageCount, selectMiniVersion } from 'store/slices/chat.slice';
@@ -23,6 +25,9 @@ const TextMessage: FC<
   const selectedInstance = useAppSelector(selectInstance);
   const messageCount = useAppSelector(selectMessageCount);
   const activeChat = useAppSelector(selectActiveChat);
+  const isMax = useIsMaxInstance();
+  const isTelegram = useIsTelegramInstance();
+  const enableMarkdownLinks = isMax || isTelegram;
 
   const dispatch = useAppDispatch();
 
@@ -30,7 +35,7 @@ const TextMessage: FC<
 
   const [downloadFile, { isLoading }] = useDownloadFileMutation();
 
-  const formattedMessage = getFormattedMessage(textMessage);
+  const formattedMessage = getFormattedMessage(textMessage, { enableMarkdownLinks });
 
   const [expanded, setExpanded] = useState(false);
   const [needsExpansion, setNeedsExpansion] = useState(false);
@@ -45,6 +50,47 @@ const TextMessage: FC<
       setNeedsExpansion(needsExpand);
     }
   }, [textMessage, formattedMessage]);
+
+  useEffect(() => {
+    const textElement = textRef.current;
+
+    if (!textElement) {
+      return;
+    }
+
+    const onCodeCopyClick = async (event: globalThis.MouseEvent) => {
+      const target = event.target as HTMLElement | null;
+      const copyButton = target?.closest('[data-code-copy="true"]') as HTMLElement | null;
+
+      if (!copyButton) {
+        return;
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      const codeBlock = copyButton.closest('.message-code-block');
+      const codeElement = codeBlock?.querySelector('code');
+      const codeText = codeElement?.textContent ?? '';
+
+      if (!codeText) {
+        return;
+      }
+
+      try {
+        await navigator.clipboard.writeText(codeText);
+        message.success(t('TEXT_WAS_COPIED'));
+      } catch {
+        message.error(t('UNKNOWN_ERROR'));
+      }
+    };
+
+    textElement.addEventListener('click', onCodeCopyClick);
+
+    return () => {
+      textElement.removeEventListener('click', onCodeCopyClick);
+    };
+  }, [t, formattedMessage]);
 
   const { idMessage, chatId } = JSON.parse(jsonMessage ?? '{}');
 

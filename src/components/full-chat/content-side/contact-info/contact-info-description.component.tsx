@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 
 import { useAppSelector } from 'hooks';
 import { useIsMaxInstance } from 'hooks/use-is-max-instance';
+import { useIsTelegramInstance } from 'hooks/use-is-telegram-instance';
 import { selectActiveChat } from 'store/slices/chat.slice';
 import { ActiveChat, LanguageLiteral } from 'types';
 import { fillJsxString, formatDate, getFormattedMessage, isContactInfo } from 'utils';
@@ -12,6 +13,8 @@ import { fillJsxString, formatDate, getFormattedMessage, isContactInfo } from 'u
 const ContactInfoDescription: FC = () => {
   const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
   const isMax = useIsMaxInstance();
+  const isTelegram = useIsTelegramInstance();
+  const enableMarkdownLinks = isMax || isTelegram;
 
   const {
     t,
@@ -33,19 +36,17 @@ const ContactInfoDescription: FC = () => {
         ),
       ]);
 
-  if (!description) {
-    return null;
-  }
-
   const formattedDescription = isContactInfo(activeChat.contactInfo, isMax)
-    ? getFormattedMessage(description as string)
+    ? getFormattedMessage(description as string, { enableMarkdownLinks })
     : description;
 
   const groupInviteLink = !isContactInfo(activeChat.contactInfo, isMax)
     ? activeChat.contactInfo.groupInviteLink
     : null;
 
-  const formattedLink = groupInviteLink ? getFormattedMessage(groupInviteLink) : null;
+  const formattedLink = groupInviteLink
+    ? getFormattedMessage(groupInviteLink, { enableMarkdownLinks })
+    : null;
   const groupDescription = !isContactInfo(activeChat.contactInfo)
     ? activeChat.contactInfo.description
     : null;
@@ -80,7 +81,8 @@ const ContactInfoDescription: FC = () => {
           <Flex vertical gap={6}>
             {groupDescription && (
               <Typography.Paragraph style={{ marginBottom: 'initial' }}>
-                <strong>{t('DESCRIPTION')}:</strong> {getFormattedMessage(groupDescription)}
+                <strong>{t('DESCRIPTION')}:</strong>{' '}
+                {getFormattedMessage(groupDescription, { enableMarkdownLinks })}
               </Typography.Paragraph>
             )}
             {typeof allowParticipantsSendInviteLink === 'boolean' && (

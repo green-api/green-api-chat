@@ -22,6 +22,7 @@ import { selectInstance } from 'store/slices/instances.slice';
 import { LanguageLiteral, MessageInterface } from 'types';
 import {
   getMessageDate,
+  getFormattedMessage,
   getMessageTypeIcon,
   getPhoneNumberFromChatId,
   getFirstNonEmptyString,
@@ -171,6 +172,10 @@ const ChatListItem: FC<ContactListItemProps> = ({
   if (groupData && groupData === 'Error: item-not-found') return null;
 
   const textMessage = getTextMessage(lastMessage);
+  const formattedPreviewMessage = getFormattedMessage(textMessage, {
+    enableMarkdownLinks: isMax || isTelegram,
+    compact: true,
+  });
   const info = contactInfo || groupData;
 
   const handleSelectChat = () => {
@@ -232,7 +237,7 @@ const ChatListItem: FC<ContactListItemProps> = ({
                   <i>{t('DELETED_MESSAGE')}</i>
                 ) : (
                   <span className="text-overflow" style={{ width: 300 }}>
-                    {textMessage}
+                    {formattedPreviewMessage}
                   </span>
                 )}
               </Flex>

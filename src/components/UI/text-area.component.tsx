@@ -1,19 +1,20 @@
-import { forwardRef, useState } from 'react';
+import { forwardRef, useEffect, useState } from 'react';
 
 import { Input } from 'antd';
+import { TextAreaProps as AntdTextAreaProps } from 'antd/es/input/TextArea';
 import { useTranslation } from 'react-i18next';
 
 import { useAppSelector } from 'hooks';
 import { selectMiniVersion } from 'store/slices/chat.slice';
 
-interface TextAreaProps {
+interface TextAreaProps extends Omit<AntdTextAreaProps, 'onChange' | 'value'> {
   value?: string;
   onChange?: (value: string) => void;
   minRows?: number;
 }
 
 const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
-  ({ value, onChange, minRows }, ref) => {
+  ({ value, onChange, minRows, ...props }, ref) => {
     const isMiniVersion = useAppSelector(selectMiniVersion);
     const { t } = useTranslation();
 
@@ -21,29 +22,37 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
 
     const computedMinRows = typeof minRows === 'number' ? minRows : isMiniVersion ? 5 : 1;
 
+    useEffect(() => {
+      setValue(value || '');
+    }, [value]);
+
     return (
       <Input.TextArea
         ref={ref}
         style={{
-          height: isMiniVersion ? '' : '42px !important',
+          height: isMiniVersion ? undefined : 42,
         }}
         autoSize={{ minRows: computedMinRows, maxRows: 5 }}
         maxLength={20_000}
         placeholder={t('MESSAGE_PLACEHOLDER')}
-        onKeyDown={(e) => {
-          if (e.ctrlKey && e.key === 'Enter') {
-            setValue((value) => value + '\n');
-          }
-        }}
-        onPressEnter={(e) => e.preventDefault()}
-        value={newValue}
-        onChange={(e) => {
-          setValue(e.target.value);
+        onKeyDown={(event) => {
+          if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
+            event.preventDefault();
+            event.stopPropagation();
 
-          if (typeof onChange === 'function') {
-            onChange(e.target.value);
+            const nextValue = `${newValue}\n`;
+
+            setValue(nextValue);
+            onChange?.(nextValue);
           }
         }}
+        onPressEnter={(event) => event.preventDefault()}
+        value={newValue}
+        onChange={(event) => {
+          setValue(event.target.value);
+          onChange?.(event.target.value);
+        }}
+        {...props}
       />
     );
   }

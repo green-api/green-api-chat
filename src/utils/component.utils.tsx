@@ -99,8 +99,11 @@ export function getMessageTypeIcon(typeMessage: TypeMessage, downloadUrl?: strin
   );
 }
 
-export function getFormattedMessage(textMessage: string): Renderable {
-  const formattedText = TextFormatter(textMessage);
+export function getFormattedMessage(
+  textMessage: string,
+  options: { enableMarkdownLinks?: boolean; compact?: boolean } = {}
+): Renderable {
+  const formattedText = TextFormatter(textMessage, options);
   if (!formattedText) {
     return textMessage;
   }

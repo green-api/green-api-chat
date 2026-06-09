@@ -102,6 +102,8 @@
   "GROUP_COUNT_MEMBERS": "Группа  ·  {0} {1}",
   "GROUP_CREATED_BY": "Группа создана {0}, {1}",
   "GROUP_INVITE_LINK": "Ссылка на приглашение в группу",
+  "GROUP_ALLOW_PARTICIPANTS_SEND_INVITE_LINK": "Участникам разрешено отправлять ссылку-приглашение",
+  "GROUP_ALLOW_PARTICIPANTS_SEND_MESSAGE_HISTORY": "Участникам разрешено отправлять историю сообщений",
   "CANT_SEND_IN_GROUP": "Вы не можете отправлять сообщения в эту группу, так как больше не являетесь ее участником.",
   "BUSINESS_ACCOUNT_DESC": "Это бизнес аккаунт",
   "LEFT_THE_GROUP_ALERT_MESSAGE": "Вы покинули группу",

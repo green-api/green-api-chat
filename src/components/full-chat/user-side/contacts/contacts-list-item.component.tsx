@@ -9,7 +9,7 @@ import emptyAvatarButAvailable from 'assets/emptyAvatarButAvailable.svg';
 import AvatarImage from 'components/UI/avatar-image.component';
 import { useGetAvatarQuery } from 'services/green-api/endpoints';
 import { ContactListItemInterface, InstanceInterface } from 'types';
-import { getPhoneNumberFromChatId } from 'utils';
+import { getPhoneNumberFromChatId, isBotChatType } from 'utils';
 
 type TranslateFn = (key: string) => string;
 
@@ -55,6 +55,7 @@ const ContactsListItem: FC<ContactsListItemProps> = ({
   const displayName = getContactDisplayName(contact);
   const phoneOrChatId = getPhoneNumberFromChatId(contact.id);
   const whatsappProfileName = contact.name && contact.name !== displayName ? contact.name : null;
+  const isBotContact = isBotChatType(contact.type);
 
   return (
     <List.Item
@@ -92,7 +93,16 @@ const ContactsListItem: FC<ContactsListItemProps> = ({
     >
       <List.Item.Meta
         avatar={<AvatarImage src={avatar} size="large" fallbackSrc={emptyAvatarButAvailable} />}
-        title={<span className="contacts-section__name">{displayName}</span>}
+        title={
+          <Flex vertical gap={0}>
+            <span className="contacts-section__name">{displayName}</span>
+            {isBotContact && (
+              <Typography.Text type="secondary" className="contacts-section__chat-id">
+                {t('BOT_LABEL')}
+              </Typography.Text>
+            )}
+          </Flex>
+        }
         description={
           <Flex vertical>
             <Typography.Text type="secondary" className="contacts-section__chat-id">

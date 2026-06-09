@@ -28,6 +28,7 @@ const Message: FC<MessageProps> = ({ messageDataForRender, preview }) => {
     textMessage,
     type,
     senderName,
+    senderType,
     showSenderName,
     timestamp,
     jsonMessage,
@@ -151,6 +152,7 @@ const Message: FC<MessageProps> = ({ messageDataForRender, preview }) => {
             marginTop: interactiveButtonsMessage ? 10 : 0,
           }}
           senderName={senderName}
+          senderType={senderType}
           phone={phone}
         />
       )}

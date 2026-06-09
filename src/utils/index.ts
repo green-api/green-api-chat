@@ -18,6 +18,8 @@ export * from './chat-list.utils';
 export * from './type-guard.utils';
 export * from './message.utils';
 export * from './image.utils';
+export * from './chat-type.utils';
+export * from './string.utils';
 
 export function getErrorMessage(error: unknown, t: i18n['t']): string | null {
   let errorMessage = '';

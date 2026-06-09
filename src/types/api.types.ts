@@ -45,6 +45,7 @@ export type EditMessageParameters = GetChatInformationParameters & { message: st
 
 export type TypeConnectionMessage = 'outgoing' | 'incoming';
 export type StatusMessage = 'pending' | 'sent' | 'delivered' | 'read';
+export type TelegramChatType = 'user' | 'group' | 'supergroup' | 'channel' | 'bot';
 export type TypeMessage =
   | 'textMessage'
   | 'imageMessage'
@@ -96,8 +97,10 @@ export interface MessageInterface
   timestamp: number;
   statusMessage?: StatusMessage;
   typeMessage: TypeMessage;
+  chatType?: TelegramChatType;
   senderId?: string;
   senderName?: string;
+  senderType?: TelegramChatType;
   senderContactName?: string;
   textMessage?: string;
   caption?: string;
@@ -288,7 +291,8 @@ export interface ContactListItemInterface {
   id: string;
   name: string;
   contactName?: string;
-  type: 'user' | 'group';
+  type: 'user' | 'group' | 'supergroup' | 'channel' | 'bot';
+  phoneNumber?: string;
 }
 
 export interface UpsertContactPayloadInterface {
@@ -679,6 +683,6 @@ export interface QRResponseInterface {
 export interface GetChatsResponseInterface {
   chatId: string;
   name: string;
-  type: string;
+  type: TelegramChatType;
   phoneNumber?: string;
 }

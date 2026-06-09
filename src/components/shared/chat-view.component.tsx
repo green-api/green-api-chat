@@ -448,6 +448,7 @@ const ChatView: FC = () => {
               typeMessage,
               textMessage: getTextMessage(message),
               senderName: message.type === 'outgoing' ? t('YOU_SENDER_NAME') : message.senderName!,
+              senderType: message.senderType,
               phone: message.senderId && getPhoneNumberFromChatId(message.senderId),
               isLastMessage: idx === formattedMessages.length - 1,
               timestamp: message.timestamp,

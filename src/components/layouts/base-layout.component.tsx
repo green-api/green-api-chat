@@ -12,14 +12,19 @@ import MiniChat from 'components/mini-chat/chat.component';
 import { useActions, useAppSelector } from 'hooks';
 import {
   useLazyGetAvatarQuery,
+  useLazyGetChatsQuery,
   useLazyGetContactInfoQuery,
   useLazyGetGroupDataQuery,
   useLazyGetSettingsQuery,
 } from 'services/green-api/endpoints';
 import { selectMiniVersion } from 'store/slices/chat.slice';
-import { selectInstance, selectInstanceList } from 'store/slices/instances.slice';
+import {
+  selectInstance,
+  selectInstanceList,
+  selectTypeInstance,
+} from 'store/slices/instances.slice';
 import { selectUser } from 'store/slices/user.slice';
-import { MessageEventTypeEnum, TariffsEnum } from 'types';
+import { GetChatsResponseInterface, MessageEventTypeEnum, TariffsEnum } from 'types';
 import {
   isAuth,
   isPartnerChat,
@@ -38,6 +43,7 @@ const BaseLayout: FC = () => {
   const user = useAppSelector(selectUser);
   const selectedInstance = useAppSelector(selectInstance);
   const instanceList = useAppSelector(selectInstanceList);
+  const typeInstance = useAppSelector(selectTypeInstance);
   const [isEventAdded, setIsEventAdded] = useState(false);
   const [searchParams] = useSearchParams();
   const { t } = useTranslation();
@@ -57,6 +63,7 @@ const BaseLayout: FC = () => {
   } = useActions();
 
   const [getContactInfo] = useLazyGetContactInfoQuery();
+  const [getChats] = useLazyGetChatsQuery();
   const [getGroupData] = useLazyGetGroupDataQuery();
   const [getAvatar] = useLazyGetAvatarQuery();
   const [getSettings] = useLazyGetSettingsQuery();
@@ -267,6 +274,20 @@ const BaseLayout: FC = () => {
               error = contactInfoError;
             }
 
+            let telegramChat;
+            if (typeInstance === 'telegram') {
+              const { data: chatsData } = await getChats({
+                apiUrl: normalizedApiUrl,
+                mediaUrl: normalizedMediaUrl,
+                apiTokenInstance,
+                idInstance: +idInstance,
+              });
+
+              telegramChat = chatsData?.find(
+                (chat: GetChatsResponseInterface) => chat.chatId === chatId
+              );
+            }
+
             if (error) {
               message.error(getErrorMessage(error, t), 0);
               return;
@@ -279,10 +300,12 @@ const BaseLayout: FC = () => {
                 groupInfo.subject) ||
               contactInfo?.contactName ||
               contactInfo?.name ||
+              telegramChat?.name ||
               getPhoneNumberFromChatId(chatId);
 
             setActiveChat({
               chatId,
+              chatType: telegramChat?.type,
               senderName,
               avatar,
               contactInfo: groupInfo || contactInfo,
@@ -291,7 +314,7 @@ const BaseLayout: FC = () => {
         }
       })();
     }
-  }, [searchParams]);
+  }, [searchParams, typeInstance]);
 
   useEffect(() => {
     const isNotAuthorized = !isAuth(user);

@@ -4,6 +4,7 @@ import { Space } from 'antd';
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
 
+import AudioMessage from './audio-message.component';
 import FileMessage from './file-message.component';
 import MessageErrorBoundary from './message-error-boundary.component';
 import MessageSenderInfo from './message-sender-info.component';
@@ -100,6 +101,12 @@ const Message: FC<MessageProps> = ({ messageDataForRender, preview }) => {
       messageBody = (
         <MessageErrorBoundary type={type} jsonMessage={jsonMessage}>
           <TemplateMessage templateMessage={templateMessage} type={type} />
+        </MessageErrorBoundary>
+      );
+    } else if (typeMessage === 'audioMessage' && downloadUrl && !isMiniVersion) {
+      messageBody = (
+        <MessageErrorBoundary type={type} jsonMessage={jsonMessage}>
+          <AudioMessage downloadUrl={downloadUrl} type={type} />
         </MessageErrorBoundary>
       );
     } else if (downloadUrl && typeMessage !== 'stickerMessage' && !isMiniVersion) {

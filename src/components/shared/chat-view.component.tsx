@@ -172,7 +172,10 @@ const ChatView: FC = () => {
     const allFormatted = formatMessages(messages, resolvedLanguage as LanguageLiteral);
     const reactionMap = new Map<string, Map<string, string>>();
 
-    const pollUpdateMap = new Map<string, (typeof messages)[number]>();
+    const pollUpdateMap = new Map<
+      string,
+      Map<string, { timestamp: number; selectedOptions: string[] }>
+    >();
 
     for (const msg of allFormatted) {
       if ('typeMessage' in msg && msg.typeMessage === 'reactionMessage') {
@@ -196,9 +199,26 @@ const ChatView: FC = () => {
       if ('typeMessage' in msg && msg.typeMessage === 'pollUpdateMessage') {
         const stanzaId = msg.pollMessageData?.stanzaId;
         if (!stanzaId) continue;
-        const existing = pollUpdateMap.get(stanzaId);
-        if (!existing || msg.timestamp > existing.timestamp) {
-          pollUpdateMap.set(stanzaId, msg);
+        const senderId =
+          typeof msg.senderId === 'string' && msg.senderId.trim()
+            ? msg.senderId.trim()
+            : msg.type === 'outgoing'
+              ? 'outgoing:self'
+              : undefined;
+
+        if (!senderId) continue;
+
+        const selectedOptions =
+          msg.pollMessageData?.votes
+            ?.filter((vote) => vote.optionVoters.includes(senderId))
+            .map((vote) => vote.optionName) ?? [];
+
+        const updatesBySender = pollUpdateMap.get(stanzaId) ?? new Map();
+        const existing = updatesBySender.get(senderId);
+
+        if (!existing || msg.timestamp >= existing.timestamp) {
+          updatesBySender.set(senderId, { timestamp: msg.timestamp, selectedOptions });
+          pollUpdateMap.set(stanzaId, updatesBySender);
         }
       }
     }
@@ -212,15 +232,32 @@ const ChatView: FC = () => {
       })
       .map((msg) => {
         if ('typeMessage' in msg && msg.typeMessage === 'pollMessage') {
-          const update = pollUpdateMap.get(msg.idMessage);
-          if (update) {
+          const updatesBySender = pollUpdateMap.get(msg.idMessage);
+          if (updatesBySender) {
+            const votesByOption = new Map<string, Set<string>>();
+
+            for (const option of msg.pollMessageData?.options ?? []) {
+              votesByOption.set(option.optionName, new Set());
+            }
+
+            for (const [senderId, update] of updatesBySender.entries()) {
+              for (const selectedOption of update.selectedOptions) {
+                const optionVoters = votesByOption.get(selectedOption) ?? new Set<string>();
+                optionVoters.add(senderId);
+                votesByOption.set(selectedOption, optionVoters);
+              }
+            }
+
             return {
               ...msg,
               pollMessageData: {
                 name: msg.pollMessageData?.name ?? '',
                 options: msg.pollMessageData?.options ?? [],
                 multipleAnswers: msg.pollMessageData?.multipleAnswers ?? false,
-                votes: update.pollMessageData?.votes || [],
+                votes: Array.from(votesByOption.entries()).map(([optionName, optionVoters]) => ({
+                  optionName,
+                  optionVoters: Array.from(optionVoters),
+                })),
               },
             };
           }

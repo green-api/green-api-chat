@@ -93,6 +93,8 @@
   "GROUP_COUNT_MEMBERS": "Grup · {0} {1}",
   "GROUP_CREATED_BY": "Grup {0}, {1} tarafından oluşturuldu",
   "GROUP_INVITE_LINK": "Grup davet bağlantısı",
+  "GROUP_ALLOW_PARTICIPANTS_SEND_INVITE_LINK": "Katılımcılar davet bağlantısı gönderebilir",
+  "GROUP_ALLOW_PARTICIPANTS_SEND_MESSAGE_HISTORY": "Katılımcılar mesaj geçmişi gönderebilir",
   "CANT_SEND_IN_GROUP": "Artık üye olmadığınız için bu gruba mesaj gönderemezsiniz.",
   "BUSINESS_ACCOUNT_DESC": "Bu işletme hesabıdır",
   "LEFT_THE_GROUP_ALERT_MESSAGE": "Gruptan ayrıldınız",

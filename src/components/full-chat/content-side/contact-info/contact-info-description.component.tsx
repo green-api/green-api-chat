@@ -1,6 +1,6 @@
 import { FC } from 'react';
 
-import { Typography } from 'antd';
+import { Flex, Typography } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import { useAppSelector } from 'hooks';
@@ -44,14 +44,58 @@ const ContactInfoDescription: FC = () => {
     : null;
 
   const formattedLink = groupInviteLink ? getFormattedMessage(groupInviteLink) : null;
+  const groupDescription = !isContactInfo(activeChat.contactInfo)
+    ? activeChat.contactInfo.description
+    : null;
+  const allowParticipantsSendInviteLink = !isContactInfo(activeChat.contactInfo)
+    ? activeChat.contactInfo.allowParticipantsSendInviteLink
+    : null;
+  const allowParticipantsSendMessageHistory = !isContactInfo(activeChat.contactInfo)
+    ? activeChat.contactInfo.allowParticipantsSendMessageHistory
+    : null;
+  const hasGroupSettings =
+    groupDescription ||
+    typeof allowParticipantsSendInviteLink === 'boolean' ||
+    typeof allowParticipantsSendMessageHistory === 'boolean';
+  const getBooleanLabel = (value: boolean) => (value ? t('YES') : t('NO'));
+  const shouldRenderDescriptionBlock = Boolean(description);
+
+  if (!shouldRenderDescriptionBlock && !hasGroupSettings && !formattedLink) {
+    return null;
+  }
 
   return (
     <>
-      <div className="contact-info-description w-100 p-10">
-        <Typography.Paragraph style={{ marginBottom: 'initial' }}>
-          {formattedDescription}
-        </Typography.Paragraph>
-      </div>
+      {shouldRenderDescriptionBlock && (
+        <div className="contact-info-description w-100 p-10">
+          <Typography.Paragraph style={{ marginBottom: 'initial' }}>
+            {formattedDescription}
+          </Typography.Paragraph>
+        </div>
+      )}
+      {hasGroupSettings && (
+        <div className="contact-info-description w-100 p-10">
+          <Flex vertical gap={6}>
+            {groupDescription && (
+              <Typography.Paragraph style={{ marginBottom: 'initial' }}>
+                <strong>{t('DESCRIPTION')}:</strong> {getFormattedMessage(groupDescription)}
+              </Typography.Paragraph>
+            )}
+            {typeof allowParticipantsSendInviteLink === 'boolean' && (
+              <Typography.Paragraph style={{ marginBottom: 'initial' }}>
+                <strong>{t('GROUP_ALLOW_PARTICIPANTS_SEND_INVITE_LINK')}:</strong>{' '}
+                {getBooleanLabel(allowParticipantsSendInviteLink)}
+              </Typography.Paragraph>
+            )}
+            {typeof allowParticipantsSendMessageHistory === 'boolean' && (
+              <Typography.Paragraph style={{ marginBottom: 'initial' }}>
+                <strong>{t('GROUP_ALLOW_PARTICIPANTS_SEND_MESSAGE_HISTORY')}:</strong>{' '}
+                {getBooleanLabel(allowParticipantsSendMessageHistory)}
+              </Typography.Paragraph>
+            )}
+          </Flex>
+        </div>
+      )}
       {formattedLink && (
         <div className="contact-info-group-link p-10">
           <Typography.Paragraph style={{ marginBottom: 'initial' }} ellipsis={{ rows: 1 }}>

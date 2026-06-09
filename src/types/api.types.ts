@@ -254,10 +254,13 @@ export interface GetGroupDataSuccessResponseInterface
   owner: string;
   subject: string;
   creation: string;
+  description?: string;
   participants: GroupParticipantInterface[];
   subjectTime: number;
   subjectOwner: string;
   groupInviteLink: string;
+  allowParticipantsSendInviteLink?: boolean;
+  allowParticipantsSendMessageHistory?: boolean;
   chatId?: string;
 }
 

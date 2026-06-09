@@ -11,6 +11,7 @@ import GroupAvatarUpload from 'components/shared/chat-header/group-avatar-upload
 import LeaveGroupButton from 'components/shared/chat-header/leave-group.component';
 import { useActions, useAppSelector } from 'hooks';
 import { useIsGroupAdmin } from 'hooks/use-is-group-admin.hook';
+import { useIsMaxInstance } from 'hooks/use-is-max-instance';
 import { useIsTelegramInstance } from 'hooks/use-is-telegram-instance';
 import { useGetGroupDataQuery } from 'services/green-api/endpoints';
 import { selectActiveChat } from 'store/slices/chat.slice';
@@ -33,6 +34,7 @@ const ContactInfoHeader: FC = () => {
 
   const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
   const instanceCredentials = useAppSelector(selectInstance);
+  const isMax = useIsMaxInstance();
   const isTelegram = useIsTelegramInstance();
   const isGroup = activeChat.chatId?.includes('@g.us') || activeChat.chatId?.startsWith('-');
   const info = !isGroup ? t('CONTACT_INFO') : t('GROUP_INFO');
@@ -136,41 +138,47 @@ const ContactInfoHeader: FC = () => {
       );
     }
 
-    const contactName =
-      (isContactInfo(activeChat.contactInfo)
-        ? activeChat.contactInfo.contactName || activeChat.contactInfo.name
-        : activeChat.contactInfo.subject) || activeChat.senderName;
+    let isContact = false;
+    let contactName: string | undefined;
+    let contactCredentials: JSX.Element | string | undefined;
+    let category: string | null | undefined;
+    let isBusiness = false;
 
-    const contactCredentials = isContactInfo(activeChat.contactInfo)
-      ? activeChat.chatId?.replace(/\@.*$/, '')
-      : fillJsxString(t('GROUP_COUNT_MEMBERS'), [
-          activeChat.contactInfo.participants.length.toString(),
-          numWord(
-            activeChat.contactInfo.participants.length,
-            {
-              ru: ['участник', 'участника', 'участников'],
-              en: ['member', 'members', 'members'],
-              he: ['חברים', 'חברים', 'חָבֵר'],
-              tr: ['üye', 'üye', 'üye'],
-            },
-            resolvedLanguage as LanguageLiteral
-          ),
-        ]);
-
-    const category = isContactInfo(activeChat.contactInfo) && activeChat.contactInfo.category;
-    const isBusiness = isContactInfo(activeChat.contactInfo) && activeChat.contactInfo.isBusiness;
+    if (isContactInfo(activeChat.contactInfo, isMax)) {
+      isContact = true;
+      contactName =
+        activeChat.contactInfo.contactName || activeChat.contactInfo.name || activeChat.senderName;
+      contactCredentials = activeChat.chatId?.replace(/\@.*$/, '');
+      category = activeChat.contactInfo.category;
+      isBusiness = activeChat.contactInfo.isBusiness;
+    } else {
+      contactName = activeChat.contactInfo.subject || activeChat.senderName;
+      contactCredentials = fillJsxString(t('GROUP_COUNT_MEMBERS'), [
+        activeChat.contactInfo.participants.length.toString(),
+        numWord(
+          activeChat.contactInfo.participants.length,
+          {
+            ru: ['участник', 'участника', 'участников'],
+            en: ['member', 'members', 'members'],
+            he: ['חברים', 'חברים', 'חָבֵר'],
+            tr: ['üye', 'üye', 'üye'],
+          },
+          resolvedLanguage as LanguageLiteral
+        ),
+      ]);
+    }
 
     return (
       <Flex vertical gap={2} justify="center" align="center" className="w-100">
         <Flex gap={6} align="center">
           {isGroup && <EditGroupName />}
         </Flex>
-        {!isContactInfo(activeChat.contactInfo) && (
+        {!isContact && (
           <Typography.Text style={{ fontSize: 15 }}>
             id: {activeChat.chatId?.replace(/\@.*$/, '')}
           </Typography.Text>
         )}
-        {isContactInfo(activeChat.contactInfo) && contactName && (
+        {isContact && contactName && (
           <Typography.Title
             level={2}
             style={{ marginBottom: 'unset' }}

@@ -1,7 +1,7 @@
 import { FC, useState, useMemo } from 'react';
 
 import { EditFilled, CheckOutlined, CloseOutlined } from '@ant-design/icons';
-import { Input, Button, Flex, Typography, message } from 'antd';
+import { Input, Button, Flex, message } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import { useActions, useAppSelector } from 'hooks';
@@ -109,13 +109,6 @@ const EditGroupName: FC = () => {
         </>
       ) : (
         <>
-          <Typography.Title
-            level={2}
-            style={{ marginBottom: 'unset' }}
-            className="contact-info-name"
-          >
-            {initialName}
-          </Typography.Title>
           {isAdmin && (
             <Button icon={<EditFilled />} onClick={() => setIsEditing(true)} type="text" />
           )}

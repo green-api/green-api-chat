@@ -21,30 +21,35 @@ const ChatHeader: FC = () => {
 
   const { setActiveChat } = useActions();
 
-  if (activeChat) {
-    const { data: chats } = useGetChatsQuery(instanceCredentials, {
+  const { data: chats } = useGetChatsQuery(instanceCredentials, {
+    skip:
+      !activeChat ||
+      typeInstance !== 'telegram' ||
+      !instanceCredentials?.idInstance ||
+      !instanceCredentials?.apiTokenInstance,
+  });
+
+  const { data: chatHistory } = useGetChatHistoryQuery(
+    {
+      ...instanceCredentials,
+      chatId: activeChat?.chatId || '',
+      count: 20,
+    },
+    {
       skip:
-        typeInstance !== 'telegram' ||
+        !activeChat?.chatId ||
         !instanceCredentials?.idInstance ||
         !instanceCredentials?.apiTokenInstance,
-    });
-    const { data: chatHistory } = useGetChatHistoryQuery(
-      {
-        ...instanceCredentials,
-        chatId: activeChat.chatId,
-        count: 20,
-      },
-      {
-        skip:
-          !activeChat?.chatId ||
-          !instanceCredentials?.idInstance ||
-          !instanceCredentials?.apiTokenInstance,
-      }
-    );
+    }
+  );
+
+  if (activeChat) {
     const telegramChat = chats?.find((chat) => chat.chatId === activeChat.chatId);
+
     const historySenderName = chatHistory?.find((message) =>
       getFirstNonEmptyString(message.senderName, message.senderContactName)
     );
+
     const displayName = getFirstNonEmptyString(
       telegramChat?.name,
       activeChat.senderName,
@@ -63,7 +68,8 @@ const ChatHeader: FC = () => {
             {displayName}
           </h3>
         </Space>
-        {activeChat.chatId?.includes('@c') && <div>{activeChat.chatId?.replace(/\@.*$/, '')}</div>}
+
+        {activeChat.chatId?.includes('@c') && <div>{activeChat.chatId.replace(/\@.*$/, '')}</div>}
       </Flex>
     );
   }
@@ -71,6 +77,7 @@ const ChatHeader: FC = () => {
   return (
     <Flex justify="space-between" align="center">
       <h3 className="text-overflow">{t('CHAT_HEADER')}</h3>
+
       <Space style={{ gap: 10 }}>
         {platform === 'web' && (
           <Typography.Link

@@ -63,6 +63,50 @@ export const useChatMessageFormatting = ({
 
       const activeFormats = messageEditorRef.current?.getActiveFormats() || [];
 
+      let disableFormatting = false;
+      let disableLink = false;
+      if (isLinkFeatureEnabled && start !== end) {
+        const checkSelectionContainsLink = (text: string, s: number, e: number): boolean => {
+          const markdownLinkRegex = /\[\s*([^[\]]+?)\s*\]\(\s*((?:https?:\/\/|www\.)[^\s)]+)\s*\)/gi;
+          let match;
+          while ((match = markdownLinkRegex.exec(text)) !== null) {
+            const linkStart = match.index;
+            const linkEnd = markdownLinkRegex.lastIndex;
+            if (Math.max(s, linkStart) < Math.min(e, linkEnd)) {
+              return true;
+            }
+          }
+
+          const plainUrlRegex = /(?:https?:\/\/|www\.)[^\s]+/gi;
+          while ((match = plainUrlRegex.exec(text)) !== null) {
+            const linkStart = match.index;
+            const linkEnd = plainUrlRegex.lastIndex;
+            if (Math.max(s, linkStart) < Math.min(e, linkEnd)) {
+              return true;
+            }
+          }
+
+          return false;
+        };
+
+        disableFormatting = checkSelectionContainsLink(inputValue, start, end);
+
+        const checkSelectionHasFormatting = (text: string, s: number, e: number, formats: string[]): boolean => {
+          if (formats.length > 0) {
+            return true;
+          }
+          const selectedText = text.slice(s, e);
+          const hasBold = /(?<!\w)\*[^*\n]+\*(?!\w)/.test(selectedText);
+          const hasItalic = /(?<!\w)_[^_\n]+_(?!\w)/.test(selectedText);
+          const hasStrikethrough = /(?<!\w)~[^~\n]+~(?!\w)/.test(selectedText);
+          const hasMonospace = /`[^`\n]+`/.test(selectedText);
+
+          return hasBold || hasItalic || hasStrikethrough || hasMonospace;
+        };
+
+        disableLink = checkSelectionHasFormatting(inputValue, start, end, activeFormats);
+      }
+
       setFormatMenu({
         isOpen: true,
         mode: isLinkFeatureEnabled ? 'root' : 'formatting',
@@ -72,9 +116,11 @@ export const useChatMessageFormatting = ({
         selectionEnd: end,
         activeFormats,
         hasSelection: start !== end,
+        disableFormatting,
+        disableLink,
       });
     },
-    [isLinkFeatureEnabled, messageEditorRef]
+    [isLinkFeatureEnabled, messageEditorRef, inputValue]
   );
 
   const onSelectMessageFormat = useCallback(

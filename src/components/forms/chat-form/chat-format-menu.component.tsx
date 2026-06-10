@@ -15,6 +15,8 @@ export type MessageFormatMenuState = {
   selectionEnd: number;
   activeFormats: MessageFormat[];
   hasSelection: boolean;
+  disableFormatting?: boolean;
+  disableLink?: boolean;
 };
 
 const messageFormatOptions: { key: MessageFormat; translationKey: string }[] = [
@@ -83,6 +85,8 @@ const ChatFormatMenu: FC<ChatFormatMenuProps> = ({
     return null;
   }
 
+  const isFormattingDisabled = !formatMenu.hasSelection || formatMenu.disableFormatting;
+
   return (
     <div
       ref={menuRef}
@@ -107,15 +111,22 @@ const ChatFormatMenu: FC<ChatFormatMenuProps> = ({
         <div className="message-format-menu__main">
           <button
             className={`message-format-menu__item ${
-              !formatMenu.hasSelection ? 'message-format-menu__item--disabled' : ''
+              isFormattingDisabled ? 'message-format-menu__item--disabled' : ''
             }`}
             type="button"
             onClick={onOpenFormattingSubmenu}
-            disabled={!formatMenu.hasSelection}
+            disabled={isFormattingDisabled}
           >
             {t('MESSAGE_FORMAT')}
           </button>
-          <button className="message-format-menu__item" type="button" onClick={onOpenLinkModal}>
+          <button
+            className={`message-format-menu__item ${
+              formatMenu.disableLink ? 'message-format-menu__item--disabled' : ''
+            }`}
+            type="button"
+            onClick={onOpenLinkModal}
+            disabled={formatMenu.disableLink}
+          >
             {t('MESSAGE_FORMAT_LINK')}
           </button>
         </div>

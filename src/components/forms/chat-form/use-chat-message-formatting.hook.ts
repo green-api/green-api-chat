@@ -173,11 +173,35 @@ export const useChatMessageFormatting = ({
 
     try {
       const values = await linkForm.validateFields();
-      const text = values.linkText.trim();
+      let text = values.linkText.trim();
       const url = values.linkUrl.trim();
       const normalizedUrl = /^https?:\/\//i.test(url) ? url : `https://${url}`;
 
-      const markdownLink = `[${text}](${normalizedUrl})`;
+      let prefix = '';
+      let suffix = '';
+      while (true) {
+        let matched = false;
+        const formats = [
+          { char: '*', close: '*' },
+          { char: '_', close: '_' },
+          { char: '~', close: '~' },
+          { char: '`', close: '`' },
+        ];
+        for (const fmt of formats) {
+          if (text.startsWith(fmt.char) && text.endsWith(fmt.char) && text.length > 2) {
+            prefix = prefix + fmt.char;
+            suffix = fmt.close + suffix;
+            text = text.slice(1, -1);
+            matched = true;
+            break;
+          }
+        }
+        if (!matched) break;
+      }
+
+      const markdownLink = prefix
+        ? `${prefix}[${text}](${normalizedUrl})${suffix}`
+        : `[${text}](${normalizedUrl})`;
       const selectionStart = linkSelectionRange?.start ?? 0;
       const selectionEnd = linkSelectionRange?.end ?? 0;
 

@@ -178,7 +178,7 @@ const ContactInfoHeader: FC = () => {
             id: {activeChat.chatId?.replace(/\@.*$/, '')}
           </Typography.Text>
         )}
-        {isContact && contactName && (
+        {contactName && (
           <Typography.Title
             level={2}
             style={{ marginBottom: 'unset' }}

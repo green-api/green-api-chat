@@ -44,6 +44,13 @@ type ContentEditableTextAreaProps = {
 
 const TRAILING_BREAK_PLACEHOLDER_ATTR = 'data-trailing-break-placeholder';
 
+const getMarkdownLinkText = (node: HTMLElement) => {
+  const label = node.textContent || '';
+  const url = node.dataset.mdUrl || node.getAttribute('href') || '';
+
+  return `[${label}](${url})`;
+};
+
 /**
  * Walks the DOM tree and collects text-bearing nodes along with <br> elements.
  * Each entry carries: the DOM node, offset length it represents in plain text,
@@ -57,11 +64,25 @@ const getOffsetNodes = (root: Node) => {
 
   while (current) {
     if (current.nodeType === Node.TEXT_NODE) {
+      const parentElement = current.parentElement;
+      const isInsideMarkdownLink = parentElement?.closest('a[data-md-link="true"]');
+
+      if (isInsideMarkdownLink) {
+        current = walker.nextNode();
+        continue;
+      }
+
       const len = current.textContent?.length ?? 0;
 
       if (len > 0) {
         nodes.push({ node: current, length: len, isBr: false });
       }
+    } else if (
+      current instanceof HTMLElement &&
+      current.tagName === 'A' &&
+      current.dataset.mdLink === 'true'
+    ) {
+      nodes.push({ node: current, length: getMarkdownLinkText(current).length, isBr: false });
     } else if (
       current instanceof HTMLBRElement &&
       current.getAttribute(TRAILING_BREAK_PLACEHOLDER_ATTR) !== 'true'
@@ -89,7 +110,21 @@ const getSelectionOffset = (root: HTMLElement, container: Node, offset: number) 
 
     while (current) {
       if (current.nodeType === Node.TEXT_NODE) {
+        const parentElement = current.parentElement;
+        const isInsideMarkdownLink = parentElement?.closest('a[data-md-link="true"]');
+
+        if (isInsideMarkdownLink) {
+          current = walker.nextNode();
+          continue;
+        }
+
         length += current.textContent?.length ?? 0;
+      } else if (
+        current instanceof HTMLElement &&
+        current.tagName === 'A' &&
+        current.dataset.mdLink === 'true'
+      ) {
+        length += getMarkdownLinkText(current).length;
       } else if (
         current instanceof HTMLBRElement &&
         current.getAttribute(TRAILING_BREAK_PLACEHOLDER_ATTR) !== 'true'
@@ -155,6 +190,15 @@ const setSelectionRange = (root: HTMLElement, start: number, end: number) => {
             const index = Array.from(parent.childNodes).indexOf(entry.node as ChildNode);
             range.setStart(parent, index + 1);
           }
+        } else if (entry.node instanceof HTMLElement) {
+          const parent = entry.node.parentNode;
+
+          if (parent) {
+            const index = Array.from(parent.childNodes).indexOf(entry.node as ChildNode);
+            const isAfterLinkMiddle = start - currentOffset > entry.length / 2;
+
+            range.setStart(parent, index + (isAfterLinkMiddle ? 1 : 0));
+          }
         } else {
           range.setStart(entry.node, Math.min(start - currentOffset, entry.length));
         }
@@ -169,6 +213,15 @@ const setSelectionRange = (root: HTMLElement, start: number, end: number) => {
           if (parent) {
             const index = Array.from(parent.childNodes).indexOf(entry.node as ChildNode);
             range.setEnd(parent, index + 1);
+          }
+        } else if (entry.node instanceof HTMLElement) {
+          const parent = entry.node.parentNode;
+
+          if (parent) {
+            const index = Array.from(parent.childNodes).indexOf(entry.node as ChildNode);
+            const isAfterLinkMiddle = end - currentOffset > entry.length / 2;
+
+            range.setEnd(parent, index + (isAfterLinkMiddle ? 1 : 0));
           }
         } else {
           range.setEnd(entry.node, Math.min(end - currentOffset, entry.length));
@@ -189,6 +242,15 @@ const setSelectionRange = (root: HTMLElement, start: number, end: number) => {
       const lastEntry = offsetNodes[offsetNodes.length - 1];
 
       if (lastEntry.isBr) {
+        const parent = lastEntry.node.parentNode;
+
+        if (parent) {
+          const index = Array.from(parent.childNodes).indexOf(lastEntry.node as ChildNode);
+
+          if (!startSet) range.setStart(parent, index + 1);
+          if (!endSet) range.setEnd(parent, index + 1);
+        }
+      } else if (lastEntry.node instanceof HTMLElement) {
         const parent = lastEntry.node.parentNode;
 
         if (parent) {

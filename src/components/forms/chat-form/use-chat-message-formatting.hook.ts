@@ -250,9 +250,13 @@ export const useChatMessageFormatting = ({
         : `[${text}](${normalizedUrl})`;
       const selectionStart = linkSelectionRange?.start ?? 0;
       const selectionEnd = linkSelectionRange?.end ?? 0;
+      const selectedText = inputValue.slice(selectionStart, selectionEnd);
+      const leadingWhitespace = selectedText.match(/^\s*/)?.[0] ?? '';
+      const trailingWhitespace = selectedText.match(/\s*$/)?.[0] ?? '';
+      const linkWithSelectionWhitespace = `${leadingWhitespace}${markdownLink}${trailingWhitespace}`;
 
       messageEditorRef.current?.setSelectionRange(selectionStart, selectionEnd);
-      const nextValue = messageEditorRef.current?.insertText(markdownLink);
+      const nextValue = messageEditorRef.current?.insertText(linkWithSelectionWhitespace);
 
       if (nextValue !== undefined) {
         form.setFieldValue('message', nextValue);
@@ -270,6 +274,7 @@ export const useChatMessageFormatting = ({
     messageEditorRef,
     onCancelLinkModal,
     setInputValue,
+    inputValue,
   ]);
 
   const onEditorKeyDown = useCallback(

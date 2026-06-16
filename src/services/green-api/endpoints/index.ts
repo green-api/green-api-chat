@@ -11,6 +11,7 @@ import { wabaGreenApiEndpoints } from './waba.green-api.endpoints';
 export const {
   useSendMessageMutation,
   useGetChatHistoryQuery,
+  useLazyGetChatHistoryQuery,
   useGetContactInfoQuery,
   useLazyGetGroupDataQuery,
   useLazyGetContactInfoQuery,

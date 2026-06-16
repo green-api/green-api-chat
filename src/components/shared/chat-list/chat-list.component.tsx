@@ -6,19 +6,14 @@ import { useTranslation } from 'react-i18next';
 import ChatListItem from './chat-list-item.component';
 import ChatSearchInput from './chat-search-input.component';
 import { useAppSelector, useMediaQuery } from 'hooks';
-import { useLastMessagesQuery } from 'services/green-api/endpoints';
+import { useGetChatsQuery, useLazyGetChatHistoryQuery } from 'services/green-api/endpoints';
 import { selectMiniVersion, selectSearchQuery, selectType } from 'store/slices/chat.slice';
+import { selectInstance } from 'store/slices/instances.slice';
+import { GetChatsResponseInterface, MessageInterface } from 'types';
 import {
-  selectInstance,
-  selectIsLastMessagesSyncingAfterAuthorization,
-} from 'store/slices/instances.slice';
-import { MessageInterface } from 'types';
-import {
-  filterContacts,
   filterMessagesByText,
   getCachedGetChatHistoryMessages,
   getErrorMessage,
-  getLastChats,
   updateAllChats,
 } from 'utils';
 
@@ -34,13 +29,22 @@ const isNotReaction = (msg: MessageInterface) => {
   return true;
 };
 
+const chatToMessage = (chat: GetChatsResponseInterface): MessageInterface => ({
+  chatId: chat.chatId,
+  chatType: chat.type,
+  idMessage: `chat-${chat.chatId}`,
+  senderName: chat.name,
+  senderContactName: chat.name,
+  timestamp: 0,
+  type: 'incoming',
+  typeMessage: 'textMessage',
+  textMessage: '',
+});
+
 const ChatList: FC = () => {
   const instanceCredentials = useAppSelector(selectInstance);
   const isMiniVersion = useAppSelector(selectMiniVersion);
   const searchQuery = useAppSelector(selectSearchQuery);
-  const isLastMessagesSyncingAfterAuthorization = useAppSelector(
-    selectIsLastMessagesSyncingAfterAuthorization
-  );
   const greenApiQueries = useAppSelector((state) => state.greenAPI.queries);
   const type = useAppSelector(selectType);
 
@@ -48,18 +52,29 @@ const ChatList: FC = () => {
 
   const { t } = useTranslation();
 
-  const { data, isLoading, error } = useLastMessagesQuery(
-    { ...instanceCredentials, allMessages: true },
+  const {
+    data: chats = [],
+    isLoading,
+    error,
+    fulfilledTimeStamp: chatsFulfilledTimeStamp,
+  } = useGetChatsQuery(
+    { ...instanceCredentials },
     {
       skipPollingIfUnfocused: true,
       pollingInterval: isMiniVersion ? 17000 : 15000,
       skip: !instanceCredentials?.idInstance || !instanceCredentials.apiTokenInstance,
     }
   );
+  const [getChatHistory] = useLazyGetChatHistoryQuery();
 
   const chatListRef = useRef<HTMLDivElement | null>(null);
+  const pendingHistoryChatIdsRef = useRef<Set<string>>(new Set());
+  const lastHistoryRefreshTimeStampRef = useRef<number>();
 
   const [contactNames, setContactNames] = useState<Record<string, string>>({});
+  const [lastMessagesByChatId, setLastMessagesByChatId] = useState<
+    Record<string, MessageInterface>
+  >({});
   const [page, setPage] = useState(1);
   const [contactsPage, setContactsPage] = useState(1);
   const [messagesPage, setMessagesPage] = useState(1);
@@ -77,10 +92,16 @@ const ChatList: FC = () => {
     }));
   };
 
-  const allMessages: MessageInterface[] = useMemo(() => {
-    const rawMessages = data ?? [];
-    return rawMessages.filter(isNotReaction);
-  }, [data]);
+  const chatPlaceholders = useMemo(() => chats.map(chatToMessage), [chats]);
+
+  const allMessages: MessageInterface[] = useMemo(
+    () =>
+      chats.map((chat) => {
+        const message = lastMessagesByChatId[chat.chatId];
+        return message && isNotReaction(message) ? message : chatToMessage(chat);
+      }),
+    [chats, lastMessagesByChatId]
+  );
 
   const cachedGetChatHistoryMessages = useMemo(
     () => getCachedGetChatHistoryMessages(greenApiQueries, instanceCredentials),
@@ -93,42 +114,130 @@ const ChatList: FC = () => {
   );
 
   const searchableMessages = useMemo(
-    () => updateAllChats(allMessages, cachedGetChatHistoryMessages, []),
-    [allMessages, cachedGetChatHistoryMessages]
+    () => updateAllChats(Object.values(lastMessagesByChatId), cachedGetChatHistoryMessages, []),
+    [lastMessagesByChatId, cachedGetChatHistoryMessages]
   );
 
-  const isChatListLoading =
-    isLoading || (!isMiniVersion && isLastMessagesSyncingAfterAuthorization && !data?.length);
-
-  // Теперь эти функции автоматически работают с "чистой" историей без реакций
-  const lastMessages = getLastChats(allMessages, [], isMiniVersion ? limit : undefined);
-  const filteredContacts = filterContacts(allMessages, contactNames, searchQuery);
-  const filteredMessages = filterMessagesByText(searchableMessages, searchQuery);
-
+  const isChatListLoading = isLoading;
   const showResults = searchQuery.trim() !== '';
+
+  const filteredContacts = useMemo(() => {
+    const query = searchQuery.toLowerCase();
+
+    return chatPlaceholders.filter((chat) => {
+      const name = (contactNames[chat.chatId] || chat.senderName || '').toLowerCase();
+      const chatId = chat.chatId?.toLowerCase();
+
+      return name.includes(query) || chatId?.includes(query);
+    });
+  }, [chatPlaceholders, contactNames, searchQuery]);
+
+  const filteredMessages = useMemo(
+    () => filterMessagesByText(searchableMessages, searchQuery),
+    [searchableMessages, searchQuery]
+  );
 
   const pagedFilteredContacts = filteredContacts.slice(0, contactsPage * limit);
   const pagedFilteredMessages = filteredMessages.slice(0, messagesPage * limit);
+  const displayedMessages = showResults
+    ? pagedFilteredContacts
+    : allMessages.slice(0, page * limit);
 
   useEffect(() => {
-    if (!initialLoaded && allMessages.length > 0) {
+    setLastMessagesByChatId({});
+    pendingHistoryChatIdsRef.current.clear();
+    lastHistoryRefreshTimeStampRef.current = undefined;
+    setInitialLoaded(false);
+    setInitialMessageIds(new Set());
+    setUnreadCounts({});
+    setPage(1);
+    setContactsPage(1);
+    setMessagesPage(1);
+  }, [
+    instanceCredentials.idInstance,
+    instanceCredentials.apiTokenInstance,
+    instanceCredentials.apiUrl,
+  ]);
+
+  useEffect(() => {
+    if (!instanceCredentials?.idInstance || !instanceCredentials.apiTokenInstance) return;
+
+    const shouldRefreshVisibleChats =
+      Boolean(chatsFulfilledTimeStamp) &&
+      lastHistoryRefreshTimeStampRef.current !== chatsFulfilledTimeStamp;
+
+    const chatsToLoad = displayedMessages.filter(
+      (chat) =>
+        (shouldRefreshVisibleChats || !lastMessagesByChatId[chat.chatId]) &&
+        !pendingHistoryChatIdsRef.current.has(chat.chatId)
+    );
+
+    if (!chatsToLoad.length) return;
+
+    if (shouldRefreshVisibleChats) {
+      lastHistoryRefreshTimeStampRef.current = chatsFulfilledTimeStamp;
+    }
+
+    chatsToLoad.forEach((chat) => pendingHistoryChatIdsRef.current.add(chat.chatId));
+
+    Promise.all(
+      chatsToLoad.map(async (chat) => {
+        try {
+          const { data: history } = await getChatHistory(
+            {
+              ...instanceCredentials,
+              chatId: chat.chatId,
+              count: 1,
+            },
+          );
+
+          return { chat, message: history?.find(isNotReaction) };
+        } finally {
+          pendingHistoryChatIdsRef.current.delete(chat.chatId);
+        }
+      })
+    ).then((results) => {
+      setLastMessagesByChatId((prev) => {
+        const updated = { ...prev };
+
+        results.forEach(({ chat, message }) => {
+          updated[chat.chatId] = message ?? chat;
+        });
+
+        return updated;
+      });
+    });
+  }, [
+    chatsFulfilledTimeStamp,
+    displayedMessages,
+    getChatHistory,
+    instanceCredentials,
+    lastMessagesByChatId,
+  ]);
+
+  useEffect(() => {
+    const loadedMessages = Object.values(lastMessagesByChatId).filter(isNotReaction);
+
+    if (!initialLoaded && loadedMessages.length > 0) {
       const messageIds = new Set(
-        allMessages.map((msg) => msg.idMessage || `${msg.chatId}-${msg.timestamp}`)
+        loadedMessages.map((msg) => msg.idMessage || `${msg.chatId}-${msg.timestamp}`)
       );
       setInitialMessageIds(messageIds);
       setInitialLoaded(true);
     }
-  }, [allMessages, initialLoaded]);
+  }, [lastMessagesByChatId, initialLoaded]);
 
   useEffect(() => {
-    if (!initialLoaded || allMessages.length === 0) return;
+    const loadedMessages = Object.values(lastMessagesByChatId).filter(isNotReaction);
+
+    if (!initialLoaded || loadedMessages.length === 0) return;
 
     const prevIds = initialMessageIds;
     const newIds = new Set(prevIds);
 
     const newUnreadCounts: Record<string, number> = { ...unreadCounts };
 
-    allMessages
+    loadedMessages
       .filter((i) => i.type !== 'outgoing')
       .forEach((msg) => {
         const messageId = msg.idMessage || `${msg.chatId}-${msg.timestamp}`;
@@ -142,7 +251,7 @@ const ChatList: FC = () => {
 
     setInitialMessageIds(newIds);
     setUnreadCounts(newUnreadCounts);
-  }, [allMessages, initialLoaded]);
+  }, [lastMessagesByChatId, initialLoaded]);
 
   const clearUnreadCount = (chatId: string) => {
     setUnreadCounts((prev) => {
@@ -159,7 +268,11 @@ const ChatList: FC = () => {
       const updated = { ...prev };
       allMessages.forEach((msg) => {
         if (!updated[msg.chatId]) {
-          updated[msg.chatId] = msg.chatId?.toLowerCase();
+          updated[msg.chatId] = (
+            msg.senderContactName ||
+            msg.senderName ||
+            msg.chatId
+          ).toLowerCase();
         }
       });
       return updated;
@@ -190,7 +303,7 @@ const ChatList: FC = () => {
             scrollTimer = setTimeout(() => setMessagesPage((prev) => prev + 1), 500);
           }
         } else {
-          if (lastMessages.length > page * limit) {
+          if (allMessages.length > page * limit) {
             scrollTimer = setTimeout(() => setPage((prev) => prev + 1), 500);
           }
         }
@@ -202,7 +315,7 @@ const ChatList: FC = () => {
   }, [
     filteredContacts,
     filteredMessages,
-    lastMessages,
+    allMessages,
     contactsPage,
     messagesPage,
     page,
@@ -299,7 +412,7 @@ const ChatList: FC = () => {
           </>
         ) : (
           <List
-            dataSource={lastMessages.slice(0, page * limit)}
+            dataSource={displayedMessages}
             renderItem={(message) => (
               <ChatListItem
                 key={message.chatId}

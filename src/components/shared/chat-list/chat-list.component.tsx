@@ -1,6 +1,6 @@
 import { FC, useEffect, useMemo, useRef, useState } from 'react';
 
-import { Empty, Flex, List, Spin, Typography } from 'antd';
+import { Empty, Flex, List, Skeleton, Spin, Typography } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import ChatListItem from './chat-list-item.component';
@@ -18,6 +18,8 @@ import {
 } from 'utils';
 
 const { Title } = Typography;
+const CHATS_BATCH_SIZE = 100;
+const SKELETON_ITEMS_COUNT = 8;
 
 const isNotReaction = (msg: MessageInterface) => {
   if (msg.typeMessage === 'reactionMessage') {
@@ -52,13 +54,29 @@ const ChatList: FC = () => {
 
   const { t } = useTranslation();
 
+  const [contactNames, setContactNames] = useState<Record<string, string>>({});
+  const [lastMessagesByChatId, setLastMessagesByChatId] = useState<
+    Record<string, MessageInterface>
+  >({});
+  const [emptyHistoryChatIds, setEmptyHistoryChatIds] = useState<Set<string>>(new Set());
+  const [page, setPage] = useState(1);
+  const [contactsPage, setContactsPage] = useState(1);
+  const [messagesPage, setMessagesPage] = useState(1);
+  const [chatsCount, setChatsCount] = useState(CHATS_BATCH_SIZE);
+  const [initialLoaded, setInitialLoaded] = useState(false);
+  const [isHistoryLoading, setIsHistoryLoading] = useState(false);
+
+  const [initialMessageIds, setInitialMessageIds] = useState<Set<string>>(new Set());
+  const [unreadCounts, setUnreadCounts] = useState<Record<string, number>>({});
+
   const {
     data: chats = [],
     isLoading,
+    isFetching,
     error,
     fulfilledTimeStamp: chatsFulfilledTimeStamp,
   } = useGetChatsQuery(
-    { ...instanceCredentials },
+    { ...instanceCredentials, count: chatsCount },
     {
       skipPollingIfUnfocused: true,
       pollingInterval: isMiniVersion ? 17000 : 15000,
@@ -71,18 +89,6 @@ const ChatList: FC = () => {
   const pendingHistoryChatIdsRef = useRef<Set<string>>(new Set());
   const lastHistoryRefreshTimeStampRef = useRef<number>();
 
-  const [contactNames, setContactNames] = useState<Record<string, string>>({});
-  const [lastMessagesByChatId, setLastMessagesByChatId] = useState<
-    Record<string, MessageInterface>
-  >({});
-  const [page, setPage] = useState(1);
-  const [contactsPage, setContactsPage] = useState(1);
-  const [messagesPage, setMessagesPage] = useState(1);
-  const [initialLoaded, setInitialLoaded] = useState(false);
-
-  const [initialMessageIds, setInitialMessageIds] = useState<Set<string>>(new Set());
-  const [unreadCounts, setUnreadCounts] = useState<Record<string, number>>({});
-
   const limit = isMiniVersion ? 5 : matchMedia ? 16 : 12;
 
   const handleNameExtracted = (chatId: string, name: string) => {
@@ -92,15 +98,25 @@ const ChatList: FC = () => {
     }));
   };
 
-  const chatPlaceholders = useMemo(() => chats.map(chatToMessage), [chats]);
+  const chatPlaceholders = useMemo(
+    () => chats.filter((chat) => !emptyHistoryChatIds.has(chat.chatId)).map(chatToMessage),
+    [chats, emptyHistoryChatIds]
+  );
 
   const allMessages: MessageInterface[] = useMemo(
     () =>
-      chats.map((chat) => {
+      chats.reduce<MessageInterface[]>((result, chat) => {
         const message = lastMessagesByChatId[chat.chatId];
-        return message && isNotReaction(message) ? message : chatToMessage(chat);
-      }),
-    [chats, lastMessagesByChatId]
+
+        if (message && isNotReaction(message)) {
+          result.push(message);
+        } else if (!emptyHistoryChatIds.has(chat.chatId)) {
+          result.push(chatToMessage(chat));
+        }
+
+        return result;
+      }, []),
+    [chats, emptyHistoryChatIds, lastMessagesByChatId]
   );
 
   const cachedGetChatHistoryMessages = useMemo(
@@ -118,7 +134,7 @@ const ChatList: FC = () => {
     [lastMessagesByChatId, cachedGetChatHistoryMessages]
   );
 
-  const isChatListLoading = isLoading;
+  const isChatListLoading = isLoading || isFetching || isHistoryLoading;
   const showResults = searchQuery.trim() !== '';
 
   const filteredContacts = useMemo(() => {
@@ -142,9 +158,14 @@ const ChatList: FC = () => {
   const displayedMessages = showResults
     ? pagedFilteredContacts
     : allMessages.slice(0, page * limit);
+  const skeletonItems = useMemo(
+    () => Array.from({ length: Math.min(limit, SKELETON_ITEMS_COUNT) }, (_, index) => index),
+    [limit]
+  );
 
   useEffect(() => {
     setLastMessagesByChatId({});
+    setEmptyHistoryChatIds(new Set());
     pendingHistoryChatIdsRef.current.clear();
     lastHistoryRefreshTimeStampRef.current = undefined;
     setInitialLoaded(false);
@@ -153,6 +174,8 @@ const ChatList: FC = () => {
     setPage(1);
     setContactsPage(1);
     setMessagesPage(1);
+    setChatsCount(CHATS_BATCH_SIZE);
+    setIsHistoryLoading(false);
   }, [
     instanceCredentials.idInstance,
     instanceCredentials.apiTokenInstance,
@@ -162,22 +185,29 @@ const ChatList: FC = () => {
   useEffect(() => {
     if (!instanceCredentials?.idInstance || !instanceCredentials.apiTokenInstance) return;
 
-    const shouldRefreshVisibleChats =
+    let canceled = false;
+
+    const shouldRefreshChats =
       Boolean(chatsFulfilledTimeStamp) &&
       lastHistoryRefreshTimeStampRef.current !== chatsFulfilledTimeStamp;
 
-    const chatsToLoad = displayedMessages.filter(
+    const chatsToLoad = chats.filter(
       (chat) =>
-        (shouldRefreshVisibleChats || !lastMessagesByChatId[chat.chatId]) &&
+        (shouldRefreshChats ||
+          (!lastMessagesByChatId[chat.chatId] && !emptyHistoryChatIds.has(chat.chatId))) &&
         !pendingHistoryChatIdsRef.current.has(chat.chatId)
     );
 
-    if (!chatsToLoad.length) return;
+    if (!chatsToLoad.length) {
+      setIsHistoryLoading(false);
+      return;
+    }
 
-    if (shouldRefreshVisibleChats) {
+    if (shouldRefreshChats) {
       lastHistoryRefreshTimeStampRef.current = chatsFulfilledTimeStamp;
     }
 
+    setIsHistoryLoading(true);
     chatsToLoad.forEach((chat) => pendingHistoryChatIdsRef.current.add(chat.chatId));
 
     Promise.all(
@@ -197,19 +227,42 @@ const ChatList: FC = () => {
         }
       })
     ).then((results) => {
+      if (canceled) return;
+
       setLastMessagesByChatId((prev) => {
         const updated = { ...prev };
+        const emptyChatIds = new Set<string>();
 
         results.forEach(({ chat, message }) => {
-          updated[chat.chatId] = message ?? chat;
+          if (message) {
+            updated[chat.chatId] = message;
+          } else {
+            delete updated[chat.chatId];
+            emptyChatIds.add(chat.chatId);
+          }
         });
+
+        if (emptyChatIds.size) {
+          setEmptyHistoryChatIds((current) => {
+            const next = new Set(current);
+            emptyChatIds.forEach((chatId) => next.add(chatId));
+            return next;
+          });
+        }
 
         return updated;
       });
+      setIsHistoryLoading(false);
     });
+
+    return () => {
+      canceled = true;
+      chatsToLoad.forEach((chat) => pendingHistoryChatIdsRef.current.delete(chat.chatId));
+    };
   }, [
+    chats,
     chatsFulfilledTimeStamp,
-    displayedMessages,
+    emptyHistoryChatIds,
     getChatHistory,
     instanceCredentials,
     lastMessagesByChatId,
@@ -285,6 +338,12 @@ const ChatList: FC = () => {
 
     let scrollTimer: number;
 
+    const loadMoreChats = () => {
+      if (!isFetching && chats.length >= chatsCount) {
+        setChatsCount((prev) => prev + CHATS_BATCH_SIZE);
+      }
+    };
+
     const handleScrollBottom = () => {
       const bottomReached = element.scrollTop + element.offsetHeight + 50 >= element.scrollHeight;
 
@@ -301,22 +360,35 @@ const ChatList: FC = () => {
 
           if (filteredMessages.length > messagesPage * limit && !updated) {
             scrollTimer = setTimeout(() => setMessagesPage((prev) => prev + 1), 500);
+            updated = true;
+          }
+
+          if (!updated) {
+            scrollTimer = setTimeout(loadMoreChats, 500);
           }
         } else {
           if (allMessages.length > page * limit) {
             scrollTimer = setTimeout(() => setPage((prev) => prev + 1), 500);
+          } else {
+            scrollTimer = setTimeout(loadMoreChats, 500);
           }
         }
       }
     };
 
     element.addEventListener('scroll', handleScrollBottom);
-    return () => element.removeEventListener('scroll', handleScrollBottom);
+    return () => {
+      clearTimeout(scrollTimer);
+      element.removeEventListener('scroll', handleScrollBottom);
+    };
   }, [
+    chats.length,
+    chatsCount,
     filteredContacts,
     filteredMessages,
     allMessages,
     contactsPage,
+    isFetching,
     messagesPage,
     page,
     showResults,
@@ -360,7 +432,17 @@ const ChatList: FC = () => {
         ref={chatListRef}
         className={`contact-list px-2 overflow-auto ${isMiniVersion ? 'min-height-460' : 'height-720'}`}
       >
-        {showResults ? (
+        {isChatListLoading ? (
+          <List
+            dataSource={skeletonItems}
+            renderItem={(item) => (
+              <List.Item key={item} className="list-item contact-list__item">
+                <Skeleton avatar title={false} paragraph={{ rows: 2 }} active />
+              </List.Item>
+            )}
+            split={false}
+          />
+        ) : showResults ? (
           <>
             {pagedFilteredContacts.length > 0 && (
               <>
@@ -423,7 +505,7 @@ const ChatList: FC = () => {
               />
             )}
             loading={{
-              spinning: isChatListLoading,
+              spinning: false,
               className: `${isMiniVersion ? 'min-height-460' : 'height-720'}`,
               size: 'large',
             }}

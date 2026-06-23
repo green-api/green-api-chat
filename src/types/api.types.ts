@@ -290,6 +290,10 @@ export interface GetContactsParametersInterface extends InstanceInterface {
   count?: number;
 }
 
+export interface GetChatsParametersInterface extends InstanceInterface {
+  count?: number;
+}
+
 export interface ContactListItemInterface {
   id: string;
   name: string;
@@ -684,6 +688,7 @@ export interface QRResponseInterface {
 }
 
 export interface GetChatsResponseInterface {
+  id?: string;
   chatId: string;
   name: string;
   type: TelegramChatType;

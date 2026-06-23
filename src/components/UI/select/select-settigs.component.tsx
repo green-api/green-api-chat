@@ -13,7 +13,7 @@ import { UserSideActiveMode } from 'types';
 export const SettingsSelect = () => {
   const { setUserSideActiveMode, setActiveChat } = useActions();
   const { t } = useTranslation();
-  const { isMobile } = useBreakpoint();
+  const { isMobile, isTablet } = useBreakpoint();
 
   const type = useAppSelector(selectType);
 
@@ -68,7 +68,9 @@ export const SettingsSelect = () => {
         items: SETTINGS_SELECT_ITEMS,
         onClick: ({ key }) => {
           setUserSideActiveMode(key as UserSideActiveMode);
-          isMobile && setActiveChat(null);
+          if (isMobile || isTablet) {
+            setActiveChat(null);
+          }
         },
       }}
     >

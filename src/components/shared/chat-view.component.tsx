@@ -208,16 +208,22 @@ const ChatView: FC = () => {
 
         if (!senderId) continue;
 
+        const senderPhone = getPhoneNumberFromChatId(senderId);
+
         const selectedOptions =
           msg.pollMessageData?.votes
-            ?.filter((vote) => vote.optionVoters.includes(senderId))
+            ?.filter((vote) =>
+              vote.optionVoters.some(
+                (voter) => getPhoneNumberFromChatId(voter) === senderPhone
+              )
+            )
             .map((vote) => vote.optionName) ?? [];
 
         const updatesBySender = pollUpdateMap.get(stanzaId) ?? new Map();
-        const existing = updatesBySender.get(senderId);
+        const existing = updatesBySender.get(senderPhone);
 
         if (!existing || msg.timestamp >= existing.timestamp) {
-          updatesBySender.set(senderId, { timestamp: msg.timestamp, selectedOptions });
+          updatesBySender.set(senderPhone, { timestamp: msg.timestamp, selectedOptions });
           pollUpdateMap.set(stanzaId, updatesBySender);
         }
       }
@@ -240,10 +246,10 @@ const ChatView: FC = () => {
               votesByOption.set(option.optionName, new Set());
             }
 
-            for (const [senderId, update] of updatesBySender.entries()) {
+            for (const [senderPhone, update] of updatesBySender.entries()) {
               for (const selectedOption of update.selectedOptions) {
                 const optionVoters = votesByOption.get(selectedOption) ?? new Set<string>();
-                optionVoters.add(senderId);
+                optionVoters.add(senderPhone);
                 votesByOption.set(selectedOption, optionVoters);
               }
             }

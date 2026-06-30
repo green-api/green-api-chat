@@ -11,7 +11,7 @@ const DeveloperInstanceAlert: FC = () => {
 
   return (
     <Empty
-      className={`${isMiniVersion ? 'min-height-460' : 'height-720'} p-10`}
+      className={`${isMiniVersion ? 'min-height-320' : 'height-720'} p-10`}
       description={<DeveloperInstanceAlertDescription />}
     />
   );

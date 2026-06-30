@@ -1,7 +1,7 @@
 import { FC, useRef } from 'react';
 
 import { LoadingOutlined, SendOutlined } from '@ant-design/icons';
-import { Button, Col, Form, Input, Row } from 'antd';
+import { Button, Col, Form, Input, Row, Select } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import TextArea from 'components/UI/text-area.component';
@@ -28,6 +28,7 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
   const type = useAppSelector(selectType);
   const isMax = useIsMaxInstance();
   const isTelegram = useIsTelegramInstance();
+  const isMaxOrTelegram = isMax || isTelegram;
 
   const dispatch = useAppDispatch();
 
@@ -44,7 +45,7 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
   const onSendMessage = async (values: NewChatFormValues) => {
     if (!isAuth(user) && !standaloneChatTypes.includes(type) && isChatWorking === false) return;
 
-    const { message, chatId } = values;
+    const { message, chatId, chatIdType } = values;
 
     if (responseTimerReference.current) {
       clearTimeout(responseTimerReference.current);
@@ -57,18 +58,30 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
       { name: 'chatId', errors: [], warnings: [] },
     ]);
 
-    const isMaxOrTelegram = isMax || isTelegram;
-    const isGroupChat = /\d{17}/.test(chatId) || (isMaxOrTelegram && chatId.startsWith('-'));
+    const isGroupChat =
+      chatIdType === 'chatId'
+        ? (chatId.startsWith('-') || chatId.length === 17 || chatId.length === 18)
+        : (/\d{17}/.test(chatId));
+
     const fullChatId =
-      isMaxOrTelegram && chatId.startsWith('-')
+      chatId.includes('@')
         ? chatId
-        : isGroupChat
-          ? `${chatId}@g.us`
-          : `${chatId}@c.us`;
+        : chatIdType === 'chatId'
+          ? (chatId.startsWith('-') ? chatId : (chatId.length === 17 || chatId.length === 18 ? `${chatId}@g.us` : chatId))
+          : chatIdType === 'phone'
+            ? `${chatId}@c.us`
+            : isGroupChat
+              ? `${chatId}@g.us`
+              : `${chatId}@c.us`;
 
     let addNewChatInList = !isGroupChat;
 
-    if (!isGroupChat) {
+    const shouldCheckWhatsapp =
+      !isGroupChat &&
+      !isMaxOrTelegram &&
+      (!chatIdType || chatIdType === 'phone');
+
+    if (shouldCheckWhatsapp) {
       const { data, error } = await checkWhatsapp({
         ...instanceCredentials,
         phoneNumber: chatId,
@@ -146,26 +159,50 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
       onSubmitCapture={() => form.setFields([{ name: 'response', errors: [], warnings: [] }])}
       onKeyDown={(e) => !e.ctrlKey && e.key === 'Enter' && form.submit()}
     >
+      {isMaxOrTelegram && (
+        <Form.Item name="chatIdType" initialValue="phone" style={{ marginBottom: 12 }}>
+          <Select style={{ width: '100%' }}>
+            <Select.Option value="phone">{t('PHONE_NUMBER', 'Номер телефона')}</Select.Option>
+            <Select.Option value="chatId">{t('CONTACT_CHAT_ID_LABEL', 'Идентификатор чата')}</Select.Option>
+          </Select>
+        </Form.Item>
+      )}
       <Form.Item
-        name="chatId"
-        normalize={(value: string) => {
-          form.setFields([{ name: 'response', warnings: [] }]);
-
-          return value.replaceAll(/[^\d-]/g, '');
-        }}
-        rules={[
-          { required: true, message: t('EMPTY_FIELD_ERROR') },
-          { min: 9, message: t('CHAT_ID_INVALID_VALUE_MESSAGE') },
-        ]}
-        validateDebounce={800}
-        required
+        noStyle
+        shouldUpdate={(prevValues, currentValues) => prevValues.chatIdType !== currentValues.chatIdType}
       >
-        <Input
-          disabled={!isAuth}
-          autoComplete="off"
-          type="tel"
-          placeholder={t('CHAT_ID_PLACEHOLDER')}
-        />
+        {({ getFieldValue }) => {
+          const selectedType = getFieldValue('chatIdType') || 'phone';
+          const isPhoneRuleNeeded = !isMaxOrTelegram || selectedType === 'phone';
+
+          return (
+            <Form.Item
+              name="chatId"
+              normalize={(value: string) => {
+                form.setFields([{ name: 'response', warnings: [] }]);
+                const regex = selectedType === 'chatId' ? /[^\d-]/g : /\D/g;
+                return value.replaceAll(regex, '');
+              }}
+              rules={[
+                { required: true, message: t('EMPTY_FIELD_ERROR') },
+                ...(isPhoneRuleNeeded ? [{ min: 9, message: t('CHAT_ID_INVALID_VALUE_MESSAGE') }] : []),
+              ]}
+              validateDebounce={800}
+              required
+            >
+              <Input
+                disabled={!isAuth}
+                autoComplete="off"
+                type="tel"
+                placeholder={
+                  selectedType === 'phone'
+                    ? t('CHAT_ID_PHONE_PLACEHOLDER', 'Номер телефона')
+                    : t('CONTACT_CHAT_ID_LABEL', 'Идентификатор чата')
+                }
+              />
+            </Form.Item>
+          );
+        }}
       </Form.Item>
       <Form.Item style={{ marginBottom: 0 }} name="response" className="response-form-item">
         <Row gutter={[15, 15]} align={isMiniVersion ? 'bottom' : 'middle'}>

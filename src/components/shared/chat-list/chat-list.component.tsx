@@ -212,7 +212,7 @@ const ChatList: FC = () => {
   if (!instanceCredentials?.idInstance || !instanceCredentials.apiTokenInstance) {
     return (
       <Empty
-        className={`empty p-10 ${isMiniVersion ? 'min-height-460' : 'height-720'}`}
+        className={`empty p-10 ${isMiniVersion ? 'min-height-320' : 'height-720'}`}
         description={t('SELECT_INSTANCE_PLACEHOLDER')}
       />
     );
@@ -222,7 +222,7 @@ const ChatList: FC = () => {
     if ('status' in error && error.status === 429) {
       return (
         <Flex
-          className={`contact-list ${isMiniVersion ? 'min-height-460' : 'height-720'}`}
+          className={`contact-list ${isMiniVersion ? 'min-height-320' : 'height-720'}`}
           align="center"
           justify="center"
         >
@@ -233,7 +233,7 @@ const ChatList: FC = () => {
 
     return (
       <Empty
-        className={`empty p-10 ${isMiniVersion ? 'min-height-460' : 'height-720'}`}
+        className={`empty p-10 ${isMiniVersion ? 'min-height-320' : 'height-720'}`}
         description={getErrorMessage(error, t)}
       />
     );
@@ -245,7 +245,7 @@ const ChatList: FC = () => {
 
       <div
         ref={chatListRef}
-        className={`contact-list px-2 overflow-auto ${isMiniVersion ? 'min-height-460' : 'height-720'}`}
+        className={`contact-list px-2 overflow-auto ${isMiniVersion ? 'min-height-320' : 'height-720'}`}
       >
         {showResults ? (
           <>
@@ -311,7 +311,7 @@ const ChatList: FC = () => {
             )}
             loading={{
               spinning: isChatListLoading,
-              className: `${isMiniVersion ? 'min-height-460' : 'height-720'}`,
+              className: `${isMiniVersion ? 'min-height-320' : 'height-720'}`,
               size: 'large',
             }}
             locale={{

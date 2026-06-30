@@ -139,6 +139,7 @@ export interface ButtonsFormValues {
 
 export interface NewChatFormValues extends ChatFormValues {
   chatId: string;
+  chatIdType?: 'phone' | 'chatId';
 }
 
 export interface SendFileFormValues extends ChatFormValues {

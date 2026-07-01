@@ -8,7 +8,11 @@ import TextArea from 'components/UI/text-area.component';
 import { useAppDispatch, useAppSelector, useFormWithLanguageValidation } from 'hooks';
 import { useIsMaxInstance } from 'hooks/use-is-max-instance';
 import { useIsTelegramInstance } from 'hooks/use-is-telegram-instance';
-import { useCheckWhatsappMutation, useSendMessageMutation } from 'services/green-api/endpoints';
+import {
+  useCheckWhatsappMutation,
+  useLazyGetChatsQuery,
+  useSendMessageMutation,
+} from 'services/green-api/endpoints';
 import { journalsGreenApiEndpoints } from 'services/green-api/endpoints/journals.green-api.endpoints';
 import { selectMiniVersion, selectType } from 'store/slices/chat.slice';
 import { selectInstance, selectIsChatWorking } from 'store/slices/instances.slice';
@@ -36,11 +40,26 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
 
   const [sendMessage, { isLoading }] = useSendMessageMutation();
   const [checkWhatsapp] = useCheckWhatsappMutation();
+  const [getChats] = useLazyGetChatsQuery();
 
   const [form] = useFormWithLanguageValidation<NewChatFormValues>();
   const responseTimerReference = useRef<number | null>(null);
 
   const standaloneChatTypes = ['partner-iframe', 'one-chat-only'];
+
+  const resolveExistingChatIdByPhone = async (phone: string) => {
+    if (!isMaxOrTelegram) return null;
+
+    const normalizedPhone = phone.replace(/\D/g, '');
+
+    if (!normalizedPhone) return null;
+
+    const { data } = await getChats(instanceCredentials);
+
+    return (
+      data?.find((chat) => chat.phoneNumber?.replace(/\D/g, '') === normalizedPhone)?.chatId ?? null
+    );
+  };
 
   const onSendMessage = async (values: NewChatFormValues) => {
     if (!isAuth(user) && !standaloneChatTypes.includes(type) && isChatWorking === false) return;
@@ -60,28 +79,30 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
 
     const isGroupChat =
       chatIdType === 'chatId'
-        ? (chatId.startsWith('-') || chatId.length === 17 || chatId.length === 18)
+        ? chatId.startsWith('-') || chatId.length === 17 || chatId.length === 18
         : /\d{17}/.test(chatId);
 
-    const fullChatId =
-      chatId.includes('@')
+    const fullChatId = chatId.includes('@')
+      ? chatId
+      : isMaxOrTelegram
         ? chatId
-        : isMaxOrTelegram
-          ? chatId
         : chatIdType === 'chatId'
-          ? (chatId.startsWith('-') ? chatId : (chatId.length === 17 || chatId.length === 18 ? `${chatId}@g.us` : chatId))
+          ? chatId.startsWith('-')
+            ? chatId
+            : chatId.length === 17 || chatId.length === 18
+              ? `${chatId}@g.us`
+              : chatId
           : chatIdType === 'phone'
             ? `${chatId}@c.us`
             : isGroupChat
               ? `${chatId}@g.us`
               : `${chatId}@c.us`;
 
+    let optimisticChatId = fullChatId;
     let addNewChatInList = !isGroupChat;
 
     const shouldCheckWhatsapp =
-      !isGroupChat &&
-      !isMaxOrTelegram &&
-      (!chatIdType || chatIdType === 'phone');
+      !isGroupChat && !isMaxOrTelegram && (!chatIdType || chatIdType === 'phone');
 
     if (shouldCheckWhatsapp) {
       const { data, error } = await checkWhatsapp({
@@ -98,6 +119,10 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
       if (data && !data.existsWhatsapp) {
         return form.setFields([{ name: 'chatId', errors: [t('PHONE_DOES_NOT_HAVE_WHATSAPP')] }]);
       }
+    }
+
+    if (isMaxOrTelegram && chatIdType === 'phone') {
+      optimisticChatId = (await resolveExistingChatIdByPhone(chatId)) ?? fullChatId;
     }
 
     const body = {
@@ -128,7 +153,7 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
               senderName: '',
               senderContactName: '',
               idMessage: data.idMessage,
-              chatId: fullChatId,
+              chatId: optimisticChatId,
               statusMessage: 'sent',
             };
 
@@ -165,16 +190,21 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
         <Form.Item name="chatIdType" initialValue="chatId" style={{ marginBottom: 12 }}>
           <Select style={{ width: '100%' }}>
             <Select.Option value="phone">{t('PHONE_NUMBER', 'Номер телефона')}</Select.Option>
-            <Select.Option value="chatId">{t('CONTACT_CHAT_ID_LABEL', 'Идентификатор чата')}</Select.Option>
+            <Select.Option value="chatId">
+              {t('CONTACT_CHAT_ID_LABEL', 'Идентификатор чата')}
+            </Select.Option>
           </Select>
         </Form.Item>
       )}
       <Form.Item
         noStyle
-        shouldUpdate={(prevValues, currentValues) => prevValues.chatIdType !== currentValues.chatIdType}
+        shouldUpdate={(prevValues, currentValues) =>
+          prevValues.chatIdType !== currentValues.chatIdType
+        }
       >
         {({ getFieldValue }) => {
-          const selectedType = getFieldValue('chatIdType') || (isMaxOrTelegram ? 'chatId' : 'phone');
+          const selectedType =
+            getFieldValue('chatIdType') || (isMaxOrTelegram ? 'chatId' : 'phone');
           const isPhoneRuleNeeded = !isMaxOrTelegram || selectedType === 'phone';
           const minChatIdLength = isMaxOrTelegram ? 6 : 9;
 

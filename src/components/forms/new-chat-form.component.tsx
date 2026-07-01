@@ -61,11 +61,13 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
     const isGroupChat =
       chatIdType === 'chatId'
         ? (chatId.startsWith('-') || chatId.length === 17 || chatId.length === 18)
-        : (/\d{17}/.test(chatId));
+        : /\d{17}/.test(chatId);
 
     const fullChatId =
       chatId.includes('@')
         ? chatId
+        : isMaxOrTelegram
+          ? chatId
         : chatIdType === 'chatId'
           ? (chatId.startsWith('-') ? chatId : (chatId.length === 17 || chatId.length === 18 ? `${chatId}@g.us` : chatId))
           : chatIdType === 'phone'
@@ -160,7 +162,7 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
       onKeyDown={(e) => !e.ctrlKey && e.key === 'Enter' && form.submit()}
     >
       {isMaxOrTelegram && (
-        <Form.Item name="chatIdType" initialValue="phone" style={{ marginBottom: 12 }}>
+        <Form.Item name="chatIdType" initialValue="chatId" style={{ marginBottom: 12 }}>
           <Select style={{ width: '100%' }}>
             <Select.Option value="phone">{t('PHONE_NUMBER', 'Номер телефона')}</Select.Option>
             <Select.Option value="chatId">{t('CONTACT_CHAT_ID_LABEL', 'Идентификатор чата')}</Select.Option>
@@ -172,8 +174,9 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
         shouldUpdate={(prevValues, currentValues) => prevValues.chatIdType !== currentValues.chatIdType}
       >
         {({ getFieldValue }) => {
-          const selectedType = getFieldValue('chatIdType') || 'phone';
+          const selectedType = getFieldValue('chatIdType') || (isMaxOrTelegram ? 'chatId' : 'phone');
           const isPhoneRuleNeeded = !isMaxOrTelegram || selectedType === 'phone';
+          const minChatIdLength = isMaxOrTelegram ? 6 : 9;
 
           return (
             <Form.Item
@@ -185,7 +188,9 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
               }}
               rules={[
                 { required: true, message: t('EMPTY_FIELD_ERROR') },
-                ...(isPhoneRuleNeeded ? [{ min: 9, message: t('CHAT_ID_INVALID_VALUE_MESSAGE') }] : []),
+                ...(isPhoneRuleNeeded
+                  ? [{ min: minChatIdLength, message: t('CHAT_ID_INVALID_VALUE_MESSAGE') }]
+                  : []),
               ]}
               validateDebounce={800}
               required

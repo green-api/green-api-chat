@@ -217,3 +217,10 @@
     color: var(--primary-color);
   }
 }
+
+.ad-message {
+  background-color: var(--qouted-message-outgoing-bg-color);
+  border-radius: 10px;
+  padding: 10px;
+  color: var(--icon-color);
+}

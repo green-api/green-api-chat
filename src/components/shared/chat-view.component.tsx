@@ -219,9 +219,7 @@ const ChatView: FC = () => {
         const selectedOptions =
           msg.pollMessageData?.votes
             ?.filter((vote) =>
-              vote.optionVoters.some(
-                (voter) => getPhoneNumberFromChatId(voter) === senderPhone
-              )
+              vote.optionVoters.some((voter) => getPhoneNumberFromChatId(voter) === senderPhone)
             )
             .map((vote) => vote.optionName) ?? [];
 
@@ -469,6 +467,7 @@ const ChatView: FC = () => {
               statusMessage: message.statusMessage,
               quotedMessage: message.quotedMessage,
               templateMessage: templateMessage,
+              extendedTextMessage: message.extendedTextMessage,
               interactiveButtonsMessage: interactiveButtonsMessage,
               caption: message.caption,
               fileName: message.fileName,

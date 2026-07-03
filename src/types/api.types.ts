@@ -146,6 +146,12 @@ export interface ExtendedTextMessage {
   title: string;
   previewType: string;
   jpegThumbnail: string;
+  mediaType?: 'IMAGE' | 'VIDEO';
+  showAdAttribution?: boolean;
+  sourceId?: string;
+  sourceType?: string;
+  sourceUrl?: string;
+  thumbnailUrl?: string;
 }
 
 export interface ExtendedTextMessageData {

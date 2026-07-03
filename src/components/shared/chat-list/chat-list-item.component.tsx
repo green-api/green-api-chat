@@ -233,13 +233,7 @@ const ChatListItem: FC<ContactListItemProps> = ({
                     height: 20,
                   })}
                 {getMessageTypeIcon(lastMessage.typeMessage)}
-                {lastMessage.isDeleted ? (
-                  <i>{t('DELETED_MESSAGE')}</i>
-                ) : (
-                  <span className="text-overflow" style={{ width: 300 }}>
-                    {formattedPreviewMessage}
-                  </span>
-                )}
+                {lastMessage.isDeleted ? <i>{t('DELETED_MESSAGE')}</i> : formattedPreviewMessage}
               </Flex>
             )
           }

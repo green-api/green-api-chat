@@ -284,5 +284,6 @@
   "STATUS_VIDEO_FALLBACK": "Видео-статус",
   "STATUS_AUDIO_FALLBACK": "Аудио-статус",
   "STATUS_QUOTE_EXCEEDED": "Превышена квота тарифа. Статус не отправлен",
-  "STATUS_BULK_NOT_SENT": "Не отправлено {failed} из {total} статусов"
+  "STATUS_BULK_NOT_SENT": "Не отправлено {failed} из {total} статусов",
+  "AD_MSG_TITLE": "Сообщение через рекламу"
 }

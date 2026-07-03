@@ -4,6 +4,7 @@ import { Space } from 'antd';
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
 
+import AdMessage from './ad-message.component';
 import AudioMessage from './audio-message.component';
 import FileMessage from './file-message.component';
 import MessageErrorBoundary from './message-error-boundary.component';
@@ -40,6 +41,7 @@ const Message: FC<MessageProps> = ({ messageDataForRender, preview }) => {
     quotedMessage,
     templateMessage,
     interactiveButtonsMessage,
+    extendedTextMessage,
     caption,
     fileName,
     isDeleted,
@@ -134,6 +136,8 @@ const Message: FC<MessageProps> = ({ messageDataForRender, preview }) => {
     );
   }
 
+  const isAdMsg = extendedTextMessage && extendedTextMessage.sourceType === 'ad';
+
   return (
     <div
       ref={messageRef}
@@ -162,6 +166,14 @@ const Message: FC<MessageProps> = ({ messageDataForRender, preview }) => {
           messageDataForRender={messageDataForRender}
           quotedMessage={quotedMessage}
           type={type}
+        />
+      )}
+
+      {isAdMsg && (
+        <AdMessage
+          sourceUrl={extendedTextMessage.sourceUrl}
+          description={extendedTextMessage.description}
+          thumbnailUrl={extendedTextMessage.thumbnailUrl}
         />
       )}
 

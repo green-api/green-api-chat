@@ -268,5 +268,6 @@
   "STATUS_VIDEO_FALLBACK": "Video status",
   "STATUS_AUDIO_FALLBACK": "Audio status",
   "STATUS_QUOTE_EXCEEDED": "The tariff quota has been exceeded. The status has not been sent",
-  "STATUS_BULK_NOT_SENT": "Failed to send {failed} of {total} statuses"
+  "STATUS_BULK_NOT_SENT": "Failed to send {failed} of {total} statuses",
+  "AD_MSG_TITLE": "Message via advertisement"
 }

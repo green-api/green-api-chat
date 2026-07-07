@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 
 import waChatIcon from 'assets/wa-chat.svg';
 import AvatarImage from 'components/UI/avatar-image.component';
+import { FULL_CHAT_HISTORY_COUNT } from 'configs';
 import { useActions, useAppSelector } from 'hooks';
 import { useGetChatHistoryQuery, useGetChatsQuery } from 'services/green-api/endpoints';
 import { selectActiveChat, selectType } from 'store/slices/chat.slice';
@@ -35,7 +36,9 @@ const ContactChatHeader: FC = () => {
     {
       ...instanceCredentials,
       chatId: activeChat.chatId,
-      count: 20,
+      // Must match the count requested by ChatView so RTK Query dedupes both hooks
+      // into a single getChatHistory request instead of firing a second parallel one.
+      count: FULL_CHAT_HISTORY_COUNT,
     },
     {
       skip:

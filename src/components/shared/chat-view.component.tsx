@@ -5,6 +5,12 @@ import { useTranslation } from 'react-i18next';
 
 import Message from './message/message.component';
 import LeftGroupAlert from 'components/alerts/left-group-alert.component';
+import {
+  CHAT_HISTORY_COUNT_STEP,
+  FULL_CHAT_HISTORY_COUNT,
+  MAX_CHAT_HISTORY_COUNT,
+  MINI_CHAT_HISTORY_COUNT,
+} from 'configs';
 import { useActions, useAppSelector } from 'hooks';
 import { useIsMaxInstance } from 'hooks/use-is-max-instance';
 import { useIsWabaInstance } from 'hooks/use-is-waba-instance';
@@ -32,7 +38,7 @@ const ChatView: FC = () => {
   const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
   const isMiniVersion = useAppSelector(selectMiniVersion);
 
-  const [count, setCount] = useState(50);
+  const [count, setCount] = useState(FULL_CHAT_HISTORY_COUNT);
   const { setMessageCount } = useActions();
   const isMax = useIsMaxInstance();
   const isWaba = useIsWabaInstance();
@@ -64,7 +70,7 @@ const ChatView: FC = () => {
     {
       ...instanceCredentials,
       chatId: activeChat.chatId,
-      count: isMiniVersion ? 10 : count,
+      count: isMiniVersion ? MINI_CHAT_HISTORY_COUNT : count,
     },
     {
       skipPollingIfUnfocused: true,
@@ -73,11 +79,11 @@ const ChatView: FC = () => {
   );
 
   useEffect(() => {
-    setMessageCount(50);
+    setMessageCount(FULL_CHAT_HISTORY_COUNT);
   }, [activeChat]);
 
   const handleLoadMore = () => {
-    if (count >= 200) return;
+    if (count >= MAX_CHAT_HISTORY_COUNT) return;
 
     const element = chatViewRef.current;
     if (!element) return;
@@ -88,7 +94,7 @@ const ChatView: FC = () => {
     };
 
     setCount((prev) => {
-      const next = Math.min(prev + 20, 200);
+      const next = Math.min(prev + CHAT_HISTORY_COUNT_STEP, MAX_CHAT_HISTORY_COUNT);
       setMessageCount(next);
       return next;
     });
@@ -107,7 +113,7 @@ const ChatView: FC = () => {
 
   useEffect(() => {
     const element = chatViewRef.current;
-    if (element && count === 50 && !scrollPositionRef.current) {
+    if (element && count === FULL_CHAT_HISTORY_COUNT && !scrollPositionRef.current) {
       setTimeout(() => {
         element.scrollTo({ top: element.scrollHeight, behavior: 'smooth' });
       }, 10);
@@ -321,7 +327,7 @@ const ChatView: FC = () => {
 
   return (
     <div className={`chat-view ${isMiniVersion ? '' : 'full'}`} ref={chatViewRef}>
-      {count < 200 ? (
+      {count < MAX_CHAT_HISTORY_COUNT ? (
         <div style={{ textAlign: 'center', padding: '12px 0' }}>
           <Button onClick={handleLoadMore}>{t('LOAD_MORE_MESSAGES')}</Button>
         </div>

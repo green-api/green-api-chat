@@ -12,7 +12,7 @@ import { useIsMaxInstance } from 'hooks/use-is-max-instance';
 import { useIsTelegramInstance } from 'hooks/use-is-telegram-instance';
 import { useGetAvatarQuery } from 'services/green-api/endpoints';
 import { selectInstance } from 'store/slices/instances.slice';
-import { normalizeAvatarSrc } from 'utils';
+import { isAuthorizedInstanceState, normalizeAvatarSrc } from 'utils';
 
 export const Profile = () => {
   const { setIsAuthorizingInstance } = useActions();
@@ -73,7 +73,7 @@ export const Profile = () => {
         />
       </div>
       <AuthorizationStatus style={{ alignSelf: 'center', marginTop: 15 }} />
-      {settings?.stateInstance === 'authorized' && (
+      {isAuthorizedInstanceState(settings?.stateInstance) && (
         <div style={{ paddingLeft: '2rem' }}>
           <Flex
             gap={22}

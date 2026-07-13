@@ -4,6 +4,7 @@ import { LeftOutlined } from '@ant-design/icons';
 import { Flex, Space, Typography } from 'antd';
 import { useTranslation } from 'react-i18next';
 
+import { MINI_CHAT_HISTORY_COUNT } from 'configs';
 import { useActions, useAppSelector } from 'hooks';
 import { useGetChatHistoryQuery, useGetChatsQuery } from 'services/green-api/endpoints';
 import { selectActiveChat } from 'store/slices/chat.slice';
@@ -33,7 +34,9 @@ const ChatHeader: FC = () => {
     {
       ...instanceCredentials,
       chatId: activeChat?.chatId || '',
-      count: 20,
+      // Must match the count requested by ChatView so RTK Query dedupes both hooks
+      // into a single getChatHistory request instead of firing a second parallel one.
+      count: MINI_CHAT_HISTORY_COUNT,
     },
     {
       skip:

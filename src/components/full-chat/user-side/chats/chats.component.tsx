@@ -16,6 +16,7 @@ import {
   selectIsLastMessagesSyncingAfterAuthorization,
 } from 'store/slices/instances.slice';
 import { StateInstanceEnum } from 'types';
+import { isAuthorizedInstanceState } from 'utils';
 
 const Chats: FC = () => {
   const isMiniVersion = useAppSelector(selectMiniVersion);
@@ -34,7 +35,7 @@ const Chats: FC = () => {
 
   const needToRenderNewChatBtn =
     !isMiniVersion &&
-    settings?.stateInstance === StateInstanceEnum.Authorized &&
+    isAuthorizedInstanceState(settings?.stateInstance) &&
     type !== 'instance-view-page' &&
     type !== 'one-chat-only';
 
@@ -76,7 +77,7 @@ const Chats: FC = () => {
             ))}
         </Flex>
       </Flex>
-      {(settings?.stateInstance === StateInstanceEnum.Authorized ||
+      {(isAuthorizedInstanceState(settings?.stateInstance) ||
         settings?.stateInstance === StateInstanceEnum.Suspended ||
         isLastMessagesSyncingAfterAuthorization) && (
         <ChatList key={instanceCredentials?.idInstance} />

@@ -8,9 +8,14 @@ import {
   CookieOptionsInterface,
   ExpandedInstanceInterface,
   LanguageLiteral,
+  StateInstanceEnum,
   TypeInstance,
   UserInterface,
 } from 'types';
+
+export function isAuthorizedInstanceState(state?: StateInstanceEnum) {
+  return state === StateInstanceEnum.Authorized || state === StateInstanceEnum.YellowCard;
+}
 
 export * from './component.utils';
 export * from './date.utils';

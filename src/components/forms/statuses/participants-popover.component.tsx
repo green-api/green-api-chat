@@ -1,11 +1,13 @@
 import { FC, useEffect, useState } from 'react';
 
-import { Button, Popover, Tabs, Form, Input } from 'antd';
+import { Button, Popover, Tabs, Form } from 'antd';
 import useFormInstance from 'antd/es/form/hooks/useFormInstance';
 import { InternalFieldProps } from 'rc-field-form/lib/Field';
 import { useTranslation } from 'react-i18next';
 
 import FormListFields from '../form-list-feilds.component';
+import ChatIdInput from 'components/UI/chat-id-input.component';
+import { isLidChatId, splitChatId } from 'utils/chat-id.utils';
 
 const ParticipantsPopover: FC = () => {
   const { t } = useTranslation();
@@ -18,11 +20,21 @@ const ParticipantsPopover: FC = () => {
     if (activeKey === 'all_contacts') {
       form.setFieldValue('participants', []);
     }
-  }, [activeKey]);
+  }, [activeKey, form]);
 
   const getParticipantChatIdElement = (isRequired = true) => {
     const rules: InternalFieldProps['rules'] = [
-      { min: 9, message: t('CHAT_ID_INVALID_VALUE_MESSAGE') },
+      {
+        validator: (_, value: string) => {
+          if (!value) return Promise.resolve();
+          const [identifier] = splitChatId(value);
+          const minLength = isLidChatId(value) ? 3 : 9;
+
+          return identifier.length >= minLength
+            ? Promise.resolve()
+            : Promise.reject(new Error(t('CHAT_ID_INVALID_VALUE_MESSAGE')));
+        },
+      },
     ];
     if (isRequired) {
       rules.push({ required: true, message: t('EMPTY_FIELD_ERROR') });
@@ -31,10 +43,7 @@ const ParticipantsPopover: FC = () => {
     return {
       key: 'participant-chat-id',
       rules,
-      normalize: (value: string) => value.replaceAll(/\D/g, ''),
-      children: (
-        <Input type="tel" placeholder={t('CHAT_ID_PHONE_PLACEHOLDER')} addonAfter="@c.us" />
-      ),
+      children: <ChatIdInput suffixes={['@c.us', '@lid']} />,
     };
   };
 

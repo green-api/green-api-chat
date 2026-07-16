@@ -17,6 +17,7 @@ import Participants from 'components/forms/statuses/participants.component';
 import { useAppSelector } from 'hooks';
 import { useUploadFileMutation, useSendVoiceStatusMutation } from 'services/green-api/endpoints';
 import { selectInstance } from 'store/slices/instances.slice';
+import { ensureChatIdSuffix } from 'utils/chat-id.utils';
 
 export const SendVoiceStatus = () => {
   const { t } = useTranslation();
@@ -195,10 +196,9 @@ export const SendVoiceStatus = () => {
 
       if (!uploadResult?.urlFile) throw new Error('Upload failed');
 
-      const mappedParticipants = participants?.map((p: string) => {
-        const cleaned = p.trim();
-        return cleaned.endsWith('@c.us') ? cleaned : `${cleaned}@c.us`;
-      });
+      const mappedParticipants = participants?.map((participant: string) =>
+        ensureChatIdSuffix(participant)
+      );
 
       await sendVoiceStatus({
         ...instanceCredentials,

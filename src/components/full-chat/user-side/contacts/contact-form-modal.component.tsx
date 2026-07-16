@@ -5,7 +5,9 @@ import type { FormInstance } from 'antd/es/form';
 import type { i18n } from 'i18next';
 
 import { ContactFormValues, normalizeChatId } from './contacts.helpers';
+import ChatIdInput from 'components/UI/chat-id-input.component';
 import { getPhoneNumberFromChatId } from 'utils';
+import { isLidChatId, splitChatId } from 'utils/chat-id.utils';
 
 interface ContactFormModalProps {
   t: i18n['t'];
@@ -55,6 +57,14 @@ const ContactFormModal: FC<ContactFormModalProps> = ({
                   return Promise.reject(new Error(t('CONTACT_PHONE_INVALID_MESSAGE')));
                 }
 
+                if (isLidChatId(normalizedChatId)) {
+                  const [identifier] = splitChatId(normalizedChatId);
+
+                  return identifier.length >= 3
+                    ? Promise.resolve()
+                    : Promise.reject(new Error(t('CHAT_ID_INVALID_VALUE_MESSAGE')));
+                }
+
                 const phone = getPhoneNumberFromChatId(normalizedChatId).replace(/\D/g, '');
 
                 if (phone.length < 9) {
@@ -65,14 +75,8 @@ const ContactFormModal: FC<ContactFormModalProps> = ({
               },
             },
           ]}
-          normalize={(value: string) => value?.replace(/\s/g, '')}
         >
-          <Input
-            disabled={isEditMode}
-            type="tel"
-            autoComplete="off"
-            placeholder={t('CHAT_ID_PLACEHOLDER')}
-          />
+          <ChatIdInput disabled={isEditMode} autoComplete="off" suffixes={['@c.us', '@lid']} />
         </Form.Item>
 
         <Form.Item

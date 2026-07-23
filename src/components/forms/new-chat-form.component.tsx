@@ -59,7 +59,11 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
     const { data } = await getChats(instanceCredentials);
 
     return (
-      data?.find((chat) => chat.phoneNumber?.replace(/\D/g, '') === normalizedPhone)?.chatId ?? null
+      data?.find(
+        (chat) =>
+          chat.phoneNumber != null &&
+          String(chat.phoneNumber).replace(/\D/g, '') === normalizedPhone
+      )?.chatId ?? null
     );
   };
 

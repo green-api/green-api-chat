@@ -15,6 +15,8 @@ export const DARK_THEME: ThemeConfig = {
     colorInfoText: '#fff',
     colorTextBase: '#fff',
     colorBgSpotlight: '#424242',
+    colorWarningBg: '#2b2111',
+    colorWarningBorder: '#594214',
   },
   components: {
     Progress: {

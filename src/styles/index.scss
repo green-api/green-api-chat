@@ -531,6 +531,24 @@ html.dark-theme .ant-select-dropdown {
   box-shadow: 0 0 0 2px var(--focus-ring-color);
 }
 
+/*
+ * iOS Safari zooms the whole page in when a text field is focused and its
+ * font-size is below 16px (default Ant Design inputs are 14px). On touch
+ * devices we bump every editable control to 16px so focusing the keyboard no
+ * longer rescales the chat. Pinch-to-zoom stays available (viewport untouched).
+ */
+@media (hover: none) and (pointer: coarse) {
+  input,
+  textarea,
+  select,
+  .ant-input,
+  .ant-input-number-input,
+  .ant-select-selection-search-input,
+  [contenteditable]:not([contenteditable='false']) {
+    font-size: 16px;
+  }
+}
+
 html.dark-theme .chat-link-modal .ant-modal-content,
 html.dark-theme .chat-link-modal .ant-modal-header {
   background: var(--second-background);

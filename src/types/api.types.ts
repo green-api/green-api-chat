@@ -687,5 +687,6 @@ export interface GetChatsResponseInterface {
   chatId: string;
   name: string;
   type: TelegramChatType;
-  phoneNumber?: string;
+  // MAX/Telegram getChats returns the phone as a number, not a string
+  phoneNumber?: string | number;
 }

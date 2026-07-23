@@ -298,26 +298,36 @@ const ChatList: FC = () => {
             )}
           </>
         ) : (
-          <List
-            dataSource={lastMessages.slice(0, page * limit)}
-            renderItem={(message) => (
-              <ChatListItem
-                key={message.chatId}
-                lastMessage={message}
-                onNameExtracted={handleNameExtracted}
-                unreadCount={unreadCounts[message.chatId]}
-                onClearUnread={() => clearUnreadCount(message.chatId)}
-              />
-            )}
-            loading={{
-              spinning: isChatListLoading,
-              className: `${isMiniVersion ? 'min-height-320' : 'height-720'}`,
-              size: 'large',
-            }}
-            locale={{
-              emptyText: <Empty className="empty p-10" description={t('EMPTY_CHAT_LIST')} />,
-            }}
-          />
+          <>
+            <List
+              dataSource={lastMessages.slice(0, page * limit)}
+              renderItem={(message) => (
+                <ChatListItem
+                  key={message.chatId}
+                  lastMessage={message}
+                  onNameExtracted={handleNameExtracted}
+                  unreadCount={unreadCounts[message.chatId]}
+                  onClearUnread={() => clearUnreadCount(message.chatId)}
+                />
+              )}
+              loading={{
+                spinning: isChatListLoading,
+                className: `${isMiniVersion ? 'min-height-320' : 'height-720'}`,
+                size: 'large',
+              }}
+              locale={{
+                emptyText: <Empty className="empty p-10" description={t('EMPTY_CHAT_LIST')} />,
+              }}
+            />
+            {!isChatListLoading &&
+              !isMiniVersion &&
+              lastMessages.length > 0 &&
+              page * limit >= lastMessages.length && (
+                <Typography.Text type="secondary" className="chat-list__end-hint">
+                  {t('NO_MORE_CHATS')}
+                </Typography.Text>
+              )}
+          </>
         )}
       </div>
     </>

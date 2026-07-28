@@ -44,11 +44,13 @@ const ChatIdInput: FC<ChatIdInputProps> = ({
     onChange?.(normalizedValue ? `${normalizedValue}${nextSuffix}` : '');
   };
 
-  const resolvedPlaceholder =
-    placeholder ??
-    (suffix === '@lid'
-      ? t('CHAT_ID_LID_PLACEHOLDER', 'LID')
-      : t('CHAT_ID_PHONE_PLACEHOLDER', 'Номер телефона'));
+  const suffixPlaceholders: Record<ChatIdSuffix, string> = {
+    '@c.us': t('CHAT_ID_PHONE_PLACEHOLDER', 'Номер телефона'),
+    '@g.us': t('CHAT_ID_GROUP_PLACEHOLDER', 'Идентификатор группы'),
+    '@lid': t('CHAT_ID_LID_PLACEHOLDER', 'LID'),
+  };
+
+  const resolvedPlaceholder = placeholder ?? suffixPlaceholders[suffix];
 
   return (
     <Input

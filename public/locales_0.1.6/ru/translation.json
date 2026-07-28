@@ -188,6 +188,7 @@
   "URL_FILE_PLACEHOLDER": "Ссылка на файл",
   "FILE_NAME_PLACEHOLDER": "Имя файла",
   "CHAT_ID_PHONE_PLACEHOLDER": "Номер телефона",
+  "CHAT_ID_GROUP_PLACEHOLDER": "Идентификатор группы",
   "CHAT_ID_LID_PLACEHOLDER": "LID",
   "CHAT_ID_TYPE_LABEL": "Тип идентификатора",
   "ENTER_VALID_CHAT_ID": "Введите корректный идентификатор",

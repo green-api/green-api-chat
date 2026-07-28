@@ -177,6 +177,7 @@
   "URL_FILE_PLACEHOLDER": "Dosya URL'si",
   "FILE_NAME_PLACEHOLDER": "Dosya adı",
   "CHAT_ID_PHONE_PLACEHOLDER": "Telefon numarası",
+  "CHAT_ID_GROUP_PLACEHOLDER": "Grup kimliği",
   "CHAT_ID_LID_PLACEHOLDER": "LID",
   "CHAT_ID_TYPE_LABEL": "Tanımlayıcı türü",
   "ENTER_VALID_CHAT_ID": "Geçerli bir tanımlayıcı girin",

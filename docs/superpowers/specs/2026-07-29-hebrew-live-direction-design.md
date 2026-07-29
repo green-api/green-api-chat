@@ -1,61 +1,61 @@
-# CSL-996: Live Hebrew direction switching
+# CSL-996: переключение направления чата для иврита без перезагрузки
 
-## Goal
+## Цель
 
-When the GREEN-API Console changes its locale to Hebrew while the chat iframe is open, the embedded chat must immediately switch to the Hebrew RTL layout without reloading the page or iframe and without losing the current chat state.
+Когда в GREEN-API Console при открытом iframe чата выбирают иврит, встроенный чат должен сразу переключаться на RTL-разметку без перезагрузки страницы или iframe и без потери текущего состояния чата.
 
-## Scope
+## Область изменений
 
-The behavioral change belongs to `sw-console-chat`. The parent console continues to send the selected locale through the existing `INIT` and `LOCALE_CHANGE` messages. No new message type or payload field is introduced.
+Изменение поведения выполняется в `sw-console-chat`. Родительская консоль продолжает передавать выбранную локаль через существующие сообщения `INIT` и `LOCALE_CHANGE`. Новые типы сообщений и поля в payload не добавляются.
 
-The fix covers transitions between all supported languages:
+Исправление охватывает переходы между всеми поддерживаемыми языками:
 
-- `en`, `ru`, and `tr` use LTR;
-- `he` uses RTL;
-- transitions such as `en → ru → he → en` update the existing UI in place.
+- `en`, `ru` и `tr` используют LTR;
+- `he` использует RTL;
+- переходы вида `en → ru → he → en` обновляют уже открытый интерфейс без перезагрузки.
 
-## Design
+## Проектное решение
 
-The chat application remains the owner of deriving document direction from its active i18next locale.
+Приложение чата остаётся единственным владельцем логики определения направления документа на основе активной локали i18next.
 
-After i18next resolves a new locale, the application:
+После того как i18next определит новую локаль, приложение:
 
-1. normalizes the language to its base code;
-2. derives direction through i18next;
-3. passes the resolved direction to Ant Design `ConfigProvider`;
-4. synchronizes the iframe document root attributes:
-   - `document.documentElement.lang` receives the normalized language;
-   - `document.documentElement.dir` receives `rtl` or `ltr`.
+1. нормализует язык до базового кода;
+2. определяет направление через i18next;
+3. передаёт полученное направление в `ConfigProvider` Ant Design;
+4. синхронизирует атрибуты корневого элемента документа iframe:
+   - в `document.documentElement.lang` записывается нормализованный язык;
+   - в `document.documentElement.dir` записывается `rtl` или `ltr`.
 
-The existing message handler continues to call `i18n.changeLanguage` for `INIT` and `LOCALE_CHANGE`. The iframe is not remounted or reloaded.
+Существующий обработчик сообщений продолжает вызывать `i18n.changeLanguage` для `INIT` и `LOCALE_CHANGE`. Iframe не перемонтируется и не перезагружается.
 
-This keeps Ant Design components, application CSS, browser bidi behavior, and accessibility metadata aligned to the same locale state.
+Так компоненты Ant Design, CSS приложения, встроенная bidi-логика браузера и метаданные доступности используют одно и то же состояние локали.
 
-## Error handling
+## Обработка некорректных данных
 
-If i18next has not resolved a supported locale, the application falls back to English and LTR, matching the existing fallback behavior. Unsupported regional suffixes are normalized to their base language before selecting the Ant Design locale.
+Если i18next не определил поддерживаемую локаль, приложение использует английский язык и LTR, что соответствует текущему fallback-поведению. Региональные суффиксы нормализуются до базового языка до выбора локали Ant Design.
 
-## Testing
+## Тестирование
 
-The regression check must first demonstrate the current failure and then verify that:
+Регрессионная проверка сначала должна воспроизвести текущую ошибку, а затем подтвердить, что:
 
-- Hebrew resolves to `rtl`;
-- English, Russian, and Turkish resolve to `ltr`;
-- the root `lang` and `dir` attributes follow live locale changes;
-- the iframe is not reloaded or remounted during the change.
+- для иврита определяется `rtl`;
+- для английского, русского и турецкого определяется `ltr`;
+- корневые атрибуты `lang` и `dir` следуют за изменением локали в реальном времени;
+- при смене языка iframe не перезагружается и не перемонтируется.
 
-After automated checks, the complete flow is verified in the existing authorized Chrome session:
+После автоматических проверок полный сценарий проверяется в существующей авторизованной сессии Chrome:
 
-1. start the chat application on `localhost:5174`;
-2. open the console on `localhost:3000`;
-3. open Chats;
-4. switch the console locale to Hebrew;
-5. confirm the visible chat becomes RTL immediately and remains usable;
-6. switch back to an LTR locale and confirm the layout returns to LTR;
-7. inspect browser console errors and horizontal overflow.
+1. поднять приложение чата на `localhost:5174`;
+2. открыть консоль на `localhost:3000`;
+3. открыть раздел «Чаты»;
+4. переключить язык консоли на иврит;
+5. убедиться, что видимый чат сразу перешёл в RTL и остался работоспособным;
+6. переключиться обратно на язык с LTR и убедиться, что разметка вернулась в LTR;
+7. проверить ошибки в консоли браузера и отсутствие горизонтального переполнения.
 
-## Non-goals
+## Вне области изменений
 
-- Reloading the iframe to apply a locale.
-- Adding a separate `direction` field to the cross-window message contract.
-- Refactoring unrelated chat layout or localization code.
+- Перезагрузка iframe для применения локали.
+- Добавление отдельного поля `direction` в контракт обмена между окнами.
+- Рефакторинг разметки или локализации чата, не связанный с текущей ошибкой.

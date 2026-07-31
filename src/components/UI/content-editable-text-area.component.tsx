@@ -14,7 +14,7 @@ import {
   MessageFormat,
   MonospaceFormatStyle,
 } from 'utils/message-formatting.utils';
-import { EditorTextFormatter, TextFormatter } from 'utils/text-formatter';
+import { EditorTextFormatter } from 'utils/text-formatter';
 
 type SelectionRange = {
   start: number;
@@ -335,9 +335,11 @@ const renderValue = (
   editor.innerHTML = nextHtml;
 
   if (selectionRange) {
-    requestAnimationFrame(() => {
-      setSelectionRange(editor, selectionRange.start, selectionRange.end);
-    });
+    // Restore selection synchronously, right after the DOM mutation. Deferring this to
+    // requestAnimationFrame leaves a window where innerHTML has already reset the caret
+    // (usually to the start of the editor) but the correct position hasn't been restored yet —
+    // a keystroke landing in that window gets inserted at the wrong place.
+    setSelectionRange(editor, selectionRange.start, selectionRange.end);
   }
 };
 

@@ -15,13 +15,13 @@ interface AsideItemProps {
   asideItem: AsideItem;
 }
 
-const SETTINGS_ITEMS = ['instance', 'profile', 'logout'] as AsideItem['item'][];
+const SETTINGS_ITEMS = ['instance', 'profile', 'logout', 'language'] as AsideItem['item'][];
 
 const AsideItem: FC<AsideItemProps> = ({ asideItem }) => {
   const activeAsideItem = useAppSelector(selectUserSideActiveMode);
 
   const { setUserSideActiveMode, setActiveChat } = useActions();
-  const { isMobile } = useBreakpoint();
+  const { isMobile, isTablet } = useBreakpoint();
 
   const { t } = useTranslation();
 
@@ -31,8 +31,12 @@ const AsideItem: FC<AsideItemProps> = ({ asideItem }) => {
 
   const handleSetActive = () => {
     if (asideItem.item === 'settings') return;
+
     setUserSideActiveMode(asideItem.item);
-    isMobile && setActiveChat(null);
+
+    if (isMobile || isTablet) {
+      setActiveChat(null);
+    }
   };
 
   const avatar = useMemo<string>(() => {

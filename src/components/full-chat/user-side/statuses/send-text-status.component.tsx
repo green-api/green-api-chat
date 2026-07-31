@@ -11,6 +11,7 @@ import { useSendTextStatusMutation } from 'services/green-api/endpoints';
 import { selectInstance } from 'store/slices/instances.slice';
 import { SendTextStatusFormValues } from 'types';
 import { isApiError, getErrorMessage } from 'utils';
+import { ensureChatIdSuffix } from 'utils/chat-id.utils';
 
 const fonts = {
   SERIF: 'serif',
@@ -37,10 +38,7 @@ export const SendTextStatus = () => {
   const onFinish = async (values: SendTextStatusFormValues) => {
     const color = values.backgroundColor?.toHexString?.().toUpperCase();
 
-    const participants = values.participants?.map((participant) => {
-      const cleaned = participant.trim();
-      return cleaned.endsWith('@c.us') ? cleaned : `${cleaned}@c.us`;
-    });
+    const participants = values.participants?.map((participant) => ensureChatIdSuffix(participant));
 
     const body = {
       ...instanceCredentials,

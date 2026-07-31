@@ -6,6 +6,7 @@ import { useAppSelector } from 'hooks';
 import { useInstanceSettings } from 'hooks/use-instance-settings.hook';
 import { selectIsLastMessagesSyncingAfterAuthorization } from 'store/slices/instances.slice';
 import { StateInstanceEnum } from 'types';
+import { isAuthorizedInstanceState } from 'utils';
 
 interface Properties {
   style?: React.CSSProperties;
@@ -22,8 +23,7 @@ const AuthorizationStatus: FC<Properties> = ({ style }) => {
 
   if (isLoading && !isLastMessagesSyncingAfterAuthorization) return null;
 
-  const isAuthorized =
-    state === StateInstanceEnum.Authorized || isLastMessagesSyncingAfterAuthorization;
+  const isAuthorized = isAuthorizedInstanceState(state) || isLastMessagesSyncingAfterAuthorization;
   const isSuspended = state === StateInstanceEnum.Suspended;
 
   let text = '';

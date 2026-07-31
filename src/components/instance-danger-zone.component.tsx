@@ -4,12 +4,14 @@ import { Button, Flex, Popconfirm, Typography } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import { useIsMaxInstance } from 'hooks/use-is-max-instance';
+import { StateInstanceEnum } from 'types';
+import { isAuthorizedInstanceState } from 'utils';
 
 interface InstanceDangerZoneProperties {
   onLogout: () => void;
   isLogoutDisabled: boolean;
   isLogouting: boolean;
-  instanceStatus?: string;
+  instanceStatus?: StateInstanceEnum;
 }
 
 const InstanceDangerZone: FC<InstanceDangerZoneProperties> = ({
@@ -23,7 +25,7 @@ const InstanceDangerZone: FC<InstanceDangerZoneProperties> = ({
 
   return (
     <Flex vertical gap={15}>
-      {instanceStatus === 'authorized' && (
+      {isAuthorizedInstanceState(instanceStatus) && (
         <div className="account-danger-zone">
           <Flex justify="space-between" align="center">
             <div>

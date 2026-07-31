@@ -1,20 +1,26 @@
 import { FC, useRef } from 'react';
 
 import { LoadingOutlined, SendOutlined } from '@ant-design/icons';
-import { Button, Col, Form, Input, Row } from 'antd';
+import { Button, Col, Form, Input, Row, Select } from 'antd';
 import { useTranslation } from 'react-i18next';
 
+import ChatIdInput from 'components/UI/chat-id-input.component';
 import TextArea from 'components/UI/text-area.component';
 import { useAppDispatch, useAppSelector, useFormWithLanguageValidation } from 'hooks';
 import { useIsMaxInstance } from 'hooks/use-is-max-instance';
 import { useIsTelegramInstance } from 'hooks/use-is-telegram-instance';
-import { useCheckWhatsappMutation, useSendMessageMutation } from 'services/green-api/endpoints';
+import {
+  useCheckWhatsappMutation,
+  useLazyGetChatsQuery,
+  useSendMessageMutation,
+} from 'services/green-api/endpoints';
 import { journalsGreenApiEndpoints } from 'services/green-api/endpoints/journals.green-api.endpoints';
 import { selectMiniVersion, selectType } from 'store/slices/chat.slice';
 import { selectInstance, selectIsChatWorking } from 'store/slices/instances.slice';
 import { selectUser } from 'store/slices/user.slice';
 import { MessageInterface, NewChatFormValues } from 'types';
 import { isAuth, updateAllChats } from 'utils';
+import { isLidChatId, splitChatId } from 'utils/chat-id.utils';
 
 interface NewChatFormProps {
   onSubmitCallback?: () => void;
@@ -28,6 +34,7 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
   const type = useAppSelector(selectType);
   const isMax = useIsMaxInstance();
   const isTelegram = useIsTelegramInstance();
+  const isMaxOrTelegram = isMax || isTelegram;
 
   const dispatch = useAppDispatch();
 
@@ -35,16 +42,35 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
 
   const [sendMessage, { isLoading }] = useSendMessageMutation();
   const [checkWhatsapp] = useCheckWhatsappMutation();
+  const [getChats] = useLazyGetChatsQuery();
 
   const [form] = useFormWithLanguageValidation<NewChatFormValues>();
   const responseTimerReference = useRef<number | null>(null);
 
   const standaloneChatTypes = ['partner-iframe', 'one-chat-only'];
 
+  const resolveExistingChatIdByPhone = async (phone: string) => {
+    if (!isMaxOrTelegram) return null;
+
+    const normalizedPhone = phone.replace(/\D/g, '');
+
+    if (!normalizedPhone) return null;
+
+    const { data } = await getChats(instanceCredentials);
+
+    return (
+      data?.find(
+        (chat) =>
+          chat.phoneNumber != null &&
+          String(chat.phoneNumber).replace(/\D/g, '') === normalizedPhone
+      )?.chatId ?? null
+    );
+  };
+
   const onSendMessage = async (values: NewChatFormValues) => {
     if (!isAuth(user) && !standaloneChatTypes.includes(type) && isChatWorking === false) return;
 
-    const { message, chatId } = values;
+    const { message, chatId, chatIdType } = values;
 
     if (responseTimerReference.current) {
       clearTimeout(responseTimerReference.current);
@@ -57,21 +83,24 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
       { name: 'chatId', errors: [], warnings: [] },
     ]);
 
-    const isMaxOrTelegram = isMax || isTelegram;
-    const isGroupChat = /\d{17}/.test(chatId) || (isMaxOrTelegram && chatId.startsWith('-'));
-    const fullChatId =
-      isMaxOrTelegram && chatId.startsWith('-')
-        ? chatId
-        : isGroupChat
-          ? `${chatId}@g.us`
-          : `${chatId}@c.us`;
+    const isGroupChat = isMaxOrTelegram
+      ? chatIdType === 'chatId'
+        ? chatId.startsWith('-') || chatId.length === 17 || chatId.length === 18
+        : /\d{17}/.test(chatId)
+      : chatId.endsWith('@g.us');
 
+    const fullChatId = chatId;
+
+    let optimisticChatId = fullChatId;
     let addNewChatInList = !isGroupChat;
 
-    if (!isGroupChat) {
+    const shouldCheckWhatsapp = !isMaxOrTelegram && fullChatId.endsWith('@c.us');
+
+    if (shouldCheckWhatsapp) {
+      const [phoneNumber] = splitChatId(fullChatId);
       const { data, error } = await checkWhatsapp({
         ...instanceCredentials,
-        phoneNumber: chatId,
+        phoneNumber,
       });
 
       if (error && 'status' in error && error.status === 466) {
@@ -83,6 +112,10 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
       if (data && !data.existsWhatsapp) {
         return form.setFields([{ name: 'chatId', errors: [t('PHONE_DOES_NOT_HAVE_WHATSAPP')] }]);
       }
+    }
+
+    if (isMaxOrTelegram && chatIdType === 'phone') {
+      optimisticChatId = (await resolveExistingChatIdByPhone(chatId)) ?? fullChatId;
     }
 
     const body = {
@@ -113,7 +146,7 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
               senderName: '',
               senderContactName: '',
               idMessage: data.idMessage,
-              chatId: fullChatId,
+              chatId: optimisticChatId,
               statusMessage: 'sent',
             };
 
@@ -146,26 +179,76 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
       onSubmitCapture={() => form.setFields([{ name: 'response', errors: [], warnings: [] }])}
       onKeyDown={(e) => !e.ctrlKey && e.key === 'Enter' && form.submit()}
     >
+      {isMaxOrTelegram && (
+        <Form.Item name="chatIdType" initialValue="chatId" style={{ marginBottom: 12 }}>
+          <Select style={{ width: '100%' }}>
+            <Select.Option value="phone">{t('PHONE_NUMBER', 'Номер телефона')}</Select.Option>
+            <Select.Option value="chatId">
+              {t('CONTACT_CHAT_ID_LABEL', 'Идентификатор чата')}
+            </Select.Option>
+          </Select>
+        </Form.Item>
+      )}
       <Form.Item
-        name="chatId"
-        normalize={(value: string) => {
-          form.setFields([{ name: 'response', warnings: [] }]);
-
-          return value.replaceAll(/[^\d-]/g, '');
-        }}
-        rules={[
-          { required: true, message: t('EMPTY_FIELD_ERROR') },
-          { min: 9, message: t('CHAT_ID_INVALID_VALUE_MESSAGE') },
-        ]}
-        validateDebounce={800}
-        required
+        noStyle
+        shouldUpdate={(prevValues, currentValues) =>
+          prevValues.chatIdType !== currentValues.chatIdType
+        }
       >
-        <Input
-          disabled={!isAuth}
-          autoComplete="off"
-          type="tel"
-          placeholder={t('CHAT_ID_PLACEHOLDER')}
-        />
+        {({ getFieldValue }) => {
+          const selectedType =
+            getFieldValue('chatIdType') || (isMaxOrTelegram ? 'chatId' : 'phone');
+          const isPhoneRuleNeeded = !isMaxOrTelegram || selectedType === 'phone';
+          const minChatIdLength = isMaxOrTelegram ? 6 : 9;
+
+          return (
+            <Form.Item
+              name="chatId"
+              normalize={(value: string) => {
+                form.setFields([{ name: 'response', warnings: [] }]);
+                if (!isMaxOrTelegram) return value;
+                const regex = selectedType === 'chatId' ? /[^\d-]/g : /\D/g;
+                return value.replaceAll(regex, '');
+              }}
+              rules={[
+                { required: true, message: t('EMPTY_FIELD_ERROR') },
+                {
+                  validator: (_, value: string) => {
+                    if (!value) return Promise.resolve();
+                    if (!isMaxOrTelegram) {
+                      const [identifier] = splitChatId(value);
+                      const minLength = isLidChatId(value) ? 3 : 9;
+                      return identifier.length >= minLength
+                        ? Promise.resolve()
+                        : Promise.reject(new Error(t('CHAT_ID_INVALID_VALUE_MESSAGE')));
+                    }
+                    if (isPhoneRuleNeeded && value.length < minChatIdLength) {
+                      return Promise.reject(new Error(t('CHAT_ID_INVALID_VALUE_MESSAGE')));
+                    }
+                    return Promise.resolve();
+                  },
+                },
+              ]}
+              validateDebounce={800}
+              required
+            >
+              {isMaxOrTelegram ? (
+                <Input
+                  disabled={!isAuth}
+                  autoComplete="off"
+                  type="tel"
+                  placeholder={
+                    selectedType === 'phone'
+                      ? t('CHAT_ID_PHONE_PLACEHOLDER', 'Номер телефона')
+                      : t('CONTACT_CHAT_ID_LABEL', 'Идентификатор чата')
+                  }
+                />
+              ) : (
+                <ChatIdInput disabled={!isAuth} autoComplete="off" />
+              )}
+            </Form.Item>
+          );
+        }}
       </Form.Item>
       <Form.Item style={{ marginBottom: 0 }} name="response" className="response-form-item">
         <Row gutter={[15, 15]} align={isMiniVersion ? 'bottom' : 'middle'}>

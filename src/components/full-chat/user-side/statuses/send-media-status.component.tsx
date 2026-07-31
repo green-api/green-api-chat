@@ -12,6 +12,7 @@ import { useAppSelector } from 'hooks';
 import { useSendMediaStatusMutation, useUploadFileMutation } from 'services/green-api/endpoints';
 import { selectInstance, selectInstanceTariff } from 'store/slices/instances.slice';
 import { TariffsEnum } from 'types';
+import { ensureChatIdSuffix } from 'utils/chat-id.utils';
 
 interface PreviewItem {
   file: File;
@@ -174,10 +175,9 @@ const SendMediaStatusComponent: FC = () => {
       let totalSent = 0;
       let hasQuotaExceeded = false;
 
-      const mappedParticipants = participants?.map((participant: string) => {
-        const cleaned = participant.trim();
-        return cleaned.endsWith('@c.us') ? cleaned : `${cleaned}@c.us`;
-      });
+      const mappedParticipants = participants?.map((participant: string) =>
+        ensureChatIdSuffix(participant)
+      );
 
       for (const [batchIndex, batch] of sendBatches.entries()) {
         const sendPromises = batch.map((url, idx) =>
@@ -194,9 +194,9 @@ const SendMediaStatusComponent: FC = () => {
 
         const sendResults = await Promise.allSettled(sendPromises);
         totalSent += sendResults.filter((r) => r.status === 'fulfilled').length;
-        hasQuotaExceeded = hasQuotaExceeded || sendResults.some(
-          (r) => r.status === 'rejected' && isQuotaExceededError(r.reason)
-        );
+        hasQuotaExceeded =
+          hasQuotaExceeded ||
+          sendResults.some((r) => r.status === 'rejected' && isQuotaExceededError(r.reason));
 
         if (batch !== sendBatches[sendBatches.length - 1]) {
           await new Promise((resolve) => setTimeout(resolve, 1000));

@@ -8,8 +8,8 @@ import telegramIcon from 'assets/telegram-logo.svg';
 import waIcon from 'assets/wa-logo.svg';
 import { isMaxInstance } from 'hooks/use-is-max-instance';
 import { useGetWaSettingsQuery, useGetAccountSettingsQuery } from 'services/green-api/endpoints';
-import { ExpandedInstanceInterface, StateInstanceEnum } from 'types';
-import { isPageInIframe } from 'utils';
+import { ExpandedInstanceInterface } from 'types';
+import { isAuthorizedInstanceState, isPageInIframe } from 'utils';
 
 const SelectInstanceLabel = ({
   idInstance,
@@ -62,7 +62,7 @@ const SelectInstanceLabel = ({
           />
           <div
             className={`statusCircle ${
-              settings?.stateInstance === StateInstanceEnum.Authorized
+              isAuthorizedInstanceState(settings?.stateInstance)
                 ? 'statusCircle__auth'
                 : 'statusCircle__notAuth'
             }`}

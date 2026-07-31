@@ -397,7 +397,7 @@ const ChatList: FC = () => {
   if (!instanceCredentials?.idInstance || !instanceCredentials.apiTokenInstance) {
     return (
       <Empty
-        className={`empty p-10 ${isMiniVersion ? 'min-height-460' : 'height-720'}`}
+        className={`empty p-10 ${isMiniVersion ? 'min-height-320' : 'height-720'}`}
         description={t('SELECT_INSTANCE_PLACEHOLDER')}
       />
     );
@@ -407,7 +407,7 @@ const ChatList: FC = () => {
     if ('status' in error && error.status === 429) {
       return (
         <Flex
-          className={`contact-list ${isMiniVersion ? 'min-height-460' : 'height-720'}`}
+          className={`contact-list ${isMiniVersion ? 'min-height-320' : 'height-720'}`}
           align="center"
           justify="center"
         >
@@ -418,7 +418,7 @@ const ChatList: FC = () => {
 
     return (
       <Empty
-        className={`empty p-10 ${isMiniVersion ? 'min-height-460' : 'height-720'}`}
+        className={`empty p-10 ${isMiniVersion ? 'min-height-320' : 'height-720'}`}
         description={getErrorMessage(error, t)}
       />
     );
@@ -430,7 +430,7 @@ const ChatList: FC = () => {
 
       <div
         ref={chatListRef}
-        className={`contact-list px-2 overflow-auto ${isMiniVersion ? 'min-height-460' : 'height-720'}`}
+        className={`contact-list px-2 overflow-auto ${isMiniVersion ? 'min-height-320' : 'height-720'}`}
       >
         {isChatListLoading ? (
           <List
@@ -493,26 +493,37 @@ const ChatList: FC = () => {
             )}
           </>
         ) : (
-          <List
-            dataSource={displayedMessages}
-            renderItem={(message) => (
-              <ChatListItem
-                key={message.chatId}
-                lastMessage={message}
-                onNameExtracted={handleNameExtracted}
-                unreadCount={unreadCounts[message.chatId]}
-                onClearUnread={() => clearUnreadCount(message.chatId)}
-              />
-            )}
-            loading={{
-              spinning: false,
-              className: `${isMiniVersion ? 'min-height-460' : 'height-720'}`,
-              size: 'large',
-            }}
-            locale={{
-              emptyText: <Empty className="empty p-10" description={t('EMPTY_CHAT_LIST')} />,
-            }}
-          />
+          <>
+            <List
+              dataSource={displayedMessages}
+              renderItem={(message) => (
+                <ChatListItem
+                  key={message.chatId}
+                  lastMessage={message}
+                  onNameExtracted={handleNameExtracted}
+                  unreadCount={unreadCounts[message.chatId]}
+                  onClearUnread={() => clearUnreadCount(message.chatId)}
+                />
+              )}
+              loading={{
+                spinning: false,
+                className: `${isMiniVersion ? 'min-height-320' : 'height-720'}`,
+                size: 'large',
+              }}
+              locale={{
+                emptyText: <Empty className="empty p-10" description={t('EMPTY_CHAT_LIST')} />,
+              }}
+            />
+            {!isChatListLoading &&
+              !isMiniVersion &&
+              allMessages.length > 0 &&
+              page * limit >= allMessages.length &&
+              chats.length < chatsCount && (
+                <Typography.Text type="secondary" className="chat-list__end-hint">
+                  {t('NO_MORE_CHATS')}
+                </Typography.Text>
+              )}
+          </>
         )}
       </div>
     </>

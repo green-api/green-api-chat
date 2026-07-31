@@ -26,6 +26,7 @@ import {
 import { selectInstance, selectTypeInstance } from 'store/slices/instances.slice';
 import { ContactListItemInterface } from 'types';
 import { getPhoneNumberFromChatId } from 'utils';
+import { isLidChatId } from 'utils/chat-id.utils';
 
 const Contacts = () => {
   const { t } = useTranslation();
@@ -145,6 +146,8 @@ const Contacts = () => {
   };
 
   const validateWhatsappAvailability = async (chatId: string): Promise<boolean> => {
+    if (isLidChatId(chatId)) return true;
+
     const phoneNumber = getPhoneNumberFromChatId(chatId).replace(/\D/g, '');
 
     if (!phoneNumber) {

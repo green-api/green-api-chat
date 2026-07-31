@@ -1,4 +1,5 @@
 export * from './service.config';
+export * from './chat.config';
 export * from './themes/default-theme.config';
 export * from './themes/dark-theme.config';
 export * from './router.config';

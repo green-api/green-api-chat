@@ -26,8 +26,7 @@ import {
   useLazyLastMessagesQuery,
 } from 'services/green-api/endpoints';
 import { selectInstance } from 'store/slices/instances.slice';
-import { StateInstanceEnum } from 'types';
-import { fillJsxString, fillString, isPageInIframe } from 'utils';
+import { fillJsxString, fillString, isAuthorizedInstanceState, isPageInIframe } from 'utils';
 
 const LAST_MESSAGES_MINUTES_WINDOW = 26300;
 const LAST_MESSAGES_RETRY_LIMIT = 10;
@@ -159,7 +158,7 @@ export const AuthInstance = () => {
 
     const interval = setInterval(updateStateInstance, 7000);
 
-    if (stateInstanceData?.stateInstance === StateInstanceEnum.Authorized && showCodeInstruction) {
+    if (isAuthorizedInstanceState(stateInstanceData?.stateInstance) && showCodeInstruction) {
       setShowCodeInstruction(false);
       setPhone('');
       refetch();
@@ -226,7 +225,7 @@ export const AuthInstance = () => {
     });
   };
 
-  if (stateInstance === StateInstanceEnum.Authorized || isMax) {
+  if (isAuthorizedInstanceState(stateInstance) || isMax) {
     return null;
   }
 

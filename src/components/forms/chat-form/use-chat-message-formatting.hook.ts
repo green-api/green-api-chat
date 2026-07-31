@@ -56,6 +56,11 @@ export const useChatMessageFormatting = ({
         end: 0,
       };
 
+      if (start === end) {
+        closeFormatMenu();
+        return;
+      }
+
       event.preventDefault();
       event.stopPropagation();
 
@@ -67,7 +72,8 @@ export const useChatMessageFormatting = ({
       let disableLink = false;
       if (isLinkFeatureEnabled && start !== end) {
         const checkSelectionContainsLink = (text: string, s: number, e: number): boolean => {
-          const markdownLinkRegex = /\[\s*([^[\]]+?)\s*\]\(\s*((?:https?:\/\/|www\.)[^\s)]+)\s*\)/gi;
+          const markdownLinkRegex =
+            /\[\s*([^[\]]+?)\s*\]\(\s*((?:https?:\/\/|www\.)[^\s)]+)\s*\)/gi;
           let match;
           while ((match = markdownLinkRegex.exec(text)) !== null) {
             const linkStart = match.index;
@@ -91,7 +97,12 @@ export const useChatMessageFormatting = ({
 
         disableFormatting = checkSelectionContainsLink(inputValue, start, end);
 
-        const checkSelectionHasFormatting = (text: string, s: number, e: number, formats: string[]): boolean => {
+        const checkSelectionHasFormatting = (
+          text: string,
+          s: number,
+          e: number,
+          formats: string[]
+        ): boolean => {
           if (formats.length > 0) {
             return true;
           }
@@ -120,7 +131,7 @@ export const useChatMessageFormatting = ({
         disableLink,
       });
     },
-    [isLinkFeatureEnabled, messageEditorRef, inputValue]
+    [isLinkFeatureEnabled, messageEditorRef, inputValue, closeFormatMenu]
   );
 
   const onSelectMessageFormat = useCallback(

@@ -40,9 +40,9 @@
     border-style: solid;
     border-color: gray;
   }
-}
 
-.ant-select-arrow {
-  position: absolute;
-  inset-inline-end: 35px !important;
+  & .ant-select-arrow {
+    position: absolute;
+    inset-inline-end: 35px ;
+  }
 }

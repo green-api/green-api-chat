@@ -5,6 +5,7 @@ import { Button, Flex, List, Modal, Input, message } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import GroupContactListItem from './group-contact-list-item.component';
+import ChatIdInput from 'components/UI/chat-id-input.component';
 import { useAppSelector } from 'hooks';
 import { useIsMaxInstance } from 'hooks/use-is-max-instance';
 import { useIsTelegramInstance } from 'hooks/use-is-telegram-instance';
@@ -13,6 +14,7 @@ import { selectActiveChat } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
 import { ActiveChat, GroupParticipantInterface } from 'types';
 import { isContactInfo } from 'utils';
+import { isLidChatId, splitChatId } from 'utils/chat-id.utils';
 
 const GroupContactList: FC = () => {
   const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
@@ -53,14 +55,28 @@ const GroupContactList: FC = () => {
   const showModal = () => setIsModalVisible(true);
 
   const handleModalOk = async () => {
-    const cleaned = phoneNumber.replace(/\D/g, '');
+    let participantChatId: string;
 
-    if (cleaned.length < 7) {
-      message.error(t('ENTER_VALID_PHONE_NUMBER'));
-      return;
+    if (!isMax && !isTelegram) {
+      const [identifier] = splitChatId(phoneNumber);
+      const minLength = isLidChatId(phoneNumber) ? 3 : 7;
+
+      if (identifier.length < minLength) {
+        message.error(t('ENTER_VALID_CHAT_ID', 'Введите корректный идентификатор'));
+        return;
+      }
+
+      participantChatId = phoneNumber;
+    } else {
+      const cleaned = phoneNumber.replace(/\D/g, '');
+
+      if (cleaned.length < 7) {
+        message.error(t('ENTER_VALID_PHONE_NUMBER'));
+        return;
+      }
+
+      participantChatId = `${cleaned}${isMax ? '' : '@c.us'}`;
     }
-
-    const participantChatId = `${cleaned}${isMax ? '' : '@c.us'}`;
 
     try {
       const res = await addParticipant({
@@ -130,12 +146,21 @@ const GroupContactList: FC = () => {
         okText={t('ADD')}
         cancelText={t('CANCEL')}
       >
-        <Input
-          placeholder={isMax ? '10000000' : t('ADD_PARTICIPANT_PLACEHOLDER')}
-          value={phoneNumber}
-          onChange={(e) => setPhoneNumber(e.target.value)}
-          maxLength={15}
-        />
+        {isMax || isTelegram ? (
+          <Input
+            placeholder={isMax ? '10000000' : t('ADD_PARTICIPANT_PLACEHOLDER')}
+            value={phoneNumber}
+            onChange={(e) => setPhoneNumber(e.target.value)}
+            maxLength={15}
+          />
+        ) : (
+          <ChatIdInput
+            value={phoneNumber}
+            onChange={setPhoneNumber}
+            suffixes={['@c.us', '@lid']}
+            autoComplete="off"
+          />
+        )}
       </Modal>
     </>
   );

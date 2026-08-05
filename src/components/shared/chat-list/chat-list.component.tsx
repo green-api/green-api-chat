@@ -1,15 +1,21 @@
-import { FC, useEffect, useMemo, useRef, useState } from 'react';
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { Empty, Flex, List, Skeleton, Spin, Typography } from 'antd';
+import { Empty, Flex, List, Spin, Typography } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import ChatListItem from './chat-list-item.component';
 import ChatSearchInput from './chat-search-input.component';
-import { useAppSelector, useMediaQuery } from 'hooks';
+import { useAppDispatch, useAppSelector, useMediaQuery } from 'hooks';
 import { useGetChatsQuery, useLazyGetChatHistoryQuery } from 'services/green-api/endpoints';
-import { selectMiniVersion, selectSearchQuery, selectType } from 'store/slices/chat.slice';
+import {
+  chatActions,
+  selectLastMessagesByChatId,
+  selectMiniVersion,
+  selectSearchQuery,
+  selectType,
+} from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
-import { GetChatsResponseInterface, MessageInterface } from 'types';
+import { GetChatsResponseInterface, InstanceInterface, MessageInterface } from 'types';
 import {
   filterMessagesByText,
   getCachedGetChatHistoryMessages,
@@ -19,7 +25,14 @@ import {
 
 const { Title } = Typography;
 const CHATS_BATCH_SIZE = 100;
-const SKELETON_ITEMS_COUNT = 8;
+const CHATS_POLLING_INTERVAL = 15000;
+const CHAT_HISTORY_REQUEST_DELAY = 800;
+const CHAT_HISTORY_RETRY_LIMIT = 5;
+const CHAT_HISTORY_RETRY_BASE_DELAY = 1000;
+const CHAT_HISTORY_REFRESH_INTERVAL = 60000;
+
+const isMessage = (message: MessageInterface | null): message is MessageInterface =>
+  message !== null;
 
 const isNotReaction = (msg: MessageInterface) => {
   if (msg.typeMessage === 'reactionMessage') {
@@ -43,6 +56,54 @@ const chatToMessage = (chat: GetChatsResponseInterface): MessageInterface => ({
   textMessage: '',
 });
 
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const fetchChatLastMessage = async (
+  chat: GetChatsResponseInterface,
+  instanceCredentials: InstanceInterface,
+  getChatHistory: ReturnType<typeof useLazyGetChatHistoryQuery>[0]
+): Promise<{ chat: GetChatsResponseInterface; message?: MessageInterface }> => {
+  for (let attempt = 0; attempt <= CHAT_HISTORY_RETRY_LIMIT; attempt++) {
+    const { data: history, error } = await getChatHistory({
+      ...instanceCredentials,
+      chatId: chat.chatId,
+      count: 1,
+    });
+
+    if (!error) {
+      return { chat, message: history?.find(isNotReaction) };
+    }
+
+    const isRateLimited = 'status' in error && error.status === 429;
+
+    if (!isRateLimited || attempt === CHAT_HISTORY_RETRY_LIMIT) {
+      return { chat, message: undefined };
+    }
+
+    await wait(CHAT_HISTORY_RETRY_BASE_DELAY * (attempt + 1));
+  }
+
+  return { chat, message: undefined };
+};
+
+const loadSequentiallyWithDelay = async <Item, Result>(
+  items: Item[],
+  delayMs: number,
+  worker: (item: Item) => Promise<Result>
+): Promise<Result[]> => {
+  const results: Result[] = [];
+
+  for (const [index, item] of items.entries()) {
+    results.push(await worker(item));
+
+    if (index < items.length - 1) {
+      await wait(delayMs);
+    }
+  }
+
+  return results;
+};
+
 const ChatList: FC = () => {
   const instanceCredentials = useAppSelector(selectInstance);
   const isMiniVersion = useAppSelector(selectMiniVersion);
@@ -54,11 +115,10 @@ const ChatList: FC = () => {
 
   const { t } = useTranslation();
 
+  const dispatch = useAppDispatch();
+  const lastMessagesByChatId = useAppSelector(selectLastMessagesByChatId);
+
   const [contactNames, setContactNames] = useState<Record<string, string>>({});
-  const [lastMessagesByChatId, setLastMessagesByChatId] = useState<
-    Record<string, MessageInterface>
-  >({});
-  const [emptyHistoryChatIds, setEmptyHistoryChatIds] = useState<Set<string>>(new Set());
   const [page, setPage] = useState(1);
   const [contactsPage, setContactsPage] = useState(1);
   const [messagesPage, setMessagesPage] = useState(1);
@@ -74,12 +134,11 @@ const ChatList: FC = () => {
     isLoading,
     isFetching,
     error,
-    fulfilledTimeStamp: chatsFulfilledTimeStamp,
   } = useGetChatsQuery(
     { ...instanceCredentials, count: chatsCount },
     {
       skipPollingIfUnfocused: true,
-      pollingInterval: isMiniVersion ? 17000 : 15000,
+      pollingInterval: CHATS_POLLING_INTERVAL,
       skip: !instanceCredentials?.idInstance || !instanceCredentials.apiTokenInstance,
     }
   );
@@ -87,7 +146,6 @@ const ChatList: FC = () => {
 
   const chatListRef = useRef<HTMLDivElement | null>(null);
   const pendingHistoryChatIdsRef = useRef<Set<string>>(new Set());
-  const lastHistoryRefreshTimeStampRef = useRef<number>();
 
   const limit = isMiniVersion ? 5 : matchMedia ? 16 : 12;
 
@@ -98,25 +156,20 @@ const ChatList: FC = () => {
     }));
   };
 
-  const chatPlaceholders = useMemo(
-    () => chats.filter((chat) => !emptyHistoryChatIds.has(chat.chatId)).map(chatToMessage),
-    [chats, emptyHistoryChatIds]
-  );
+  const chatPlaceholders = useMemo(() => chats.map(chatToMessage), [chats]);
+
+  const renderedChats = useMemo(() => chats.slice(0, page * limit), [chats, page, limit]);
+  const renderedChatsRef = useRef(renderedChats);
+  renderedChatsRef.current = renderedChats;
 
   const allMessages: MessageInterface[] = useMemo(
     () =>
-      chats.reduce<MessageInterface[]>((result, chat) => {
+      chats.map((chat) => {
         const message = lastMessagesByChatId[chat.chatId];
 
-        if (message && isNotReaction(message)) {
-          result.push(message);
-        } else if (!emptyHistoryChatIds.has(chat.chatId)) {
-          result.push(chatToMessage(chat));
-        }
-
-        return result;
-      }, []),
-    [chats, emptyHistoryChatIds, lastMessagesByChatId]
+        return message && isNotReaction(message) ? message : chatToMessage(chat);
+      }),
+    [chats, lastMessagesByChatId]
   );
 
   const cachedGetChatHistoryMessages = useMemo(
@@ -130,7 +183,12 @@ const ChatList: FC = () => {
   );
 
   const searchableMessages = useMemo(
-    () => updateAllChats(Object.values(lastMessagesByChatId), cachedGetChatHistoryMessages, []),
+    () =>
+      updateAllChats(
+        Object.values(lastMessagesByChatId).filter(isMessage),
+        cachedGetChatHistoryMessages,
+        []
+      ),
     [lastMessagesByChatId, cachedGetChatHistoryMessages]
   );
 
@@ -158,16 +216,13 @@ const ChatList: FC = () => {
   const displayedMessages = showResults
     ? pagedFilteredContacts
     : allMessages.slice(0, page * limit);
-  const skeletonItems = useMemo(
-    () => Array.from({ length: Math.min(limit, SKELETON_ITEMS_COUNT) }, (_, index) => index),
-    [limit]
-  );
 
   useEffect(() => {
-    setLastMessagesByChatId({});
-    setEmptyHistoryChatIds(new Set());
+    // Note: lastMessagesByChatId itself is NOT reset here — it lives in Redux and is
+    // cleared reactively (in chat.slice's extraReducers) only when the instance actually
+    // changes, so it survives this component unmounting/remounting (e.g. navigating away
+    // and back). This effect only resets local UI/pagination state.
     pendingHistoryChatIdsRef.current.clear();
-    lastHistoryRefreshTimeStampRef.current = undefined;
     setInitialLoaded(false);
     setInitialMessageIds(new Set());
     setUnreadCounts({});
@@ -182,106 +237,92 @@ const ChatList: FC = () => {
     instanceCredentials.apiUrl,
   ]);
 
-  useEffect(() => {
-    if (!instanceCredentials?.idInstance || !instanceCredentials.apiTokenInstance) return;
+  // Fetches the last message for a batch of chats, sequentially with a delay between
+  // requests to stay clear of 429s. Independent of getChats' polling — callers decide
+  // when a sweep should run (on newly rendered chats, or on the fixed refresh interval).
+  const runHistorySweep = useCallback(
+    (candidates: GetChatsResponseInterface[]) => {
+      const chatsToLoad = candidates.filter(
+        (chat) => !pendingHistoryChatIdsRef.current.has(chat.chatId)
+      );
 
-    let canceled = false;
+      if (!chatsToLoad.length) return;
 
-    const shouldRefreshChats =
-      Boolean(chatsFulfilledTimeStamp) &&
-      lastHistoryRefreshTimeStampRef.current !== chatsFulfilledTimeStamp;
+      setIsHistoryLoading(true);
+      chatsToLoad.forEach((chat) => pendingHistoryChatIdsRef.current.add(chat.chatId));
 
-    const chatsToLoad = chats.filter(
-      (chat) =>
-        (shouldRefreshChats ||
-          (!lastMessagesByChatId[chat.chatId] && !emptyHistoryChatIds.has(chat.chatId))) &&
-        !pendingHistoryChatIdsRef.current.has(chat.chatId)
-    );
-
-    if (!chatsToLoad.length) {
-      setIsHistoryLoading(false);
-      return;
-    }
-
-    if (shouldRefreshChats) {
-      lastHistoryRefreshTimeStampRef.current = chatsFulfilledTimeStamp;
-    }
-
-    setIsHistoryLoading(true);
-    chatsToLoad.forEach((chat) => pendingHistoryChatIdsRef.current.add(chat.chatId));
-
-    Promise.all(
-      chatsToLoad.map(async (chat) => {
+      loadSequentiallyWithDelay(chatsToLoad, CHAT_HISTORY_REQUEST_DELAY, async (chat) => {
         try {
-          const { data: history } = await getChatHistory(
-            {
-              ...instanceCredentials,
-              chatId: chat.chatId,
-              count: 1,
-            },
-          );
+          const { message } = await fetchChatLastMessage(chat, instanceCredentials, getChatHistory);
 
-          return { chat, message: history?.find(isNotReaction) };
+          dispatch(
+            chatActions.setLastMessageByChatId({
+              chatId: chat.chatId,
+              message: message
+                ? {
+                    ...message,
+                    chatId: chat.chatId,
+                    chatType: chat.type,
+                    senderName: chat.name,
+                    senderContactName: chat.name,
+                  }
+                : null,
+            })
+          );
         } finally {
           pendingHistoryChatIdsRef.current.delete(chat.chatId);
         }
-      })
-    ).then((results) => {
-      if (canceled) return;
-
-      setLastMessagesByChatId((prev) => {
-        const updated = { ...prev };
-        const emptyChatIds = new Set<string>();
-
-        results.forEach(({ chat, message }) => {
-          if (message) {
-            updated[chat.chatId] = message;
-          } else {
-            delete updated[chat.chatId];
-            emptyChatIds.add(chat.chatId);
-          }
-        });
-
-        if (emptyChatIds.size) {
-          setEmptyHistoryChatIds((current) => {
-            const next = new Set(current);
-            emptyChatIds.forEach((chatId) => next.add(chatId));
-            return next;
-          });
-        }
-
-        return updated;
+      }).then(() => {
+        setIsHistoryLoading(false);
       });
-      setIsHistoryLoading(false);
-    });
-
-    return () => {
-      canceled = true;
-      chatsToLoad.forEach((chat) => pendingHistoryChatIdsRef.current.delete(chat.chatId));
-    };
-  }, [
-    chats,
-    chatsFulfilledTimeStamp,
-    emptyHistoryChatIds,
-    getChatHistory,
-    instanceCredentials,
-    lastMessagesByChatId,
-  ]);
+    },
+    [instanceCredentials, getChatHistory, dispatch]
+  );
 
   useEffect(() => {
-    const loadedMessages = Object.values(lastMessagesByChatId).filter(isNotReaction);
+    if (!instanceCredentials?.idInstance || !instanceCredentials.apiTokenInstance) return;
 
-    if (!initialLoaded && loadedMessages.length > 0) {
-      const messageIds = new Set(
-        loadedMessages.map((msg) => msg.idMessage || `${msg.chatId}-${msg.timestamp}`)
-      );
-      setInitialMessageIds(messageIds);
-      setInitialLoaded(true);
-    }
-  }, [lastMessagesByChatId, initialLoaded]);
+    // lastMessagesByChatId is read fresh here but intentionally left out of the deps below:
+    // this effect only needs to react to newly rendered chats or an instance switch, not to
+    // every cache update the sweep itself produces.
+    const unresolvedChats = renderedChats.filter((chat) => !(chat.chatId in lastMessagesByChatId));
+
+    runHistorySweep(unresolvedChats);
+  }, [renderedChats, instanceCredentials, runHistorySweep]);
 
   useEffect(() => {
-    const loadedMessages = Object.values(lastMessagesByChatId).filter(isNotReaction);
+    if (!instanceCredentials?.idInstance || !instanceCredentials.apiTokenInstance) return;
+
+    // Runs on its own clock, fully decoupled from getChats' polling interval —
+    // refreshing every chat's last message once a minute regardless of how often
+    // (or rarely) the chats list itself refetches.
+    const intervalId = setInterval(() => {
+      runHistorySweep(renderedChatsRef.current);
+    }, CHAT_HISTORY_REFRESH_INTERVAL);
+
+    return () => clearInterval(intervalId);
+  }, [instanceCredentials, runHistorySweep]);
+
+  useEffect(() => {
+    if (initialLoaded || isHistoryLoading) return;
+
+    const loadedMessages = Object.values(lastMessagesByChatId)
+      .filter(isMessage)
+      .filter(isNotReaction);
+
+    if (loadedMessages.length === 0) return;
+
+    const messageIds = new Set(
+      loadedMessages.map((msg) => msg.idMessage || `${msg.chatId}-${msg.timestamp}`)
+    );
+    setInitialMessageIds(messageIds);
+    setInitialLoaded(true);
+  }, [lastMessagesByChatId, initialLoaded, isHistoryLoading]);
+
+  useEffect(() => {
+    const loadedMessages = Object.values(lastMessagesByChatId)
+      .filter(isMessage)
+      .filter(isNotReaction);
 
     if (!initialLoaded || loadedMessages.length === 0) return;
 
@@ -432,17 +473,7 @@ const ChatList: FC = () => {
         ref={chatListRef}
         className={`contact-list px-2 overflow-auto ${isMiniVersion ? 'min-height-320' : 'height-720'}`}
       >
-        {isChatListLoading ? (
-          <List
-            dataSource={skeletonItems}
-            renderItem={(item) => (
-              <List.Item key={item} className="list-item contact-list__item">
-                <Skeleton avatar title={false} paragraph={{ rows: 2 }} active />
-              </List.Item>
-            )}
-            split={false}
-          />
-        ) : showResults ? (
+        {showResults ? (
           <>
             {pagedFilteredContacts.length > 0 && (
               <>
@@ -506,7 +537,7 @@ const ChatList: FC = () => {
                 />
               )}
               loading={{
-                spinning: false,
+                spinning: isLoading,
                 className: `${isMiniVersion ? 'min-height-320' : 'height-720'}`,
                 size: 'large',
               }}

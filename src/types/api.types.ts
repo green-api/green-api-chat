@@ -111,6 +111,7 @@ export interface MessageInterface
   templateMessage?: TemplateMessageInterface;
   templateButtonReplyMessage?: TemplateButtonReplyMessage;
   interactiveButtons?: InteractiveButtons;
+  editedMessageData?: MessageInterface;
   downloadUrl?: string;
   location?: LocationInterface;
   fileName?: string;

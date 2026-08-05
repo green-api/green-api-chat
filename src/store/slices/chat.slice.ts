@@ -1,8 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { RootState } from 'store';
-import { ChatState } from 'types';
+import { instancesActions } from 'store/slices/instances.slice';
+import { ChatState, InstanceInterface, MessageInterface } from 'types';
 import { getIsMiniVersion } from 'utils';
+
+const getInstanceKey = ({ idInstance, apiTokenInstance, apiUrl }: InstanceInterface) =>
+  `${idInstance}:${apiTokenInstance}:${apiUrl}`;
 
 const initialState: ChatState = {
   activeChat: null,
@@ -17,6 +21,8 @@ const initialState: ChatState = {
   isCallsIframeReady: false,
   searchQuery: '',
   replyMessage: null,
+  lastMessagesByChatId: {},
+  lastMessagesInstanceKey: null,
 };
 
 const chatSlice = createSlice({
@@ -74,6 +80,27 @@ const chatSlice = createSlice({
     setIsCallsIframeReady: (state, action: PayloadAction<ChatState['isCallsIframeReady']>) => {
       state.isCallsIframeReady = action.payload;
     },
+
+    setLastMessageByChatId: (
+      state,
+      action: PayloadAction<{ chatId: string; message: MessageInterface | null }>
+    ) => {
+      state.lastMessagesByChatId[action.payload.chatId] = action.payload.message;
+    },
+
+    clearLastMessagesByChatId: (state) => {
+      state.lastMessagesByChatId = {};
+    },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(instancesActions.setSelectedInstance, (state, action) => {
+      const instanceKey = getInstanceKey(action.payload);
+
+      if (state.lastMessagesInstanceKey !== instanceKey) {
+        state.lastMessagesByChatId = {};
+        state.lastMessagesInstanceKey = instanceKey;
+      }
+    });
   },
 });
 
@@ -93,3 +120,5 @@ export const selectBrandImgUrl = (state: RootState) => state.chatReducer.brandIm
 export const selectSearchQuery = (state: RootState) => state.chatReducer.searchQuery;
 export const selectReplyMessage = (state: RootState) => state.chatReducer.replyMessage;
 export const selectIsCallsIframeReady = (state: RootState) => state.chatReducer.isCallsIframeReady;
+export const selectLastMessagesByChatId = (state: RootState) =>
+  state.chatReducer.lastMessagesByChatId;

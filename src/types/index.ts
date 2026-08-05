@@ -47,6 +47,8 @@ export interface ChatState {
   brandImgUrl?: string;
   isCallsIframeReady: boolean;
   replyMessage: MessageDataForRender | null;
+  lastMessagesByChatId: Record<string, MessageInterface | null>;
+  lastMessagesInstanceKey: string | null;
 }
 
 export type ChatType =

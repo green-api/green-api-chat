@@ -219,9 +219,7 @@ const ChatView: FC = () => {
         const selectedOptions =
           msg.pollMessageData?.votes
             ?.filter((vote) =>
-              vote.optionVoters.some(
-                (voter) => getPhoneNumberFromChatId(voter) === senderPhone
-              )
+              vote.optionVoters.some((voter) => getPhoneNumberFromChatId(voter) === senderPhone)
             )
             .map((vote) => vote.optionName) ?? [];
 
@@ -310,14 +308,9 @@ const ChatView: FC = () => {
     );
   }
 
-  if (error) {
-    if ('status' in error && error.status === 429) {
-      return (
-        <div className={`chat-view flex-center ${isMiniVersion ? '' : 'full'}`}>
-          <Spin size="large" />
-        </div>
-      );
-    }
+  const isRateLimitError = !!error && 'status' in error && error.status === 429;
+
+  if (error && !isRateLimitError) {
     return (
       <div className={`chat-view flex-center ${isMiniVersion ? '' : 'full'}`}>
         <Empty description={getErrorMessage(error, t)} />

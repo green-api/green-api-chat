@@ -156,10 +156,10 @@ const ChatListItem: FC<ContactListItemProps> = ({
 
     default:
       chatName = getFirstNonEmptyString(
-        contactInfo?.contactName,
-        contactInfo?.name,
         lastMessage.senderContactName,
         lastMessage.senderName,
+        contactInfo?.contactName,
+        contactInfo?.name,
         getPhoneNumberFromChatId(lastMessage.chatId)
       );
   }
@@ -180,6 +180,7 @@ const ChatListItem: FC<ContactListItemProps> = ({
   const info = contactInfo || groupData;
 
   const handleSelectChat = () => {
+    console.log(info);
     setActiveChat({
       chatId: lastMessage.chatId,
       chatType: lastMessage.chatType || telegramChat?.type,

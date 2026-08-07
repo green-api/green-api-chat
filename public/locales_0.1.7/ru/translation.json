@@ -200,6 +200,7 @@
   "DUPLICATED_FIELD_ERROR": "Такой вариант уже есть",
   "AUTHORIZED": "Авторизован",
   "NOT_AUTHORIZED": "Не авторизован",
+  "SUSPENDED": "Ограничено мессенджером",
   "AUTHORIZE": "Подключить",
   "LINK_BY": "Связать по",
   "LINK_BY_QR": "QR-коду",

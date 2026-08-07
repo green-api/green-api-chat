@@ -189,6 +189,7 @@
   "DUPLICATED_FIELD_ERROR": "Bu seçenek zaten mevcut",
   "AUTHORIZED": "Yetkili",
   "NOT_AUTHORIZED": "Yetkili değil",
+  "SUSPENDED": "Askıya alınmış",
   "CONFIRM_LEAVE_GROUP": "Gruptan ayrılmak istediğinizden emin misiniz?",
   "LEFT_GROUP_SUCCESS": "Gruptan ayrıldınız",
   "ERROR_LEAVING_GROUP": "Gruptan ayrılırken bir hata oluştu",

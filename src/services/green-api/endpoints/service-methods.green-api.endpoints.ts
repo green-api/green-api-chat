@@ -9,6 +9,7 @@ import {
   EditMessageParameters,
   GetContactsParametersInterface,
   GetChatInformationParameters,
+  GetChatsParametersInterface,
   GetChatsResponseInterface,
   GetContactInfoResponseInterface,
   InstanceInterface,
@@ -114,10 +115,16 @@ export const serviceMethodsGreenApiEndpoints = greenAPI.injectEndpoints({
         body,
       }),
     }),
-    getChats: builder.query<GetChatsResponseInterface[], InstanceInterface>({
-      query: ({ idInstance, apiTokenInstance, apiUrl, mediaUrl: _ }) => ({
+    getChats: builder.query<GetChatsResponseInterface[], GetChatsParametersInterface>({
+      query: ({ idInstance, apiTokenInstance, apiUrl, mediaUrl: _, ...params }) => ({
         url: `${apiUrl}waInstance${idInstance}/getChats/${apiTokenInstance}`,
+        params,
       }),
+      transformResponse: (response: GetChatsResponseInterface[]) =>
+        response.map((chat) => ({
+          ...chat,
+          chatId: chat.chatId || chat.id || '',
+        })),
     }),
   }),
 });

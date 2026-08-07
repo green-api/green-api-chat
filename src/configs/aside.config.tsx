@@ -24,7 +24,9 @@ export const asideTopIconItems: (
     ? { item: 'instance', title: 'INSTANCE', icon: <InstanceIcon /> }
     : null,
   { item: 'chats', title: 'CHATS_TITLE', icon: <ChatIcon /> },
-  { item: 'statuses', title: 'STATUSES', icon: <StatusIcon />, waOnly: true },
+  typeInstance === 'whatsapp'
+    ? { item: 'statuses', title: 'STATUSES', icon: <StatusIcon />, waOnly: true }
+    : null,
   typeInstance === 'whatsapp' && isCallsIframeReady
     ? { item: 'calls', title: 'CALLS_TITLE', icon: <PhoneIcon /> }
     : null,

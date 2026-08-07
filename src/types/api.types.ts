@@ -111,6 +111,7 @@ export interface MessageInterface
   templateMessage?: TemplateMessageInterface;
   templateButtonReplyMessage?: TemplateButtonReplyMessage;
   interactiveButtons?: InteractiveButtons;
+  editedMessageData?: MessageInterface;
   downloadUrl?: string;
   location?: LocationInterface;
   fileName?: string;
@@ -287,6 +288,10 @@ export interface CheckWhatsappResponseInterface {
 
 export interface GetContactsParametersInterface extends InstanceInterface {
   group?: boolean;
+  count?: number;
+}
+
+export interface GetChatsParametersInterface extends InstanceInterface {
   count?: number;
 }
 
@@ -684,6 +689,7 @@ export interface QRResponseInterface {
 }
 
 export interface GetChatsResponseInterface {
+  id?: string;
   chatId: string;
   name: string;
   type: TelegramChatType;

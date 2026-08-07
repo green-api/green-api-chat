@@ -60,6 +60,7 @@ const ChatListItem: FC<ContactListItemProps> = ({
   const isMax = useIsMaxInstance();
   const isTelegram = useIsTelegramInstance();
   const isMaxGroup = isMax && lastMessage.chatId?.startsWith('-');
+  const hasMessagePreview = !lastMessage.idMessage.startsWith('chat-');
 
   const messageDate = getMessageDate(
     lastMessage.timestamp * 1000,
@@ -155,10 +156,10 @@ const ChatListItem: FC<ContactListItemProps> = ({
 
     default:
       chatName = getFirstNonEmptyString(
-        contactInfo?.contactName,
-        contactInfo?.name,
         lastMessage.senderContactName,
         lastMessage.senderName,
+        contactInfo?.contactName,
+        contactInfo?.name,
         getPhoneNumberFromChatId(lastMessage.chatId)
       );
   }
@@ -179,6 +180,7 @@ const ChatListItem: FC<ContactListItemProps> = ({
   const info = contactInfo || groupData;
 
   const handleSelectChat = () => {
+    console.log(info);
     setActiveChat({
       chatId: lastMessage.chatId,
       chatType: lastMessage.chatType || telegramChat?.type,
@@ -225,7 +227,8 @@ const ChatListItem: FC<ContactListItemProps> = ({
             </Flex>
           }
           description={
-            showDescription && (
+            showDescription &&
+            hasMessagePreview && (
               <Flex align="center" gap={5}>
                 {lastMessage.statusMessage &&
                   getOutgoingStatusMessageIcon(lastMessage.statusMessage, {
@@ -244,7 +247,7 @@ const ChatListItem: FC<ContactListItemProps> = ({
             )
           }
         />
-        {showDescription && (
+        {showDescription && hasMessagePreview && (
           <Flex vertical align="end" style={{ alignSelf: 'start' }} gap={4}>
             <span style={{ textAlign: 'end' }}>{messageDate}</span>
             {unreadCount &&

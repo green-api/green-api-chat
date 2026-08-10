@@ -534,6 +534,7 @@ const ChatList: FC = () => {
                   onNameExtracted={handleNameExtracted}
                   unreadCount={unreadCounts[message.chatId]}
                   onClearUnread={() => clearUnreadCount(message.chatId)}
+                  isLastMessageLoading={!(message.chatId in lastMessagesByChatId)}
                 />
               )}
               loading={{

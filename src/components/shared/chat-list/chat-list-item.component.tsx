@@ -38,6 +38,7 @@ interface ContactListItemProps {
   showDescription?: boolean;
   unreadCount?: number;
   onClearUnread?: () => void;
+  isLastMessageLoading?: boolean;
 }
 
 const WABA_POOLS = ['7835', '9908'];
@@ -48,6 +49,7 @@ const ChatListItem: FC<ContactListItemProps> = ({
   showDescription = true,
   unreadCount,
   onClearUnread,
+  isLastMessageLoading = false,
 }) => {
   const {
     t,
@@ -228,7 +230,7 @@ const ChatListItem: FC<ContactListItemProps> = ({
           }
           description={
             showDescription &&
-            hasMessagePreview && (
+            (hasMessagePreview ? (
               <Flex align="center" gap={5}>
                 {lastMessage.statusMessage &&
                   getOutgoingStatusMessageIcon(lastMessage.statusMessage, {
@@ -244,7 +246,11 @@ const ChatListItem: FC<ContactListItemProps> = ({
                   </span>
                 )}
               </Flex>
-            )
+            ) : (
+              isLastMessageLoading && (
+                <Skeleton.Input active size="small" style={{ width: 180, height: 16 }} />
+              )
+            ))
           }
         />
         {showDescription && hasMessagePreview && (

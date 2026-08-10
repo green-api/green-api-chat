@@ -188,6 +188,7 @@
   "DUPLICATED_FIELD_ERROR": "אפשרות זו כבר קיימת",
   "AUTHORIZED": "מורשה",
   "NOT_AUTHORIZED": "לא מורשה",
+  "SUSPENDED": "מושהה",
   "CONFIRM_LEAVE_GROUP": "האם אתה בטוח שברצונך לעזוב את הקבוצה?",
   "LEFT_GROUP_SUCCESS": "עזבת את הקבוצה",
   "ERROR_LEAVING_GROUP": "אירעה שגיאה בעת עזיבת הקבוצה",

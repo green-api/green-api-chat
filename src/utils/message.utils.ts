@@ -13,6 +13,7 @@ export function getTextMessage(message: MessageLike) {
   }
 
   return (
+    message.editedMessageData?.textMessage ||
     message.extendedTextMessage?.text ||
     message.textMessage ||
     message.templateButtonReplyMessage?.selectedDisplayText ||

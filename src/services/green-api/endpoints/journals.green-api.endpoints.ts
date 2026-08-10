@@ -16,9 +16,7 @@ export const journalsGreenApiEndpoints = greenAPI.injectEndpoints({
       transformResponse: (res: GetChatHistoryResponse) =>
         res
           .filter(
-            (msg) =>
-              msg.typeMessage !== 'deletedMessage' &&
-              msg.typeMessage !== 'editedMessage'
+            (msg) => msg.typeMessage !== 'deletedMessage' && msg.typeMessage !== 'editedMessage'
           )
           .reverse(),
       providesTags: ['chatHistory'],

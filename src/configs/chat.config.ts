@@ -6,7 +6,7 @@
  * getChatHistory for the same chat, which doubles the load and can trigger 429 errors
  * (making chats open very slowly).
  */
-export const FULL_CHAT_HISTORY_COUNT = 50;
+export const FULL_CHAT_HISTORY_COUNT = 20;
 
 /** Same as {@link FULL_CHAT_HISTORY_COUNT} but for the mini (iframe) chat view. */
 export const MINI_CHAT_HISTORY_COUNT = 10;

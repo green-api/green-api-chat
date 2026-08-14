@@ -286,6 +286,17 @@ export interface CheckWhatsappResponseInterface {
   existsWhatsapp: boolean;
 }
 
+export interface CheckAccountParametersInterface extends CheckWhatsappParametersInterface {
+  username?: string;
+  force?: boolean;
+}
+
+export interface CheckAccountResponseInterface {
+  exist: boolean;
+  chatId: string;
+  fromCache: boolean;
+}
+
 export interface GetContactsParametersInterface extends InstanceInterface {
   group?: boolean;
   count?: number;
@@ -296,6 +307,7 @@ export interface GetChatsParametersInterface extends InstanceInterface {
 }
 
 export interface ContactListItemInterface {
+  chatId?: string;
   id: string;
   name: string;
   contactName?: string;

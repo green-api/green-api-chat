@@ -2,7 +2,6 @@ import { FC, useEffect, useState, useMemo, useRef } from 'react';
 
 import { Flex, Spin } from 'antd';
 import VirtualList from 'rc-virtual-list';
-import { useTranslation } from 'react-i18next';
 
 import SelectInstanceLabel from './select-instance-label.component';
 import { Search } from '../search.component';
@@ -31,7 +30,6 @@ const SelectInstance: FC = () => {
 
   const { setUserSideActiveMode } = useActions();
   const { setSelectedInstance, setActiveChat, setIsAuthorizingInstance } = useActions();
-  const { t } = useTranslation();
 
   const { isLoading: isLoadingInstances } = useGetInstancesQuery(
     { idUser, apiTokenUser, projectId },
@@ -98,7 +96,7 @@ const SelectInstance: FC = () => {
   return (
     <Flex vertical gap={8} style={{ height: '100vh' }}>
       <div ref={searchRef}>
-        <Search searchQuery={searchQuery} t={t} handleChange={handleSearchChange} />
+        <Search searchQuery={searchQuery} handleChange={handleSearchChange} />
       </div>
 
       <div style={{ margin: '0 12px' }}>

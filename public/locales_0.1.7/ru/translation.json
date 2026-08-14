@@ -27,6 +27,7 @@
   "QUOTE_EXCEEDED": "Превышена квота тарифа. Сообщение не отправлено",
   "SUCCESS_SENDING_MESSAGE": "Сообщение отправлено",
   "PHONE_DOES_NOT_HAVE_WHATSAPP": "У данного номера отсутствует Whatsapp",
+  "MAX_ACCOUNT_NOT_FOUND": "Данный аккаунт не найден в Max",
   "QUOTE_REACHED": "Исчерпана квота тарифа",
   "CHECK_WHATSAPP_QUOTE_REACHED": "Исчерпана квота для метода CheckWhatsApp",
   "LOGO_TITLE": "GREEN-API для отправки и получения сообщений WhatsApp",

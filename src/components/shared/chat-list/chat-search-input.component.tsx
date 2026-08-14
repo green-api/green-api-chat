@@ -1,7 +1,5 @@
 import React, { useCallback } from 'react';
 
-import { useTranslation } from 'react-i18next';
-
 import { Search } from 'components/UI/search.component';
 import { useActions, useAppSelector } from 'hooks';
 import { selectMiniVersion, selectSearchQuery } from 'store/slices/chat.slice';
@@ -11,8 +9,6 @@ interface ChatSearchInputProps {
 }
 
 const ChatSearchInput: React.FC<ChatSearchInputProps> = ({ setPage }) => {
-  const { t } = useTranslation();
-
   const searchQuery = useAppSelector(selectSearchQuery);
 
   const isMiniVersion = useAppSelector(selectMiniVersion);
@@ -32,7 +28,7 @@ const ChatSearchInput: React.FC<ChatSearchInputProps> = ({ setPage }) => {
     return null;
   }
 
-  return <Search searchQuery={searchQuery} t={t} handleChange={handleChange} />;
+  return <Search searchQuery={searchQuery} handleChange={handleChange} />;
 };
 
 export default ChatSearchInput;

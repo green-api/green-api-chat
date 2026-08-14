@@ -22,18 +22,27 @@ const ChatIdInput: FC<ChatIdInputProps> = ({
   ...inputProperties
 }) => {
   const { t } = useTranslation();
-  const [identifier, parsedSuffix] = splitChatId(value, defaultSuffix);
+  const hasSuffixes = suffixes.length > 0;
+  const [identifier, parsedSuffix] = hasSuffixes
+    ? splitChatId(value, defaultSuffix)
+    : [value, defaultSuffix];
   const [suffix, setSuffix] = useState<ChatIdSuffix>(
     suffixes.includes(parsedSuffix) ? parsedSuffix : defaultSuffix
   );
 
   useEffect(() => {
-    if (value && suffixes.includes(parsedSuffix) && parsedSuffix !== suffix) {
+    if (hasSuffixes && value && suffixes.includes(parsedSuffix) && parsedSuffix !== suffix) {
       setSuffix(parsedSuffix);
     }
-  }, [parsedSuffix, suffix, suffixes, value]);
+  }, [hasSuffixes, parsedSuffix, suffix, suffixes, value]);
 
   const handleIdentifierChange = (nextValue: string) => {
+    if (!hasSuffixes) {
+      onChange?.(nextValue.replace(/\D/g, ''));
+
+      return;
+    }
+
     const normalizedValue = normalizeChatIdIdentifier(nextValue, suffix);
     onChange?.(normalizedValue ? `${normalizedValue}${suffix}` : '');
   };
@@ -50,24 +59,26 @@ const ChatIdInput: FC<ChatIdInputProps> = ({
     '@lid': t('CHAT_ID_LID_PLACEHOLDER', 'LID'),
   };
 
-  const resolvedPlaceholder = placeholder ?? suffixPlaceholders[suffix];
+  const resolvedPlaceholder = placeholder ?? (hasSuffixes ? suffixPlaceholders[suffix] : undefined);
 
   return (
     <Input
       {...inputProperties}
       value={identifier}
       onChange={(event) => handleIdentifierChange(event.target.value)}
-      type={suffix === '@lid' ? 'text' : 'tel'}
+      type={hasSuffixes && suffix === '@lid' ? 'text' : 'tel'}
       placeholder={resolvedPlaceholder}
       addonAfter={
-        <Select<ChatIdSuffix>
-          aria-label={t('CHAT_ID_TYPE_LABEL', 'Тип идентификатора')}
-          value={suffix}
-          onChange={handleSuffixChange}
-          variant="borderless"
-          popupMatchSelectWidth={false}
-          options={suffixes.map((item) => ({ value: item, label: item }))}
-        />
+        hasSuffixes ? (
+          <Select<ChatIdSuffix>
+            aria-label={t('CHAT_ID_TYPE_LABEL', 'Тип идентификатора')}
+            value={suffix}
+            onChange={handleSuffixChange}
+            variant="borderless"
+            popupMatchSelectWidth={false}
+            options={suffixes.map((item) => ({ value: item, label: item }))}
+          />
+        ) : undefined
       }
     />
   );

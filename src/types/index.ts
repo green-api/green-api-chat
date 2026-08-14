@@ -5,6 +5,7 @@ import { Color } from 'antd/es/color-picker';
 
 import {
   Button,
+  ContactListItemInterface,
   ExpandedInstanceInterface,
   FontType,
   GetContactInfoResponseInterface,
@@ -106,6 +107,11 @@ export interface MessageMenuState {
   activeMode: 'messageInfo' | 'menu';
   activeServiceMethod: MessageServiceMethodName | null;
   messageDataForRender: MessageDataForRender | null;
+}
+
+export interface ContactsModalState {
+  isOpen: boolean;
+  editedContact: ContactListItemInterface | null;
 }
 
 export type LanguageLiteral = 'en' | 'ru' | 'he' | 'tr';

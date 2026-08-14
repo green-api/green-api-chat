@@ -146,12 +146,14 @@ const ContactFormModal: FC = () => {
       return;
     }
 
-    const isAccountAvailable = isMax
-      ? await validateMaxAccountAvailability(normalizedChatId)
-      : await validateWhatsappAvailability(normalizedChatId);
+    if (!isEditMode) {
+      const isAccountAvailable = isMax
+        ? await validateMaxAccountAvailability(normalizedChatId)
+        : await validateWhatsappAvailability(normalizedChatId);
 
-    if (!isAccountAvailable) {
-      return;
+      if (!isAccountAvailable) {
+        return;
+      }
     }
 
     const requestBody = {

@@ -1,16 +1,94 @@
+import { useLazyGetChatHistoryQuery } from 'services/green-api/endpoints';
 import {
   GetChatHistoryParametersInterface,
   GetChatHistoryResponse,
+  GetChatsResponseInterface,
   InstanceInterface,
   MessageInterface,
   StatusMessage,
 } from 'types';
 
+const CHAT_HISTORY_RETRY_LIMIT = 5;
+const CHAT_HISTORY_RETRY_BASE_DELAY = 1000;
+
+export const isMessage = (message: MessageInterface | null): message is MessageInterface =>
+  message !== null;
+
+export const chatToMessage = (chat: GetChatsResponseInterface): MessageInterface => ({
+  chatId: chat.chatId,
+  chatType: chat.type,
+  idMessage: `chat-${chat.chatId}`,
+  senderName: chat.name,
+  senderContactName: chat.name,
+  timestamp: 0,
+  type: 'incoming',
+  typeMessage: 'textMessage',
+  textMessage: '',
+});
+
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const getReactionEmoji = (message: MessageInterface): string | undefined =>
+  message.extendedTextMessageData?.text?.trim() ||
+  message.extendedTextMessage?.text?.trim() ||
+  message.textMessage?.trim() ||
+  undefined;
+
+export const fetchChatLastMessage = async (
+  chat: GetChatsResponseInterface,
+  instanceCredentials: InstanceInterface,
+  getChatHistory: ReturnType<typeof useLazyGetChatHistoryQuery>[0]
+): Promise<{ chat: GetChatsResponseInterface; message?: MessageInterface }> => {
+  for (let attempt = 0; attempt <= CHAT_HISTORY_RETRY_LIMIT; attempt++) {
+    const { data: history, error } = await getChatHistory({
+      ...instanceCredentials,
+      chatId: chat.chatId,
+      count: 1,
+    });
+
+    if (!error) {
+      const message = history?.[0];
+
+      if (message?.typeMessage === 'reactionMessage') {
+        return { chat, message: { ...message, textMessage: getReactionEmoji(message) } };
+      }
+
+      return { chat, message };
+    }
+
+    const isRateLimited = 'status' in error && error.status === 429;
+
+    if (!isRateLimited || attempt === CHAT_HISTORY_RETRY_LIMIT) {
+      return { chat, message: undefined };
+    }
+
+    await wait(CHAT_HISTORY_RETRY_BASE_DELAY * (attempt + 1));
+  }
+
+  return { chat, message: undefined };
+};
+
+export const loadSequentiallyWithDelay = async <Item, Result>(
+  items: Item[],
+  delayMs: number,
+  worker: (item: Item) => Promise<Result>
+): Promise<Result[]> => {
+  const results: Result[] = [];
+
+  for (const [index, item] of items.entries()) {
+    results.push(await worker(item));
+
+    if (index < items.length - 1) {
+      await wait(delayMs);
+    }
+  }
+
+  return results;
+};
+
 const getFilteredMessages = (messages: GetChatHistoryResponse): GetChatHistoryResponse =>
   messages.filter(
-    (message) =>
-      message.typeMessage !== 'deletedMessage' &&
-      message.typeMessage !== 'editedMessage'
+    (message) => message.typeMessage !== 'deletedMessage' && message.typeMessage !== 'editedMessage'
   );
 
 const getMessageKey = (message: MessageInterface): string =>

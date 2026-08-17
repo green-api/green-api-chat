@@ -15,11 +15,16 @@ import {
   selectType,
 } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
-import { GetChatsResponseInterface, InstanceInterface, MessageInterface } from 'types';
+import { GetChatsResponseInterface, MessageInterface } from 'types';
 import {
+  chatToMessage,
+  fetchChatLastMessage,
   filterMessagesByText,
   getCachedGetChatHistoryMessages,
   getErrorMessage,
+  isMessage,
+  isNotReaction,
+  loadSequentiallyWithDelay,
   updateAllChats,
 } from 'utils';
 
@@ -27,82 +32,7 @@ const { Title } = Typography;
 const CHATS_BATCH_SIZE = 100;
 const CHATS_POLLING_INTERVAL = 15000;
 const CHAT_HISTORY_REQUEST_DELAY = 800;
-const CHAT_HISTORY_RETRY_LIMIT = 5;
-const CHAT_HISTORY_RETRY_BASE_DELAY = 1000;
 const CHAT_HISTORY_REFRESH_INTERVAL = 60000;
-
-const isMessage = (message: MessageInterface | null): message is MessageInterface =>
-  message !== null;
-
-const isNotReaction = (msg: MessageInterface) => {
-  if (msg.typeMessage === 'reactionMessage') {
-    return false;
-  }
-  if ('reactionText' in msg || 'reaction' in msg) {
-    return false;
-  }
-  return true;
-};
-
-const chatToMessage = (chat: GetChatsResponseInterface): MessageInterface => ({
-  chatId: chat.chatId,
-  chatType: chat.type,
-  idMessage: `chat-${chat.chatId}`,
-  senderName: chat.name,
-  senderContactName: chat.name,
-  timestamp: 0,
-  type: 'incoming',
-  typeMessage: 'textMessage',
-  textMessage: '',
-});
-
-const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
-const fetchChatLastMessage = async (
-  chat: GetChatsResponseInterface,
-  instanceCredentials: InstanceInterface,
-  getChatHistory: ReturnType<typeof useLazyGetChatHistoryQuery>[0]
-): Promise<{ chat: GetChatsResponseInterface; message?: MessageInterface }> => {
-  for (let attempt = 0; attempt <= CHAT_HISTORY_RETRY_LIMIT; attempt++) {
-    const { data: history, error } = await getChatHistory({
-      ...instanceCredentials,
-      chatId: chat.chatId,
-      count: 1,
-    });
-
-    if (!error) {
-      return { chat, message: history?.find(isNotReaction) };
-    }
-
-    const isRateLimited = 'status' in error && error.status === 429;
-
-    if (!isRateLimited || attempt === CHAT_HISTORY_RETRY_LIMIT) {
-      return { chat, message: undefined };
-    }
-
-    await wait(CHAT_HISTORY_RETRY_BASE_DELAY * (attempt + 1));
-  }
-
-  return { chat, message: undefined };
-};
-
-const loadSequentiallyWithDelay = async <Item, Result>(
-  items: Item[],
-  delayMs: number,
-  worker: (item: Item) => Promise<Result>
-): Promise<Result[]> => {
-  const results: Result[] = [];
-
-  for (const [index, item] of items.entries()) {
-    results.push(await worker(item));
-
-    if (index < items.length - 1) {
-      await wait(delayMs);
-    }
-  }
-
-  return results;
-};
 
 const ChatList: FC = () => {
   const instanceCredentials = useAppSelector(selectInstance);
@@ -167,7 +97,7 @@ const ChatList: FC = () => {
       chats.map((chat) => {
         const message = lastMessagesByChatId[chat.chatId];
 
-        return message && isNotReaction(message) ? message : chatToMessage(chat);
+        return message ?? chatToMessage(chat);
       }),
     [chats, lastMessagesByChatId]
   );

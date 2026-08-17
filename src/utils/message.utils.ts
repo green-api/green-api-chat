@@ -21,6 +21,16 @@ export function getTextMessage(message: MessageLike) {
   );
 }
 
+export const isNotReaction = (message: MessageInterface): boolean => {
+  if (message.typeMessage === 'reactionMessage') {
+    return false;
+  }
+  if ('reactionText' in message || 'reaction' in message) {
+    return false;
+  }
+  return true;
+};
+
 export function getPhoneNumberFromChatId(chatId: string) {
   return chatId?.replace(/\@.*$/, '');
 }

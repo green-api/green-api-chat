@@ -347,7 +347,7 @@ export interface GetContactInfoResponseInterface
   category: string;
   description: string;
   products: ProductInterface[];
-  lastSeen: string | null;
+  lastSeen: string | number | null;
   isArchive: boolean;
   isDisappearing: boolean;
   isBusiness: boolean;
@@ -355,6 +355,10 @@ export interface GetContactInfoResponseInterface
   messageExpiration: number;
   muteExpiration: number | null;
   base64Avatar?: string;
+  // MAX-specific fields
+  chatType?: string;
+  phoneNumber?: number;
+  phoneNumberTimestamp?: number;
 }
 
 interface ProductInterface {

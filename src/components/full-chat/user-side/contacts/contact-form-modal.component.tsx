@@ -1,6 +1,6 @@
 import { FC, useCallback, useEffect } from 'react';
 
-import { Form, Input, message, Modal } from 'antd';
+import { Form, Input, message, Modal, Select } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import { ContactFormValues, getContactApiErrorDetails, normalizeChatId } from './contacts.helpers';
@@ -12,6 +12,7 @@ import {
   useCheckAccountMutation,
   useCheckWhatsappMutation,
   useEditContactMutation,
+  useLazyGetContactInfoQuery,
 } from 'services/green-api/endpoints';
 import { selectEditedContact, selectIsContactModalOpen } from 'store/slices/contacts-modal.slice';
 import { selectInstance } from 'store/slices/instances.slice';
@@ -35,6 +36,7 @@ const ContactFormModal: FC = () => {
 
   const [checkWhatsapp] = useCheckWhatsappMutation();
   const [checkAccount] = useCheckAccountMutation();
+  const [getContactInfo] = useLazyGetContactInfoQuery();
   const [addContact, { isLoading: isAddContactLoading }] = useAddContactMutation();
   const [editContact, { isLoading: isEditContactLoading }] = useEditContactMutation();
 
@@ -135,6 +137,35 @@ const ContactFormModal: FC = () => {
     return true;
   };
 
+  const validateMaxChatIdAvailability = async (chatId: string): Promise<boolean> => {
+    const { data, error } = await getContactInfo({
+      ...instanceCredentials,
+      chatId,
+    });
+
+    if (error) {
+      const errorDetails = getContactApiErrorDetails(error, t);
+
+      if (errorDetails.field) {
+        form.setFields([{ name: errorDetails.field, errors: [errorDetails.message] }]);
+      } else {
+        message.error(errorDetails.message);
+      }
+
+      return false;
+    }
+
+    const isEmptyContact = !data?.lastSeen && !data?.phoneNumber && !data?.phoneNumberTimestamp;
+
+    if (isEmptyContact) {
+      form.setFields([{ name: 'chatId', errors: [t('MAX_ACCOUNT_NOT_FOUND')] }]);
+
+      return false;
+    }
+
+    return true;
+  };
+
   const handleSubmit = async (values: ContactFormValues) => {
     clearFormErrors();
 
@@ -147,9 +178,13 @@ const ContactFormModal: FC = () => {
     }
 
     if (!isEditMode) {
-      const isAccountAvailable = isMax
-        ? await validateMaxAccountAvailability(normalizedChatId)
-        : await validateWhatsappAvailability(normalizedChatId);
+      const isMaxChatIdType = isMax && values.chatIdType === 'chatId';
+
+      const isAccountAvailable = isMaxChatIdType
+        ? await validateMaxChatIdAvailability(normalizedChatId)
+        : isMax
+          ? await validateMaxAccountAvailability(normalizedChatId)
+          : await validateWhatsappAvailability(normalizedChatId);
 
       if (!isAccountAvailable) {
         return;
@@ -194,53 +229,90 @@ const ContactFormModal: FC = () => {
       destroyOnClose
     >
       <Form<ContactFormValues> form={form} layout="vertical" onFinish={handleSubmit}>
+        {isMax && !isEditMode && (
+          <Form.Item name="chatIdType" initialValue="phone" style={{ marginBottom: 12 }}>
+            <Select style={{ width: '100%' }}>
+              <Select.Option value="phone">{t('PHONE_NUMBER')}</Select.Option>
+              <Select.Option value="chatId">{t('CONTACT_CHAT_ID_LABEL')}</Select.Option>
+            </Select>
+          </Form.Item>
+        )}
         <Form.Item
-          name="chatId"
-          label={t('CONTACT_CHAT_ID_LABEL')}
-          rules={[
-            { required: true, message: t('EMPTY_FIELD_ERROR') },
-            {
-              validator: (_, value) => {
-                const normalizedChatId = normalizeChatId(value ?? '', isMax);
-
-                if (!normalizedChatId) {
-                  return Promise.resolve();
-                }
-
-                if (isMax) {
-                  return normalizedChatId.length >= MAX_CHAT_ID_MIN_LENGTH
-                    ? Promise.resolve()
-                    : Promise.reject(new Error(t('CHAT_ID_INVALID_VALUE_MESSAGE')));
-                }
-
-                if (normalizedChatId.includes('@g.us')) {
-                  return Promise.reject(new Error(t('CONTACT_PHONE_INVALID_MESSAGE')));
-                }
-
-                if (isLidChatId(normalizedChatId)) {
-                  const [identifier] = splitChatId(normalizedChatId);
-
-                  return identifier.length >= 3
-                    ? Promise.resolve()
-                    : Promise.reject(new Error(t('CHAT_ID_INVALID_VALUE_MESSAGE')));
-                }
-
-                const phone = getPhoneNumberFromChatId(normalizedChatId).replace(/\D/g, '');
-
-                if (phone.length < 9) {
-                  return Promise.reject(new Error(t('CONTACT_PHONE_INVALID_MESSAGE')));
-                }
-
-                return Promise.resolve();
-              },
-            },
-          ]}
+          noStyle
+          shouldUpdate={(prevValues, currentValues) =>
+            prevValues.chatIdType !== currentValues.chatIdType
+          }
         >
-          <ChatIdInput
-            disabled={isEditMode}
-            autoComplete="off"
-            suffixes={isMax ? [] : ['@c.us', '@lid']}
-          />
+          {({ getFieldValue }) => {
+            const chatIdType = isMax
+              ? (getFieldValue('chatIdType') as ContactFormValues['chatIdType']) || 'phone'
+              : undefined;
+            const isPhoneRuleNeeded = !isMax || isEditMode || chatIdType === 'phone';
+
+            return (
+              <Form.Item
+                name="chatId"
+                label={
+                  isMax && chatIdType === 'phone' ? t('PHONE_NUMBER') : t('CONTACT_CHAT_ID_LABEL')
+                }
+                rules={[
+                  { required: true, message: t('EMPTY_FIELD_ERROR') },
+                  {
+                    validator: (_, value) => {
+                      const normalizedChatId = normalizeChatId(value ?? '', isMax);
+
+                      if (!normalizedChatId) {
+                        return Promise.resolve();
+                      }
+
+                      if (isMax) {
+                        if (!isPhoneRuleNeeded) {
+                          return Promise.resolve();
+                        }
+
+                        return normalizedChatId.length >= MAX_CHAT_ID_MIN_LENGTH
+                          ? Promise.resolve()
+                          : Promise.reject(new Error(t('CHAT_ID_INVALID_VALUE_MESSAGE')));
+                      }
+
+                      if (normalizedChatId.includes('@g.us')) {
+                        return Promise.reject(new Error(t('CONTACT_PHONE_INVALID_MESSAGE')));
+                      }
+
+                      if (isLidChatId(normalizedChatId)) {
+                        const [identifier] = splitChatId(normalizedChatId);
+
+                        return identifier.length >= 3
+                          ? Promise.resolve()
+                          : Promise.reject(new Error(t('CHAT_ID_INVALID_VALUE_MESSAGE')));
+                      }
+
+                      const phone = getPhoneNumberFromChatId(normalizedChatId).replace(/\D/g, '');
+
+                      if (phone.length < 9) {
+                        return Promise.reject(new Error(t('CONTACT_PHONE_INVALID_MESSAGE')));
+                      }
+
+                      return Promise.resolve();
+                    },
+                  },
+                ]}
+              >
+                <ChatIdInput
+                  disabled={isEditMode}
+                  autoComplete="off"
+                  suffixes={isMax ? [] : ['@c.us', '@lid']}
+                  placeholder={
+                    isMax
+                      ? chatIdType === 'chatId'
+                        ? t('CONTACT_CHAT_ID_LABEL')
+                        : t('CHAT_ID_PHONE_PLACEHOLDER')
+                      : undefined
+                  }
+                />
+              </Form.Item>
+            );
+          }}
         </Form.Item>
 
         <Form.Item

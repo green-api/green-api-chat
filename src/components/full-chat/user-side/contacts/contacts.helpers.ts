@@ -5,6 +5,7 @@ import { getErrorMessage, getPhoneNumberFromChatId, isApiError } from 'utils';
 
 export interface ContactFormValues {
   chatId: string;
+  chatIdType?: 'phone' | 'chatId';
   contactName: string;
   contactSecondName?: string;
 }

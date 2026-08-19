@@ -49,7 +49,7 @@ const ContactFormModal: FC = () => {
 
     if (editedContact) {
       form.setFieldsValue({
-        chatId: editedContact.id,
+        chatId: (isMax && editedContact.phoneNumber) || editedContact.id,
         contactName: editedContact.contactName || editedContact.name || '',
         contactSecondName: '',
       });
@@ -58,7 +58,7 @@ const ContactFormModal: FC = () => {
     }
 
     form.resetFields();
-  }, [editedContact, form, isOpen]);
+  }, [editedContact, form, isOpen, isMax]);
 
   const closeModal = useCallback(() => {
     closeContactModal();
@@ -248,12 +248,15 @@ const ContactFormModal: FC = () => {
               ? (getFieldValue('chatIdType') as ContactFormValues['chatIdType']) || 'phone'
               : undefined;
             const isPhoneRuleNeeded = !isMax || isEditMode || chatIdType === 'phone';
+            const isEditModeChatIdDisplay = isEditMode && isMax && !editedContact?.phoneNumber;
 
             return (
               <Form.Item
                 name="chatId"
                 label={
-                  isMax && chatIdType === 'phone' ? t('PHONE_NUMBER') : t('CONTACT_CHAT_ID_LABEL')
+                  isMax && (isEditMode ? !isEditModeChatIdDisplay : chatIdType === 'phone')
+                    ? t('PHONE_NUMBER')
+                    : t('CONTACT_CHAT_ID_LABEL')
                 }
                 rules={[
                   { required: true, message: t('EMPTY_FIELD_ERROR') },

@@ -17,7 +17,7 @@ import {
 import { selectEditedContact, selectIsContactModalOpen } from 'store/slices/contacts-modal.slice';
 import { selectInstance } from 'store/slices/instances.slice';
 import { getPhoneNumberFromChatId } from 'utils';
-import { isLidChatId, splitChatId } from 'utils/chat-id.utils';
+import { ensureChatIdSuffix, isLidChatId, splitChatId } from 'utils/chat-id.utils';
 
 const MAX_CHAT_ID_MIN_LENGTH = 6;
 
@@ -49,7 +49,7 @@ const ContactFormModal: FC = () => {
 
     if (editedContact) {
       form.setFieldsValue({
-        chatId: (isMax && editedContact.phoneNumber) || editedContact.id,
+        chatId: String((isMax && editedContact.phoneNumber) || editedContact.id),
         contactName: editedContact.contactName || editedContact.name || '',
         contactSecondName: '',
       });
@@ -177,9 +177,11 @@ const ContactFormModal: FC = () => {
       return;
     }
 
-    if (!isEditMode) {
-      const isMaxChatIdType = isMax && values.chatIdType === 'chatId';
+    const isMaxChatIdType = isEditMode
+      ? isMax && !editedContact?.phoneNumber
+      : isMax && values.chatIdType === 'chatId';
 
+    if (!isEditMode) {
       const isAccountAvailable = isMaxChatIdType
         ? await validateMaxChatIdAvailability(normalizedChatId)
         : isMax
@@ -191,9 +193,12 @@ const ContactFormModal: FC = () => {
       }
     }
 
+    const finalChatId =
+      isMax && !isMaxChatIdType ? ensureChatIdSuffix(normalizedChatId) : normalizedChatId;
+
     const requestBody = {
       ...instanceCredentials,
-      chatId: normalizedChatId,
+      chatId: finalChatId,
       firstName: values.contactName.trim(),
       ...(values.contactSecondName?.trim() ? { lastName: values.contactSecondName.trim() } : {}),
       saveInAddressbook: isMax ? undefined : true,

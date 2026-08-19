@@ -18,7 +18,7 @@ export interface ContactApiErrorDetails {
 export const CONTACTS_PAGE_SIZE = 20;
 
 export const normalizeChatId = (chatId: string, isMax = false): string => {
-  const trimmedValue = chatId.trim();
+  const trimmedValue = String(chatId ?? '').trim();
 
   if (!trimmedValue) return '';
 

@@ -1,4 +1,5 @@
 import { chatActions } from 'store/slices/chat.slice';
+import { contactsModalActions } from 'store/slices/contacts-modal.slice';
 import { instancesActions } from 'store/slices/instances.slice';
 import { messageMenuActions } from 'store/slices/message-menu.slice';
 import { themeActions } from 'store/slices/theme.slice';
@@ -9,4 +10,5 @@ export const actionCreators = {
   ...instancesActions,
   ...themeActions,
   ...messageMenuActions,
+  ...contactsModalActions,
 };

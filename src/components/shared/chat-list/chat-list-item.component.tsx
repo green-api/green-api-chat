@@ -182,7 +182,6 @@ const ChatListItem: FC<ContactListItemProps> = ({
   const info = contactInfo || groupData;
 
   const handleSelectChat = () => {
-    console.log(info);
     setActiveChat({
       chatId: lastMessage.chatId,
       chatType: lastMessage.chatType || telegramChat?.type,

@@ -194,9 +194,14 @@ const ChatView: FC = () => {
               ? 'outgoing:self'
               : undefined;
         const normalizedTarget = targetId?.trim();
-        if (normalizedTarget && reaction && senderId) {
+        if (normalizedTarget && senderId) {
           const existingReactions = reactionMap.get(normalizedTarget) ?? new Map<string, string>();
-          existingReactions.set(senderId, reaction);
+          if (reaction) {
+            existingReactions.set(senderId, reaction);
+          } else {
+            // Empty extendedTextMessageData.text means the sender removed their reaction.
+            existingReactions.delete(senderId);
+          }
           reactionMap.set(normalizedTarget, existingReactions);
         }
         continue;

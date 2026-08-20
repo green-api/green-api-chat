@@ -5,6 +5,7 @@ import { getErrorMessage, getPhoneNumberFromChatId, isApiError } from 'utils';
 
 export interface ContactFormValues {
   chatId: string;
+  chatIdType?: 'phone' | 'chatId';
   contactName: string;
   contactSecondName?: string;
 }
@@ -16,18 +17,24 @@ export interface ContactApiErrorDetails {
 
 export const CONTACTS_PAGE_SIZE = 20;
 
-export const normalizeChatId = (chatId: string): string => {
-  const trimmedValue = chatId.trim().toLowerCase();
+export const normalizeChatId = (chatId: string, isMax = false): string => {
+  const trimmedValue = String(chatId ?? '').trim();
 
   if (!trimmedValue) return '';
 
-  if (trimmedValue.includes('@')) {
-    return trimmedValue;
+  if (isMax) {
+    return trimmedValue.replace(/\D/g, '');
   }
 
-  const digitsOnly = trimmedValue.replace(/\D/g, '');
+  const lowerValue = trimmedValue.toLowerCase();
 
-  return digitsOnly ? `${digitsOnly}@c.us` : trimmedValue;
+  if (lowerValue.includes('@')) {
+    return lowerValue;
+  }
+
+  const digitsOnly = lowerValue.replace(/\D/g, '');
+
+  return digitsOnly ? `${digitsOnly}@c.us` : lowerValue;
 };
 
 export const getContactDisplayName = (contact: ContactListItemInterface) =>

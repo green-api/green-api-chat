@@ -286,6 +286,17 @@ export interface CheckWhatsappResponseInterface {
   existsWhatsapp: boolean;
 }
 
+export interface CheckAccountParametersInterface extends CheckWhatsappParametersInterface {
+  username?: string;
+  force?: boolean;
+}
+
+export interface CheckAccountResponseInterface {
+  exist: boolean;
+  chatId: string;
+  fromCache: boolean;
+}
+
 export interface GetContactsParametersInterface extends InstanceInterface {
   group?: boolean;
   count?: number;
@@ -296,6 +307,7 @@ export interface GetChatsParametersInterface extends InstanceInterface {
 }
 
 export interface ContactListItemInterface {
+  chatId?: string;
   id: string;
   name: string;
   contactName?: string;
@@ -335,7 +347,7 @@ export interface GetContactInfoResponseInterface
   category: string;
   description: string;
   products: ProductInterface[];
-  lastSeen: string | null;
+  lastSeen: string | number | null;
   isArchive: boolean;
   isDisappearing: boolean;
   isBusiness: boolean;
@@ -343,6 +355,10 @@ export interface GetContactInfoResponseInterface
   messageExpiration: number;
   muteExpiration: number | null;
   base64Avatar?: string;
+  // MAX-specific fields
+  chatType?: string;
+  phoneNumber?: number;
+  phoneNumberTimestamp?: number;
 }
 
 interface ProductInterface {

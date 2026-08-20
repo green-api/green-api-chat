@@ -27,6 +27,7 @@
   "QUOTE_EXCEEDED": "Tarife kotası aşıldı. Mesaj gönderilmedi",
   "SUCCESS_SENDING_MESSAGE": "Mesaj gönderildi",
   "PHONE_DOES_NOT_HAVE_WHATSAPP": "Bu numaranın WhatsApp'ı yok",
+  "MAX_ACCOUNT_NOT_FOUND": "Bu hesap Max'te bulunamadı",
   "QUOTE_REACHED": "Tarife kotası doldu",
   "CHECK_WHATSAPP_QUOTE_REACHED": "CheckWhatsApp yönteminin kotası doldu",
   "LOGO_TITLE": "GREEN-API: WhatsApp mesajlarını gönderin ve alın",

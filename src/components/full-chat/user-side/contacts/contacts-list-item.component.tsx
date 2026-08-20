@@ -1,35 +1,32 @@
 import { FC, memo, useMemo } from 'react';
 
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { Button, Flex, List, Popconfirm, Typography } from 'antd';
+import { Button, Flex, List, message, Popconfirm, Typography } from 'antd';
+import { useTranslation } from 'react-i18next';
 
-import { getContactDisplayName } from './contacts.helpers';
+import { getContactApiErrorDetails, getContactDisplayName } from './contacts.helpers';
 import emptyAvatar from 'assets/emptyAvatar.svg';
 import emptyAvatarButAvailable from 'assets/emptyAvatarButAvailable.svg';
 import AvatarImage from 'components/UI/avatar-image.component';
-import { useGetAvatarQuery } from 'services/green-api/endpoints';
-import { ContactListItemInterface, InstanceInterface } from 'types';
+import { useActions, useAppSelector } from 'hooks';
+import { useIsMaxInstance } from 'hooks/use-is-max-instance';
+import { useDeleteContactMutation, useGetAvatarQuery } from 'services/green-api/endpoints';
+import { selectInstance } from 'store/slices/instances.slice';
+import { ContactListItemInterface } from 'types';
 import { getPhoneNumberFromChatId, isBotChatType } from 'utils';
-
-type TranslateFn = (key: string) => string;
 
 interface ContactsListItemProps {
   contact: ContactListItemInterface;
-  instanceCredentials: InstanceInterface;
-  isDeleteLoading: boolean;
-  onEdit: (contact: ContactListItemInterface) => void;
-  onDelete: (chatId: string) => void;
-  t: TranslateFn;
 }
 
-const ContactsListItem: FC<ContactsListItemProps> = ({
-  contact,
-  instanceCredentials,
-  isDeleteLoading,
-  onEdit,
-  onDelete,
-  t,
-}) => {
+const ContactsListItem: FC<ContactsListItemProps> = ({ contact }) => {
+  const { t } = useTranslation();
+
+  const instanceCredentials = useAppSelector(selectInstance);
+  const isMax = useIsMaxInstance();
+  const { openEditContactModal } = useActions();
+  const [deleteContact, { isLoading: isDeleteLoading }] = useDeleteContactMutation();
+
   const { data: avatarData } = useGetAvatarQuery(
     {
       ...instanceCredentials,
@@ -53,9 +50,27 @@ const ContactsListItem: FC<ContactsListItemProps> = ({
   }, [avatarData]);
 
   const displayName = getContactDisplayName(contact);
-  const phoneOrChatId = getPhoneNumberFromChatId(contact.id);
-  const whatsappProfileName = contact.name && contact.name !== displayName ? contact.name : null;
+  const phoneOrChatId = isMax
+    ? contact.phoneNumber || contact.id
+    : getPhoneNumberFromChatId(contact.id);
+  const profileName = contact.name && contact.name !== displayName ? contact.name : null;
   const isBotContact = isBotChatType(contact.type);
+
+  const handleDelete = async () => {
+    const response = await deleteContact({
+      ...instanceCredentials,
+      chatId: contact.id,
+    });
+
+    if (response.error) {
+      const errorDetails = getContactApiErrorDetails(response.error, t);
+      message.error(errorDetails.message);
+
+      return;
+    }
+
+    message.success(t('CONTACT_DELETED_SUCCESS'));
+  };
 
   return (
     <List.Item
@@ -68,7 +83,7 @@ const ContactsListItem: FC<ContactsListItemProps> = ({
             icon={<EditOutlined />}
             title={t('EDIT_CONTACT_ACTION')}
             aria-label={t('EDIT_CONTACT_ACTION')}
-            onClick={() => onEdit(contact)}
+            onClick={() => openEditContactModal(contact)}
           />
 
           <Popconfirm
@@ -76,7 +91,7 @@ const ContactsListItem: FC<ContactsListItemProps> = ({
             description={t('DELETE_CONTACT_CONFIRM_DESCRIPTION')}
             okText={t('YES')}
             cancelText={t('NO')}
-            onConfirm={() => onDelete(contact.id)}
+            onConfirm={handleDelete}
           >
             <Button
               className="contacts-section__icon-btn contacts-section__icon-btn--danger"
@@ -108,9 +123,9 @@ const ContactsListItem: FC<ContactsListItemProps> = ({
             <Typography.Text type="secondary" className="contacts-section__chat-id">
               {phoneOrChatId}
             </Typography.Text>
-            {whatsappProfileName && (
+            {profileName && (
               <Typography.Text type="secondary" className="contacts-section__chat-id">
-                {whatsappProfileName}
+                {profileName}
               </Typography.Text>
             )}
           </Flex>

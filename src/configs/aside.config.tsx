@@ -30,7 +30,7 @@ export const asideTopIconItems: (
   typeInstance === 'whatsapp' && isCallsIframeReady
     ? { item: 'calls', title: 'CALLS_TITLE', icon: <PhoneIcon /> }
     : null,
-  type !== 'one-chat-only' && typeInstance === 'whatsapp'
+  type !== 'one-chat-only' && (typeInstance === 'whatsapp' || typeInstance === 'v3')
     ? { item: 'contacts', title: 'CONTACTS', icon: <ContactIcon /> }
     : null,
 ];

@@ -1,31 +1,19 @@
-import { FC, useEffect } from 'react';
+import { FC } from 'react';
 
 import { Flex } from 'antd';
 
 import AsideItem from './aside-item.component';
 import { asideBottomIconItems, asideTopIconItems } from 'configs';
-import { useActions, useAppSelector } from 'hooks';
-import {
-  selectIsCallsIframeReady,
-  selectType,
-  selectUserSideActiveMode,
-} from 'store/slices/chat.slice';
+import { useAppSelector } from 'hooks';
+import { selectIsCallsIframeReady, selectType } from 'store/slices/chat.slice';
 import { selectTypeInstance } from 'store/slices/instances.slice';
 
 const Aside: FC = () => {
   const type = useAppSelector(selectType);
   const typeInstance = useAppSelector(selectTypeInstance);
-  const userSideActiveMode = useAppSelector(selectUserSideActiveMode);
   const isCallsIframeReady = useAppSelector(selectIsCallsIframeReady);
-  const { setUserSideActiveMode } = useActions();
 
   const items = asideTopIconItems(type, typeInstance, isCallsIframeReady);
-
-  useEffect(() => {
-    if (typeInstance !== 'whatsapp' && userSideActiveMode === 'contacts') {
-      setUserSideActiveMode('chats');
-    }
-  }, [setUserSideActiveMode, typeInstance, userSideActiveMode]);
 
   return (
     <aside className="aside">

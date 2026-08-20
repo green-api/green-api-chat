@@ -8,6 +8,7 @@ import { useAppSelector } from 'hooks';
 import { useIsMaxInstance } from 'hooks/use-is-max-instance';
 import { selectActiveChat } from 'store/slices/chat.slice';
 import { ActiveChat } from 'types';
+import { isChannelChatType } from 'utils';
 
 const ContactChatFooter: FC = () => {
   const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
@@ -17,6 +18,10 @@ const ContactChatFooter: FC = () => {
   const isMax = useIsMaxInstance();
 
   const isNotInMaxGroup = isMax && activeChat.chatId.startsWith('-') && !activeChat.contactInfo;
+
+  if (isChannelChatType(activeChat.chatType)) {
+    return null;
+  }
 
   if (isNotInMaxGroup || activeChat.contactInfo === 'Error: forbidden') {
     return (

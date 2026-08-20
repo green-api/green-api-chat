@@ -1,13 +1,17 @@
+import { ChangeEvent, FC } from 'react';
+
 import { SearchOutlined } from '@ant-design/icons';
 import Input from 'antd/es/input';
+import { useTranslation } from 'react-i18next';
 
 interface SearchProps {
   searchQuery: string;
-  t: (key: string) => string;
-  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
-export const Search: React.FC<SearchProps> = ({ searchQuery, t, handleChange }) => {
+export const Search: FC<SearchProps> = ({ searchQuery, handleChange }) => {
+  const { t } = useTranslation();
+
   return (
     <div style={{ margin: 8 }}>
       <Input

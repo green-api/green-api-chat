@@ -93,6 +93,13 @@ function groupedDays(
   }, {});
 }
 
+function isHiddenFromRenderMessage(message: MessageInterface): boolean {
+  return (
+    'typeMessage' in message &&
+    (message.typeMessage === 'reactionMessage' || message.typeMessage === 'pollUpdateMessage')
+  );
+}
+
 export function formatMessages(
   messages: MessageInterface[],
   language: LanguageLiteral = 'en'
@@ -102,7 +109,10 @@ export function formatMessages(
     (x, y) => new Date(x).getTime() - new Date(y).getTime()
   );
   const items = sortedDays.reduce<FormattedMessagesWithDate>((acc, date) => {
-    return acc.concat([{ date }, ...days[date]]);
+    const dayMessages = days[date];
+    const hasVisibleMessage = dayMessages.some((message) => !isHiddenFromRenderMessage(message));
+
+    return hasVisibleMessage ? acc.concat([{ date }, ...dayMessages]) : acc.concat(dayMessages);
   }, []);
 
   return items;

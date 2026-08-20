@@ -21,7 +21,6 @@ import { useIsTelegramInstance } from 'hooks/use-is-telegram-instance';
 import {
   selectActiveChat,
   selectReplyMessage,
-  selectMessageCount,
   selectMiniVersion,
   selectType,
 } from 'store/slices/chat.slice';
@@ -33,7 +32,6 @@ const ChatForm: FC = () => {
   const instanceCredentials = useAppSelector(selectInstance);
   const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
   const isMiniVersion = useAppSelector(selectMiniVersion);
-  const messageCount = useAppSelector(selectMessageCount);
   const platform = useAppSelector(selectPlatform);
   const replyMessage = useAppSelector(selectReplyMessage);
   const type = useAppSelector(selectType);
@@ -62,8 +60,6 @@ const ChatForm: FC = () => {
     form,
     instanceCredentials,
     activeChat,
-    isMiniVersion,
-    messageCount,
     replyMessage,
     setInputValue,
     messageEditorRef,

@@ -107,11 +107,7 @@ export function getFormattedMessage(
   if (!formattedText) {
     return textMessage;
   }
-  return (
-    <span className="text-overflow" style={{ width: 300 }}>
-      {parse(formattedText)}
-    </span>
-  );
+  return <span>{parse(formattedText)}</span>;
 }
 
 export function fillString(string: string, data: string[]) {

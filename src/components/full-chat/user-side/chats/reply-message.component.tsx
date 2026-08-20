@@ -4,13 +4,20 @@ import { CloseOutlined } from '@ant-design/icons';
 import { Flex, Image } from 'antd';
 
 import { useActions, useAppSelector } from 'hooks';
+import { useIsMaxInstance } from 'hooks/use-is-max-instance';
+import { useIsTelegramInstance } from 'hooks/use-is-telegram-instance';
 import { selectActiveChat, selectReplyMessage } from 'store/slices/chat.slice';
+import { getFormattedMessage } from 'utils';
 
 export const ReplyMessage = () => {
   const replyMessage = useAppSelector(selectReplyMessage);
   const activeChat = useAppSelector(selectActiveChat);
 
   const { setReplyMessage } = useActions();
+
+  const isMax = useIsMaxInstance();
+  const isTelegram = useIsTelegramInstance();
+  const enableMarkdownLinks = isMax || isTelegram;
 
   useEffect(() => {
     setReplyMessage(null);
@@ -39,9 +46,12 @@ export const ReplyMessage = () => {
           <p className="phoneNumber">{replyMessage.phone}</p>
         </Flex>
         <div className="replyMessageText">
-          {replyMessage.typeMessage === 'imageMessage'
-            ? replyMessage.caption
-            : replyMessage.textMessage}
+          {getFormattedMessage(
+            (replyMessage.typeMessage === 'imageMessage'
+              ? replyMessage.caption
+              : replyMessage.textMessage) || '',
+            { enableMarkdownLinks, compact: true }
+          )}
         </div>
       </div>
       <Flex gap={8}>

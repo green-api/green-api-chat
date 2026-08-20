@@ -11,17 +11,13 @@ import TextArea from 'components/UI/text-area.component';
 import { formItemDefaultLayout } from 'configs';
 import { useActions, useAppDispatch, useAppSelector, useFormWithLanguageValidation } from 'hooks';
 import { useSendMessageMutation } from 'services/green-api/endpoints';
-import { journalsGreenApiEndpoints } from 'services/green-api/endpoints/journals.green-api.endpoints';
-import { selectActiveChat, selectMessageCount, selectMiniVersion } from 'store/slices/chat.slice';
+import { selectActiveChat } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
-import { ActiveChat, ChatFormValues, MessageInterface } from 'types';
-import { updateAllChats } from 'utils';
+import { ActiveChat, ChatFormValues } from 'types';
 
 const PreviewedMessageForm: FC = () => {
   const instanceCredentials = useAppSelector(selectInstance);
   const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
-  const isMiniVersion = useAppSelector(selectMiniVersion);
-  const messageCount = useAppSelector(selectMessageCount);
 
   const { setActiveSendingMode } = useActions();
 
@@ -79,59 +75,6 @@ const PreviewedMessageForm: FC = () => {
     }
 
     if (data) {
-      const updateChatHistoryThunk = journalsGreenApiEndpoints.util?.updateQueryData(
-        'getChatHistory',
-        {
-          ...instanceCredentials,
-          chatId: activeChat.chatId,
-          count: isMiniVersion ? 10 : messageCount,
-        },
-        (draftChatHistory) => {
-          const existingMessage = draftChatHistory.find((msg) => msg.idMessage === data.idMessage);
-          if (existingMessage) {
-            console.log('message already in chat history');
-
-            return;
-          }
-
-          draftChatHistory.push({
-            type: 'outgoing',
-            typeMessage: 'textMessage',
-            textMessage: message,
-            timestamp: Math.floor(Date.now() / 1000),
-            senderName: activeChat.senderName || '',
-            senderContactName: activeChat.senderContactName || '',
-            idMessage: data.idMessage,
-            chatId: activeChat.chatId,
-            statusMessage: 'sent',
-          });
-
-          return draftChatHistory;
-        }
-      );
-
-      const updateChatListThunk = journalsGreenApiEndpoints.util?.updateQueryData(
-        'lastMessages',
-        { allMessages: true, ...instanceCredentials },
-        (draftChatHistory) => {
-          const newMessage: MessageInterface = {
-            type: 'outgoing',
-            typeMessage: 'textMessage',
-            textMessage: message,
-            timestamp: Math.floor(Date.now() / 1000),
-            senderName: activeChat.senderName || '',
-            senderContactName: activeChat.senderContactName || '',
-            idMessage: data.idMessage,
-            chatId: activeChat.chatId,
-            statusMessage: 'sent',
-          };
-
-          return updateAllChats(draftChatHistory, [newMessage], []);
-        }
-      );
-
-      dispatch(updateChatHistoryThunk);
-      dispatch(updateChatListThunk);
       dispatch(setActiveSendingMode(null));
 
       form.resetFields();

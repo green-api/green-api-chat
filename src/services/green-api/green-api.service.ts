@@ -125,5 +125,6 @@ export const greenAPI = createApi({
     'avatar',
     'statuses',
     'contacts',
+    'chats',
   ],
 });

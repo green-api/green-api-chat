@@ -103,7 +103,11 @@ interface WabaTemplateParametersInterface<T extends NonNullable<unknown>> {
   templateParams: T;
 }
 
-export type SendTemplateParameters = InstanceInterface & { params?: string[] };
+export type SendTemplateParameters = InstanceInterface & {
+  chatId: string;
+  templateId: string;
+  params?: string[];
+};
 
 export type EditTemplateParameters =
   WabaTemplateParametersInterface<EditTemplateParametersArgumentInterface> & InstanceInterface;

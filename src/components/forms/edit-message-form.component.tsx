@@ -5,10 +5,9 @@ import { Button, Col, Form, Row } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import TextArea from 'components/UI/text-area.component';
-import { useActions, useAppDispatch, useAppSelector, useFormWithLanguageValidation } from 'hooks';
+import { useActions, useAppSelector, useFormWithLanguageValidation } from 'hooks';
 import { useEditMessageMutation } from 'services/green-api/endpoints';
-import { journalsGreenApiEndpoints } from 'services/green-api/endpoints/journals.green-api.endpoints';
-import { selectActiveChat, selectMessageCount, selectMiniVersion } from 'store/slices/chat.slice';
+import { selectActiveChat } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
 import { selectMessageDataForRender } from 'store/slices/message-menu.slice';
 import { ActiveChat, ChatFormValues, MessageDataForRender } from 'types';
@@ -17,10 +16,7 @@ const EditMessageForm: FC = () => {
   const instanceCredentials = useAppSelector(selectInstance);
   const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
   const editedMessageData = useAppSelector(selectMessageDataForRender) as MessageDataForRender;
-  const isMiniVersion = useAppSelector(selectMiniVersion);
-  const messageCount = useAppSelector(selectMessageCount);
 
-  const dispatch = useAppDispatch();
   const { setActiveServiceMethod } = useActions();
 
   const { t } = useTranslation();
@@ -59,67 +55,6 @@ const EditMessageForm: FC = () => {
     }
 
     if (data) {
-      const updateChatHistoryThunk = journalsGreenApiEndpoints.util?.updateQueryData(
-        'getChatHistory',
-        {
-          ...instanceCredentials,
-          chatId: activeChat.chatId,
-          count: isMiniVersion ? 10 : messageCount,
-        },
-        (draftChatHistory) => {
-          const existingMessage = draftChatHistory.find(
-            (msg) => msg.idMessage === editedMessageData.idMessage
-          );
-
-          if (!existingMessage) {
-            console.log('message not found in chat history');
-
-            return;
-          }
-
-          if (existingMessage.extendedTextMessage) {
-            existingMessage.extendedTextMessage.text = message;
-          } else if ('caption' in existingMessage) {
-            existingMessage.caption = message;
-          } else {
-            existingMessage.textMessage = message;
-          }
-
-          existingMessage.isEdited = true;
-
-          return draftChatHistory;
-        }
-      );
-
-      const updateChatListThunk = journalsGreenApiEndpoints.util?.updateQueryData(
-        'lastMessages',
-        { allMessages: true, ...instanceCredentials },
-        (draftChatList) => {
-          const existingChat = draftChatList.find(
-            (msg) => msg.idMessage === editedMessageData.idMessage
-          );
-
-          if (!existingChat) {
-            return;
-          }
-
-          if (existingChat.extendedTextMessage) {
-            existingChat.extendedTextMessage.text = message;
-          } else if ('caption' in existingChat) {
-            existingChat.caption = message;
-          } else {
-            existingChat.textMessage = message;
-          }
-
-          existingChat.isEdited = true;
-
-          return draftChatList;
-        }
-      );
-
-      dispatch(updateChatHistoryThunk);
-      dispatch(updateChatListThunk);
-
       form.resetFields();
 
       responseTimerReference.current = setTimeout(() => {

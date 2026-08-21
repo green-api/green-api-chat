@@ -6,20 +6,20 @@ import { useTranslation } from 'react-i18next';
 
 import ChatIdInput from 'components/UI/chat-id-input.component';
 import TextArea from 'components/UI/text-area.component';
-import { useAppDispatch, useAppSelector, useFormWithLanguageValidation } from 'hooks';
+import { useAppDispatch, useAppSelector, useAppStore, useFormWithLanguageValidation } from 'hooks';
 import { useIsMaxInstance } from 'hooks/use-is-max-instance';
 import { useIsTelegramInstance } from 'hooks/use-is-telegram-instance';
 import {
+  useCheckAccountMutation,
   useCheckWhatsappMutation,
-  useLazyGetChatsQuery,
   useSendMessageMutation,
 } from 'services/green-api/endpoints';
-import { journalsGreenApiEndpoints } from 'services/green-api/endpoints/journals.green-api.endpoints';
+import { serviceMethodsGreenApiEndpoints } from 'services/green-api/endpoints/service-methods.green-api.endpoints';
 import { selectMiniVersion, selectType } from 'store/slices/chat.slice';
 import { selectInstance, selectIsChatWorking } from 'store/slices/instances.slice';
 import { selectUser } from 'store/slices/user.slice';
-import { MessageInterface, NewChatFormValues } from 'types';
-import { isAuth, updateAllChats } from 'utils';
+import { GetChatsParametersInterface, GetChatsResponseInterface, NewChatFormValues } from 'types';
+import { getPhoneNumberFromChatId, isAuth } from 'utils';
 import { isLidChatId, splitChatId } from 'utils/chat-id.utils';
 
 interface NewChatFormProps {
@@ -37,35 +37,18 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
   const isMaxOrTelegram = isMax || isTelegram;
 
   const dispatch = useAppDispatch();
+  const store = useAppStore();
 
   const { t } = useTranslation();
 
   const [sendMessage, { isLoading }] = useSendMessageMutation();
   const [checkWhatsapp] = useCheckWhatsappMutation();
-  const [getChats] = useLazyGetChatsQuery();
+  const [checkAccount] = useCheckAccountMutation();
 
   const [form] = useFormWithLanguageValidation<NewChatFormValues>();
   const responseTimerReference = useRef<number | null>(null);
 
   const standaloneChatTypes = ['partner-iframe', 'one-chat-only'];
-
-  const resolveExistingChatIdByPhone = async (phone: string) => {
-    if (!isMaxOrTelegram) return null;
-
-    const normalizedPhone = phone.replace(/\D/g, '');
-
-    if (!normalizedPhone) return null;
-
-    const { data } = await getChats(instanceCredentials);
-
-    return (
-      data?.find(
-        (chat) =>
-          chat.phoneNumber != null &&
-          String(chat.phoneNumber).replace(/\D/g, '') === normalizedPhone
-      )?.chatId ?? null
-    );
-  };
 
   const onSendMessage = async (values: NewChatFormValues) => {
     if (!isAuth(user) && !standaloneChatTypes.includes(type) && isChatWorking === false) return;
@@ -89,15 +72,14 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
         : /\d{17}/.test(chatId)
       : chatId.endsWith('@g.us');
 
-    const fullChatId = chatId;
+    let resolvedChatId = chatId;
 
-    let optimisticChatId = fullChatId;
     let addNewChatInList = !isGroupChat;
 
-    const shouldCheckWhatsapp = !isMaxOrTelegram && fullChatId.endsWith('@c.us');
+    const shouldCheckWhatsapp = !isMaxOrTelegram && resolvedChatId.endsWith('@c.us');
 
     if (shouldCheckWhatsapp) {
-      const [phoneNumber] = splitChatId(fullChatId);
+      const [phoneNumber] = splitChatId(resolvedChatId);
       const { data, error } = await checkWhatsapp({
         ...instanceCredentials,
         phoneNumber,
@@ -114,13 +96,32 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
       }
     }
 
-    if (isMaxOrTelegram && chatIdType === 'phone') {
-      optimisticChatId = (await resolveExistingChatIdByPhone(chatId)) ?? fullChatId;
+    const shouldCheckAccount = isMaxOrTelegram && chatIdType === 'phone' && !isGroupChat;
+
+    if (shouldCheckAccount) {
+      const { data, error } = await checkAccount({
+        ...instanceCredentials,
+        phoneNumber: chatId,
+      });
+
+      if (error && 'status' in error && error.status === 466) {
+        form.setFields([{ name: 'chatId', errors: [t('CHECK_ACCOUNT_QUOTE_REACHED')] }]);
+
+        addNewChatInList = false;
+      }
+
+      if (data && !data.exist) {
+        return form.setFields([{ name: 'chatId', errors: [t('ACCOUNT_NOT_FOUND')] }]);
+      }
+
+      if (data?.exist) {
+        resolvedChatId = data.chatId;
+      }
     }
 
     const body = {
       ...instanceCredentials,
-      chatId: fullChatId,
+      chatId: resolvedChatId,
       message,
     };
 
@@ -134,26 +135,38 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
 
     if (data) {
       if (addNewChatInList) {
-        const updateChatListThunk = journalsGreenApiEndpoints.util?.updateQueryData(
-          'lastMessages',
-          { allMessages: true, ...instanceCredentials },
-          (draftChatHistory) => {
-            const newMessage: MessageInterface = {
-              type: 'outgoing',
-              typeMessage: 'textMessage',
-              textMessage: message,
-              timestamp: Math.floor(Date.now() / 1000),
-              senderName: '',
-              senderContactName: '',
-              idMessage: data.idMessage,
-              chatId: optimisticChatId,
-              statusMessage: 'sent',
-            };
+        serviceMethodsGreenApiEndpoints.util
+          .selectInvalidatedBy(store.getState(), ['chats'])
+          .filter(
+            (entry) =>
+              entry.endpointName === 'getChats' &&
+              (entry.originalArgs as GetChatsParametersInterface).idInstance ===
+                instanceCredentials.idInstance
+          )
+          .forEach(({ originalArgs }) =>
+            dispatch(
+              serviceMethodsGreenApiEndpoints.util.updateQueryData(
+                'getChats',
+                originalArgs as GetChatsParametersInterface,
+                (draft) => {
+                  const alreadyExists = draft.some((chat) => chat.chatId === resolvedChatId);
 
-            return updateAllChats(draftChatHistory, [newMessage], []);
-          }
-        );
-        dispatch(updateChatListThunk);
+                  if (alreadyExists) return;
+
+                  const newChat: GetChatsResponseInterface = {
+                    chatId: resolvedChatId,
+                    name: getPhoneNumberFromChatId(resolvedChatId) || resolvedChatId,
+                    type: isGroupChat ? 'group' : 'user',
+                    ...(isGroupChat
+                      ? {}
+                      : { phoneNumber: getPhoneNumberFromChatId(resolvedChatId) }),
+                  };
+
+                  draft.unshift(newChat);
+                }
+              )
+            )
+          );
       }
 
       form.resetFields();

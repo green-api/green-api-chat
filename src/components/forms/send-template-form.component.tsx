@@ -7,14 +7,9 @@ import FormListFields from './form-list-feilds.component';
 import TemplateMessagePreview from 'components/shared/message/template-message/template-message-preview.component';
 import SelectTemplate from 'components/UI/select/select-template.component';
 import { formItemMethodApiLayout } from 'configs';
-import { useActions, useAppDispatch, useAppSelector, useFormWithLanguageValidation } from 'hooks';
+import { useActions, useAppSelector, useFormWithLanguageValidation } from 'hooks';
 import { useSendTemplateMutation } from 'services/green-api/endpoints';
-import { journalsGreenApiEndpoints } from 'services/green-api/endpoints/journals.green-api.endpoints';
-import {
-  selectActiveChat,
-  selectActiveTemplate,
-  selectMessageCount,
-} from 'store/slices/chat.slice';
+import { selectActiveChat, selectActiveTemplate } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
 import { ActiveChat, SelectTemplateOption, SendTemplateValues } from 'types';
 import { getErrorMessage, isApiError } from 'utils';
@@ -22,10 +17,8 @@ import { getErrorMessage, isApiError } from 'utils';
 const SendTemplateForm: FC = () => {
   const instanceCredentials = useAppSelector(selectInstance);
   const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
-  const messageCount = useAppSelector(selectMessageCount);
   const activeTemplate = useAppSelector(selectActiveTemplate);
 
-  const dispatch = useAppDispatch();
   const { setActiveSendingMode, setActiveTemplate } = useActions();
 
   const { t } = useTranslation();
@@ -76,42 +69,6 @@ const SendTemplateForm: FC = () => {
     }
 
     if (data) {
-      const updateChatHistoryThunk = journalsGreenApiEndpoints.util?.updateQueryData(
-        'getChatHistory',
-        {
-          ...instanceCredentials,
-          chatId: activeChat.chatId,
-          count: messageCount,
-        },
-        (draftChatHistory) => {
-          const existingMessage = draftChatHistory.find((msg) => msg.idMessage === data.idMessage);
-          if (existingMessage) {
-            console.log('message already in chat history');
-
-            return;
-          }
-
-          draftChatHistory.push({
-            type: 'outgoing',
-            typeMessage: 'templateMessage',
-            timestamp: Math.floor(Date.now() / 1000),
-            senderName: '',
-            senderContactName: '',
-            idMessage: data.idMessage,
-            chatId: activeChat.chatId,
-            templateMessage: {
-              templateId: values.templateId,
-              params: params,
-            },
-            statusMessage: 'sent',
-          });
-
-          return draftChatHistory;
-        }
-      );
-
-      dispatch(updateChatHistoryThunk);
-
       form.setFields([{ name: 'response', warnings: [t('SUCCESS_SENDING_MESSAGE')] }]);
 
       setActiveSendingMode(null);

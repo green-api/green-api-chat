@@ -6,11 +6,10 @@ import { useTranslation } from 'react-i18next';
 
 import UploadOneFile from 'components/UI/upload-one-file.components';
 import { formItemMethodApiLayout } from 'configs';
-import { useActions, useAppDispatch, useAppSelector, useFormWithLanguageValidation } from 'hooks';
+import { useActions, useAppSelector, useFormWithLanguageValidation } from 'hooks';
 import { useIsMaxInstance } from 'hooks/use-is-max-instance';
 import { useSendFileByUploadMutation } from 'services/green-api/endpoints';
-import { journalsGreenApiEndpoints } from 'services/green-api/endpoints/journals.green-api.endpoints';
-import { selectActiveChat, selectMessageCount } from 'store/slices/chat.slice';
+import { selectActiveChat } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
 import { ActiveChat, SendFileFormValues } from 'types';
 import { getErrorMessage, isApiError } from 'utils';
@@ -18,9 +17,7 @@ import { getErrorMessage, isApiError } from 'utils';
 const SendFileForm: FC = () => {
   const instanceCredentials = useAppSelector(selectInstance);
   const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
-  const messageCount = useAppSelector(selectMessageCount);
 
-  const dispatch = useAppDispatch();
   const { setActiveSendingMode } = useActions();
 
   const { t } = useTranslation();
@@ -57,41 +54,6 @@ const SendFileForm: FC = () => {
     }
 
     if (data) {
-      const updateChatHistoryThunk = journalsGreenApiEndpoints.util?.updateQueryData(
-        'getChatHistory',
-        {
-          ...instanceCredentials,
-          chatId: activeChat.chatId,
-          count: messageCount,
-        },
-        (draftChatHistory) => {
-          const existingMessage = draftChatHistory.find((msg) => msg.idMessage === data.idMessage);
-          if (existingMessage) {
-            console.log('message already in chat history');
-
-            return;
-          }
-
-          draftChatHistory.push({
-            type: 'outgoing',
-            typeMessage: 'documentMessage', // TODO: check on message type
-            fileName: values.fileName || values.file.name,
-            caption: values.caption,
-            downloadUrl: data.urlFile,
-            timestamp: Math.floor(Date.now() / 1000),
-            senderName: '',
-            senderContactName: '',
-            idMessage: data.idMessage,
-            chatId: activeChat.chatId,
-            statusMessage: 'sent',
-          });
-
-          return draftChatHistory;
-        }
-      );
-
-      dispatch(updateChatHistoryThunk);
-
       form.setFields([{ name: 'response', warnings: [t('SUCCESS_SENDING_MESSAGE')] }]);
 
       setActiveSendingMode(null);

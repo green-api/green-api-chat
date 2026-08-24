@@ -237,7 +237,7 @@ const ChatListItem: FC<ContactListItemProps> = ({
                     height: 20,
                   })}
                 {getMessageTypeIcon(lastMessage.typeMessage)}
-                {lastMessage.isDeleted ? (
+                {lastMessage.isDeleted || lastMessage.typeMessage === 'deletedMessage' ? (
                   <i>{t('DELETED_MESSAGE')}</i>
                 ) : (
                   <span className="text-overflow" style={{ flex: '1 1 auto', minWidth: 0 }}>

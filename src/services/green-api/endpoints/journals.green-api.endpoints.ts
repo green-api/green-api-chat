@@ -21,6 +21,15 @@ export const journalsGreenApiEndpoints = greenAPI.injectEndpoints({
           .reverse(),
       providesTags: ['chatHistory'],
     }),
+    // Get last message for chat list, we dont need to filter response
+    getChatLastMessage: builder.query<GetChatHistoryResponse, GetChatHistoryParametersInterface>({
+      query: ({ idInstance, apiTokenInstance, apiUrl, chatId, count }) => ({
+        url: `${apiUrl}waInstance${idInstance}/getChatHistory/${apiTokenInstance}`,
+        method: 'POST',
+        body: { chatId, count },
+      }),
+      providesTags: ['chatHistory'],
+    }),
     lastIncomingMessages: builder.query<GetChatHistoryResponse, LastMessagesParametersInterface>({
       query: ({ idInstance, apiTokenInstance, apiUrl, minutes }) => ({
         url: `${apiUrl}waInstance${idInstance}/lastIncomingMessages/${apiTokenInstance}`,

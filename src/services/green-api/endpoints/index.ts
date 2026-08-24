@@ -12,6 +12,7 @@ export const {
   useSendMessageMutation,
   useGetChatHistoryQuery,
   useLazyGetChatHistoryQuery,
+  useLazyGetChatLastMessageQuery,
   useGetContactInfoQuery,
   useLazyGetGroupDataQuery,
   useLazyGetContactInfoQuery,

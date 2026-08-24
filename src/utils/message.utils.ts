@@ -71,7 +71,7 @@ export function getJSONMessage(message: Partial<MessageInterface>): string {
       copyMessage.caption = copyMessage.caption.slice(0, 150) + '...';
     }
 
-    if (copyMessage.location && copyMessage.location.jpegThumbnail.length > 50) {
+    if (copyMessage.location && copyMessage.location.jpegThumbnail?.length > 50) {
       copyMessage.location.jpegThumbnail = copyMessage.location.jpegThumbnail.slice(0, 50) + '...';
     }
 

@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import ChatListItem from './chat-list-item.component';
 import ChatSearchInput from './chat-search-input.component';
 import { useAppDispatch, useAppSelector, useMediaQuery } from 'hooks';
-import { useGetChatsQuery, useLazyGetChatHistoryQuery } from 'services/green-api/endpoints';
+import { useGetChatsQuery, useLazyGetChatLastMessageQuery } from 'services/green-api/endpoints';
 import {
   chatActions,
   selectLastMessagesByChatId,
@@ -72,7 +72,7 @@ const ChatList: FC = () => {
       skip: !instanceCredentials?.idInstance || !instanceCredentials.apiTokenInstance,
     }
   );
-  const [getChatHistory] = useLazyGetChatHistoryQuery();
+  const [getChatLastMessage] = useLazyGetChatLastMessageQuery();
 
   const chatListRef = useRef<HTMLDivElement | null>(null);
   const pendingHistoryChatIdsRef = useRef<Set<string>>(new Set());
@@ -183,7 +183,11 @@ const ChatList: FC = () => {
 
       loadSequentiallyWithDelay(chatsToLoad, CHAT_HISTORY_REQUEST_DELAY, async (chat) => {
         try {
-          const { message } = await fetchChatLastMessage(chat, instanceCredentials, getChatHistory);
+          const { message } = await fetchChatLastMessage(
+            chat,
+            instanceCredentials,
+            getChatLastMessage
+          );
 
           dispatch(
             chatActions.setLastMessageByChatId({
@@ -206,7 +210,7 @@ const ChatList: FC = () => {
         setIsHistoryLoading(false);
       });
     },
-    [instanceCredentials, getChatHistory, dispatch]
+    [instanceCredentials, getChatLastMessage, dispatch]
   );
 
   useEffect(() => {

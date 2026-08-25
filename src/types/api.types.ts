@@ -45,7 +45,7 @@ export type EditMessageParameters = GetChatInformationParameters & { message: st
 
 export type TypeConnectionMessage = 'outgoing' | 'incoming';
 export type StatusMessage = 'pending' | 'sent' | 'delivered' | 'read';
-export type TelegramChatType = 'user' | 'group' | 'supergroup' | 'channel' | 'bot';
+export type ChatType = 'user' | 'group' | 'supergroup' | 'channel' | 'bot';
 export type TypeMessage =
   | 'textMessage'
   | 'imageMessage'
@@ -97,10 +97,10 @@ export interface MessageInterface
   timestamp: number;
   statusMessage?: StatusMessage;
   typeMessage: TypeMessage;
-  chatType?: TelegramChatType;
+  chatType?: ChatType;
   senderId?: string;
   senderName?: string;
-  senderType?: TelegramChatType;
+  senderType?: ChatType;
   senderContactName?: string;
   textMessage?: string;
   caption?: string;
@@ -253,6 +253,14 @@ export interface SetGroupPictureResponseInterface {
 export interface LeaveGroupResponseInterface {
   leaveGroup: boolean;
   removeAdmin?: boolean;
+}
+
+export type ReadChatParameters = Pick<SendingBaseParametersInterface, 'chatId'> &
+  InstanceInterface &
+  Partial<SendingResponseInterface>;
+
+export interface ReadChatResponseInterface {
+  setRead: boolean;
 }
 
 export type GetGroupDataResponseInterface =
@@ -714,7 +722,9 @@ export interface GetChatsResponseInterface {
   id?: string;
   chatId: string;
   name: string;
-  type: TelegramChatType;
+  type: ChatType;
   // MAX/Telegram getChats returns the phone as a number, not a string
   phoneNumber?: string | number;
+  // only for WhatsApp for now
+  unreadCount?: number;
 }

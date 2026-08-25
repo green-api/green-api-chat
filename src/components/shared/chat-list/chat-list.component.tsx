@@ -6,9 +6,14 @@ import { useTranslation } from 'react-i18next';
 import ChatListItem from './chat-list-item.component';
 import ChatSearchInput from './chat-search-input.component';
 import { useAppDispatch, useAppSelector, useMediaQuery } from 'hooks';
-import { useGetChatsQuery, useLazyGetChatLastMessageQuery } from 'services/green-api/endpoints';
+import {
+  useGetChatsQuery,
+  useLazyGetChatLastMessageQuery,
+  useReadChatMutation,
+} from 'services/green-api/endpoints';
 import {
   chatActions,
+  selectActiveChat,
   selectLastMessagesByChatId,
   selectMiniVersion,
   selectSearchQuery,
@@ -47,6 +52,7 @@ const ChatList: FC = () => {
 
   const dispatch = useAppDispatch();
   const lastMessagesByChatId = useAppSelector(selectLastMessagesByChatId);
+  const activeChat = useAppSelector(selectActiveChat);
 
   const [contactNames, setContactNames] = useState<Record<string, string>>({});
   const [page, setPage] = useState(1);
@@ -73,6 +79,7 @@ const ChatList: FC = () => {
     }
   );
   const [getChatLastMessage] = useLazyGetChatLastMessageQuery();
+  const [readChat] = useReadChatMutation();
 
   const chatListRef = useRef<HTMLDivElement | null>(null);
   const pendingHistoryChatIdsRef = useRef<Set<string>>(new Set());
@@ -87,6 +94,18 @@ const ChatList: FC = () => {
   };
 
   const chatPlaceholders = useMemo(() => chats.map(chatToMessage), [chats]);
+
+  const apiUnreadCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+
+    chats.forEach((chat) => {
+      if (typeof chat.unreadCount === 'number') {
+        counts[chat.chatId] = chat.unreadCount;
+      }
+    });
+
+    return counts;
+  }, [chats]);
 
   const renderedChats = useMemo(() => chats.slice(0, page * limit), [chats, page, limit]);
   const renderedChatsRef = useRef(renderedChats);
@@ -289,6 +308,16 @@ const ChatList: FC = () => {
     });
   };
 
+  // Marks the currently open chat as read whenever getChats reports unread messages for
+  // it — both right after opening it and if new messages arrive while it stays open.
+  const activeChatUnreadCount = activeChat ? apiUnreadCounts[activeChat.chatId] : undefined;
+
+  useEffect(() => {
+    if (!activeChat?.chatId || !activeChatUnreadCount) return;
+
+    readChat({ ...instanceCredentials, chatId: activeChat.chatId });
+  }, [activeChat?.chatId, activeChatUnreadCount, instanceCredentials, readChat]);
+
   useEffect(() => {
     if (!allMessages.length) return;
 
@@ -442,6 +471,7 @@ const ChatList: FC = () => {
                       lastMessage={msg}
                       onNameExtracted={handleNameExtracted}
                       unreadCount={unreadCounts[msg.chatId]}
+                      apiUnreadCount={apiUnreadCounts[msg.chatId]}
                       onClearUnread={() => clearUnreadCount(msg.chatId)}
                     />
                   )}
@@ -467,6 +497,7 @@ const ChatList: FC = () => {
                   lastMessage={message}
                   onNameExtracted={handleNameExtracted}
                   unreadCount={unreadCounts[message.chatId]}
+                  apiUnreadCount={apiUnreadCounts[message.chatId]}
                   onClearUnread={() => clearUnreadCount(message.chatId)}
                   isLastMessageLoading={!(message.chatId in lastMessagesByChatId)}
                 />

@@ -1,7 +1,7 @@
 import { CSSProperties, FC } from 'react';
 
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Flex, Form, Space } from 'antd';
+import { Button, Flex, Form } from 'antd';
 import { FormListProps } from 'antd/es/form';
 import { useTranslation } from 'react-i18next';
 

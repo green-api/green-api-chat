@@ -1,4 +1,4 @@
-import { useLazyGetChatHistoryQuery } from 'services/green-api/endpoints';
+import { useLazyGetChatLastMessageQuery } from 'services/green-api/endpoints';
 import {
   GetChatHistoryParametersInterface,
   GetChatHistoryResponse,
@@ -37,10 +37,10 @@ const getReactionEmoji = (message: MessageInterface): string | undefined =>
 export const fetchChatLastMessage = async (
   chat: GetChatsResponseInterface,
   instanceCredentials: InstanceInterface,
-  getChatHistory: ReturnType<typeof useLazyGetChatHistoryQuery>[0]
+  getChatLastMessage: ReturnType<typeof useLazyGetChatLastMessageQuery>[0]
 ): Promise<{ chat: GetChatsResponseInterface; message?: MessageInterface }> => {
   for (let attempt = 0; attempt <= CHAT_HISTORY_RETRY_LIMIT; attempt++) {
-    const { data: history, error } = await getChatHistory({
+    const { data: history, error } = await getChatLastMessage({
       ...instanceCredentials,
       chatId: chat.chatId,
       count: 1,

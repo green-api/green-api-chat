@@ -37,6 +37,7 @@ interface ContactListItemProps {
   onNameExtracted?: (chatId: string, name: string) => void;
   showDescription?: boolean;
   unreadCount?: number;
+  apiUnreadCount?: number;
   onClearUnread?: () => void;
   isLastMessageLoading?: boolean;
 }
@@ -48,6 +49,7 @@ const ChatListItem: FC<ContactListItemProps> = ({
   onNameExtracted,
   showDescription = true,
   unreadCount,
+  apiUnreadCount,
   onClearUnread,
   isLastMessageLoading = false,
 }) => {
@@ -237,10 +239,10 @@ const ChatListItem: FC<ContactListItemProps> = ({
                     height: 20,
                   })}
                 {getMessageTypeIcon(lastMessage.typeMessage)}
-                {lastMessage.isDeleted ? (
+                {lastMessage.isDeleted || lastMessage.typeMessage === 'deletedMessage' ? (
                   <i>{t('DELETED_MESSAGE')}</i>
                 ) : (
-                  <span className="text-overflow" style={{ width: 300 }}>
+                  <span className="text-overflow" style={{ flex: '1 1 auto', minWidth: 0 }}>
                     {formattedPreviewMessage}
                   </span>
                 )}
@@ -255,7 +257,17 @@ const ChatListItem: FC<ContactListItemProps> = ({
         {showDescription && hasMessagePreview && (
           <Flex vertical align="end" style={{ alignSelf: 'start' }} gap={4}>
             <span style={{ textAlign: 'end' }}>{messageDate}</span>
-            {unreadCount &&
+            {typeof apiUnreadCount === 'number' && apiUnreadCount > 0 ? (
+              <Badge
+                count={apiUnreadCount}
+                style={{
+                  backgroundColor: 'var(--primary-color)',
+                  boxShadow: '0 0 0 1px #fff',
+                  textAlign: 'center',
+                }}
+              />
+            ) : (
+              unreadCount &&
               unreadCount > 0 &&
               WABA_POOLS.includes(instanceCredentials.idInstance.toString().slice(0, 4)) && (
                 <Badge
@@ -266,7 +278,8 @@ const ChatListItem: FC<ContactListItemProps> = ({
                     textAlign: 'center',
                   }}
                 />
-              )}
+              )
+            )}
           </Flex>
         )}
       </Skeleton>

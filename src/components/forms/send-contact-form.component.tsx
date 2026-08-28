@@ -4,12 +4,11 @@ import { Button, Form, Input } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import { formItemMethodApiLayout } from 'configs';
-import { useActions, useAppDispatch, useAppSelector, useFormWithLanguageValidation } from 'hooks';
+import { useActions, useAppSelector, useFormWithLanguageValidation } from 'hooks';
 import { useIsMaxInstance } from 'hooks/use-is-max-instance';
 import { useIsTelegramInstance } from 'hooks/use-is-telegram-instance';
 import { useSendContactMutation } from 'services/green-api/endpoints';
-import { journalsGreenApiEndpoints } from 'services/green-api/endpoints/journals.green-api.endpoints';
-import { selectActiveChat, selectMessageCount } from 'store/slices/chat.slice';
+import { selectActiveChat } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
 import { ActiveChat, SendContactFormValues } from 'types';
 import { getErrorMessage, isApiError } from 'utils';
@@ -17,9 +16,7 @@ import { getErrorMessage, isApiError } from 'utils';
 const SendContactForm: FC = () => {
   const instanceCredentials = useAppSelector(selectInstance);
   const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
-  const messageCount = useAppSelector(selectMessageCount);
 
-  const dispatch = useAppDispatch();
   const { setActiveSendingMode } = useActions();
 
   const { t } = useTranslation();
@@ -78,47 +75,6 @@ const SendContactForm: FC = () => {
     }
 
     if (data) {
-      const contactDisplayName = isMax
-        ? values.phoneContact
-        : `${values.firstName || ''} ${values.middleName || ''} ${values.lastName || ''}`.trim() ||
-          values.phoneContact;
-
-      const updateChatHistoryThunk = journalsGreenApiEndpoints.util?.updateQueryData(
-        'getChatHistory',
-        {
-          ...instanceCredentials,
-          chatId: activeChat.chatId,
-          count: messageCount,
-        },
-        (draftChatHistory) => {
-          const existingMessage = draftChatHistory.find((msg) => msg.idMessage === data.idMessage);
-          if (existingMessage) {
-            console.log('message already in chat history');
-
-            return;
-          }
-
-          draftChatHistory.push({
-            type: 'outgoing',
-            typeMessage: 'contactMessage',
-            contact: {
-              displayName: contactDisplayName,
-              vcard: '',
-            },
-            timestamp: Math.floor(Date.now() / 1000),
-            senderName: '',
-            senderContactName: '',
-            idMessage: data.idMessage,
-            chatId: activeChat.chatId,
-            statusMessage: 'sent',
-          });
-
-          return draftChatHistory;
-        }
-      );
-
-      dispatch(updateChatHistoryThunk);
-
       form.setFields([{ name: 'response', warnings: [t('SUCCESS_SENDING_MESSAGE')] }]);
 
       setActiveSendingMode(null);

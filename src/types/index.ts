@@ -7,6 +7,7 @@ import {
   Button,
   ContactListItemInterface,
   ExpandedInstanceInterface,
+  ExtendedTextMessage,
   FontType,
   GetContactInfoResponseInterface,
   GetGroupDataSuccessResponseInterface,
@@ -379,6 +380,7 @@ export interface MessageDataForRender {
   quotedMessage?: QuotedMessageInterface;
   templateMessage?: ParsedWabaTemplateInterface;
   interactiveButtonsMessage?: ParsedWabaTemplateInterface;
+  extendedTextMessage?: ExtendedTextMessage;
   caption?: string;
   fileName?: string;
   isDeleted?: boolean;

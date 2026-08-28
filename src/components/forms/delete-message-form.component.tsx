@@ -4,10 +4,9 @@ import { Button, Flex, Form, Typography } from 'antd';
 import useMessage from 'antd/es/message/useMessage';
 import { useTranslation } from 'react-i18next';
 
-import { useActions, useAppDispatch, useAppSelector, useFormWithLanguageValidation } from 'hooks';
+import { useActions, useAppSelector, useFormWithLanguageValidation } from 'hooks';
 import { useDeleteMessageMutation } from 'services/green-api/endpoints';
-import { journalsGreenApiEndpoints } from 'services/green-api/endpoints/journals.green-api.endpoints';
-import { selectActiveChat, selectMessageCount, selectMiniVersion } from 'store/slices/chat.slice';
+import { selectActiveChat } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
 import { selectMessageDataForRender } from 'store/slices/message-menu.slice';
 import { ActiveChat, GetChatInformationParameters, MessageDataForRender } from 'types';
@@ -16,10 +15,7 @@ const DeleteMessageForm: FC = () => {
   const instanceCredentials = useAppSelector(selectInstance);
   const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
   const deletedMessageData = useAppSelector(selectMessageDataForRender) as MessageDataForRender;
-  const isMiniVersion = useAppSelector(selectMiniVersion);
-  const messageCount = useAppSelector(selectMessageCount);
 
-  const dispatch = useAppDispatch();
   const { setActiveServiceMethod } = useActions();
   const { t } = useTranslation();
   const [message, contextMessageHolder] = useMessage();
@@ -58,38 +54,6 @@ const DeleteMessageForm: FC = () => {
     }
 
     if (data || !error) {
-      const updateChatHistoryThunk = journalsGreenApiEndpoints.util?.updateQueryData(
-        'getChatHistory',
-        {
-          ...instanceCredentials,
-          chatId: activeChat.chatId,
-          count: isMiniVersion ? 10 : messageCount,
-        },
-        (draftChatHistory) => {
-          const existingMessage = draftChatHistory.find(
-            (msg) => msg.idMessage === deletedMessageData.idMessage
-          );
-          if (!existingMessage) return;
-          existingMessage.isDeleted = true;
-          return draftChatHistory;
-        }
-      );
-
-      const updateChatListThunk = journalsGreenApiEndpoints.util?.updateQueryData(
-        'lastMessages',
-        { allMessages: true, ...instanceCredentials },
-        (draftChatList) => {
-          const existingChat = draftChatList.find(
-            (msg) => msg.idMessage === deletedMessageData.idMessage
-          );
-          if (!existingChat) return;
-          existingChat.isDeleted = true;
-          return draftChatList;
-        }
-      );
-
-      dispatch(updateChatHistoryThunk);
-      dispatch(updateChatListThunk);
       form.resetFields();
 
       responseTimerReference.current = setTimeout(() => {

@@ -1,7 +1,7 @@
-import { MessageInterface, TelegramChatType } from 'types';
+import { MessageInterface, ChatType } from 'types';
 
 type ChatTypeLike =
-  | TelegramChatType
+  | ChatType
   | MessageInterface['chatType']
   | MessageInterface['senderType']
   | undefined;

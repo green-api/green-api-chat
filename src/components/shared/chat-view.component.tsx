@@ -467,6 +467,7 @@ const ChatView: FC = () => {
               statusMessage: message.statusMessage,
               quotedMessage: message.quotedMessage,
               templateMessage: templateMessage,
+              extendedTextMessage: message.extendedTextMessage,
               interactiveButtonsMessage: interactiveButtonsMessage,
               caption: message.caption,
               fileName: message.fileName,

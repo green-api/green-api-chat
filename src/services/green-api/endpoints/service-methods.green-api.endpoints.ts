@@ -1,5 +1,7 @@
+import { journalsGreenApiEndpoints } from 'services/green-api/endpoints/journals.green-api.endpoints';
 import { greenAPI } from 'services/green-api/green-api.service';
 import type { RootState } from 'store';
+import { chatActions, selectLastMessagesByChatId } from 'store/slices/chat.slice';
 import {
   AddContactParametersInterface,
   CheckWhatsappParametersInterface,
@@ -8,11 +10,13 @@ import {
   DeleteContactParametersInterface,
   EditContactParametersInterface,
   EditMessageParameters,
+  GetChatHistoryParametersInterface,
   GetContactsParametersInterface,
   GetChatInformationParameters,
   GetChatsParametersInterface,
   GetChatsResponseInterface,
   GetContactInfoResponseInterface,
+  MessageInterface,
   RequestWithChatIdParameters,
   SendFileByUrlParametersInterface,
   SendingResponseInterface,
@@ -21,6 +25,22 @@ import {
   CheckAccountParametersInterface,
 } from 'types';
 import { normalizeAvatarSrc } from 'utils/image.utils';
+
+const applyMessageEdit = (msg: MessageInterface, message: string): MessageInterface => {
+  const updated = { ...msg };
+
+  if (updated.extendedTextMessage) {
+    updated.extendedTextMessage = { ...updated.extendedTextMessage, text: message };
+  } else if ('caption' in updated) {
+    updated.caption = message;
+  } else {
+    updated.textMessage = message;
+  }
+
+  updated.isEdited = true;
+
+  return updated;
+};
 
 export const serviceMethodsGreenApiEndpoints = greenAPI.injectEndpoints({
   endpoints: (builder) => ({
@@ -215,6 +235,58 @@ export const serviceMethodsGreenApiEndpoints = greenAPI.injectEndpoints({
         method: 'POST',
         body,
       }),
+      onQueryStarted: async (
+        { idInstance, chatId, idMessage },
+        { dispatch, getState, queryFulfilled }
+      ) => {
+        const state = getState() as RootState;
+
+        const patches = journalsGreenApiEndpoints.util
+          .selectInvalidatedBy(state, ['chatHistory'])
+          .filter(
+            (entry) =>
+              entry.endpointName === 'getChatHistory' &&
+              (entry.originalArgs as GetChatHistoryParametersInterface).chatId === chatId &&
+              (entry.originalArgs as GetChatHistoryParametersInterface).idInstance === idInstance
+          )
+          .map(({ originalArgs }) =>
+            dispatch(
+              journalsGreenApiEndpoints.util.updateQueryData(
+                'getChatHistory',
+                originalArgs as GetChatHistoryParametersInterface,
+                (draft) => {
+                  const existingMessage = draft.find((msg) => msg.idMessage === idMessage);
+
+                  if (!existingMessage) return;
+
+                  existingMessage.isDeleted = true;
+                }
+              )
+            )
+          );
+
+        const previousLastMessage = selectLastMessagesByChatId(state)[chatId] ?? null;
+        const isDeletingLastMessage = previousLastMessage?.idMessage === idMessage;
+
+        if (isDeletingLastMessage && previousLastMessage) {
+          dispatch(
+            chatActions.setLastMessageByChatId({
+              chatId,
+              message: { ...previousLastMessage, isDeleted: true },
+            })
+          );
+        }
+
+        try {
+          await queryFulfilled;
+        } catch {
+          patches.forEach((patch) => patch.undo());
+
+          if (isDeletingLastMessage) {
+            dispatch(chatActions.setLastMessageByChatId({ chatId, message: previousLastMessage }));
+          }
+        }
+      },
     }),
     editMessage: builder.mutation<
       SendingResponseInterface,
@@ -225,6 +297,66 @@ export const serviceMethodsGreenApiEndpoints = greenAPI.injectEndpoints({
         method: 'POST',
         body,
       }),
+      onQueryStarted: async (
+        { idInstance, chatId, idMessage, message },
+        { dispatch, getState, queryFulfilled }
+      ) => {
+        const state = getState() as RootState;
+
+        const patches = journalsGreenApiEndpoints.util
+          .selectInvalidatedBy(state, ['chatHistory'])
+          .filter(
+            (entry) =>
+              entry.endpointName === 'getChatHistory' &&
+              (entry.originalArgs as GetChatHistoryParametersInterface).chatId === chatId &&
+              (entry.originalArgs as GetChatHistoryParametersInterface).idInstance === idInstance
+          )
+          .map(({ originalArgs }) =>
+            dispatch(
+              journalsGreenApiEndpoints.util.updateQueryData(
+                'getChatHistory',
+                originalArgs as GetChatHistoryParametersInterface,
+                (draft) => {
+                  const existingMessage = draft.find((msg) => msg.idMessage === idMessage);
+
+                  if (!existingMessage) return;
+
+                  if (existingMessage.extendedTextMessage) {
+                    existingMessage.extendedTextMessage.text = message;
+                  } else if ('caption' in existingMessage) {
+                    existingMessage.caption = message;
+                  } else {
+                    existingMessage.textMessage = message;
+                  }
+
+                  existingMessage.isEdited = true;
+                }
+              )
+            )
+          );
+
+        const previousLastMessage = selectLastMessagesByChatId(state)[chatId] ?? null;
+        const isEditingLastMessage = previousLastMessage?.idMessage === idMessage;
+
+        if (isEditingLastMessage && previousLastMessage) {
+          dispatch(
+            chatActions.setLastMessageByChatId({
+              chatId,
+              message: applyMessageEdit(previousLastMessage, message),
+            })
+          );
+        }
+
+        try {
+          await queryFulfilled;
+        } catch {
+          patches.forEach((patch) => patch.undo());
+
+          if (isEditingLastMessage) {
+            dispatch(chatActions.setLastMessageByChatId({ chatId, message: previousLastMessage }));
+          }
+        }
+      },
     }),
     getChats: builder.query<GetChatsResponseInterface[], GetChatsParametersInterface>({
       query: ({ idInstance, apiTokenInstance, apiUrl, mediaUrl: _, ...params }) => ({
@@ -236,6 +368,7 @@ export const serviceMethodsGreenApiEndpoints = greenAPI.injectEndpoints({
           ...chat,
           chatId: chat.chatId || chat.id || '',
         })),
+      providesTags: ['chats'],
     }),
   }),
 });

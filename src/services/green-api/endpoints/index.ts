@@ -2,6 +2,7 @@ import { accountGreenApiEndpoints } from './account.green-api.endpoints';
 import { groupGreenApiEndpoints } from './group.green-api.endpoints';
 import { journalsGreenApiEndpoints } from './journals.green-api.endpoints';
 import { persistedMethods } from './persisted-methods.green-api.endpoints';
+import { readMarkGreenApiEndpoints } from './read-mark.green-api.endpoints';
 import { receivingGreenApiEndpoints } from './receiving.green-api.endpoints';
 import { sendingGreenApiEndpoints } from './sending.green-api.endpoints';
 import { serviceMethodsGreenApiEndpoints } from './service-methods.green-api.endpoints';
@@ -12,6 +13,7 @@ export const {
   useSendMessageMutation,
   useGetChatHistoryQuery,
   useLazyGetChatHistoryQuery,
+  useLazyGetChatLastMessageQuery,
   useGetContactInfoQuery,
   useLazyGetGroupDataQuery,
   useLazyGetContactInfoQuery,
@@ -63,6 +65,7 @@ export const {
   useQrMutation,
   useGetChatsQuery,
   useLazyGetChatsQuery,
+  useReadChatMutation,
 } = {
   ...accountGreenApiEndpoints,
   ...sendingGreenApiEndpoints,
@@ -73,4 +76,5 @@ export const {
   ...wabaGreenApiEndpoints,
   ...statusesGreenApiEndpoints,
   ...persistedMethods,
+  ...readMarkGreenApiEndpoints,
 };

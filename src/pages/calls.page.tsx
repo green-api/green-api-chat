@@ -73,6 +73,9 @@ const CallsPage: FC = () => {
             typeInstance: typeInstance,
             projectId: projectId,
             instanceList: instanceList,
+            enableCalls: instanceList?.find(
+              (instance) => instanceData.idInstance === instance.idInstance
+            )?.enableCalls,
           },
         },
         CALLS_APP_URL

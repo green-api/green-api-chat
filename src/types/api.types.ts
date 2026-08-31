@@ -491,6 +491,7 @@ export interface ExpandedInstanceInterface extends InstanceInterface {
   isExpired: boolean;
   isFree: boolean;
   isPartner: boolean;
+  enableCalls: boolean;
   name: string;
   partnerUserUiid: string;
   tariff: TariffsEnum;

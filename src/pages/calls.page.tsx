@@ -121,7 +121,7 @@ const CallsPage: FC = () => {
       }}
       name="calls"
       ref={iframeReference}
-      allow="clipboard-read; clipboard-write"
+      allow="clipboard-read; clipboard-write; microphone;"
     />
   );
 };

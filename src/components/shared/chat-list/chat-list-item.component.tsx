@@ -38,6 +38,7 @@ interface ContactListItemProps {
   showDescription?: boolean;
   unreadCount?: number;
   apiUnreadCount?: number;
+  newChatId?: string;
   onClearUnread?: () => void;
   isLastMessageLoading?: boolean;
 }
@@ -50,6 +51,7 @@ const ChatListItem: FC<ContactListItemProps> = ({
   showDescription = true,
   unreadCount,
   apiUnreadCount,
+  newChatId,
   onClearUnread,
   isLastMessageLoading = false,
 }) => {
@@ -191,6 +193,7 @@ const ChatListItem: FC<ContactListItemProps> = ({
       senderContactName: lastMessage.senderContactName,
       avatar,
       contactInfo: info,
+      newChatId,
     });
 
     setSearchQuery('');

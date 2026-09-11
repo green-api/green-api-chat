@@ -327,6 +327,7 @@ export interface ContactListItemInterface {
   contactName?: string;
   type: 'user' | 'group' | 'supergroup' | 'channel' | 'bot';
   phoneNumber?: string;
+  newChatId?: string;
 }
 
 export interface UpsertContactPayloadInterface {
@@ -728,4 +729,5 @@ export interface GetChatsResponseInterface {
   phoneNumber?: string | number;
   // only for WhatsApp for now
   unreadCount?: number;
+  newChatId?: string;
 }

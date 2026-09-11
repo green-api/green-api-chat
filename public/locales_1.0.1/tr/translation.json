@@ -110,6 +110,7 @@
   "GROUP_ALLOW_PARTICIPANTS_SEND_INVITE_LINK": "Katılımcılar davet bağlantısı gönderebilir",
   "GROUP_ALLOW_PARTICIPANTS_SEND_MESSAGE_HISTORY": "Katılımcılar mesaj geçmişi gönderebilir",
   "CANT_SEND_IN_GROUP": "Artık üye olmadığınız için bu gruba mesaj gönderemezsiniz.",
+  "CANT_SEND_ACCOUNT_INACTIVE": "Bu hesap artık aktif olmadığı için bu hesaba mesaj gönderemezsiniz.",
   "BUSINESS_ACCOUNT_DESC": "Bu işletme hesabıdır",
   "LEFT_THE_GROUP_ALERT_MESSAGE": "Gruptan ayrıldınız",
   "BLOCKED_OR_PRIVATE_CHAT": "Sohbet katılımcısı sizi engelledi veya gizlilik ayarlarını açtı",

@@ -116,6 +116,18 @@ const ChatList: FC = () => {
     return counts;
   }, [chats]);
 
+  const newChatIdByChatId = useMemo(() => {
+    const map: Record<string, string> = {};
+
+    chats.forEach((chat) => {
+      if (chat.newChatId) {
+        map[chat.chatId] = chat.newChatId;
+      }
+    });
+
+    return map;
+  }, [chats]);
+
   const renderedChats = useMemo(() => chats.slice(0, page * limit), [chats, page, limit]);
   const renderedChatsRef = useRef(renderedChats);
   renderedChatsRef.current = renderedChats;
@@ -527,6 +539,7 @@ const ChatList: FC = () => {
                       lastMessage={msg}
                       onNameExtracted={handleNameExtracted}
                       showDescription={false}
+                      newChatId={newChatIdByChatId[msg.chatId]}
                     />
                   )}
                   split={false}
@@ -548,6 +561,7 @@ const ChatList: FC = () => {
                       onNameExtracted={handleNameExtracted}
                       unreadCount={unreadCounts[msg.chatId]}
                       apiUnreadCount={apiUnreadCounts[msg.chatId]}
+                      newChatId={newChatIdByChatId[msg.chatId]}
                       onClearUnread={() => clearUnreadCount(msg.chatId)}
                     />
                   )}
@@ -574,6 +588,7 @@ const ChatList: FC = () => {
                   onNameExtracted={handleNameExtracted}
                   unreadCount={unreadCounts[message.chatId]}
                   apiUnreadCount={apiUnreadCounts[message.chatId]}
+                  newChatId={newChatIdByChatId[message.chatId]}
                   onClearUnread={() => clearUnreadCount(message.chatId)}
                   isLastMessageLoading={!(message.chatId in lastMessagesByChatId)}
                 />

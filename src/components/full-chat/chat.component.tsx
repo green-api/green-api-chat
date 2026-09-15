@@ -6,16 +6,10 @@ import Aside from './aside/aside.component';
 import ContentSide from './content-side/content-side.component';
 import UserSide from './user-side/user-side.component';
 import { useAppSelector } from 'hooks';
-import CallsPage from 'pages/calls.page';
-import { selectType, selectUserSideActiveMode } from 'store/slices/chat.slice';
-import { selectTypeInstance } from 'store/slices/instances.slice';
+import { selectType } from 'store/slices/chat.slice';
 
 const Chat: FC = () => {
   const type = useAppSelector(selectType);
-  const typeInstance = useAppSelector(selectTypeInstance);
-  const activeMode = useAppSelector(selectUserSideActiveMode);
-  const isCallsNeedToRender =
-    type !== 'one-chat-only' && type !== 'instance-view-page' && typeInstance === 'whatsapp';
 
   return (
     <Flex
@@ -23,13 +17,8 @@ const Chat: FC = () => {
       style={{ overflowY: 'hidden' }}
     >
       {type !== 'mobile-mode' && <Aside />}
-      {isCallsNeedToRender && <CallsPage />}
-      {activeMode !== 'calls' && (
-        <>
-          <UserSide />
-          <ContentSide />
-        </>
-      )}
+      <UserSide />
+      <ContentSide />
     </Flex>
   );
 };

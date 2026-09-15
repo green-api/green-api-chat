@@ -47,7 +47,6 @@ export interface ChatState {
   searchQuery: string;
   description?: string;
   brandImgUrl?: string;
-  isCallsIframeReady: boolean;
   replyMessage: MessageDataForRender | null;
   lastMessagesByChatId: Record<string, MessageInterface | null>;
   lastMessagesInstanceKey: string | null;
@@ -277,7 +276,6 @@ export type UserSideActiveMode =
   | 'settings'
   | 'profile'
   | 'statuses'
-  | 'calls'
   | 'archive'
   | 'instance'
   | 'logout'

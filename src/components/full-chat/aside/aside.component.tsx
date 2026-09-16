@@ -5,15 +5,14 @@ import { Flex } from 'antd';
 import AsideItem from './aside-item.component';
 import { asideBottomIconItems, asideTopIconItems } from 'configs';
 import { useAppSelector } from 'hooks';
-import { selectIsCallsIframeReady, selectType } from 'store/slices/chat.slice';
+import { selectType } from 'store/slices/chat.slice';
 import { selectTypeInstance } from 'store/slices/instances.slice';
 
 const Aside: FC = () => {
   const type = useAppSelector(selectType);
   const typeInstance = useAppSelector(selectTypeInstance);
-  const isCallsIframeReady = useAppSelector(selectIsCallsIframeReady);
 
-  const items = asideTopIconItems(type, typeInstance, isCallsIframeReady);
+  const items = asideTopIconItems(type, typeInstance);
 
   return (
     <aside className="aside">

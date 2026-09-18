@@ -1,6 +1,7 @@
 .full-chat {
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
   box-shadow: 0 6px 18px var(--register-form-shadow-color);
   border-radius: 0;
   background-color: var(--main-background);
@@ -9,6 +10,7 @@
   &.console-page {
     width: 100vw;
     height: 100vh;
+    height: 100dvh;
     max-width: initial;
   }
 }

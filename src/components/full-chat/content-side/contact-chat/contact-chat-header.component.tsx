@@ -1,6 +1,6 @@
 import { FC } from 'react';
 
-import { CloseOutlined } from '@ant-design/icons';
+import { CloseOutlined, LeftOutlined } from '@ant-design/icons';
 import { Flex, Space } from 'antd';
 import { Header } from 'antd/es/layout/layout';
 import { useTranslation } from 'react-i18next';
@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import waChatIcon from 'assets/wa-chat.svg';
 import AvatarImage from 'components/UI/avatar-image.component';
 import { FULL_CHAT_HISTORY_COUNT } from 'configs';
-import { useActions, useAppSelector } from 'hooks';
+import { useActions, useAppSelector, useMediaQuery } from 'hooks';
 import { useGetChatHistoryQuery, useGetChatsQuery } from 'services/green-api/endpoints';
 import { selectActiveChat, selectType } from 'store/slices/chat.slice';
 import { selectInstance, selectTypeInstance } from 'store/slices/instances.slice';
@@ -21,6 +21,9 @@ const ContactChatHeader: FC = () => {
   const instanceCredentials = useAppSelector(selectInstance);
   const typeInstance = useAppSelector(selectTypeInstance);
   const { t } = useTranslation();
+  // Same breakpoint as content-side.component.tsx, where the chat list and the open
+  // chat are shown one at a time instead of side by side.
+  const isMobile = useMediaQuery('(max-width: 975px)');
 
   const { setActiveChat, setContactInfoOpen } = useActions();
 
@@ -86,11 +89,27 @@ const ContactChatHeader: FC = () => {
         {!isOfficial && activeChat.chatId?.includes('@c') && (
           <span>{activeChat.chatId?.replace(/\@.*$/, '')}</span>
         )}
-        {type !== 'one-chat-only' && (
-          <a>
-            <CloseOutlined style={{ width: 13 }} onClick={() => setActiveChat(null)} />
-          </a>
-        )}
+        {type !== 'one-chat-only' &&
+          (isMobile ? (
+            <a
+              className="back-button"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 4,
+                flexShrink: 0,
+                whiteSpace: 'nowrap',
+              }}
+              onClick={() => setActiveChat(null)}
+            >
+              <LeftOutlined style={{ fontSize: 26 }} />
+              {t('BACK_TO_CHATS')}
+            </a>
+          ) : (
+            <a>
+              <CloseOutlined style={{ width: 14 }} onClick={() => setActiveChat(null)} />
+            </a>
+          ))}
       </Space>
     </Header>
   );

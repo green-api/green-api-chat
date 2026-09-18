@@ -241,6 +241,7 @@
   "CONTACT_NOT_FOUND": "Contact not found",
   "CONTACT_SERVER_ERROR": "Server error while processing contact",
   "BOT_LABEL": "bot",
+  "BACK_TO_CHATS": "Back to chats",
   "CONTACT_REQUEST_ERROR": "Unable to process contact request",
   "DELETE_CONTACT_CONFIRM_TITLE": "Delete contact?",
   "DELETE_CONTACT_CONFIRM_DESCRIPTION": "This action cannot be undone",

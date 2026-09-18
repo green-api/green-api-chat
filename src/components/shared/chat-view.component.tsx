@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo, useRef, useState } from 'react';
+import { FC, useEffect, useMemo, useRef } from 'react';
 
 import { Alert, Button, Empty, Spin } from 'antd';
 import { useTranslation } from 'react-i18next';
@@ -15,7 +15,7 @@ import { useActions, useAppSelector } from 'hooks';
 import { useIsMaxInstance } from 'hooks/use-is-max-instance';
 import { useIsWabaInstance } from 'hooks/use-is-waba-instance';
 import { useGetChatHistoryQuery, useGetTemplatesQuery } from 'services/green-api/endpoints';
-import { selectActiveChat, selectMiniVersion } from 'store/slices/chat.slice';
+import { selectActiveChat, selectMessageCount, selectMiniVersion } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
 import {
   ActiveChat,
@@ -38,7 +38,7 @@ const ChatView: FC = () => {
   const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
   const isMiniVersion = useAppSelector(selectMiniVersion);
 
-  const [count, setCount] = useState(FULL_CHAT_HISTORY_COUNT);
+  const count = useAppSelector(selectMessageCount);
   const { setMessageCount } = useActions();
   const isMax = useIsMaxInstance();
   const isWaba = useIsWabaInstance();
@@ -53,6 +53,7 @@ const ChatView: FC = () => {
 
   const chatViewRef = useRef<HTMLDivElement | null>(null);
   const scrollPositionRef = useRef<{ top: number; height: number } | null>(null);
+  const shouldScrollToBottomRef = useRef(true);
 
   const { data: templates, isLoading: templatesLoading } = useGetTemplatesQuery(
     instanceCredentials,
@@ -79,7 +80,19 @@ const ChatView: FC = () => {
   );
 
   useEffect(() => {
+    shouldScrollToBottomRef.current = true;
     setMessageCount(FULL_CHAT_HISTORY_COUNT);
+
+    // If this chat's messages are already cached, `messages` won't change
+    // reference below, so the [messages, templates] effect never reruns to
+    // consume the flag — scroll down right away for that case. Otherwise
+    // leave the flag set for that effect to consume once the fetch resolves.
+    const element = chatViewRef.current;
+    if (element && !isFetching) {
+      element.scrollTop = element.scrollHeight;
+      shouldScrollToBottomRef.current = false;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeChat]);
 
   const handleLoadMore = () => {
@@ -88,39 +101,38 @@ const ChatView: FC = () => {
     const element = chatViewRef.current;
     if (!element) return;
 
+    shouldScrollToBottomRef.current = false;
     scrollPositionRef.current = {
       top: element.scrollTop,
       height: element.scrollHeight,
     };
 
-    setCount((prev) => {
-      const next = Math.min(prev + CHAT_HISTORY_COUNT_STEP, MAX_CHAT_HISTORY_COUNT);
-      setMessageCount(next);
-      return next;
-    });
+    setMessageCount(Math.min(count + CHAT_HISTORY_COUNT_STEP, MAX_CHAT_HISTORY_COUNT));
   };
 
   useEffect(() => {
     const element = chatViewRef.current;
-    if (!element || !scrollPositionRef.current) return;
+    if (!element) return;
 
-    const heightDiff = element.scrollHeight - scrollPositionRef.current.height;
-
-    element.scrollTop = scrollPositionRef.current.top + heightDiff;
-
-    scrollPositionRef.current = null;
-  }, [messages]);
-
-  useEffect(() => {
-    const element = chatViewRef.current;
-    if (element && count === FULL_CHAT_HISTORY_COUNT && !scrollPositionRef.current) {
-      setTimeout(() => {
-        element.scrollTo({ top: element.scrollHeight, behavior: 'smooth' });
-      }, 10);
+    if (shouldScrollToBottomRef.current) {
+      element.scrollTop = element.scrollHeight;
+      shouldScrollToBottomRef.current = false;
+      return;
     }
-  }, [count, templates]);
+
+    if (scrollPositionRef.current) {
+      const heightDiff = element.scrollHeight - scrollPositionRef.current.height;
+      element.scrollTop = scrollPositionRef.current.top + heightDiff;
+      scrollPositionRef.current = null;
+    }
+  }, [messages, templates]);
 
   const loaderVisible = !isMiniVersion && isFetching;
+
+  const requestedCount = isMiniVersion ? MINI_CHAT_HISTORY_COUNT : count;
+  const hasMoreMessages = !messages || messages.length >= requestedCount;
+  const canLoadMore = hasMoreMessages && count < MAX_CHAT_HISTORY_COUNT;
+  const isLimitReached = hasMoreMessages && count >= MAX_CHAT_HISTORY_COUNT;
 
   const getReactionTargetId = (msg: Record<string, unknown>): string | undefined => {
     const quoted = msg.quotedMessage as { stanzaId?: string } | undefined;
@@ -242,7 +254,10 @@ const ChatView: FC = () => {
       .filter((msg) => {
         return (
           !('typeMessage' in msg) ||
-          (msg.typeMessage !== 'pollUpdateMessage' && msg.typeMessage !== 'reactionMessage')
+          (msg.typeMessage !== 'pollUpdateMessage' &&
+            msg.typeMessage !== 'reactionMessage' &&
+            msg.typeMessage !== 'deletedMessage' &&
+            msg.typeMessage !== 'editedMessage')
         );
       })
       .map((msg) => {
@@ -325,17 +340,17 @@ const ChatView: FC = () => {
 
   return (
     <div className={`chat-view ${isMiniVersion ? '' : 'full'}`} ref={chatViewRef}>
-      {count < MAX_CHAT_HISTORY_COUNT ? (
+      {canLoadMore ? (
         <div style={{ textAlign: 'center', padding: '12px 0' }}>
           <Button onClick={handleLoadMore}>{t('LOAD_MORE_MESSAGES')}</Button>
         </div>
-      ) : (
+      ) : isLimitReached ? (
         <Alert
           style={{ textAlign: 'center' }}
           message={t('CHAT_MESSAGE_LIMIT_REACHED_TITLE')}
           type="warning"
         />
-      )}
+      ) : null}
 
       <Spin size="large" style={{ visibility: loaderVisible ? 'initial' : 'hidden' }} />
 

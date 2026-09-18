@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
+import { FULL_CHAT_HISTORY_COUNT } from 'configs';
 import { RootState } from 'store';
 import { instancesActions } from 'store/slices/instances.slice';
 import { ChatState, InstanceInterface, MessageInterface } from 'types';
@@ -14,7 +15,7 @@ const initialState: ChatState = {
   activeSendingMode: null,
   type: 'tab',
   isMiniVersion: getIsMiniVersion('tab'),
-  messageCount: 30,
+  messageCount: FULL_CHAT_HISTORY_COUNT,
   isContactInfoOpen: false,
   activeTemplate: null,
   templateMessagesLoading: false,

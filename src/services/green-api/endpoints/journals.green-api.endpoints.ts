@@ -13,12 +13,10 @@ export const journalsGreenApiEndpoints = greenAPI.injectEndpoints({
         method: 'POST',
         body,
       }),
-      transformResponse: (res: GetChatHistoryResponse) =>
-        res
-          .filter(
-            (msg) => msg.typeMessage !== 'deletedMessage' && msg.typeMessage !== 'editedMessage'
-          )
-          .reverse(),
+      // Keep deletedMessage/editedMessage entries here so callers can tell how many raw
+      // messages the API returned for the requested count (chat-view uses this to detect
+      // whether more history exists); they're filtered out of the rendered list instead.
+      transformResponse: (res: GetChatHistoryResponse) => res.reverse(),
       providesTags: ['chatHistory'],
     }),
     // Get last message for chat list, we dont need to filter response

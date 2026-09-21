@@ -20,6 +20,14 @@ export function isContactInfo(
   return 'chatId' in info;
 }
 
+// Telegram groupData exposes `isChannel`, MAX groupData exposes `type: 'channel'`
+export function isChannelGroupData(data: unknown): boolean {
+  if (!data || typeof data !== 'object') return false;
+  if ('isChannel' in data && data.isChannel) return true;
+  if ('type' in data && data.type === 'channel') return true;
+  return false;
+}
+
 export function isOutgoingTemplateMessage(
   templateMessage: TemplateMessageInterface,
   type: TypeConnectionMessage

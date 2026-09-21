@@ -117,8 +117,14 @@ const ChatListItem: FC<ContactListItemProps> = ({
   );
 
   const isLoading = isGroupDataLoading || isContactInfoLoading;
+  const isGroupChat = Boolean(
+    lastMessage.chatId?.includes('g.us') || lastMessage.chatId?.startsWith('-')
+  );
 
   const avatar = useMemo<string>(() => {
+    if (isLoading) {
+      return isGroupChat ? emptyAvatarGroup : emptyAvatarButAvailable;
+    }
     if (isMax && !avatarData?.urlAvatar) {
       return emptyAvatarButAvailable;
     }
@@ -133,7 +139,7 @@ const ChatListItem: FC<ContactListItemProps> = ({
     }
 
     return lastMessage.chatId?.includes('g.us') ? emptyAvatarGroup : emptyAvatarButAvailable;
-  }, [contactInfo, avatarData, lastMessage]);
+  }, [isLoading, isGroupChat, contactInfo, avatarData, lastMessage]);
 
   let chatName: string | undefined;
   const telegramChat = chats?.find((c) => c.chatId === lastMessage.chatId);
@@ -206,7 +212,7 @@ const ChatListItem: FC<ContactListItemProps> = ({
       onClick={handleSelectChat}
       title={avatar === emptyAvatar ? t('BLOCKED_OR_PRIVATE_CHAT') : undefined}
     >
-      <Skeleton avatar title={false} loading={isLoading} active>
+      <>
         <List.Item.Meta
           avatar={
             <AvatarImage
@@ -282,7 +288,7 @@ const ChatListItem: FC<ContactListItemProps> = ({
             )}
           </Flex>
         )}
-      </Skeleton>
+      </>
     </List.Item>
   );
 };

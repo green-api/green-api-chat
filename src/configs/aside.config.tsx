@@ -25,9 +25,7 @@ export const asideTopIconItems: (
   typeInstance === 'whatsapp'
     ? { item: 'statuses', title: 'STATUSES', icon: <StatusIcon />, waOnly: true }
     : null,
-  type !== 'one-chat-only' && (typeInstance === 'whatsapp' || typeInstance === 'v3')
-    ? { item: 'contacts', title: 'CONTACTS', icon: <ContactIcon /> }
-    : null,
+  type !== 'one-chat-only' ? { item: 'contacts', title: 'CONTACTS', icon: <ContactIcon /> } : null,
 ];
 
 export const asideBottomIconItems: AsideItem[] = [

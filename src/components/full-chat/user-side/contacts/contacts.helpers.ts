@@ -17,12 +17,12 @@ export interface ContactApiErrorDetails {
 
 export const CONTACTS_PAGE_SIZE = 20;
 
-export const normalizeChatId = (chatId: string, isMax = false): string => {
+export const normalizeChatId = (chatId: string, isDigitsOnlyChatId = false): string => {
   const trimmedValue = String(chatId ?? '').trim();
 
   if (!trimmedValue) return '';
 
-  if (isMax) {
+  if (isDigitsOnlyChatId) {
     return trimmedValue.replace(/\D/g, '');
   }
 

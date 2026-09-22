@@ -15,12 +15,11 @@ const Contacts: FC = () => {
   const instanceCredentials = useAppSelector(selectInstance);
   const typeInstance = useAppSelector(selectTypeInstance);
   const isWhatsApp = typeInstance === 'whatsapp';
-  const isTelegram = typeInstance === 'telegram';
 
   const { openAddContactModal } = useActions();
 
   const skipGetContactsQuery =
-    !instanceCredentials?.idInstance || !instanceCredentials.apiTokenInstance || isTelegram;
+    !instanceCredentials?.idInstance || !instanceCredentials.apiTokenInstance;
 
   const {
     isLoading: isContactsLoading,
@@ -41,16 +40,6 @@ const Contacts: FC = () => {
       <Empty
         className="empty p-10"
         description={t('SELECT_INSTANCE_PLACEHOLDER')}
-        style={{ marginTop: 40 }}
-      />
-    );
-  }
-
-  if (isTelegram) {
-    return (
-      <Empty
-        className="empty p-10"
-        description={t('CONTACTS_UNAVAILABLE_TELEGRAM')}
         style={{ marginTop: 40 }}
       />
     );

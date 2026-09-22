@@ -242,7 +242,6 @@
   "DELETE_CONTACT_CONFIRM_TITLE": "Kişi silinsin mi?",
   "DELETE_CONTACT_CONFIRM_DESCRIPTION": "Bu işlem geri alınamaz",
   "SAVE_CONTACT_CHANGES": "Kaydet",
-  "CONTACTS_UNAVAILABLE_TELEGRAM": "Telegram örneklerinde kişi yönetimi kullanılamaz",
   "STATUS_LIST": "Durum listesi",
   "STATUS_HISTORY_ERROR": "Durumlar yüklenemedi",
   "NO_STATUSES_FOUND": "Durum bulunamadı",

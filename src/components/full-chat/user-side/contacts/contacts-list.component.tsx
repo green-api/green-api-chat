@@ -19,12 +19,11 @@ const ContactsList: FC = () => {
   const instanceCredentials = useAppSelector(selectInstance);
   const typeInstance = useAppSelector(selectTypeInstance);
   const isWhatsApp = typeInstance === 'whatsapp';
-  const isTelegram = typeInstance === 'telegram';
 
   const [searchQuery, setSearchQuery] = useState('');
 
   const skipGetContactsQuery =
-    !instanceCredentials?.idInstance || !instanceCredentials.apiTokenInstance || isTelegram;
+    !instanceCredentials?.idInstance || !instanceCredentials.apiTokenInstance;
 
   const {
     data: contactsData = [],

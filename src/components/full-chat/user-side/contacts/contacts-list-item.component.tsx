@@ -10,6 +10,7 @@ import emptyAvatarButAvailable from 'assets/emptyAvatarButAvailable.svg';
 import AvatarImage from 'components/UI/avatar-image.component';
 import { useActions, useAppSelector } from 'hooks';
 import { useIsMaxInstance } from 'hooks/use-is-max-instance';
+import { useIsTelegramInstance } from 'hooks/use-is-telegram-instance';
 import { useDeleteContactMutation, useGetAvatarQuery } from 'services/green-api/endpoints';
 import { selectInstance } from 'store/slices/instances.slice';
 import { ContactListItemInterface } from 'types';
@@ -24,6 +25,7 @@ const ContactsListItem: FC<ContactsListItemProps> = ({ contact }) => {
 
   const instanceCredentials = useAppSelector(selectInstance);
   const isMax = useIsMaxInstance();
+  const isTelegram = useIsTelegramInstance();
   const { openEditContactModal } = useActions();
   const [deleteContact, { isLoading: isDeleteLoading }] = useDeleteContactMutation();
 
@@ -50,9 +52,8 @@ const ContactsListItem: FC<ContactsListItemProps> = ({ contact }) => {
   }, [avatarData]);
 
   const displayName = getContactDisplayName(contact);
-  const phoneOrChatId = isMax
-    ? contact.phoneNumber || contact.id
-    : getPhoneNumberFromChatId(contact.id);
+  const phoneOrChatId =
+    isMax || isTelegram ? contact.phoneNumber || contact.id : getPhoneNumberFromChatId(contact.id);
   const profileName = contact.name && contact.name !== displayName ? contact.name : null;
   const isBotContact = isBotChatType(contact.type);
 

@@ -7,6 +7,7 @@ import { ContactFormValues, getContactApiErrorDetails, normalizeChatId } from '.
 import ChatIdInput from 'components/UI/chat-id-input.component';
 import { useActions, useAppSelector, useFormWithLanguageValidation } from 'hooks';
 import { useIsMaxInstance } from 'hooks/use-is-max-instance';
+import { useIsTelegramInstance } from 'hooks/use-is-telegram-instance';
 import {
   useAddContactMutation,
   useCheckAccountMutation,
@@ -29,6 +30,8 @@ const ContactFormModal: FC = () => {
   const editedContact = useAppSelector(selectEditedContact);
   const isEditMode = !!editedContact;
   const isMax = useIsMaxInstance();
+  const isTelegram = useIsTelegramInstance();
+  const isMaxOrTelegram = isMax || isTelegram;
 
   const { closeContactModal } = useActions();
 
@@ -49,7 +52,7 @@ const ContactFormModal: FC = () => {
 
     if (editedContact) {
       form.setFieldsValue({
-        chatId: String((isMax && editedContact.phoneNumber) || editedContact.id),
+        chatId: String((isMaxOrTelegram && editedContact.phoneNumber) || editedContact.id),
         contactName: editedContact.contactName || editedContact.name || '',
         contactSecondName: '',
       });
@@ -58,7 +61,7 @@ const ContactFormModal: FC = () => {
     }
 
     form.resetFields();
-  }, [editedContact, form, isOpen, isMax]);
+  }, [editedContact, form, isOpen, isMaxOrTelegram]);
 
   const closeModal = useCallback(() => {
     closeContactModal();
@@ -110,7 +113,9 @@ const ContactFormModal: FC = () => {
     return true;
   };
 
-  const validateMaxAccountAvailability = async (chatId: string): Promise<boolean> => {
+  const validateAccountAvailability = async (
+    chatId: string
+  ): Promise<{ isAvailable: boolean; resolvedChatId?: string }> => {
     const { data, error } = await checkAccount({
       ...instanceCredentials,
       phoneNumber: chatId,
@@ -125,19 +130,21 @@ const ContactFormModal: FC = () => {
         message.error(errorDetails.message);
       }
 
-      return false;
+      return { isAvailable: false };
     }
 
     if (!data?.exist) {
-      form.setFields([{ name: 'chatId', errors: [t('MAX_ACCOUNT_NOT_FOUND')] }]);
+      form.setFields([
+        { name: 'chatId', errors: [t(isMax ? 'MAX_ACCOUNT_NOT_FOUND' : 'ACCOUNT_NOT_FOUND')] },
+      ]);
 
-      return false;
+      return { isAvailable: false };
     }
 
-    return true;
+    return { isAvailable: true, resolvedChatId: data.chatId };
   };
 
-  const validateMaxChatIdAvailability = async (chatId: string): Promise<boolean> => {
+  const validateChatIdAvailability = async (chatId: string): Promise<boolean> => {
     const { data, error } = await getContactInfo({
       ...instanceCredentials,
       chatId,
@@ -158,7 +165,9 @@ const ContactFormModal: FC = () => {
     const isEmptyContact = !data?.lastSeen && !data?.phoneNumber && !data?.phoneNumberTimestamp;
 
     if (isEmptyContact) {
-      form.setFields([{ name: 'chatId', errors: [t('MAX_ACCOUNT_NOT_FOUND')] }]);
+      form.setFields([
+        { name: 'chatId', errors: [t(isMax ? 'MAX_ACCOUNT_NOT_FOUND' : 'ACCOUNT_NOT_FOUND')] },
+      ]);
 
       return false;
     }
@@ -169,39 +178,58 @@ const ContactFormModal: FC = () => {
   const handleSubmit = async (values: ContactFormValues) => {
     clearFormErrors();
 
-    const normalizedChatId = normalizeChatId(values.chatId, isMax);
+    const normalizedChatId = normalizeChatId(values.chatId, isMaxOrTelegram);
 
-    if (!normalizedChatId || (!isMax && normalizedChatId.includes('@g.us'))) {
+    if (!normalizedChatId || (!isMaxOrTelegram && normalizedChatId.includes('@g.us'))) {
       form.setFields([{ name: 'chatId', errors: [t('CONTACT_PHONE_INVALID_MESSAGE')] }]);
 
       return;
     }
 
-    const isMaxChatIdType = isEditMode
-      ? isMax && !editedContact?.phoneNumber
-      : isMax && values.chatIdType === 'chatId';
+    const isChatIdType = isEditMode
+      ? isMaxOrTelegram && !editedContact?.phoneNumber
+      : isMaxOrTelegram && values.chatIdType === 'chatId';
+
+    let resolvedAccountChatId: string | undefined;
 
     if (!isEditMode) {
-      const isAccountAvailable = isMaxChatIdType
-        ? await validateMaxChatIdAvailability(normalizedChatId)
-        : isMax
-          ? await validateMaxAccountAvailability(normalizedChatId)
-          : await validateWhatsappAvailability(normalizedChatId);
+      if (isChatIdType) {
+        const isAccountAvailable = await validateChatIdAvailability(normalizedChatId);
 
-      if (!isAccountAvailable) {
-        return;
+        if (!isAccountAvailable) {
+          return;
+        }
+      } else if (isMaxOrTelegram) {
+        const accountAvailability = await validateAccountAvailability(normalizedChatId);
+
+        if (!accountAvailability.isAvailable) {
+          return;
+        }
+
+        resolvedAccountChatId = accountAvailability.resolvedChatId;
+      } else {
+        const isAccountAvailable = await validateWhatsappAvailability(normalizedChatId);
+
+        if (!isAccountAvailable) {
+          return;
+        }
       }
     }
 
-    const finalChatId =
-      isMax && !isMaxChatIdType ? ensureChatIdSuffix(normalizedChatId) : normalizedChatId;
+    const finalChatId = isChatIdType
+      ? normalizedChatId
+      : isTelegram
+        ? resolvedAccountChatId ?? normalizedChatId
+        : isMax
+          ? ensureChatIdSuffix(normalizedChatId)
+          : normalizedChatId;
 
     const requestBody = {
       ...instanceCredentials,
       chatId: finalChatId,
       firstName: values.contactName.trim(),
       ...(values.contactSecondName?.trim() ? { lastName: values.contactSecondName.trim() } : {}),
-      saveInAddressbook: isMax ? undefined : true,
+      saveInAddressbook: isMaxOrTelegram ? undefined : true,
     };
 
     const response = isEditMode ? await editContact(requestBody) : await addContact(requestBody);
@@ -234,7 +262,7 @@ const ContactFormModal: FC = () => {
       destroyOnClose
     >
       <Form<ContactFormValues> form={form} layout="vertical" onFinish={handleSubmit}>
-        {isMax && !isEditMode && (
+        {isMaxOrTelegram && !isEditMode && (
           <Form.Item name="chatIdType" initialValue="phone" style={{ marginBottom: 12 }}>
             <Select style={{ width: '100%' }}>
               <Select.Option value="phone">{t('PHONE_NUMBER')}</Select.Option>
@@ -249,17 +277,19 @@ const ContactFormModal: FC = () => {
           }
         >
           {({ getFieldValue }) => {
-            const chatIdType = isMax
+            const chatIdType = isMaxOrTelegram
               ? (getFieldValue('chatIdType') as ContactFormValues['chatIdType']) || 'phone'
               : undefined;
-            const isPhoneRuleNeeded = !isMax || isEditMode || chatIdType === 'phone';
-            const isEditModeChatIdDisplay = isEditMode && isMax && !editedContact?.phoneNumber;
+            const isPhoneRuleNeeded = !isMaxOrTelegram || isEditMode || chatIdType === 'phone';
+            const isEditModeChatIdDisplay =
+              isEditMode && isMaxOrTelegram && !editedContact?.phoneNumber;
 
             return (
               <Form.Item
                 name="chatId"
                 label={
-                  isMax && (isEditMode ? !isEditModeChatIdDisplay : chatIdType === 'phone')
+                  isMaxOrTelegram &&
+                  (isEditMode ? !isEditModeChatIdDisplay : chatIdType === 'phone')
                     ? t('PHONE_NUMBER')
                     : t('CONTACT_CHAT_ID_LABEL')
                 }
@@ -267,13 +297,13 @@ const ContactFormModal: FC = () => {
                   { required: true, message: t('EMPTY_FIELD_ERROR') },
                   {
                     validator: (_, value) => {
-                      const normalizedChatId = normalizeChatId(value ?? '', isMax);
+                      const normalizedChatId = normalizeChatId(value ?? '', isMaxOrTelegram);
 
                       if (!normalizedChatId) {
                         return Promise.resolve();
                       }
 
-                      if (isMax) {
+                      if (isMaxOrTelegram) {
                         if (!isPhoneRuleNeeded) {
                           return Promise.resolve();
                         }
@@ -309,9 +339,9 @@ const ContactFormModal: FC = () => {
                 <ChatIdInput
                   disabled={isEditMode}
                   autoComplete="off"
-                  suffixes={isMax ? [] : ['@c.us', '@lid']}
+                  suffixes={isMaxOrTelegram ? [] : ['@c.us', '@lid']}
                   placeholder={
-                    isMax
+                    isMaxOrTelegram
                       ? chatIdType === 'chatId'
                         ? t('CONTACT_CHAT_ID_LABEL')
                         : t('CHAT_ID_PHONE_PLACEHOLDER')

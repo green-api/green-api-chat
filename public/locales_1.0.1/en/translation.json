@@ -248,7 +248,6 @@
   "DELETE_CONTACT_CONFIRM_TITLE": "Delete contact?",
   "DELETE_CONTACT_CONFIRM_DESCRIPTION": "This action cannot be undone",
   "SAVE_CONTACT_CHANGES": "Save",
-  "CONTACTS_UNAVAILABLE_TELEGRAM": "Contact management is unavailable for Telegram instances",
   "STATUS_LIST": "Status list",
   "STATUS_HISTORY_ERROR": "Failed to load statuses",
   "NO_STATUSES_FOUND": "No statuses found",

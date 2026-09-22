@@ -267,7 +267,6 @@
   "DELETE_CONTACT_CONFIRM_TITLE": "Удалить контакт?",
   "DELETE_CONTACT_CONFIRM_DESCRIPTION": "Действие нельзя отменить",
   "SAVE_CONTACT_CHANGES": "Сохранить",
-  "CONTACTS_UNAVAILABLE_TELEGRAM": "Управление контактами недоступно для Telegram-инстансов",
   "STATUS_LIST": "Список статусов",
   "STATUS_HISTORY_ERROR": "Не удалось загрузить статусы",
   "NO_STATUSES_FOUND": "Статусы не найдены",

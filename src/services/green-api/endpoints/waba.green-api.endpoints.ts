@@ -11,6 +11,7 @@ import {
   SendTemplateParameters,
   WabaTemplateResponseInterface,
 } from 'types';
+import { generateTempMessageId } from 'utils';
 
 export const wabaGreenApiEndpoints = greenAPI.injectEndpoints({
   endpoints: (builder) => ({
@@ -53,7 +54,7 @@ export const wabaGreenApiEndpoints = greenAPI.injectEndpoints({
       ) => {
         const state = getState() as RootState;
         const previousLastMessage = selectLastMessagesByChatId(state)[chatId] ?? null;
-        const tempIdMessage = `temp-${crypto.randomUUID()}`;
+        const tempIdMessage = generateTempMessageId();
 
         const chatHistoryEntries = journalsGreenApiEndpoints.util
           .selectInvalidatedBy(state, ['chatHistory'])

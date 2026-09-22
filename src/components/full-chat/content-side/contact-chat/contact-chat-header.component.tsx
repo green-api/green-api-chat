@@ -102,7 +102,7 @@ const ContactChatHeader: FC = () => {
               }}
               onClick={() => setActiveChat(null)}
             >
-              <LeftOutlined style={{ fontSize: 26 }} />
+              <LeftOutlined style={{ fontSize: 14 }} />
               {t('BACK_TO_CHATS')}
             </a>
           ) : (

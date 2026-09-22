@@ -308,7 +308,8 @@ html {
 }
 
 .chatHeader-space {
-  flex: 0 1 100%;
+  flex: 0 1 auto;
+  min-width: 0;
   overflow: hidden;
   cursor: pointer;
 }

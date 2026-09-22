@@ -7,6 +7,7 @@ import Message from './message/message.component';
 import LeftGroupAlert from 'components/alerts/left-group-alert.component';
 import {
   CHAT_HISTORY_COUNT_STEP,
+  CHAT_HISTORY_RATE_LIMIT_RETRY_DELAY,
   FULL_CHAT_HISTORY_COUNT,
   MAX_CHAT_HISTORY_COUNT,
   MINI_CHAT_HISTORY_COUNT,
@@ -33,6 +34,9 @@ import {
   isOutgoingTemplateMessage,
 } from 'utils';
 
+// How close to the bottom (in px) still counts as "at the bottom" for auto-scroll purposes.
+const AT_BOTTOM_SCROLL_THRESHOLD = 80;
+
 const ChatView: FC = () => {
   const instanceCredentials = useAppSelector(selectInstance);
   const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
@@ -54,6 +58,11 @@ const ChatView: FC = () => {
   const chatViewRef = useRef<HTMLDivElement | null>(null);
   const scrollPositionRef = useRef<{ top: number; height: number } | null>(null);
   const shouldScrollToBottomRef = useRef(true);
+  // Tracks whether the user was scrolled to (or near) the bottom right before the
+  // messages list changed — kept up to date by the scroll listener below, independent of
+  // the messages/templates effect, so it reflects where the user actually was, not where
+  // the last render left them.
+  const isAtBottomRef = useRef(true);
 
   const { data: templates, isLoading: templatesLoading } = useGetTemplatesQuery(
     instanceCredentials,
@@ -67,6 +76,7 @@ const ChatView: FC = () => {
     isLoading,
     isFetching,
     error,
+    refetch,
   } = useGetChatHistoryQuery(
     {
       ...instanceCredentials,
@@ -78,6 +88,23 @@ const ChatView: FC = () => {
       pollingInterval: 15000,
     }
   );
+
+  const isRateLimitError = !!error && 'status' in error && error.status === 429;
+
+  useEffect(() => {
+    if (!isRateLimitError) return;
+
+    const timeout = setTimeout(() => {
+      refetch();
+    }, CHAT_HISTORY_RATE_LIMIT_RETRY_DELAY);
+
+    return () => clearTimeout(timeout);
+    // `error` (not `isRateLimitError`) must drive this: RTK Query gives every failed
+    // attempt a new error object, so this is what re-fires the effect on each consecutive
+    // 429. A derived boolean would stay `true` across retries and the effect would only
+    // run once.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [error, refetch]);
 
   useEffect(() => {
     shouldScrollToBottomRef.current = true;
@@ -94,6 +121,20 @@ const ChatView: FC = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeChat]);
+
+  useEffect(() => {
+    const element = chatViewRef.current;
+    if (!element) return;
+
+    const handleScroll = () => {
+      isAtBottomRef.current =
+        element.scrollHeight - element.scrollTop - element.clientHeight <=
+        AT_BOTTOM_SCROLL_THRESHOLD;
+    };
+
+    element.addEventListener('scroll', handleScroll, { passive: true });
+    return () => element.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const handleLoadMore = () => {
     if (count >= MAX_CHAT_HISTORY_COUNT) return;
@@ -124,10 +165,17 @@ const ChatView: FC = () => {
       const heightDiff = element.scrollHeight - scrollPositionRef.current.height;
       element.scrollTop = scrollPositionRef.current.top + heightDiff;
       scrollPositionRef.current = null;
+      return;
+    }
+
+    // New message arrived (sent or received) while the user was already at the bottom —
+    // follow it down. If they'd scrolled up to read history, leave them where they are.
+    if (isAtBottomRef.current) {
+      element.scrollTop = element.scrollHeight;
     }
   }, [messages, templates]);
 
-  const loaderVisible = !isMiniVersion && isFetching;
+  const loaderVisible = !isMiniVersion && (isFetching || isRateLimitError);
 
   const requestedCount = isMiniVersion ? MINI_CHAT_HISTORY_COUNT : count;
   const hasMoreMessages = !messages || messages.length >= requestedCount;
@@ -328,8 +376,6 @@ const ChatView: FC = () => {
     );
   }
 
-  const isRateLimitError = !!error && 'status' in error && error.status === 429;
-
   if (error && !isRateLimitError) {
     return (
       <div className={`chat-view flex-center ${isMiniVersion ? '' : 'full'}`}>
@@ -338,9 +384,17 @@ const ChatView: FC = () => {
     );
   }
 
+  if (isRateLimitError && !messages) {
+    return (
+      <div className={`chat-view flex-center ${isMiniVersion ? '' : 'full'}`}>
+        <Spin size="large" />
+      </div>
+    );
+  }
+
   return (
     <div className={`chat-view ${isMiniVersion ? '' : 'full'}`} ref={chatViewRef}>
-      {canLoadMore ? (
+      {isRateLimitError ? null : canLoadMore ? (
         <div style={{ textAlign: 'center', padding: '12px 0' }}>
           <Button onClick={handleLoadMore}>{t('LOAD_MORE_MESSAGES')}</Button>
         </div>

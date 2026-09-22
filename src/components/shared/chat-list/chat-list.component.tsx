@@ -38,6 +38,10 @@ const CHATS_BATCH_SIZE = 100;
 const CHATS_POLLING_INTERVAL = 15000;
 const CHAT_HISTORY_REQUEST_DELAY = 800;
 const CHAT_HISTORY_REFRESH_INTERVAL = 60000;
+// How far (in px) from the true bottom the next batch starts loading. Large enough that
+// it lands before the user runs out of rendered chats to scroll through, instead of only
+// firing once they hit the physical end of the list.
+const SCROLL_LOAD_THRESHOLD_PX = 300;
 
 const ChatList: FC = () => {
   const instanceCredentials = useAppSelector(selectInstance);
@@ -83,6 +87,11 @@ const ChatList: FC = () => {
 
   const chatListRef = useRef<HTMLDivElement | null>(null);
   const pendingHistoryChatIdsRef = useRef<Set<string>>(new Set());
+  // Guards the scroll listener against firing another page bump before the previous one
+  // has actually rendered — cleared by the effect below once that happens, not by a fixed
+  // timer, so there's no artificial delay between reaching the load zone and more chats
+  // appearing.
+  const isLoadScheduledRef = useRef(false);
 
   const limit = isMiniVersion ? 5 : matchMedia ? 16 : 12;
 
@@ -110,6 +119,12 @@ const ChatList: FC = () => {
   const renderedChats = useMemo(() => chats.slice(0, page * limit), [chats, page, limit]);
   const renderedChatsRef = useRef(renderedChats);
   renderedChatsRef.current = renderedChats;
+
+  // Read inside the sweep's in-flight loop (see runHistorySweep below) so a chat opened
+  // mid-sweep can stop it immediately, instead of only blocking sweeps that haven't
+  // started yet.
+  const activeChatRef = useRef(activeChat);
+  activeChatRef.current = activeChat;
 
   const allMessages: MessageInterface[] = useMemo(
     () =>
@@ -167,10 +182,6 @@ const ChatList: FC = () => {
     : allMessages.slice(0, page * limit);
 
   useEffect(() => {
-    // Note: lastMessagesByChatId itself is NOT reset here — it lives in Redux and is
-    // cleared reactively (in chat.slice's extraReducers) only when the instance actually
-    // changes, so it survives this component unmounting/remounting (e.g. navigating away
-    // and back). This effect only resets local UI/pagination state.
     pendingHistoryChatIdsRef.current.clear();
     setInitialLoaded(false);
     setInitialMessageIds(new Set());
@@ -191,6 +202,8 @@ const ChatList: FC = () => {
   // when a sweep should run (on newly rendered chats, or on the fixed refresh interval).
   const runHistorySweep = useCallback(
     (candidates: GetChatsResponseInterface[]) => {
+      if (type === 'mobile-mode' && activeChat?.chatId) return;
+
       const chatsToLoad = candidates.filter(
         (chat) => !pendingHistoryChatIdsRef.current.has(chat.chatId)
       );
@@ -200,36 +213,48 @@ const ChatList: FC = () => {
       setIsHistoryLoading(true);
       chatsToLoad.forEach((chat) => pendingHistoryChatIdsRef.current.add(chat.chatId));
 
-      loadSequentiallyWithDelay(chatsToLoad, CHAT_HISTORY_REQUEST_DELAY, async (chat) => {
-        try {
-          const { message } = await fetchChatLastMessage(
-            chat,
-            instanceCredentials,
-            getChatLastMessage
-          );
+      loadSequentiallyWithDelay(
+        chatsToLoad,
+        CHAT_HISTORY_REQUEST_DELAY,
+        async (chat) => {
+          try {
+            const { message } = await fetchChatLastMessage(
+              chat,
+              instanceCredentials,
+              getChatLastMessage
+            );
 
-          dispatch(
-            chatActions.setLastMessageByChatId({
-              chatId: chat.chatId,
-              message: message
-                ? {
-                    ...message,
-                    chatId: chat.chatId,
-                    chatType: chat.type,
-                    senderName: chat.name,
-                    senderContactName: chat.name,
-                  }
-                : null,
-            })
-          );
-        } finally {
-          pendingHistoryChatIdsRef.current.delete(chat.chatId);
-        }
-      }).then(() => {
+            dispatch(
+              chatActions.setLastMessageByChatId({
+                chatId: chat.chatId,
+                message: message
+                  ? {
+                      ...message,
+                      chatId: chat.chatId,
+                      chatType: chat.type,
+                      senderName: chat.name,
+                      senderContactName: chat.name,
+                    }
+                  : null,
+              })
+            );
+          } finally {
+            pendingHistoryChatIdsRef.current.delete(chat.chatId);
+          }
+        },
+        () => type === 'mobile-mode' && !!activeChatRef.current?.chatId
+      ).then((results) => {
+        // Items past `results.length` never reached the worker (the loop stopped early),
+        // so they were never actually requested — release their pending mark or they'd be
+        // stuck "in flight" forever and never get swept again.
+        chatsToLoad
+          .slice(results.length)
+          .forEach((chat) => pendingHistoryChatIdsRef.current.delete(chat.chatId));
+
         setIsHistoryLoading(false);
       });
     },
-    [instanceCredentials, getChatLastMessage, dispatch]
+    [instanceCredentials, getChatLastMessage, dispatch, type, activeChat?.chatId]
   );
 
   useEffect(() => {
@@ -336,67 +361,118 @@ const ChatList: FC = () => {
     });
   }, [allMessages]);
 
+  // Scroll state is read through this ref instead of the effect's dependency array so that
+  // background updates (last-message sweeps, polling, etc.) don't tear down and recreate the
+  // listener mid-flight — that used to cancel an already-scheduled scrollTimer before it fired,
+  // silently delaying the next batch load until another scroll event happened to arrive.
+  const scrollStateRef = useRef({
+    chats,
+    chatsCount,
+    isFetching,
+    showResults,
+    filteredContacts,
+    filteredMessages,
+    contactsPage,
+    messagesPage,
+    allMessages,
+    page,
+    limit,
+  });
+  scrollStateRef.current = {
+    chats,
+    chatsCount,
+    isFetching,
+    showResults,
+    filteredContacts,
+    filteredMessages,
+    contactsPage,
+    messagesPage,
+    allMessages,
+    page,
+    limit,
+  };
+
+  // Releases the scroll guard once a page bump actually lands (new chats rendered, or the
+  // raw list grew via background polling) — not on a fixed timer, so the next batch can
+  // start loading as soon as the previous one is visible instead of after an artificial wait.
+  useEffect(() => {
+    isLoadScheduledRef.current = false;
+  }, [page, contactsPage, messagesPage, chatsCount, chats.length]);
+
   useEffect(() => {
     const element = chatListRef.current;
     if (!element) return;
 
-    let scrollTimer: number;
+    // Only for loadMoreChats' isFetching retry below — a genuine "wait for the network"
+    // case, not an artificial UX delay, so it stays a timer.
+    let retryTimer: number;
 
     const loadMoreChats = () => {
-      if (!isFetching && chats.length >= chatsCount) {
+      const { isFetching, chats, chatsCount } = scrollStateRef.current;
+
+      if (isFetching) {
+        retryTimer = window.setTimeout(loadMoreChats, 500);
+        return;
+      }
+
+      if (chats.length >= chatsCount) {
         setChatsCount((prev) => prev + CHATS_BATCH_SIZE);
+      } else {
+        // Already at the true end of the data — nothing changed, so nothing will trigger
+        // the release effect above. Release here so a future scroll event (once background
+        // polling grows `chats`) can still retry.
+        isLoadScheduledRef.current = false;
       }
     };
 
     const handleScrollBottom = () => {
-      const bottomReached = element.scrollTop + element.offsetHeight + 50 >= element.scrollHeight;
+      const nearBottom =
+        element.scrollTop + element.offsetHeight + SCROLL_LOAD_THRESHOLD_PX >= element.scrollHeight;
 
-      if (bottomReached) {
-        clearTimeout(scrollTimer);
+      if (!nearBottom) {
+        isLoadScheduledRef.current = false;
+        return;
+      }
 
-        if (showResults) {
-          let updated = false;
+      if (isLoadScheduledRef.current) return;
+      isLoadScheduledRef.current = true;
 
-          if (filteredContacts.length > contactsPage * limit) {
-            scrollTimer = setTimeout(() => setContactsPage((prev) => prev + 1), 500);
-            updated = true;
-          }
+      const {
+        showResults,
+        filteredContacts,
+        filteredMessages,
+        contactsPage,
+        messagesPage,
+        allMessages,
+        page,
+        limit,
+      } = scrollStateRef.current;
 
-          if (filteredMessages.length > messagesPage * limit && !updated) {
-            scrollTimer = setTimeout(() => setMessagesPage((prev) => prev + 1), 500);
-            updated = true;
-          }
-
-          if (!updated) {
-            scrollTimer = setTimeout(loadMoreChats, 500);
-          }
-        } else {
-          if (allMessages.length > page * limit) {
-            scrollTimer = setTimeout(() => setPage((prev) => prev + 1), 500);
-          } else {
-            scrollTimer = setTimeout(loadMoreChats, 500);
-          }
+      if (showResults) {
+        if (filteredContacts.length > contactsPage * limit) {
+          setContactsPage((prev) => prev + 1);
+          return;
         }
+
+        if (filteredMessages.length > messagesPage * limit) {
+          setMessagesPage((prev) => prev + 1);
+          return;
+        }
+
+        loadMoreChats();
+      } else if (allMessages.length > page * limit) {
+        setPage((prev) => prev + 1);
+      } else {
+        loadMoreChats();
       }
     };
 
     element.addEventListener('scroll', handleScrollBottom);
     return () => {
-      clearTimeout(scrollTimer);
+      clearTimeout(retryTimer);
       element.removeEventListener('scroll', handleScrollBottom);
     };
-  }, [
-    chats.length,
-    chatsCount,
-    filteredContacts,
-    filteredMessages,
-    allMessages,
-    contactsPage,
-    isFetching,
-    messagesPage,
-    page,
-    showResults,
-  ]);
+  }, [instanceCredentials.idInstance, instanceCredentials.apiTokenInstance]);
 
   if (!instanceCredentials?.idInstance || !instanceCredentials.apiTokenInstance) {
     return (

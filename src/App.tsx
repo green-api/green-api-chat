@@ -8,15 +8,12 @@ import { RouterProvider } from 'react-router-dom';
 import { useGetProfileSettingsQuery } from './services/app/endpoints';
 import { DARK_THEME, DEFAULT_THEME, localisation } from 'configs';
 import { useAppSelector } from 'hooks';
-import { useSyncViewportShell } from 'hooks/use-sync-viewport-shell.hook';
 import router from 'router';
 import { selectTheme } from 'store/slices/theme.slice';
 import { selectUser } from 'store/slices/user.slice';
 import { Themes } from 'types';
 
 function App() {
-  useSyncViewportShell();
-
   const { idUser, apiTokenUser, projectId } = useAppSelector(selectUser);
 
   const { i18n } = useTranslation();

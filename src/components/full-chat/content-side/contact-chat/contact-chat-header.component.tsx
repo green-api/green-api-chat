@@ -1,7 +1,7 @@
 import { FC } from 'react';
 
 import { CloseOutlined, LeftOutlined } from '@ant-design/icons';
-import { Flex, Space } from 'antd';
+import { Flex } from 'antd';
 import { Header } from 'antd/es/layout/layout';
 import { useTranslation } from 'react-i18next';
 
@@ -13,7 +13,13 @@ import { useGetChatHistoryQuery, useGetChatsQuery } from 'services/green-api/end
 import { selectActiveChat, selectType } from 'store/slices/chat.slice';
 import { selectInstance, selectTypeInstance } from 'store/slices/instances.slice';
 import { ActiveChat } from 'types';
-import { getFirstNonEmptyString, isBotChatType, isWhatsAppOfficialChat } from 'utils';
+import {
+  formatPhoneNumber,
+  getFirstNonEmptyString,
+  isBotChatType,
+  isContactInfo,
+  isWhatsAppOfficialChat,
+} from 'utils';
 
 const ContactChatHeader: FC = () => {
   const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
@@ -27,13 +33,13 @@ const ContactChatHeader: FC = () => {
 
   const { setActiveChat, setContactInfoOpen } = useActions();
 
+  const isMax = typeInstance === 'v3';
+  const isTelegram = typeInstance === 'telegram';
+
   const isOfficial = isWhatsAppOfficialChat(activeChat.chatId);
   const isBotChat = isBotChatType(activeChat.chatType);
   const { data: chats } = useGetChatsQuery(instanceCredentials, {
-    skip:
-      typeInstance !== 'telegram' ||
-      !instanceCredentials?.idInstance ||
-      !instanceCredentials?.apiTokenInstance,
+    skip: !isTelegram || !instanceCredentials?.idInstance || !instanceCredentials?.apiTokenInstance,
   });
   const { data: chatHistory } = useGetChatHistoryQuery(
     {
@@ -62,10 +68,32 @@ const ContactChatHeader: FC = () => {
     activeChat.chatId
   );
 
+  const { contactInfo } = activeChat;
+  const maxOrTelegramPhoneNumber =
+    (isMax || isTelegram) &&
+    contactInfo &&
+    typeof contactInfo === 'object' &&
+    isContactInfo(contactInfo, isMax) &&
+    contactInfo.phoneNumber
+      ? formatPhoneNumber(contactInfo.phoneNumber)
+      : undefined;
+
+  const headerPhoneNumber =
+    !isOfficial && activeChat.chatId?.includes('@c')
+      ? formatPhoneNumber(activeChat.chatId.replace(/\@.*$/, ''))
+      : maxOrTelegramPhoneNumber;
+
   return (
     <Header className="contact-chat-header">
-      <Space className="chatHeader-space" onClick={() => setContactInfoOpen(true)}>
-        <AvatarImage src={isOfficial ? waChatIcon : activeChat.avatar} size="large" />
+      <Flex
+        className="chatHeader-space"
+        align="center"
+        gap={8}
+        onClick={() => setContactInfoOpen(true)}
+      >
+        <div style={{ flexShrink: 0 }}>
+          <AvatarImage src={isOfficial ? waChatIcon : activeChat.avatar} size="large" />
+        </div>
         <Flex vertical style={{ minWidth: 0, justifyContent: 'center' }} gap={0}>
           <h3
             className="text-overflow"
@@ -83,12 +111,10 @@ const ContactChatHeader: FC = () => {
             </div>
           )}
         </Flex>
-      </Space>
+      </Flex>
 
-      <Space>
-        {!isOfficial && activeChat.chatId?.includes('@c') && (
-          <span>{activeChat.chatId?.replace(/\@.*$/, '')}</span>
-        )}
+      <Flex align="center" gap={8} style={{ flexShrink: 0 }}>
+        {headerPhoneNumber && <span>{headerPhoneNumber}</span>}
         {type !== 'one-chat-only' &&
           (isMobile ? (
             <a
@@ -110,7 +136,7 @@ const ContactChatHeader: FC = () => {
               <CloseOutlined style={{ width: 14 }} onClick={() => setActiveChat(null)} />
             </a>
           ))}
-      </Space>
+      </Flex>
     </Header>
   );
 };

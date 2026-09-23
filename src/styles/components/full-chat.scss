@@ -1,16 +1,28 @@
 .full-chat {
-  width: 100vw;
-  height: 100vh;
-  height: 100dvh;
+  // Pinned to the viewport and re-synced from `visualViewport` (see
+  // use-sync-viewport-shell.hook.ts) instead of sized via 100vh/100dvh in
+  // normal flow: older iOS Safari pans the visual viewport within the
+  // (unchanged) layout viewport to keep a focused input above the keyboard,
+  // a compositor-level shift that carries along normal-flow content —
+  // `position: fixed` alone doesn't opt out of it, but continuously
+  // re-matching `top`/`height` to the pan does.
+  position: fixed;
+  top: var(--app-top, 0px);
+  left: 0;
+  right: 0;
+  height: var(--app-height, 100dvh);
+  // Smooths out the rAF-batched top/height updates from
+  // use-sync-viewport-shell.hook.ts into the keyboard's own open/close
+  // animation instead of each one landing as a hard, instant snap.
+  transition:
+    top 0.2s ease-out,
+    height 0.2s ease-out;
   box-shadow: 0 6px 18px var(--register-form-shadow-color);
   border-radius: 0;
   background-color: var(--main-background);
   @include scrollBar();
 
   &.console-page {
-    width: 100vw;
-    height: 100vh;
-    height: 100dvh;
     max-width: initial;
   }
 }
@@ -29,6 +41,11 @@
 .chat-view.full {
   height: 720px;
   flex-grow: 1;
+}
+
+.chat-form,
+.chat-form-container {
+  flex-shrink: 0;
 }
 
 .new-chat-btn {

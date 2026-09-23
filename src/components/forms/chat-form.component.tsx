@@ -109,12 +109,12 @@ const ChatForm: FC = () => {
         <ReplyMessage />
 
         <Flex gap={10} align="center">
-          <Flex align="center" justify="center">
+          <Flex align="center" justify="center" style={{ flexShrink: 0 }}>
             <SelectSendingMode />
           </Flex>
 
           <Form.Item
-            style={{ marginBottom: 0, flex: '1 1 auto' }}
+            style={{ marginBottom: 0, flex: '1 1 auto', minWidth: 0 }}
             name="message"
             normalize={(value) => {
               form.setFields([{ name: 'response', warnings: [] }]);
@@ -138,6 +138,7 @@ const ChatForm: FC = () => {
           <Form.Item
             style={{
               marginBottom: 0,
+              flexShrink: 0,
               visibility: inputValue || isMiniVersion ? 'initial' : 'hidden',
             }}
           >

@@ -93,9 +93,7 @@ const ContactInfoHeader: FC = () => {
       if (!groupData || typeof groupData === 'string') {
         return (
           <Flex vertical gap={2} justify="center" align="center" className="w-100">
-            <Typography.Text style={{ fontSize: 15 }}>
-              id: {activeChat.chatId?.replace(/\@.*$/, '')}
-            </Typography.Text>
+            <Typography.Text style={{ fontSize: 15 }}>id: {activeChat.chatId}</Typography.Text>
           </Flex>
         );
       }
@@ -123,9 +121,7 @@ const ContactInfoHeader: FC = () => {
           <Flex gap={6} align="center">
             {isGroup && !isChannel && <EditGroupName />}
           </Flex>
-          <Typography.Text style={{ fontSize: 15 }}>
-            id: {activeChat.chatId?.replace(/\@.*$/, '')}
-          </Typography.Text>
+          <Typography.Text style={{ fontSize: 15 }}>id: {activeChat.chatId}</Typography.Text>
           <Typography.Title
             level={2}
             style={{ marginBottom: 'unset' }}
@@ -174,7 +170,7 @@ const ContactInfoHeader: FC = () => {
       isContact = true;
       contactName =
         activeChat.contactInfo.contactName || activeChat.contactInfo.name || activeChat.senderName;
-      contactCredentials = activeChat.chatId?.replace(/\@.*$/, '');
+      contactCredentials = activeChat.chatId;
       category = activeChat.contactInfo.category;
       isBusiness = activeChat.contactInfo.isBusiness;
 

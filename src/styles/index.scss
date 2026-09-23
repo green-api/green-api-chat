@@ -43,13 +43,29 @@ html {
   overflow: hidden;
 }
 
+// iOS Safari scrolls the document to keep a focused input above the keyboard
+// even with `overflow: hidden` on body — it only respects that heuristic for
+// elements it can't scroll at all, i.e. `position: fixed`. Since nothing in
+// this app is meant to scroll at the body level (chat history has its own
+// internal scroll), pinning body removes that second, unwanted scroll
+// entirely instead of just resetting it after the fact.
+body {
+  position: fixed;
+  inset: 0;
+  // On slower devices the on-screen keyboard can take longer to rise than
+  // `.full-chat`'s own resize transition takes to finish, briefly exposing
+  // whatever is behind it. Matching the app's own background here means that
+  // gap blends in instead of flashing the browser's default white/transparent.
+  background-color: var(--main-background);
+}
+
 .app {
   min-height: 100vh;
   min-height: 100dvh;
 }
 
 .bg {
-  background: linear-gradient(180deg, var(--primary-fg-color) 15%, #e0dddd 15%);
+  background: white;
 }
 
 .chat-bg {

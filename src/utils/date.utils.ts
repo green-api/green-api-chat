@@ -96,7 +96,10 @@ function groupedDays(
 function isHiddenFromRenderMessage(message: MessageInterface): boolean {
   return (
     'typeMessage' in message &&
-    (message.typeMessage === 'reactionMessage' || message.typeMessage === 'pollUpdateMessage')
+    (message.typeMessage === 'reactionMessage' ||
+      message.typeMessage === 'pollUpdateMessage' ||
+      message.typeMessage === 'deletedMessage' ||
+      message.typeMessage === 'editedMessage')
   );
 }
 

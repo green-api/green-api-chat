@@ -332,7 +332,7 @@ const BaseLayout: FC = () => {
   if (!isThemeSet && isPageInIframe() && !isPartnerChat(searchParams)) return null;
 
   return (
-    <Layout className={`app ${!isMiniVersion ? 'bg' : ''}`}>
+    <Layout className="app">
       <Layout.Content className={`main ${!isMiniVersion ? 'flex-center' : ''}`}>
         {isMiniVersion ? <MiniChat /> : <FullChat />}
       </Layout.Content>

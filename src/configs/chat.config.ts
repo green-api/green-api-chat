@@ -16,3 +16,12 @@ export const MAX_CHAT_HISTORY_COUNT = 200;
 
 /** Number of extra messages loaded on each "load more" click. */
 export const CHAT_HISTORY_COUNT_STEP = 20;
+
+/**
+ * Delay before retrying getChatHistory in the chat view after a 429 response.
+ *
+ * The chat list's background "last message" sweep competes for the same instance
+ * rate limit, so opening a chat can get rate-limited on its very first fetch. We
+ * retry automatically instead of leaving the user stuck on an empty screen.
+ */
+export const CHAT_HISTORY_RATE_LIMIT_RETRY_DELAY = 3000;

@@ -13,7 +13,7 @@ import { useAddGroupParticipantMutation, useGetGroupDataQuery } from 'services/g
 import { selectActiveChat } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
 import { ActiveChat, GroupParticipantInterface } from 'types';
-import { isContactInfo } from 'utils';
+import { isChannelGroupData, isContactInfo } from 'utils';
 import { isLidChatId, splitChatId } from 'utils/chat-id.utils';
 
 const GroupContactList: FC = () => {
@@ -111,11 +111,13 @@ const GroupContactList: FC = () => {
     return [];
   };
 
+  const isChannel = isChannelGroupData(isTelegram ? groupData : activeChat.contactInfo);
+
   const participants = isTelegram
     ? getParticipantsFromData(groupData)
     : getParticipantsFromData(activeChat.contactInfo);
 
-  if (participants.length === 0) {
+  if (isChannel || participants.length === 0) {
     return null;
   }
 

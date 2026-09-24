@@ -192,8 +192,13 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
       onSubmitCapture={() => form.setFields([{ name: 'response', errors: [], warnings: [] }])}
       onKeyDown={(e) => !e.ctrlKey && e.key === 'Enter' && form.submit()}
     >
-      {isMaxOrTelegram && (
-        <Form.Item name="chatIdType" initialValue="chatId" style={{ marginBottom: 12 }}>
+      {isMaxOrTelegram && type !== 'mobile-mode' && (
+        <Form.Item
+          name="chatIdType"
+          initialValue="chatId"
+          preserve={false}
+          style={{ marginBottom: 12 }}
+        >
           <Select style={{ width: '100%' }}>
             <Select.Option value="phone">{t('PHONE_NUMBER', 'Номер телефона')}</Select.Option>
             <Select.Option value="chatId">
@@ -210,7 +215,8 @@ const NewChatForm: FC<NewChatFormProps> = ({ onSubmitCallback }) => {
       >
         {({ getFieldValue }) => {
           const selectedType =
-            getFieldValue('chatIdType') || (isMaxOrTelegram ? 'chatId' : 'phone');
+            getFieldValue('chatIdType') ||
+            (isMaxOrTelegram && type !== 'mobile-mode' ? 'chatId' : 'phone');
           const isPhoneRuleNeeded = !isMaxOrTelegram || selectedType === 'phone';
           const minChatIdLength = isMaxOrTelegram ? 6 : 9;
 

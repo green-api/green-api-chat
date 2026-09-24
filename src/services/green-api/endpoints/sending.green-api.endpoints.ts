@@ -13,7 +13,7 @@ import {
   SendInteractiveButtonsInterface,
   GetChatHistoryParametersInterface,
 } from 'types';
-import { getFormData, getTextMessage } from 'utils';
+import { generateTempMessageId, getFormData, getTextMessage } from 'utils';
 
 export const sendingGreenApiEndpoints = greenAPI.injectEndpoints({
   endpoints: (builder) => ({
@@ -30,7 +30,7 @@ export const sendingGreenApiEndpoints = greenAPI.injectEndpoints({
         const state = getState() as RootState;
         const activeChat = selectActiveChat(state);
         const previousLastMessage = selectLastMessagesByChatId(state)[chatId] ?? null;
-        const tempIdMessage = `temp-${crypto.randomUUID()}`;
+        const tempIdMessage = generateTempMessageId();
 
         const chatHistoryEntries = journalsGreenApiEndpoints.util
           .selectInvalidatedBy(state, ['chatHistory'])
@@ -134,7 +134,7 @@ export const sendingGreenApiEndpoints = greenAPI.injectEndpoints({
       ) => {
         const state = getState() as RootState;
         const previousLastMessage = selectLastMessagesByChatId(state)[chatId] ?? null;
-        const tempIdMessage = `temp-${crypto.randomUUID()}`;
+        const tempIdMessage = generateTempMessageId();
 
         const contactDisplayName =
           'chatId' in contact
@@ -223,7 +223,7 @@ export const sendingGreenApiEndpoints = greenAPI.injectEndpoints({
       ) => {
         const state = getState() as RootState;
         const previousLastMessage = selectLastMessagesByChatId(state)[chatId] ?? null;
-        const tempIdMessage = `temp-${crypto.randomUUID()}`;
+        const tempIdMessage = generateTempMessageId();
 
         const chatHistoryEntries = journalsGreenApiEndpoints.util
           .selectInvalidatedBy(state, ['chatHistory'])
@@ -312,7 +312,7 @@ export const sendingGreenApiEndpoints = greenAPI.injectEndpoints({
       ) => {
         const state = getState() as RootState;
         const previousLastMessage = selectLastMessagesByChatId(state)[chatId] ?? null;
-        const tempIdMessage = `temp-${crypto.randomUUID()}`;
+        const tempIdMessage = generateTempMessageId();
 
         const chatHistoryEntries = journalsGreenApiEndpoints.util
           .selectInvalidatedBy(state, ['chatHistory'])
@@ -403,7 +403,7 @@ export const sendingGreenApiEndpoints = greenAPI.injectEndpoints({
       ) => {
         const state = getState() as RootState;
         const previousLastMessage = selectLastMessagesByChatId(state)[chatId] ?? null;
-        const tempIdMessage = `temp-${crypto.randomUUID()}`;
+        const tempIdMessage = generateTempMessageId();
 
         const chatHistoryEntries = journalsGreenApiEndpoints.util
           .selectInvalidatedBy(state, ['chatHistory'])

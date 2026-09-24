@@ -71,11 +71,14 @@ export const fetchChatLastMessage = async (
 export const loadSequentiallyWithDelay = async <Item, Result>(
   items: Item[],
   delayMs: number,
-  worker: (item: Item) => Promise<Result>
+  worker: (item: Item) => Promise<Result>,
+  shouldStop?: () => boolean
 ): Promise<Result[]> => {
   const results: Result[] = [];
 
   for (const [index, item] of items.entries()) {
+    if (shouldStop?.()) break;
+
     results.push(await worker(item));
 
     if (index < items.length - 1) {

@@ -45,10 +45,11 @@ html {
 
 .app {
   min-height: 100vh;
+  min-height: 100dvh;
 }
 
 .bg {
-  background: linear-gradient(180deg, var(--primary-fg-color) 15%, #e0dddd 15%);
+  background: white;
 }
 
 .chat-bg {
@@ -307,7 +308,8 @@ html {
 }
 
 .chatHeader-space {
-  flex: 0 1 100%;
+  flex: 0 1 auto;
+  min-width: 0;
   overflow: hidden;
   cursor: pointer;
 }

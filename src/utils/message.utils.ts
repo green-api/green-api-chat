@@ -1,3 +1,5 @@
+import { parsePhoneNumberFromString } from 'libphonenumber-js';
+
 import { MessageInterface } from 'types';
 
 type MessageLike = Partial<MessageInterface> & Pick<MessageInterface, 'typeMessage'>;
@@ -36,6 +38,14 @@ export const isNotReaction = (message: MessageInterface): boolean => {
 
 export function getPhoneNumberFromChatId(chatId: string) {
   return chatId?.replace(/\@.*$/, '');
+}
+
+export function formatPhoneNumber(phoneNumber: number | string): string {
+  const parsedPhoneNumber = parsePhoneNumberFromString(`+${phoneNumber}`);
+
+  if (!parsedPhoneNumber) return `+${phoneNumber}`;
+
+  return parsedPhoneNumber.formatInternational();
 }
 
 export function getJSONMessage(message: Partial<MessageInterface>): string {

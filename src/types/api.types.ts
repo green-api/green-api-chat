@@ -46,6 +46,7 @@ export type EditMessageParameters = GetChatInformationParameters & { message: st
 export type TypeConnectionMessage = 'outgoing' | 'incoming';
 export type StatusMessage = 'pending' | 'sent' | 'delivered' | 'read';
 export type ChatType = 'user' | 'group' | 'supergroup' | 'channel' | 'bot';
+export type MaxGroupType = 'group' | 'channel';
 export type TypeMessage =
   | 'textMessage'
   | 'imageMessage'
@@ -274,12 +275,30 @@ export interface GetGroupDataSuccessResponseInterface
   creation: string;
   description?: string;
   participants: GroupParticipantInterface[];
+  size: number;
   subjectTime: number;
   subjectOwner: string;
   groupInviteLink: string;
+  allowParticipantsSendMessages: boolean;
   allowParticipantsSendInviteLink?: boolean;
   allowParticipantsSendMessageHistory?: boolean;
+  allowParticipantsEditGroupSettings?: boolean;
+  allowParticipantsAddMembers?: boolean;
+  isCommunity?: boolean;
+  isCommunityAnnounce?: boolean;
   chatId?: string;
+  // Telegram-specific fields
+  isChannel?: boolean;
+  isSupergroup?: boolean;
+  allowParticipantsSendMedia?: boolean;
+  allowParticipantsSendPolls?: boolean;
+  allowParticipantsSendOtherMessages?: boolean;
+  allowParticipantsAddWebPagePreviews?: boolean;
+  allowParticipantsPinMessages?: boolean;
+  // MAX-specific fields
+  isOfficial?: boolean;
+  isCommentsEnabled?: boolean;
+  type?: MaxGroupType;
 }
 
 export type GetGroupDataErrorResponse = 'Error: item-not-found' | 'Error: forbidden';
@@ -369,10 +388,15 @@ export interface GetContactInfoResponseInterface
   messageExpiration: number;
   muteExpiration: number | null;
   base64Avatar?: string;
-  // MAX-specific fields
+  // MAX/Telegram-specific fields
   chatType?: string;
   phoneNumber?: number;
   phoneNumberTimestamp?: number;
+  // Telegram-specific fields
+  isPremium?: boolean;
+  isVerified?: boolean;
+  isScam?: boolean;
+  username?: string;
 }
 
 interface ProductInterface {

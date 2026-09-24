@@ -1,19 +1,25 @@
 import { FC } from 'react';
 
-import { CloseOutlined } from '@ant-design/icons';
-import { Flex, Space } from 'antd';
+import { CloseOutlined, LeftOutlined } from '@ant-design/icons';
+import { Flex } from 'antd';
 import { Header } from 'antd/es/layout/layout';
 import { useTranslation } from 'react-i18next';
 
 import waChatIcon from 'assets/wa-chat.svg';
 import AvatarImage from 'components/UI/avatar-image.component';
 import { FULL_CHAT_HISTORY_COUNT } from 'configs';
-import { useActions, useAppSelector } from 'hooks';
+import { useActions, useAppSelector, useMediaQuery } from 'hooks';
 import { useGetChatHistoryQuery, useGetChatsQuery } from 'services/green-api/endpoints';
 import { selectActiveChat, selectType } from 'store/slices/chat.slice';
 import { selectInstance, selectTypeInstance } from 'store/slices/instances.slice';
 import { ActiveChat } from 'types';
-import { getFirstNonEmptyString, isBotChatType, isWhatsAppOfficialChat } from 'utils';
+import {
+  formatPhoneNumber,
+  getFirstNonEmptyString,
+  isBotChatType,
+  isContactInfo,
+  isWhatsAppOfficialChat,
+} from 'utils';
 
 const ContactChatHeader: FC = () => {
   const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
@@ -21,16 +27,19 @@ const ContactChatHeader: FC = () => {
   const instanceCredentials = useAppSelector(selectInstance);
   const typeInstance = useAppSelector(selectTypeInstance);
   const { t } = useTranslation();
+  // Same breakpoint as content-side.component.tsx, where the chat list and the open
+  // chat are shown one at a time instead of side by side.
+  const isMobile = useMediaQuery('(max-width: 975px)');
 
   const { setActiveChat, setContactInfoOpen } = useActions();
+
+  const isMax = typeInstance === 'v3';
+  const isTelegram = typeInstance === 'telegram';
 
   const isOfficial = isWhatsAppOfficialChat(activeChat.chatId);
   const isBotChat = isBotChatType(activeChat.chatType);
   const { data: chats } = useGetChatsQuery(instanceCredentials, {
-    skip:
-      typeInstance !== 'telegram' ||
-      !instanceCredentials?.idInstance ||
-      !instanceCredentials?.apiTokenInstance,
+    skip: !isTelegram || !instanceCredentials?.idInstance || !instanceCredentials?.apiTokenInstance,
   });
   const { data: chatHistory } = useGetChatHistoryQuery(
     {
@@ -59,10 +68,32 @@ const ContactChatHeader: FC = () => {
     activeChat.chatId
   );
 
+  const { contactInfo } = activeChat;
+  const maxOrTelegramPhoneNumber =
+    (isMax || isTelegram) &&
+    contactInfo &&
+    typeof contactInfo === 'object' &&
+    isContactInfo(contactInfo, isMax) &&
+    contactInfo.phoneNumber
+      ? formatPhoneNumber(contactInfo.phoneNumber)
+      : undefined;
+
+  const headerPhoneNumber =
+    !isOfficial && activeChat.chatId?.includes('@c')
+      ? formatPhoneNumber(activeChat.chatId.replace(/\@.*$/, ''))
+      : maxOrTelegramPhoneNumber;
+
   return (
     <Header className="contact-chat-header">
-      <Space className="chatHeader-space" onClick={() => setContactInfoOpen(true)}>
-        <AvatarImage src={isOfficial ? waChatIcon : activeChat.avatar} size="large" />
+      <Flex
+        className="chatHeader-space"
+        align="center"
+        gap={8}
+        onClick={() => setContactInfoOpen(true)}
+      >
+        <div style={{ flexShrink: 0 }}>
+          <AvatarImage src={isOfficial ? waChatIcon : activeChat.avatar} size="large" />
+        </div>
         <Flex vertical style={{ minWidth: 0, justifyContent: 'center' }} gap={0}>
           <h3
             className="text-overflow"
@@ -80,18 +111,32 @@ const ContactChatHeader: FC = () => {
             </div>
           )}
         </Flex>
-      </Space>
+      </Flex>
 
-      <Space>
-        {!isOfficial && activeChat.chatId?.includes('@c') && (
-          <span>{activeChat.chatId?.replace(/\@.*$/, '')}</span>
-        )}
-        {type !== 'one-chat-only' && (
-          <a>
-            <CloseOutlined style={{ width: 13 }} onClick={() => setActiveChat(null)} />
-          </a>
-        )}
-      </Space>
+      <Flex align="center" gap={8} style={{ flexShrink: 0 }}>
+        {headerPhoneNumber && <span>{headerPhoneNumber}</span>}
+        {type !== 'one-chat-only' &&
+          (isMobile ? (
+            <a
+              className="back-button"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 4,
+                flexShrink: 0,
+                whiteSpace: 'nowrap',
+              }}
+              onClick={() => setActiveChat(null)}
+            >
+              <LeftOutlined style={{ fontSize: 14 }} />
+              {t('BACK_TO_CHATS')}
+            </a>
+          ) : (
+            <a>
+              <CloseOutlined style={{ width: 14 }} onClick={() => setActiveChat(null)} />
+            </a>
+          ))}
+      </Flex>
     </Header>
   );
 };

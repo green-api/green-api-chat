@@ -11,13 +11,16 @@ import { selectType } from 'store/slices/chat.slice';
 const Chat: FC = () => {
   const type = useAppSelector(selectType);
 
+  const renderAside = type !== 'mobile-mode' && type !== 'one-chat-only';
+  const renderUserSide = type !== 'one-chat-only';
+
   return (
     <Flex
       className={`full-chat ${type === 'console-page' ? 'console-page' : ''}`}
       style={{ overflowY: 'hidden' }}
     >
-      {type !== 'mobile-mode' && <Aside />}
-      <UserSide />
+      {renderAside && <Aside />}
+      {renderUserSide && <UserSide />}
       <ContentSide />
     </Flex>
   );

@@ -274,8 +274,8 @@ const BaseLayout: FC = () => {
               error = contactInfoError;
             }
 
-            let telegramChat;
-            if (typeInstance === 'telegram') {
+            let matchedChat;
+            if (!idInstance.toString().startsWith('7835')) {
               const { data: chatsData } = await getChats({
                 apiUrl: normalizedApiUrl,
                 mediaUrl: normalizedMediaUrl,
@@ -283,10 +283,12 @@ const BaseLayout: FC = () => {
                 idInstance: +idInstance,
               });
 
-              telegramChat = chatsData?.find(
+              matchedChat = chatsData?.find(
                 (chat: GetChatsResponseInterface) => chat.chatId === chatId
               );
             }
+
+            const telegramChat = typeInstance === 'telegram' ? matchedChat : undefined;
 
             if (error) {
               message.error(getErrorMessage(error, t), 0);
@@ -309,6 +311,7 @@ const BaseLayout: FC = () => {
               senderName,
               avatar,
               contactInfo: groupInfo || contactInfo,
+              newChatId: matchedChat?.newChatId,
             });
           }
         }

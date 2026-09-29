@@ -69,6 +69,7 @@ export interface ActiveChat
     | GetGroupDataSuccessResponseInterface
     | 'Error: forbidden'
     | 'groupId not found';
+  newChatId?: string;
 }
 
 export interface InstancesState {

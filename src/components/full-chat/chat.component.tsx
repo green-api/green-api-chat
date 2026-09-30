@@ -4,6 +4,7 @@ import { Flex } from 'antd';
 
 import Aside from './aside/aside.component';
 import ContentSide from './content-side/content-side.component';
+import MobileNav from './mobile-nav/mobile-nav.component';
 import UserSide from './user-side/user-side.component';
 import { useAppSelector } from 'hooks';
 import { selectType } from 'store/slices/chat.slice';
@@ -22,6 +23,7 @@ const Chat: FC = () => {
       {renderAside && <Aside />}
       {renderUserSide && <UserSide />}
       <ContentSide />
+      {renderAside && <MobileNav />}
     </Flex>
   );
 };

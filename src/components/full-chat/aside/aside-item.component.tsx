@@ -13,11 +13,17 @@ import type { AsideItem } from 'types';
 
 interface AsideItemProps {
   asideItem: AsideItem;
+  showLabel?: boolean;
+  highlightSettingsGroup?: boolean;
 }
 
 const SETTINGS_ITEMS = ['instance', 'profile', 'logout', 'language'] as AsideItem['item'][];
 
-const AsideItem: FC<AsideItemProps> = ({ asideItem }) => {
+const AsideItem: FC<AsideItemProps> = ({
+  asideItem,
+  showLabel = false,
+  highlightSettingsGroup = true,
+}) => {
   const activeAsideItem = useAppSelector(selectUserSideActiveMode);
 
   const { setUserSideActiveMode, setActiveChat } = useActions();
@@ -55,9 +61,10 @@ const AsideItem: FC<AsideItemProps> = ({ asideItem }) => {
     <a
       className={clsx(
         'aside-item flex-center',
-        { active: isActive },
+        { active: isActive, 'aside-item-with-label': showLabel },
         activeAsideItem === asideItem.item && 'active-aside-item',
-        SETTINGS_ITEMS.includes(activeAsideItem) &&
+        highlightSettingsGroup &&
+          SETTINGS_ITEMS.includes(activeAsideItem) &&
           asideItem.item === 'settings' &&
           'active-aside-item'
       )}
@@ -65,6 +72,7 @@ const AsideItem: FC<AsideItemProps> = ({ asideItem }) => {
       title={t(asideItem.title)}
     >
       {asideItem.icon}
+      {showLabel && <span className="aside-item-label">{t(asideItem.title)}</span>}
     </a>
   );
 };

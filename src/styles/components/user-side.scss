@@ -6,6 +6,7 @@
 
   @media screen and (max-width: 975px) {
     max-width: initial;
+    padding-bottom: var(--mobile-nav-height, 0px);
   }
 
   &-footer {

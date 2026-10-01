@@ -1,6 +1,7 @@
-import { FC, useEffect, useMemo } from 'react';
+import { FC, MouseEventHandler, useEffect, useMemo } from 'react';
 
-import { Badge, Flex, List, Skeleton } from 'antd';
+import { PhoneOutlined } from '@ant-design/icons';
+import { Badge, Button, Flex, List, Skeleton } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import emptyAvatar from 'assets/emptyAvatar.svg';
@@ -18,7 +19,11 @@ import {
   useGetGroupDataQuery,
 } from 'services/green-api/endpoints';
 import { selectActiveChat } from 'store/slices/chat.slice';
-import { selectInstance } from 'store/slices/instances.slice';
+import {
+  selectEnableCalls,
+  selectInstance,
+  selectInstanceTariff,
+} from 'store/slices/instances.slice';
 import { LanguageLiteral, MessageInterface } from 'types';
 import {
   getMessageDate,
@@ -41,6 +46,7 @@ interface ContactListItemProps {
   newChatId?: string;
   onClearUnread?: () => void;
   isLastMessageLoading?: boolean;
+  showCallButton?: boolean;
 }
 
 const WABA_POOLS = ['7835', '9908'];
@@ -54,6 +60,7 @@ const ChatListItem: FC<ContactListItemProps> = ({
   newChatId,
   onClearUnread,
   isLastMessageLoading = false,
+  showCallButton = false,
 }) => {
   const {
     t,
@@ -62,6 +69,8 @@ const ChatListItem: FC<ContactListItemProps> = ({
 
   const instanceCredentials = useAppSelector(selectInstance);
   const activeChat = useAppSelector(selectActiveChat);
+  const enableCalls = useAppSelector(selectEnableCalls);
+  const tariff = useAppSelector(selectInstanceTariff);
   const { setActiveChat, setSearchQuery } = useActions();
   const isMax = useIsMaxInstance();
   const isTelegram = useIsTelegramInstance();
@@ -209,6 +218,30 @@ const ChatListItem: FC<ContactListItemProps> = ({
     }
   };
 
+  const canShowCallButton = showCallButton && !isGroupChat;
+
+  const handleCallClick: MouseEventHandler = (event) => {
+    event.stopPropagation();
+
+    if (enableCalls) {
+      window.parent.postMessage(
+        {
+          event: 'openCalls',
+          pendingCall: {
+            chatId: lastMessage.chatId,
+            phone: getPhoneNumberFromChatId(lastMessage.chatId),
+            name: chatName,
+            avatar,
+          },
+        },
+        '*'
+      );
+      return;
+    }
+
+    window.parent.postMessage({ event: 'callsUnavailable', tariff }, '*');
+  };
+
   return (
     <List.Item
       className={`list-item contact-list__item ${activeChat?.chatId === lastMessage.chatId ? 'active' : ''}`}
@@ -263,32 +296,44 @@ const ChatListItem: FC<ContactListItemProps> = ({
             ))
           }
         />
-        {showDescription && hasMessagePreview && (
+        {(canShowCallButton || (showDescription && hasMessagePreview)) && (
           <Flex vertical align="end" style={{ alignSelf: 'start' }} gap={4}>
-            <span style={{ textAlign: 'end' }}>{messageDate}</span>
-            {typeof apiUnreadCount === 'number' && apiUnreadCount > 0 ? (
-              <Badge
-                count={apiUnreadCount}
-                style={{
-                  backgroundColor: 'var(--primary-color)',
-                  boxShadow: '0 0 0 1px #fff',
-                  textAlign: 'center',
-                }}
+            {showDescription && hasMessagePreview && (
+              <span style={{ textAlign: 'end' }}>{messageDate}</span>
+            )}
+            {canShowCallButton && (
+              <Button
+                className="call-button"
+                icon={<PhoneOutlined />}
+                onClick={handleCallClick}
+                title={t('CALL_BUTTON_TITLE')}
               />
-            ) : (
-              unreadCount &&
-              unreadCount > 0 &&
-              WABA_POOLS.includes(instanceCredentials.idInstance.toString().slice(0, 4)) && (
+            )}
+            {showDescription &&
+              hasMessagePreview &&
+              (typeof apiUnreadCount === 'number' && apiUnreadCount > 0 ? (
                 <Badge
-                  count={unreadCount}
+                  count={apiUnreadCount}
                   style={{
                     backgroundColor: 'var(--primary-color)',
                     boxShadow: '0 0 0 1px #fff',
                     textAlign: 'center',
                   }}
                 />
-              )
-            )}
+              ) : (
+                unreadCount &&
+                unreadCount > 0 &&
+                WABA_POOLS.includes(instanceCredentials.idInstance.toString().slice(0, 4)) && (
+                  <Badge
+                    count={unreadCount}
+                    style={{
+                      backgroundColor: 'var(--primary-color)',
+                      boxShadow: '0 0 0 1px #fff',
+                      textAlign: 'center',
+                    }}
+                  />
+                )
+              ))}
           </Flex>
         )}
       </>

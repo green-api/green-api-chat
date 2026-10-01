@@ -1,14 +1,19 @@
 import { FC } from 'react';
 
-import { LeftOutlined } from '@ant-design/icons';
+import { LeftOutlined, PhoneOutlined } from '@ant-design/icons';
 import { Flex, Space, Typography } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import { MINI_CHAT_HISTORY_COUNT } from 'configs';
 import { useActions, useAppSelector } from 'hooks';
 import { useGetChatHistoryQuery, useGetChatsQuery } from 'services/green-api/endpoints';
-import { selectActiveChat } from 'store/slices/chat.slice';
-import { selectInstance, selectTypeInstance } from 'store/slices/instances.slice';
+import { selectActiveChat, selectType } from 'store/slices/chat.slice';
+import {
+  selectEnableCalls,
+  selectInstance,
+  selectInstanceTariff,
+  selectTypeInstance,
+} from 'store/slices/instances.slice';
 import { selectPlatform } from 'store/slices/user.slice';
 import { getFirstNonEmptyString } from 'utils';
 
@@ -17,10 +22,25 @@ const ChatHeader: FC = () => {
   const platform = useAppSelector(selectPlatform);
   const instanceCredentials = useAppSelector(selectInstance);
   const typeInstance = useAppSelector(selectTypeInstance);
+  const enableCalls = useAppSelector(selectEnableCalls);
+  const tariff = useAppSelector(selectInstanceTariff);
+  const type = useAppSelector(selectType);
 
   const { t } = useTranslation();
 
   const { setActiveChat } = useActions();
+
+  const showCallButton =
+    typeInstance === 'whatsapp' && (type === 'console-page' || type === 'instance-view-page');
+
+  const handleCallClick = () => {
+    if (enableCalls) {
+      window.parent.postMessage({ event: 'openCalls' }, '*');
+      return;
+    }
+
+    window.parent.postMessage({ event: 'callsUnavailable', tariff }, '*');
+  };
 
   const { data: chats } = useGetChatsQuery(instanceCredentials, {
     skip:
@@ -83,16 +103,23 @@ const ChatHeader: FC = () => {
 
       <Space style={{ gap: 10 }}>
         {platform === 'web' && (
-          <Typography.Link
-            onClick={() => {
-              window.parent.postMessage({ event: 'openChats' }, '*');
-            }}
-            target="_parent"
-            rel="noreferrer"
-            title={t('FULL_VERSION_TITLE')}
-          >
-            {t('FULL_VERSION')}
-          </Typography.Link>
+          <>
+            {showCallButton && (
+              <Typography.Link onClick={handleCallClick} title={t('CALL_BUTTON_TITLE')}>
+                <PhoneOutlined />
+              </Typography.Link>
+            )}
+            <Typography.Link
+              onClick={() => {
+                window.parent.postMessage({ event: 'openChats' }, '*');
+              }}
+              target="_parent"
+              rel="noreferrer"
+              title={t('FULL_VERSION_TITLE')}
+            >
+              {t('FULL_VERSION')}
+            </Typography.Link>
+          </>
         )}
         {/* {tariff === TariffsEnum.Developer && isChatWorking && (
           <Typography.Link title={t('TURN_OFF_CHAT')} onClick={() => setIsChatWorking(false)}>

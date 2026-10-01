@@ -55,6 +55,7 @@ iframeReference.current?.contentWindow?.postMessage(
       apiUrl: instanceData.apiUrl,
       mediaUrl: instanceData.mediaUrl,
       tariff: instanceData.tariff,
+      enableCalls: instanceData.enableCalls,
       locale: resolvedLanguage,
       theme: currentTheme,
       platform: platform,
@@ -81,6 +82,7 @@ iframeReference.current?.contentWindow?.postMessage(
 | `apiUrl`           | `string`              | Base API URL                                |
 | `mediaUrl`         | `string`              | Media upload URL                            |
 | `tariff`           | `TariffsEnum`         | Tariff plan (see below)                     |
+| `enableCalls`      | `boolean \| undefined` | Whether calls are available on the current tariff. When falsy, the mini-chat call button shows an upgrade notice instead of posting `openCalls` |
 | `locale`           | `string \| undefined` | Optional language code (e.g., `en`, `ru`)   |
 | `theme`            | `ThemesEnum`          | Theme mode (see below)                      |
 | `platform`         | `string`              | Platform ID (e.g., `web`, `android`, `ios`) |
@@ -210,6 +212,7 @@ iframeReference.current?.contentWindow?.postMessage(
       apiUrl: instanceData.apiUrl,
       mediaUrl: instanceData.mediaUrl,
       tariff: instanceData.tariff,
+      enableCalls: instanceData.enableCalls,
       locale: resolvedLanguage,
       theme: currentTheme,
       platform: platform,
@@ -236,6 +239,7 @@ iframeReference.current?.contentWindow?.postMessage(
 | `apiUrl`           | `string`              | Базовый URL API                                       |
 | `mediaUrl`         | `string`              | URL для загрузки медиа                                |
 | `tariff`           | `TariffsEnum`         | Тарифный план (см. ниже)                              |
+| `enableCalls`      | `boolean \| undefined` | Доступны ли звонки на текущем тарифе. Если не передано/false, кнопка звонка в mini-chat показывает окно с предложением перейти на другой тариф вместо отправки `openCalls` |
 | `locale`           | `string \| undefined` | Необязательный код языка (например, `en`, `ru`, `he`) |
 | `theme`            | `ThemesEnum`          | Тема интерфейса (см. ниже)                            |
 | `platform`         | `string`              | Платформа (`web`, `android`, `ios`)                   |

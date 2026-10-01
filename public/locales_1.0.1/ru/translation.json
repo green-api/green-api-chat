@@ -89,6 +89,7 @@
   "TURKISH": "Türkçe",
   "FULL_VERSION": "Открыть чаты",
   "FULL_VERSION_TITLE": "Открыть в отдельном окне",
+  "CALL_BUTTON_TITLE": "Позвонить",
   "LOGIN_TITLE": "Вход",
   "INPUT_EMAIL_INVALID": "Введенный адрес не является E-mail!",
   "INPUT_EMAIL_HINT": "Введите адрес электронной почты!",

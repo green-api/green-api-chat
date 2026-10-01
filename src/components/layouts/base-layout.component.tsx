@@ -102,6 +102,7 @@ const BaseLayout: FC = () => {
               apiUrl: event.data.payload.apiUrl,
               mediaUrl: event.data.payload.mediaUrl,
               tariff: event.data.payload.tariff,
+              enableCalls: event.data.payload.enableCalls,
               isChatWorking: isChatWorking,
               typeInstance: event.data.payload.typeInstance,
             });

@@ -1,7 +1,7 @@
 import { FC } from 'react';
 
-import { CloseOutlined, LeftOutlined } from '@ant-design/icons';
-import { Flex } from 'antd';
+import { CloseOutlined, LeftOutlined, PhoneOutlined } from '@ant-design/icons';
+import { Button, Flex } from 'antd';
 import { Header } from 'antd/es/layout/layout';
 import { useTranslation } from 'react-i18next';
 
@@ -11,11 +11,17 @@ import { FULL_CHAT_HISTORY_COUNT } from 'configs';
 import { useActions, useAppSelector, useMediaQuery } from 'hooks';
 import { useGetChatHistoryQuery, useGetChatsQuery } from 'services/green-api/endpoints';
 import { selectActiveChat, selectType } from 'store/slices/chat.slice';
-import { selectInstance, selectTypeInstance } from 'store/slices/instances.slice';
+import {
+  selectEnableCalls,
+  selectInstance,
+  selectInstanceTariff,
+  selectTypeInstance,
+} from 'store/slices/instances.slice';
 import { ActiveChat } from 'types';
 import {
   formatPhoneNumber,
   getFirstNonEmptyString,
+  getPhoneNumberFromChatId,
   isBotChatType,
   isContactInfo,
   isWhatsAppOfficialChat,
@@ -26,6 +32,8 @@ const ContactChatHeader: FC = () => {
   const type = useAppSelector(selectType);
   const instanceCredentials = useAppSelector(selectInstance);
   const typeInstance = useAppSelector(selectTypeInstance);
+  const enableCalls = useAppSelector(selectEnableCalls);
+  const tariff = useAppSelector(selectInstanceTariff);
   const { t } = useTranslation();
   // Same breakpoint as content-side.component.tsx, where the chat list and the open
   // chat are shown one at a time instead of side by side.
@@ -35,6 +43,11 @@ const ContactChatHeader: FC = () => {
 
   const isMax = typeInstance === 'v3';
   const isTelegram = typeInstance === 'telegram';
+  const isGroup = activeChat.chatId?.includes('@g.us') || activeChat.chatId?.startsWith('-');
+  const showCallButton =
+    typeInstance === 'whatsapp' &&
+    !isGroup &&
+    (type === 'console-page' || type === 'instance-view-page');
 
   const isOfficial = isWhatsAppOfficialChat(activeChat.chatId);
   const isBotChat = isBotChatType(activeChat.chatType);
@@ -83,6 +96,26 @@ const ContactChatHeader: FC = () => {
       ? formatPhoneNumber(activeChat.chatId.replace(/\@.*$/, ''))
       : maxOrTelegramPhoneNumber;
 
+  const handleCallClick = () => {
+    if (enableCalls) {
+      window.parent.postMessage(
+        {
+          event: 'openCalls',
+          pendingCall: {
+            chatId: activeChat.chatId,
+            phone: getPhoneNumberFromChatId(activeChat.chatId),
+            name: displayName,
+            avatar: activeChat.avatar,
+          },
+        },
+        '*'
+      );
+      return;
+    }
+
+    window.parent.postMessage({ event: 'callsUnavailable', tariff }, '*');
+  };
+
   return (
     <Header className="contact-chat-header">
       <Flex
@@ -114,6 +147,14 @@ const ContactChatHeader: FC = () => {
       </Flex>
 
       <Flex align="center" gap={8} style={{ flexShrink: 0 }}>
+        {showCallButton && (
+          <Button
+            className="call-button"
+            icon={<PhoneOutlined />}
+            onClick={handleCallClick}
+            title={t('CALL_BUTTON_TITLE')}
+          />
+        )}
         {headerPhoneNumber && <span>{headerPhoneNumber}</span>}
         {type !== 'one-chat-only' &&
           (isMobile ? (

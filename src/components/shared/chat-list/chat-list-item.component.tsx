@@ -1,7 +1,7 @@
 import { FC, MouseEventHandler, useEffect, useMemo } from 'react';
 
 import { PhoneOutlined } from '@ant-design/icons';
-import { Badge, Button, Flex, List, Skeleton } from 'antd';
+import { Badge, Button, Flex, List, Skeleton, Space } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import emptyAvatar from 'assets/emptyAvatar.svg';
@@ -301,39 +301,41 @@ const ChatListItem: FC<ContactListItemProps> = ({
             {showDescription && hasMessagePreview && (
               <span style={{ textAlign: 'end' }}>{messageDate}</span>
             )}
-            {canShowCallButton && (
-              <Button
-                className="call-button"
-                icon={<PhoneOutlined />}
-                onClick={handleCallClick}
-                title={t('CALL_BUTTON_TITLE')}
-              />
-            )}
-            {showDescription &&
-              hasMessagePreview &&
-              (typeof apiUnreadCount === 'number' && apiUnreadCount > 0 ? (
-                <Badge
-                  count={apiUnreadCount}
-                  style={{
-                    backgroundColor: 'var(--primary-color)',
-                    boxShadow: '0 0 0 1px #fff',
-                    textAlign: 'center',
-                  }}
+            <Space>
+              {canShowCallButton && (
+                <Button
+                  className="call-button"
+                  icon={<PhoneOutlined />}
+                  onClick={handleCallClick}
+                  title={t('CALL_BUTTON_TITLE')}
                 />
-              ) : (
-                unreadCount &&
-                unreadCount > 0 &&
-                WABA_POOLS.includes(instanceCredentials.idInstance.toString().slice(0, 4)) && (
+              )}
+              {showDescription &&
+                hasMessagePreview &&
+                (typeof apiUnreadCount === 'number' && apiUnreadCount > 0 ? (
                   <Badge
-                    count={unreadCount}
+                    count={apiUnreadCount}
                     style={{
                       backgroundColor: 'var(--primary-color)',
                       boxShadow: '0 0 0 1px #fff',
                       textAlign: 'center',
                     }}
                   />
-                )
-              ))}
+                ) : (
+                  unreadCount &&
+                  unreadCount > 0 &&
+                  WABA_POOLS.includes(instanceCredentials.idInstance.toString().slice(0, 4)) && (
+                    <Badge
+                      count={unreadCount}
+                      style={{
+                        backgroundColor: 'var(--primary-color)',
+                        boxShadow: '0 0 0 1px #fff',
+                        textAlign: 'center',
+                      }}
+                    />
+                  )
+                ))}
+            </Space>
           </Flex>
         )}
       </>

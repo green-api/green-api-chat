@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, PointerEvent, ChangeEvent } from 'react';
 
 import {
   CaretRightFilled,
@@ -18,6 +18,7 @@ import { useAppSelector } from 'hooks';
 import { useUploadFileMutation, useSendVoiceStatusMutation } from 'services/green-api/endpoints';
 import { selectInstance } from 'store/slices/instances.slice';
 import { ensureChatIdSuffix } from 'utils/chat-id.utils';
+import { formatTime } from 'utils/message.utils';
 
 export const SendVoiceStatus = () => {
   const { t } = useTranslation();
@@ -27,6 +28,7 @@ export const SendVoiceStatus = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [duration, setDuration] = useState(0);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const visualizerRef = useRef<HTMLCanvasElement>(null);
@@ -46,7 +48,7 @@ export const SendVoiceStatus = () => {
 
   const openAudioPicker = () => fileInputRef.current?.click();
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -126,6 +128,7 @@ export const SendVoiceStatus = () => {
     if (!blob) {
       audioRef.current = null;
       setProgress(0);
+      setDuration(0);
       return;
     }
 
@@ -139,6 +142,12 @@ export const SendVoiceStatus = () => {
       if (audioRef.current && audioRef.current.duration) {
         setProgress(audioRef.current.currentTime);
         rafId = requestAnimationFrame(updateProgress);
+      }
+    };
+
+    const updateDuration = () => {
+      if (Number.isFinite(audio.duration)) {
+        setDuration(audio.duration);
       }
     };
 
@@ -158,6 +167,8 @@ export const SendVoiceStatus = () => {
       setIsPlaying(false);
     };
 
+    audio.addEventListener('loadedmetadata', updateDuration);
+    audio.addEventListener('durationchange', updateDuration);
     audio.addEventListener('play', handlePlay);
     audio.addEventListener('pause', handlePause);
     audio.addEventListener('ended', handleEnded);
@@ -166,6 +177,8 @@ export const SendVoiceStatus = () => {
       cancelAnimationFrame(rafId);
       audio.pause();
       URL.revokeObjectURL(audioUrl);
+      audio.removeEventListener('loadedmetadata', updateDuration);
+      audio.removeEventListener('durationchange', updateDuration);
       audio.removeEventListener('play', handlePlay);
       audio.removeEventListener('pause', handlePause);
       audio.removeEventListener('ended', handleEnded);
@@ -179,6 +192,25 @@ export const SendVoiceStatus = () => {
     } else {
       audioRef.current.play();
     }
+  };
+
+  const seekTo = (e: PointerEvent<HTMLDivElement>) => {
+    const audio = audioRef.current;
+    if (!audio || !duration) return;
+
+    const rect = e.currentTarget.getBoundingClientRect();
+    const ratio = Math.min(Math.max((e.clientX - rect.left) / rect.width, 0), 1);
+    audio.currentTime = ratio * duration;
+    setProgress(audio.currentTime);
+  };
+
+  const handleSeekStart = (e: PointerEvent<HTMLDivElement>) => {
+    e.currentTarget.setPointerCapture(e.pointerId);
+    seekTo(e);
+  };
+
+  const handleSeekMove = (e: PointerEvent<HTMLDivElement>) => {
+    if (e.currentTarget.hasPointerCapture(e.pointerId)) seekTo(e);
   };
 
   const handleSendVoiceStatus = async () => {
@@ -261,17 +293,34 @@ export const SendVoiceStatus = () => {
 
           <div style={{ flex: 1, display: 'flex', alignItems: 'center', height: 40, width: 140 }}>
             {blob ? (
-              <AudioVisualizer
-                ref={visualizerRef}
-                blob={blob}
-                width={140}
-                height={44}
-                barWidth={2}
-                gap={0.3}
-                barColor="#aaa"
-                barPlayedColor="#000"
-                currentTime={progress}
-              />
+              <Flex vertical>
+                <div
+                  onPointerDown={handleSeekStart}
+                  onPointerMove={handleSeekMove}
+                  style={{ cursor: duration ? 'pointer' : 'default', touchAction: 'none' }}
+                >
+                  <AudioVisualizer
+                    ref={visualizerRef}
+                    blob={blob}
+                    width={140}
+                    height={44}
+                    barWidth={2}
+                    gap={0.3}
+                    barColor="#aaa"
+                    barPlayedColor="#000"
+                    currentTime={progress}
+                  />
+                </div>
+                <span
+                  style={{
+                    fontSize: 11,
+                    fontVariantNumeric: 'tabular-nums',
+                    opacity: 0.7,
+                  }}
+                >
+                  {duration ? formatTime(isPlaying || progress > 0 ? progress : duration) : '--:--'}
+                </span>
+              </Flex>
             ) : (
               <svg width="100%" height="1">
                 <line

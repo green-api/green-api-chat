@@ -50,7 +50,7 @@ const MobileNav: FC = () => {
 
   return (
     <nav ref={navRef} className="mobile-nav">
-      <Flex className="mobile-nav-row" align="center" justify="space-evenly">
+      <Flex className="mobile-nav-row" align="flex-start" justify="space-evenly">
         {items.map((item) => (
           <AsideItem key={item.item} asideItem={item} showLabel highlightSettingsGroup={false} />
         ))}

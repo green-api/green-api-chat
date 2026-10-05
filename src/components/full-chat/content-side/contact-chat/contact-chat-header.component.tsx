@@ -1,22 +1,18 @@
 import { FC } from 'react';
 
-import { CloseOutlined, LeftOutlined, PhoneOutlined } from '@ant-design/icons';
-import { Button, Flex } from 'antd';
+import { CloseOutlined, LeftOutlined } from '@ant-design/icons';
+import { Flex } from 'antd';
 import { Header } from 'antd/es/layout/layout';
 import { useTranslation } from 'react-i18next';
 
-import waChatIcon from 'assets/wa-chat.svg';
+import waChatIcon from 'assets/messenger-logo/wa-chat.svg';
+import CallButton from 'components/shared/call-button.component';
 import AvatarImage from 'components/UI/avatar-image.component';
 import { FULL_CHAT_HISTORY_COUNT } from 'configs';
 import { useActions, useAppSelector, useMediaQuery } from 'hooks';
 import { useGetChatHistoryQuery, useGetChatsQuery } from 'services/green-api/endpoints';
 import { selectActiveChat, selectType } from 'store/slices/chat.slice';
-import {
-  selectEnableCalls,
-  selectInstance,
-  selectInstanceTariff,
-  selectTypeInstance,
-} from 'store/slices/instances.slice';
+import { selectInstance, selectTypeInstance } from 'store/slices/instances.slice';
 import { ActiveChat } from 'types';
 import {
   formatPhoneNumber,
@@ -32,8 +28,6 @@ const ContactChatHeader: FC = () => {
   const type = useAppSelector(selectType);
   const instanceCredentials = useAppSelector(selectInstance);
   const typeInstance = useAppSelector(selectTypeInstance);
-  const enableCalls = useAppSelector(selectEnableCalls);
-  const tariff = useAppSelector(selectInstanceTariff);
   const { t } = useTranslation();
   // Same breakpoint as content-side.component.tsx, where the chat list and the open
   // chat are shown one at a time instead of side by side.
@@ -96,26 +90,6 @@ const ContactChatHeader: FC = () => {
       ? formatPhoneNumber(activeChat.chatId.replace(/\@.*$/, ''))
       : maxOrTelegramPhoneNumber;
 
-  const handleCallClick = () => {
-    if (enableCalls) {
-      window.parent.postMessage(
-        {
-          event: 'openCalls',
-          pendingCall: {
-            chatId: activeChat.chatId,
-            phone: getPhoneNumberFromChatId(activeChat.chatId),
-            name: displayName,
-            avatar: activeChat.avatar,
-          },
-        },
-        '*'
-      );
-      return;
-    }
-
-    window.parent.postMessage({ event: 'callsUnavailable', tariff }, '*');
-  };
-
   return (
     <Header className="contact-chat-header">
       <Flex
@@ -148,11 +122,13 @@ const ContactChatHeader: FC = () => {
 
       <Flex align="center" gap={8} style={{ flexShrink: 0 }}>
         {showCallButton && (
-          <Button
-            className="call-button"
-            icon={<PhoneOutlined />}
-            onClick={handleCallClick}
-            title={t('CALL_BUTTON_TITLE')}
+          <CallButton
+            pendingCall={{
+              chatId: activeChat.chatId,
+              phone: getPhoneNumberFromChatId(activeChat.chatId),
+              name: displayName,
+              avatar: activeChat.avatar,
+            }}
           />
         )}
         {headerPhoneNumber && <span>{headerPhoneNumber}</span>}

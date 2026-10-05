@@ -1,19 +1,15 @@
 import { FC } from 'react';
 
-import { LeftOutlined, PhoneOutlined } from '@ant-design/icons';
+import { LeftOutlined } from '@ant-design/icons';
 import { Flex, Space, Typography } from 'antd';
 import { useTranslation } from 'react-i18next';
 
+import CallButton from 'components/shared/call-button.component';
 import { MINI_CHAT_HISTORY_COUNT } from 'configs';
 import { useActions, useAppSelector } from 'hooks';
 import { useGetChatHistoryQuery, useGetChatsQuery } from 'services/green-api/endpoints';
 import { selectActiveChat, selectType } from 'store/slices/chat.slice';
-import {
-  selectEnableCalls,
-  selectInstance,
-  selectInstanceTariff,
-  selectTypeInstance,
-} from 'store/slices/instances.slice';
+import { selectInstance, selectTypeInstance } from 'store/slices/instances.slice';
 import { selectPlatform } from 'store/slices/user.slice';
 import { getFirstNonEmptyString } from 'utils';
 
@@ -22,8 +18,6 @@ const ChatHeader: FC = () => {
   const platform = useAppSelector(selectPlatform);
   const instanceCredentials = useAppSelector(selectInstance);
   const typeInstance = useAppSelector(selectTypeInstance);
-  const enableCalls = useAppSelector(selectEnableCalls);
-  const tariff = useAppSelector(selectInstanceTariff);
   const type = useAppSelector(selectType);
 
   const { t } = useTranslation();
@@ -32,15 +26,6 @@ const ChatHeader: FC = () => {
 
   const showCallButton =
     typeInstance === 'whatsapp' && (type === 'console-page' || type === 'instance-view-page');
-
-  const handleCallClick = () => {
-    if (enableCalls) {
-      window.parent.postMessage({ event: 'openCalls' }, '*');
-      return;
-    }
-
-    window.parent.postMessage({ event: 'callsUnavailable', tariff }, '*');
-  };
 
   const { data: chats } = useGetChatsQuery(instanceCredentials, {
     skip:
@@ -101,14 +86,10 @@ const ChatHeader: FC = () => {
     <Flex justify="space-between" align="center">
       <h3 className="text-overflow">{t('CHAT_HEADER')}</h3>
 
-      <Space style={{ gap: 10 }}>
+      <Flex align="center" gap={8}>
         {platform === 'web' && (
           <>
-            {showCallButton && (
-              <Typography.Link onClick={handleCallClick} title={t('CALL_BUTTON_TITLE')}>
-                <PhoneOutlined />
-              </Typography.Link>
-            )}
+            {showCallButton && <CallButton variant="link" />}
             <Typography.Link
               onClick={() => {
                 window.parent.postMessage({ event: 'openChats' }, '*');
@@ -126,7 +107,7 @@ const ChatHeader: FC = () => {
             <PoweroffOutlined />
           </Typography.Link>
         )} */}
-      </Space>
+      </Flex>
     </Flex>
   );
 };

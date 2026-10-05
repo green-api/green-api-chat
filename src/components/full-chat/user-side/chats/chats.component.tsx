@@ -5,7 +5,7 @@ import { Button, Flex } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import AddNewChat from './add-new-chat.component';
-import NewChatIcon from 'assets/newChat.svg?react';
+import NewChatIcon from 'assets/icons/newChat.svg?react';
 import AuthorizationStatus from 'components/instance-auth/authorization-status.component';
 import ChatList from 'components/shared/chat-list/chat-list.component';
 import { useActions, useAppSelector } from 'hooks';

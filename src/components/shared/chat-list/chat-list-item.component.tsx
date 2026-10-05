@@ -1,13 +1,13 @@
-import { FC, MouseEventHandler, useEffect, useMemo } from 'react';
+import { FC, useEffect, useMemo } from 'react';
 
-import { PhoneOutlined } from '@ant-design/icons';
-import { Badge, Button, Flex, List, Skeleton, Space } from 'antd';
+import { Badge, Flex, List, Skeleton, Space } from 'antd';
 import { useTranslation } from 'react-i18next';
 
-import emptyAvatar from 'assets/emptyAvatar.svg';
-import emptyAvatarButAvailable from 'assets/emptyAvatarButAvailable.svg';
-import emptyAvatarGroup from 'assets/emptyAvatarGroup.png';
-import waChatIcon from 'assets/wa-chat.svg';
+import emptyAvatar from 'assets/avatar/emptyAvatar.svg';
+import emptyAvatarButAvailable from 'assets/avatar/emptyAvatarButAvailable.svg';
+import emptyAvatarGroup from 'assets/avatar/emptyAvatarGroup.png';
+import waChatIcon from 'assets/messenger-logo/wa-chat.svg';
+import CallButton from 'components/shared/call-button.component';
 import AvatarImage from 'components/UI/avatar-image.component';
 import { useActions, useAppSelector } from 'hooks';
 import { useIsMaxInstance } from 'hooks/use-is-max-instance';
@@ -19,11 +19,7 @@ import {
   useGetGroupDataQuery,
 } from 'services/green-api/endpoints';
 import { selectActiveChat } from 'store/slices/chat.slice';
-import {
-  selectEnableCalls,
-  selectInstance,
-  selectInstanceTariff,
-} from 'store/slices/instances.slice';
+import { selectInstance } from 'store/slices/instances.slice';
 import { LanguageLiteral, MessageInterface } from 'types';
 import {
   getMessageDate,
@@ -69,8 +65,6 @@ const ChatListItem: FC<ContactListItemProps> = ({
 
   const instanceCredentials = useAppSelector(selectInstance);
   const activeChat = useAppSelector(selectActiveChat);
-  const enableCalls = useAppSelector(selectEnableCalls);
-  const tariff = useAppSelector(selectInstanceTariff);
   const { setActiveChat, setSearchQuery } = useActions();
   const isMax = useIsMaxInstance();
   const isTelegram = useIsTelegramInstance();
@@ -220,28 +214,6 @@ const ChatListItem: FC<ContactListItemProps> = ({
 
   const canShowCallButton = showCallButton && !isGroupChat;
 
-  const handleCallClick: MouseEventHandler = (event) => {
-    event.stopPropagation();
-
-    if (enableCalls) {
-      window.parent.postMessage(
-        {
-          event: 'openCalls',
-          pendingCall: {
-            chatId: lastMessage.chatId,
-            phone: getPhoneNumberFromChatId(lastMessage.chatId),
-            name: chatName,
-            avatar,
-          },
-        },
-        '*'
-      );
-      return;
-    }
-
-    window.parent.postMessage({ event: 'callsUnavailable', tariff }, '*');
-  };
-
   return (
     <List.Item
       className={`list-item contact-list__item ${activeChat?.chatId === lastMessage.chatId ? 'active' : ''}`}
@@ -303,11 +275,13 @@ const ChatListItem: FC<ContactListItemProps> = ({
             )}
             <Space>
               {canShowCallButton && (
-                <Button
-                  className="call-button"
-                  icon={<PhoneOutlined />}
-                  onClick={handleCallClick}
-                  title={t('CALL_BUTTON_TITLE')}
+                <CallButton
+                  pendingCall={{
+                    chatId: lastMessage.chatId,
+                    phone: getPhoneNumberFromChatId(lastMessage.chatId),
+                    name: chatName,
+                    avatar,
+                  }}
                 />
               )}
               {showDescription &&

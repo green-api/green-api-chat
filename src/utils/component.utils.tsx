@@ -15,8 +15,8 @@ import OTP from 'antd/es/input/OTP';
 import parse from 'html-react-parser';
 
 import { TextFormatter } from './text-formatter';
-import DoubleTickIcon from 'assets/double-tick.svg?react';
-import TickIcon from 'assets/tick.svg?react';
+import DoubleTickIcon from 'assets/icons/double-tick.svg?react';
+import TickIcon from 'assets/icons/tick.svg?react';
 import {
   GetTemplateMessageLayoutOptions,
   LanguageLiteral,

@@ -4,9 +4,9 @@ import { AudioOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import { Avatar, Dropdown, MenuProps } from 'antd';
 import { useTranslation } from 'react-i18next';
 
-import emptyAvatarButAvailable from 'assets/emptyAvatarButAvailable.svg';
-import MediaStatusIcon from 'assets/media-status.svg?react';
-import TextStatusIcon from 'assets/text-status.svg?react';
+import emptyAvatarButAvailable from 'assets/avatar/emptyAvatarButAvailable.svg';
+import MediaStatusIcon from 'assets/icons/media-status.svg?react';
+import TextStatusIcon from 'assets/icons/text-status.svg?react';
 import MessageServiceModal from 'components/modals/message-service-modal.component';
 import SendingModal from 'components/modals/sending-modal.component';
 import { useActions, useAppSelector } from 'hooks';

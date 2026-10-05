@@ -4,9 +4,9 @@ import { Layout, message } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 
-import emptyAvatar from 'assets/emptyAvatar.svg';
-import emptyAvatarButAvailable from 'assets/emptyAvatarButAvailable.svg';
-import emptyAvatarGroup from 'assets/emptyAvatarGroup.png';
+import emptyAvatar from 'assets/avatar/emptyAvatar.svg';
+import emptyAvatarButAvailable from 'assets/avatar/emptyAvatarButAvailable.svg';
+import emptyAvatarGroup from 'assets/avatar/emptyAvatarGroup.png';
 import FullChat from 'components/full-chat/chat.component';
 import MiniChat from 'components/mini-chat/chat.component';
 import { useActions, useAppSelector } from 'hooks';

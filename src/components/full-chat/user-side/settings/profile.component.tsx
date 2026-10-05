@@ -4,7 +4,7 @@ import { PhoneOutlined } from '@ant-design/icons';
 import { Avatar, Flex } from 'antd';
 import { useTranslation } from 'react-i18next';
 
-import emptyAvatarButAvailable from 'assets/emptyAvatarButAvailable.svg';
+import emptyAvatarButAvailable from 'assets/avatar/emptyAvatarButAvailable.svg';
 import AuthorizationStatus from 'components/instance-auth/authorization-status.component';
 import { useActions, useAppSelector } from 'hooks';
 import { useInstanceSettings } from 'hooks/use-instance-settings.hook';

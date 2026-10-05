@@ -1,7 +1,7 @@
-import enIcon from 'assets/en.svg';
-import heIcon from 'assets/he.svg';
-import ruIcon from 'assets/ru.svg';
-import trIcon from 'assets/tr.svg';
+import enIcon from 'assets/flags/en.svg';
+import heIcon from 'assets/flags/he.svg';
+import ruIcon from 'assets/flags/ru.svg';
+import trIcon from 'assets/flags/tr.svg';
 
 type Language = {
   name: string;

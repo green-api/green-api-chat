@@ -2,9 +2,9 @@ import { GlobalOutlined, SettingOutlined } from '@ant-design/icons';
 import { Dropdown, Flex } from 'antd';
 import { useTranslation } from 'react-i18next';
 
-import InstanceIcon from 'assets/instance-icon.svg?react';
-import LogoutIcon from 'assets/logout-icon.svg?react';
-import ProfileIcon from 'assets/profile-icon.svg?react';
+import InstanceIcon from 'assets/icons/instance-icon.svg?react';
+import LogoutIcon from 'assets/icons/logout-icon.svg?react';
+import ProfileIcon from 'assets/icons/profile-icon.svg?react';
 import { useActions, useAppSelector } from 'hooks';
 import { useBreakpoint } from 'hooks/use-breakpoint.hook';
 import { selectType } from 'store/slices/chat.slice';

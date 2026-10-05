@@ -3,7 +3,7 @@ import { FC, useMemo } from 'react';
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
 
-import emptyAvatar from 'assets/emptyAvatarButAvailable.svg';
+import emptyAvatar from 'assets/avatar/emptyAvatarButAvailable.svg';
 import AvatarImage from 'components/UI/avatar-image.component';
 import { useActions, useAppSelector } from 'hooks';
 import { useBreakpoint } from 'hooks/use-breakpoint.hook';

@@ -1,12 +1,12 @@
 import { Space, Typography } from 'antd';
 import { useTranslation } from 'react-i18next';
 
-import githubIcon from 'assets/github.svg';
-import linkedInIcon from 'assets/linkedIn.svg';
-import rutubeIcon from 'assets/rutube.svg';
-import telegramIcon from 'assets/telegram.svg';
-import whatsappIcon from 'assets/whatsapp.svg';
-import youtubeIcon from 'assets/youtube.svg';
+import telegramIcon from 'assets/messenger-logo/telegram.svg';
+import whatsappIcon from 'assets/messenger-logo/whatsapp.svg';
+import githubIcon from 'assets/socials-logo/github.svg';
+import linkedInIcon from 'assets/socials-logo/linkedIn.svg';
+import rutubeIcon from 'assets/socials-logo/rutube.svg';
+import youtubeIcon from 'assets/socials-logo/youtube.svg';
 import { EXTERNAL_LINKS } from 'configs';
 
 const MessengerLink = () => {

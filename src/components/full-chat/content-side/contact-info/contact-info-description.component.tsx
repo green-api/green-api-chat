@@ -1,19 +1,15 @@
 import { FC } from 'react';
 
-import { PhoneOutlined } from '@ant-design/icons';
-import { Button, Flex, Typography } from 'antd';
+import { Flex, Typography } from 'antd';
 import { useTranslation } from 'react-i18next';
 
+import CallButton from 'components/shared/call-button.component';
 import { useAppSelector } from 'hooks';
 import { useIsMaxInstance } from 'hooks/use-is-max-instance';
 import { useIsTelegramInstance } from 'hooks/use-is-telegram-instance';
 import { useGetGroupDataQuery } from 'services/green-api/endpoints';
 import { selectActiveChat, selectType } from 'store/slices/chat.slice';
-import {
-  selectEnableCalls,
-  selectInstance,
-  selectInstanceTariff,
-} from 'store/slices/instances.slice';
+import { selectInstance } from 'store/slices/instances.slice';
 import { ActiveChat, LanguageLiteral } from 'types';
 import {
   fillJsxString,
@@ -27,8 +23,6 @@ import {
 const ContactInfoDescription: FC = () => {
   const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
   const instanceCredentials = useAppSelector(selectInstance);
-  const enableCalls = useAppSelector(selectEnableCalls);
-  const tariff = useAppSelector(selectInstanceTariff);
   const type = useAppSelector(selectType);
   const isMax = useIsMaxInstance();
   const isTelegram = useIsTelegramInstance();
@@ -42,33 +36,16 @@ const ContactInfoDescription: FC = () => {
     i18n: { resolvedLanguage },
   } = useTranslation();
 
-  const handleCallClick = () => {
-    if (enableCalls) {
-      window.parent.postMessage(
-        {
-          event: 'openCalls',
-          pendingCall: {
-            chatId: activeChat.chatId,
-            phone: getPhoneNumberFromChatId(activeChat.chatId),
-            name: activeChat.senderName,
-            avatar: activeChat.avatar,
-          },
-        },
-        '*'
-      );
-      return;
-    }
-
-    window.parent.postMessage({ event: 'callsUnavailable', tariff }, '*');
-  };
-
   const callButtonBlock = showCallButton ? (
     <div className="contact-info-description w-100 p-10">
-      <Button
-        className="call-button"
-        icon={<PhoneOutlined />}
-        onClick={handleCallClick}
-        title={t('CALL_BUTTON_TITLE')}
+      <CallButton
+        variant="labeled"
+        pendingCall={{
+          chatId: activeChat.chatId,
+          phone: getPhoneNumberFromChatId(activeChat.chatId),
+          name: activeChat.senderName,
+          avatar: activeChat.avatar,
+        }}
       />
     </div>
   ) : null;

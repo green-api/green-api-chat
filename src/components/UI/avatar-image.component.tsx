@@ -3,7 +3,7 @@ import { FC, useEffect, useMemo, useState } from 'react';
 import { Avatar } from 'antd';
 import { AvatarProps } from 'antd/es/avatar/avatar';
 
-import emptyAvatarButAvailable from 'assets/emptyAvatarButAvailable.svg';
+import emptyAvatarButAvailable from 'assets/avatar/emptyAvatarButAvailable.svg';
 import { normalizeAvatarSrc } from 'utils';
 
 interface AvatarImageProps {

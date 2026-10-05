@@ -3,7 +3,7 @@ import { FC, useMemo } from 'react';
 import { List, Skeleton, Tag } from 'antd';
 
 import ParticipantMenu from './participant-menu.component';
-import emptyAvatar from 'assets/emptyAvatarButAvailable.svg';
+import emptyAvatar from 'assets/avatar/emptyAvatarButAvailable.svg';
 import AvatarImage from 'components/UI/avatar-image.component';
 import { useAppSelector } from 'hooks';
 import { useIsMaxInstance } from 'hooks/use-is-max-instance';

@@ -13,7 +13,7 @@ i18n
     nonExplicitSupportedLngs: true,
     load: 'languageOnly',
     backend: {
-      loadPath: '/locales_1.0.2/{{lng}}/translation.json',
+      loadPath: '/locales_1.0.4/{{lng}}/translation.json',
       expirationTime: 24 * 60 * 60 * 1000,
     },
     detection: {

@@ -32,6 +32,7 @@ const getInitialStateFromStorage = (): Partial<InstancesState> | null => {
     return {
       selectedInstance,
       tariff: parsed.tariff,
+      enableCalls: parsed.enableCalls ?? false,
       isChatWorking: parsed.isChatWorking ?? null,
       typeInstance: isQueryCredentialsProvided
         ? getTypeInstanceFromQuery(typeInstanceFromQuery)
@@ -51,6 +52,7 @@ const initialState: InstancesState = {
     mediaUrl: '',
   },
   tariff: TariffsEnum.Developer,
+  enableCalls: false,
   isChatWorking: null,
   typeInstance: 'whatsapp',
   instanceList: null,
@@ -69,15 +71,21 @@ export const instancesSlice = createSlice({
       action: PayloadAction<
         InstancesState['selectedInstance'] & {
           tariff: TariffsEnum;
+          enableCalls?: boolean;
           typeInstance: TypeInstance;
           isChatWorking?: boolean | null;
         }
       >
     ) => {
-      const { tariff, isChatWorking, typeInstance, ...selectedInstance } = action.payload;
+      const { tariff, enableCalls, isChatWorking, typeInstance, ...selectedInstance } =
+        action.payload;
 
       state.selectedInstance = selectedInstance;
       state.tariff = tariff;
+
+      if (enableCalls !== undefined) {
+        state.enableCalls = enableCalls;
+      }
 
       if (isChatWorking !== undefined) {
         state.isChatWorking = isChatWorking;
@@ -122,6 +130,7 @@ export const selectInstance = (state: RootState) => state.instancesReducer.selec
 export const selectInstanceList = (state: RootState) => state.instancesReducer.instanceList;
 export const selectTypeInstance = (state: RootState) => state.instancesReducer.typeInstance;
 export const selectInstanceTariff = (state: RootState) => state.instancesReducer.tariff;
+export const selectEnableCalls = (state: RootState) => state.instancesReducer.enableCalls;
 export const selectIsChatWorking = (state: RootState) => state.instancesReducer.isChatWorking;
 export const selectIsAuthorizingInstance = (state: RootState) =>
   state.instancesReducer.isAuthorizingInstance;

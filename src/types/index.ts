@@ -75,6 +75,7 @@ export interface ActiveChat
 export interface InstancesState {
   selectedInstance: InstanceInterface;
   tariff: TariffsEnum;
+  enableCalls: boolean;
   isChatWorking: boolean | null;
   typeInstance: TypeInstance;
   instanceList: ExpandedInstanceInterface[] | null;
@@ -225,6 +226,7 @@ export interface MessageDataInit {
     UserInterface & {
       platform: ChatPlatform;
       tariff: TariffsEnum;
+      enableCalls?: boolean;
       typeInstance: TypeInstance;
       instanceList: ExpandedInstanceInterface[];
     };

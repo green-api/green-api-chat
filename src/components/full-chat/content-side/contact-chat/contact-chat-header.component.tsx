@@ -5,7 +5,8 @@ import { Flex } from 'antd';
 import { Header } from 'antd/es/layout/layout';
 import { useTranslation } from 'react-i18next';
 
-import waChatIcon from 'assets/wa-chat.svg';
+import waChatIcon from 'assets/messenger-logo/wa-chat.svg';
+import CallButton from 'components/shared/call-button.component';
 import AvatarImage from 'components/UI/avatar-image.component';
 import { FULL_CHAT_HISTORY_COUNT } from 'configs';
 import { useActions, useAppSelector, useMediaQuery } from 'hooks';
@@ -16,6 +17,7 @@ import { ActiveChat } from 'types';
 import {
   formatPhoneNumber,
   getFirstNonEmptyString,
+  getPhoneNumberFromChatId,
   isBotChatType,
   isContactInfo,
   isWhatsAppOfficialChat,
@@ -35,6 +37,11 @@ const ContactChatHeader: FC = () => {
 
   const isMax = typeInstance === 'v3';
   const isTelegram = typeInstance === 'telegram';
+  const isGroup = activeChat.chatId?.includes('@g.us') || activeChat.chatId?.startsWith('-');
+  const showCallButton =
+    typeInstance === 'whatsapp' &&
+    !isGroup &&
+    (type === 'console-page' || type === 'instance-view-page');
 
   const isOfficial = isWhatsAppOfficialChat(activeChat.chatId);
   const isBotChat = isBotChatType(activeChat.chatType);
@@ -114,6 +121,16 @@ const ContactChatHeader: FC = () => {
       </Flex>
 
       <Flex align="center" gap={8} style={{ flexShrink: 0 }}>
+        {showCallButton && (
+          <CallButton
+            pendingCall={{
+              chatId: activeChat.chatId,
+              phone: getPhoneNumberFromChatId(activeChat.chatId),
+              name: displayName,
+              avatar: activeChat.avatar,
+            }}
+          />
+        )}
         {headerPhoneNumber && <span>{headerPhoneNumber}</span>}
         {type !== 'one-chat-only' &&
           (isMobile ? (

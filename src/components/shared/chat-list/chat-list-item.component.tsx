@@ -1,12 +1,13 @@
 import { FC, useEffect, useMemo } from 'react';
 
-import { Badge, Flex, List, Skeleton } from 'antd';
+import { Badge, Flex, List, Skeleton, Space } from 'antd';
 import { useTranslation } from 'react-i18next';
 
-import emptyAvatar from 'assets/emptyAvatar.svg';
-import emptyAvatarButAvailable from 'assets/emptyAvatarButAvailable.svg';
-import emptyAvatarGroup from 'assets/emptyAvatarGroup.png';
-import waChatIcon from 'assets/wa-chat.svg';
+import emptyAvatar from 'assets/avatar/emptyAvatar.svg';
+import emptyAvatarButAvailable from 'assets/avatar/emptyAvatarButAvailable.svg';
+import emptyAvatarGroup from 'assets/avatar/emptyAvatarGroup.png';
+import waChatIcon from 'assets/messenger-logo/wa-chat.svg';
+import CallButton from 'components/shared/call-button.component';
 import AvatarImage from 'components/UI/avatar-image.component';
 import { useActions, useAppSelector } from 'hooks';
 import { useIsMaxInstance } from 'hooks/use-is-max-instance';
@@ -41,6 +42,7 @@ interface ContactListItemProps {
   newChatId?: string;
   onClearUnread?: () => void;
   isLastMessageLoading?: boolean;
+  showCallButton?: boolean;
 }
 
 const WABA_POOLS = ['7835', '9908'];
@@ -54,6 +56,7 @@ const ChatListItem: FC<ContactListItemProps> = ({
   newChatId,
   onClearUnread,
   isLastMessageLoading = false,
+  showCallButton = false,
 }) => {
   const {
     t,
@@ -209,6 +212,8 @@ const ChatListItem: FC<ContactListItemProps> = ({
     }
   };
 
+  const canShowCallButton = showCallButton && !isGroupChat;
+
   return (
     <List.Item
       className={`list-item contact-list__item ${activeChat?.chatId === lastMessage.chatId ? 'active' : ''}`}
@@ -263,32 +268,48 @@ const ChatListItem: FC<ContactListItemProps> = ({
             ))
           }
         />
-        {showDescription && hasMessagePreview && (
+        {(canShowCallButton || (showDescription && hasMessagePreview)) && (
           <Flex vertical align="end" style={{ alignSelf: 'start' }} gap={4}>
-            <span style={{ textAlign: 'end' }}>{messageDate}</span>
-            {typeof apiUnreadCount === 'number' && apiUnreadCount > 0 ? (
-              <Badge
-                count={apiUnreadCount}
-                style={{
-                  backgroundColor: 'var(--primary-color)',
-                  boxShadow: '0 0 0 1px #fff',
-                  textAlign: 'center',
-                }}
-              />
-            ) : (
-              unreadCount &&
-              unreadCount > 0 &&
-              WABA_POOLS.includes(instanceCredentials.idInstance.toString().slice(0, 4)) && (
-                <Badge
-                  count={unreadCount}
-                  style={{
-                    backgroundColor: 'var(--primary-color)',
-                    boxShadow: '0 0 0 1px #fff',
-                    textAlign: 'center',
+            {showDescription && hasMessagePreview && (
+              <span style={{ textAlign: 'end' }}>{messageDate}</span>
+            )}
+            <Space>
+              {canShowCallButton && (
+                <CallButton
+                  pendingCall={{
+                    chatId: lastMessage.chatId,
+                    phone: getPhoneNumberFromChatId(lastMessage.chatId),
+                    name: chatName,
+                    avatar,
                   }}
                 />
-              )
-            )}
+              )}
+              {showDescription &&
+                hasMessagePreview &&
+                (typeof apiUnreadCount === 'number' && apiUnreadCount > 0 ? (
+                  <Badge
+                    count={apiUnreadCount}
+                    style={{
+                      backgroundColor: 'var(--primary-color)',
+                      boxShadow: '0 0 0 1px #fff',
+                      textAlign: 'center',
+                    }}
+                  />
+                ) : (
+                  unreadCount &&
+                  unreadCount > 0 &&
+                  WABA_POOLS.includes(instanceCredentials.idInstance.toString().slice(0, 4)) && (
+                    <Badge
+                      count={unreadCount}
+                      style={{
+                        backgroundColor: 'var(--primary-color)',
+                        boxShadow: '0 0 0 1px #fff',
+                        textAlign: 'center',
+                      }}
+                    />
+                  )
+                ))}
+            </Space>
           </Flex>
         )}
       </>

@@ -19,7 +19,7 @@ import {
   selectSearchQuery,
   selectType,
 } from 'store/slices/chat.slice';
-import { selectInstance } from 'store/slices/instances.slice';
+import { selectInstance, selectTypeInstance } from 'store/slices/instances.slice';
 import { GetChatsResponseInterface, MessageInterface } from 'types';
 import {
   chatToMessage,
@@ -46,6 +46,7 @@ const SCROLL_LOAD_THRESHOLD_PX = 300;
 const ChatList: FC = () => {
   const instanceCredentials = useAppSelector(selectInstance);
   const isMiniVersion = useAppSelector(selectMiniVersion);
+  const typeInstance = useAppSelector(selectTypeInstance);
   const searchQuery = useAppSelector(selectSearchQuery);
   const greenApiQueries = useAppSelector((state) => state.greenAPI.queries);
   const type = useAppSelector(selectType);
@@ -94,6 +95,10 @@ const ChatList: FC = () => {
   const isLoadScheduledRef = useRef(false);
 
   const limit = isMiniVersion ? 5 : matchMedia ? 16 : 12;
+  const showCallButton =
+    isMiniVersion &&
+    typeInstance === 'whatsapp' &&
+    (type === 'console-page' || type === 'instance-view-page');
 
   const handleNameExtracted = (chatId: string, name: string) => {
     setContactNames((prev) => ({
@@ -540,6 +545,7 @@ const ChatList: FC = () => {
                       onNameExtracted={handleNameExtracted}
                       showDescription={false}
                       newChatId={newChatIdByChatId[msg.chatId]}
+                      showCallButton={showCallButton}
                     />
                   )}
                   split={false}
@@ -563,6 +569,7 @@ const ChatList: FC = () => {
                       apiUnreadCount={apiUnreadCounts[msg.chatId]}
                       newChatId={newChatIdByChatId[msg.chatId]}
                       onClearUnread={() => clearUnreadCount(msg.chatId)}
+                      showCallButton={showCallButton}
                     />
                   )}
                   split={false}
@@ -591,6 +598,7 @@ const ChatList: FC = () => {
                   newChatId={newChatIdByChatId[message.chatId]}
                   onClearUnread={() => clearUnreadCount(message.chatId)}
                   isLastMessageLoading={!(message.chatId in lastMessagesByChatId)}
+                  showCallButton={showCallButton}
                 />
               )}
               loading={{

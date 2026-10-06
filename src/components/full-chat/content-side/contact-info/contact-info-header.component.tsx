@@ -5,7 +5,7 @@ import { Divider, Flex, Image, Typography } from 'antd';
 import { Header } from 'antd/es/layout/layout';
 import { useTranslation } from 'react-i18next';
 
-import waChatIcon from 'assets/wa-chat.svg';
+import waChatIcon from 'assets/messenger-logo/wa-chat.svg';
 import EditGroupName from 'components/shared/chat-header/edit-group-name.component';
 import GroupAvatarUpload from 'components/shared/chat-header/group-avatar-upload.component';
 import LeaveGroupButton from 'components/shared/chat-header/leave-group.component';

@@ -503,11 +503,16 @@ export interface AppApiErrorResponse {
 export interface UserLoginDataInterface extends Pick<UserInterface, 'login'> {
   password: string;
 }
-export enum TariffsEnum {
+export const enum TariffsEnum {
   Developer = 'DEVELOPER',
   Business = 'BUSINESS',
+  Ultra = 'ULTRA',
+  BusinessMax = 'MAX_BUSINESS',
+  DeveloperMax = 'MAX_DEVELOPER',
   BusinessUSD = 'BUSINESS_USD',
   BusinessKZT = 'BUSINESS_KZT',
+  TelegramDeveloper = 'TELEGRAM_DEVELOPER',
+  TelegramBusiness = 'TELEGRAM_BUSINESS',
 }
 
 export interface ExpandedInstanceInterface extends InstanceInterface {

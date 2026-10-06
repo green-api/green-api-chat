@@ -84,6 +84,7 @@
   "TURKISH": "Türkçe",
   "FULL_VERSION": "Sohbetleri aç",
   "FULL_VERSION_TITLE": "Ayrı bir pencerede aç",
+  "CALL_BUTTON_TITLE": "Ara",
   "LOGIN_TITLE": "Giriş yapmak",
   "INPUT_EMAIL_INVALID": "Girilen adres bir E-posta değil!",
   "INPUT_EMAIL_HINT": "E-posta adresini girin!",

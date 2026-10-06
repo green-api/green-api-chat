@@ -3,9 +3,9 @@ import { memo } from 'react';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Image, Flex, Space, Spin } from 'antd';
 
-import maxIcon from 'assets/max-logo.svg';
-import telegramIcon from 'assets/telegram-logo.svg';
-import waIcon from 'assets/wa-logo.svg';
+import maxIcon from 'assets/messenger-logo/max-logo.svg';
+import telegramIcon from 'assets/messenger-logo/telegram-logo.svg';
+import waIcon from 'assets/messenger-logo/wa-logo.svg';
 import { isMaxInstance } from 'hooks/use-is-max-instance';
 import { useGetWaSettingsQuery, useGetAccountSettingsQuery } from 'services/green-api/endpoints';
 import { ExpandedInstanceInterface } from 'types';

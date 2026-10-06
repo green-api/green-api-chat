@@ -1,6 +1,7 @@
 import { FC, useCallback, useEffect } from 'react';
 
-import { Form, Input, message, Modal, Select } from 'antd';
+import { DeleteOutlined } from '@ant-design/icons';
+import { Button, Flex, Form, Input, message, Modal, Popconfirm, Select } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import { ContactFormValues, getContactApiErrorDetails, normalizeChatId } from './contacts.helpers';
@@ -11,6 +12,7 @@ import {
   useAddContactMutation,
   useCheckAccountMutation,
   useCheckWhatsappMutation,
+  useDeleteContactMutation,
   useEditContactMutation,
   useLazyGetContactInfoQuery,
 } from 'services/green-api/endpoints';
@@ -39,6 +41,7 @@ const ContactFormModal: FC = () => {
   const [getContactInfo] = useLazyGetContactInfoQuery();
   const [addContact, { isLoading: isAddContactLoading }] = useAddContactMutation();
   const [editContact, { isLoading: isEditContactLoading }] = useEditContactMutation();
+  const [deleteContact, { isLoading: isDeleteLoading }] = useDeleteContactMutation();
 
   const isLoading = isAddContactLoading || isEditContactLoading;
 
@@ -222,6 +225,25 @@ const ContactFormModal: FC = () => {
     closeModal();
   };
 
+  const handleDelete = async () => {
+    if (!editedContact) return;
+
+    const response = await deleteContact({
+      ...instanceCredentials,
+      chatId: editedContact.id,
+    });
+
+    if (response.error) {
+      const errorDetails = getContactApiErrorDetails(response.error, t);
+      message.error(errorDetails.message);
+
+      return;
+    }
+
+    message.success(t('CONTACT_DELETED_SUCCESS'));
+    closeModal();
+  };
+
   return (
     <Modal
       title={t(isEditMode ? 'EDIT_CONTACT' : 'ADD_CONTACT')}
@@ -232,6 +254,26 @@ const ContactFormModal: FC = () => {
       cancelText={t('CANCEL')}
       confirmLoading={isLoading}
       destroyOnClose
+      footer={(originNode) =>
+        isEditMode ? (
+          <Flex align="center" justify="space-between">
+            <Popconfirm
+              title={t('DELETE_CONTACT_CONFIRM_TITLE')}
+              description={t('DELETE_CONTACT_CONFIRM_DESCRIPTION')}
+              okText={t('YES')}
+              cancelText={t('NO')}
+              onConfirm={handleDelete}
+            >
+              <Button type="default" danger icon={<DeleteOutlined />} loading={isDeleteLoading}>
+                {t('DELETE_CONTACT_ACTION')}
+              </Button>
+            </Popconfirm>
+            <Flex gap={8}>{originNode}</Flex>
+          </Flex>
+        ) : (
+          originNode
+        )
+      }
     >
       <Form<ContactFormValues> form={form} layout="vertical" onFinish={handleSubmit}>
         {isMax && !isEditMode && (

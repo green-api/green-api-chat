@@ -10,10 +10,25 @@
     width: 45px;
     font-size: 30px;
   }
+
+  @media screen and (max-width: 975px) {
+    display: none;
+  }
 }
 
 .aside-item {
   color: var(--icon-color);
+}
+
+.aside-item-with-label {
+  flex-direction: column;
+  gap: 2px;
+  height: auto;
+  width: auto;
+}
+
+.aside-item-label {
+  font-size: 10px;
 }
 
 .active-aside-item {

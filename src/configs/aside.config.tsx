@@ -1,9 +1,9 @@
 import { SettingOutlined } from '@ant-design/icons';
 
-import ChatIcon from 'assets/chat.svg?react';
-import ContactIcon from 'assets/contact-icon.svg?react';
-import InstanceIcon from 'assets/instance-icon.svg?react';
-import StatusIcon from 'assets/status.svg?react';
+import ChatIcon from 'assets/icons/chat.svg?react';
+import ContactIcon from 'assets/icons/contact-icon.svg?react';
+import InstanceIcon from 'assets/icons/instance-icon.svg?react';
+import StatusIcon from 'assets/icons/status.svg?react';
 import Chats from 'components/full-chat/user-side/chats/chats.component';
 import Contacts from 'components/full-chat/user-side/contacts/contacts.component';
 import { InstanceSettings } from 'components/full-chat/user-side/settings/instance.component';

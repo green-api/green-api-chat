@@ -3,17 +3,19 @@ import { FC } from 'react';
 import { Flex, Typography } from 'antd';
 import { useTranslation } from 'react-i18next';
 
+import CallButton from 'components/shared/call-button.component';
 import { useAppSelector } from 'hooks';
 import { useIsMaxInstance } from 'hooks/use-is-max-instance';
 import { useIsTelegramInstance } from 'hooks/use-is-telegram-instance';
 import { useGetGroupDataQuery } from 'services/green-api/endpoints';
-import { selectActiveChat } from 'store/slices/chat.slice';
+import { selectActiveChat, selectType } from 'store/slices/chat.slice';
 import { selectInstance } from 'store/slices/instances.slice';
 import { ActiveChat, LanguageLiteral } from 'types';
 import {
   fillJsxString,
   formatDate,
   getFormattedMessage,
+  getPhoneNumberFromChatId,
   isChannelGroupData,
   isContactInfo,
 } from 'utils';
@@ -21,15 +23,32 @@ import {
 const ContactInfoDescription: FC = () => {
   const activeChat = useAppSelector(selectActiveChat) as ActiveChat;
   const instanceCredentials = useAppSelector(selectInstance);
+  const type = useAppSelector(selectType);
   const isMax = useIsMaxInstance();
   const isTelegram = useIsTelegramInstance();
   const enableMarkdownLinks = isMax || isTelegram;
   const isGroup = activeChat.chatId?.includes('@g.us') || activeChat.chatId?.startsWith('-');
+  const showCallButton =
+    !isMax && !isTelegram && !isGroup && (type === 'console-page' || type === 'instance-view-page');
 
   const {
     t,
     i18n: { resolvedLanguage },
   } = useTranslation();
+
+  const callButtonBlock = showCallButton ? (
+    <div className="contact-info-description w-100 p-10">
+      <CallButton
+        variant="labeled"
+        pendingCall={{
+          chatId: activeChat.chatId,
+          phone: getPhoneNumberFromChatId(activeChat.chatId),
+          name: activeChat.senderName,
+          avatar: activeChat.avatar,
+        }}
+      />
+    </div>
+  ) : null;
 
   const { data: telegramGroupData } = useGetGroupDataQuery(
     {
@@ -126,7 +145,7 @@ const ContactInfoDescription: FC = () => {
   }
 
   if (!activeChat.contactInfo || typeof activeChat.contactInfo === 'string') {
-    return null;
+    return callButtonBlock;
   }
 
   const isChannel = isChannelGroupData(activeChat.contactInfo);
@@ -171,11 +190,12 @@ const ContactInfoDescription: FC = () => {
   const shouldRenderDescriptionBlock = Boolean(description);
 
   if (!shouldRenderDescriptionBlock && !hasGroupSettings && !formattedLink) {
-    return null;
+    return callButtonBlock;
   }
 
   return (
     <>
+      {callButtonBlock}
       {shouldRenderDescriptionBlock && (
         <div className="contact-info-description w-100 p-10">
           <Typography.Paragraph style={{ marginBottom: 'initial' }}>

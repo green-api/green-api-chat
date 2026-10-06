@@ -1,68 +1,53 @@
-import { FC, useEffect, useRef, useState } from 'react';
+import { ChangeEvent, FC, useEffect, useRef, useState } from 'react';
 
-import { CaretRightFilled, PauseOutlined, LoadingOutlined } from '@ant-design/icons';
+import { CaretRightFilled, PauseOutlined } from '@ant-design/icons';
 import { Avatar, Flex } from 'antd';
-import { AudioVisualizer } from 'react-audio-visualize';
 
 import { MessageProps } from './message.component';
+import { formatTime } from 'utils/message.utils';
 
 import styles from './audio-message.module.scss';
 
 export const AudioMessage: FC<
   Pick<MessageProps['messageDataForRender'], 'downloadUrl' | 'type'>
 > = ({ downloadUrl, type }) => {
-  const [blob, setBlob] = useState<Blob | null>(null);
-  const [loading, setLoading] = useState(true);
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [bufferedEnd, setBufferedEnd] = useState(0);
 
-  const visualizerRef = useRef<HTMLCanvasElement>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
-
-  useEffect(() => {
-    if (!downloadUrl) {
-      setLoading(false);
-      return;
-    }
-
-    setLoading(true);
-    fetch(downloadUrl)
-      .then((res) => {
-        if (!res.ok) throw new Error('CORS or Network issue');
-        return res.blob();
-      })
-      .then((audioBlob) => {
-        setBlob(audioBlob);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error('Failed to load audio message waveform:', err);
-        setLoading(false);
-      });
-  }, [downloadUrl]);
 
   useEffect(() => {
     if (!downloadUrl) return;
 
-    const audioUrl = blob ? URL.createObjectURL(blob) : downloadUrl;
-    const audio = new Audio(audioUrl);
+    const audio = new Audio();
+    audio.preload = 'none';
     audioRef.current = audio;
 
     let rafId: number;
 
-    const updateProgress = () => {
-      if (audioRef.current) {
-        setProgress(audioRef.current.currentTime);
-        if (audioRef.current.duration) {
-          setDuration(audioRef.current.duration);
-        }
-        rafId = requestAnimationFrame(updateProgress);
+    const updateDuration = () => {
+      if (Number.isFinite(audio.duration)) {
+        setDuration(audio.duration);
       }
     };
 
-    const handleLoadedMetadata = () => {
-      setDuration(audio.duration);
+    // End of the buffered range that contains the playhead (or 0 if nothing is buffered there)
+    const updateBuffered = () => {
+      const { buffered, currentTime } = audio;
+      for (let i = 0; i < buffered.length; i++) {
+        if (currentTime >= buffered.start(i) && currentTime <= buffered.end(i)) {
+          setBufferedEnd(buffered.end(i));
+          return;
+        }
+      }
+      setBufferedEnd(0);
+    };
+
+    const updateProgress = () => {
+      setProgress(audio.currentTime);
+      rafId = requestAnimationFrame(updateProgress);
     };
 
     const handlePlay = () => {
@@ -81,39 +66,57 @@ export const AudioMessage: FC<
       setIsPlaying(false);
     };
 
-    audio.addEventListener('loadedmetadata', handleLoadedMetadata);
+    audio.addEventListener('loadedmetadata', updateDuration);
+    audio.addEventListener('durationchange', updateDuration);
+    audio.addEventListener('progress', updateBuffered);
+    audio.addEventListener('seeked', updateBuffered);
     audio.addEventListener('play', handlePlay);
     audio.addEventListener('pause', handlePause);
     audio.addEventListener('ended', handleEnded);
 
-    if (audio.readyState >= 1) {
-      setDuration(audio.duration);
-    }
-
     return () => {
       cancelAnimationFrame(rafId);
       audio.pause();
-      if (blob) {
-        URL.revokeObjectURL(audioUrl);
-      }
-      audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
+      audio.removeEventListener('loadedmetadata', updateDuration);
+      audio.removeEventListener('durationchange', updateDuration);
+      audio.removeEventListener('progress', updateBuffered);
+      audio.removeEventListener('seeked', updateBuffered);
       audio.removeEventListener('play', handlePlay);
       audio.removeEventListener('pause', handlePause);
       audio.removeEventListener('ended', handleEnded);
+      audio.removeAttribute('src');
+      audio.load();
+      audioRef.current = null;
     };
-  }, [blob, downloadUrl]);
+  }, [downloadUrl]);
 
   const togglePlay = () => {
-    if (!audioRef.current) return;
+    const audio = audioRef.current;
+    if (!audio) return;
     if (isPlaying) {
-      audioRef.current.pause();
+      audio.pause();
     } else {
-      audioRef.current.play();
+      if (!audio.getAttribute('src') && downloadUrl) {
+        audio.src = downloadUrl;
+      }
+      audio.play().catch((err) => console.error('Failed to play audio message:', err));
     }
+  };
+
+  const handleSeek = (e: ChangeEvent<HTMLInputElement>) => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    const time = Number(e.target.value);
+    audio.currentTime = time;
+    setProgress(time);
   };
 
   const isOutgoing = type === 'outgoing';
   const progressPercent = duration ? (progress / duration) * 100 : 0;
+  const bufferedPercent = duration ? Math.max((bufferedEnd / duration) * 100, progressPercent) : 0;
+  const playedColor = isOutgoing ? '#008069' : '#00a884';
+  const bufferedColor = isOutgoing ? '#7f9a95' : '#9aa9b0';
+  const trackColor = isOutgoing ? '#b4cdb0' : '#d5dde0';
 
   return (
     <Flex align="center" gap={8} className={styles.audioMessageWrap}>
@@ -130,45 +133,26 @@ export const AudioMessage: FC<
         )}
       </div>
 
-      <div className={styles.visualizerWrapper}>
-        {!loading && (
-          <div
-            className={styles.baseline}
-            style={{
-              background: `linear-gradient(to right, ${isOutgoing ? '#008069' : '#00a884'} ${progressPercent}%, ${isOutgoing ? '#8696a0' : '#b6c5cb'} ${progressPercent}%)`,
-            }}
-          />
-        )}
-        {loading ? (
-          <LoadingOutlined style={{ color: 'var(--text-color)', opacity: 0.5 }} />
-        ) : blob ? (
-          <div className={styles.visualizerContainer}>
-            <AudioVisualizer
-              ref={visualizerRef}
-              blob={blob}
-              width={140}
-              height={36}
-              barWidth={2}
-              gap={0.3}
-              barColor={isOutgoing ? '#8696a0' : '#b6c5cb'}
-              barPlayedColor={isOutgoing ? '#008069' : '#00a884'}
-              currentTime={progress}
-            />
-          </div>
-        ) : (
-          <svg width="100%" height="2" className={styles.fallbackSvg}>
-            <line
-              x1="0"
-              y1="0"
-              x2="100%"
-              y2="0"
-              stroke={isOutgoing ? '#8696a0' : '#b6c5cb'}
-              strokeWidth="2"
-              opacity="0.5"
-            />
-          </svg>
-        )}
+      <div className={styles.seekWrapper}>
+        <input
+          type="range"
+          className={styles.seek}
+          min={0}
+          max={duration || 0}
+          step="any"
+          value={Math.min(progress, duration || 0)}
+          disabled={!duration}
+          onChange={handleSeek}
+          style={{
+            background: `linear-gradient(to right, ${playedColor} ${progressPercent}%, ${bufferedColor} ${progressPercent}%, ${bufferedColor} ${bufferedPercent}%, ${trackColor} ${bufferedPercent}%)`,
+            color: playedColor,
+          }}
+        />
       </div>
+
+      <span className={styles.time}>
+        {duration ? formatTime(isPlaying || progress > 0 ? progress : duration) : '--:--'}
+      </span>
     </Flex>
   );
 };

@@ -4,7 +4,7 @@ import viteCompression from 'vite-plugin-compression';
 import svgr from 'vite-plugin-svgr';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
-const assetsDirectory = 'assets_1.0.3';
+const assetsDirectory = 'assets_1.0.4';
 
 // Do not force-split React/Antd/rc ecosystem to avoid runtime init cycles.
 const UNSPLIT_PACKAGES = [

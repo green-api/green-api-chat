@@ -17,6 +17,10 @@ export function isAuthorizedInstanceState(state?: StateInstanceEnum) {
   return state === StateInstanceEnum.Authorized || state === StateInstanceEnum.YellowCard;
 }
 
+export function withTrailingSlash(url: string) {
+  return url.endsWith('/') ? url : `${url}/`;
+}
+
 export * from './component.utils';
 export * from './date.utils';
 export * from './chat-list.utils';

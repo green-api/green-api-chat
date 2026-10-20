@@ -9,7 +9,7 @@ import waIcon from 'assets/messenger-logo/wa-logo.svg';
 import { isMaxInstance } from 'hooks/use-is-max-instance';
 import { useGetWaSettingsQuery, useGetAccountSettingsQuery } from 'services/green-api/endpoints';
 import { ExpandedInstanceInterface } from 'types';
-import { isAuthorizedInstanceState, isPageInIframe } from 'utils';
+import { isAuthorizedInstanceState } from 'utils';
 
 const SelectInstanceLabel = ({
   idInstance,
@@ -33,11 +33,11 @@ const SelectInstanceLabel = ({
 
   const { data: accountSettings, isLoading: isLoadingAccountSettings } = useGetAccountSettingsQuery(
     { idInstance, apiTokenInstance, apiUrl, mediaUrl },
-    { skip: !isAccountSettingsInstance && !isPageInIframe() }
+    { skip: !isAccountSettingsInstance }
   );
 
-  const settings = accountSettings ?? waSettings;
-  const isLoading = isLoadingAccountSettings ?? isLoadingWaSettings;
+  const settings = isAccountSettingsInstance ? accountSettings : waSettings;
+  const isLoading = isAccountSettingsInstance ? isLoadingAccountSettings : isLoadingWaSettings;
 
   return (
     <Space

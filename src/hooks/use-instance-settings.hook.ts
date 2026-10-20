@@ -5,7 +5,6 @@ import { useIsMaxInstance } from './use-is-max-instance';
 import { useGetWaSettingsQuery, useGetAccountSettingsQuery } from 'services/green-api/endpoints';
 import { selectInstance, selectTypeInstance } from 'store/slices/instances.slice';
 import { GetWaSettingsResponseInterface } from 'types';
-import { isPageInIframe } from 'utils';
 
 interface UseInstanceSettingsOptions {
   pollingInterval?: number;
@@ -33,7 +32,7 @@ export const useInstanceSettings = ({
   const skipAccount =
     !selectedInstance?.idInstance ||
     !selectedInstance?.apiTokenInstance ||
-    (!isAccountSettingsInstance && isPageInIframe());
+    !isAccountSettingsInstance;
 
   const {
     data: waSettings,
@@ -49,10 +48,10 @@ export const useInstanceSettings = ({
     refetch: refetchAccount,
   } = useGetAccountSettingsQuery({ ...selectedInstance }, { skip: skipAccount, pollingInterval });
 
-  const settings = accountSettings ?? waSettings;
-  const isLoading = isAccountLoading ?? isWaLoading;
-  const error = accountError ?? waError;
-  const refetch = refetchAccount ?? refetchWa;
+  const settings = isAccountSettingsInstance ? accountSettings : waSettings;
+  const isLoading = isAccountSettingsInstance ? isAccountLoading : isWaLoading;
+  const error = isAccountSettingsInstance ? accountError : waError;
+  const refetch = isAccountSettingsInstance ? refetchAccount : refetchWa;
 
   useEffect(() => {
     if (error && typeof error === 'object' && 'status' in error) {

@@ -26,7 +26,7 @@ import {
   useLazyLastMessagesQuery,
 } from 'services/green-api/endpoints';
 import { selectInstance } from 'store/slices/instances.slice';
-import { fillJsxString, fillString, isAuthorizedInstanceState, isPageInIframe } from 'utils';
+import { fillJsxString, fillString, isAuthorizedInstanceState } from 'utils';
 
 const LAST_MESSAGES_MINUTES_WINDOW = 26300;
 const LAST_MESSAGES_RETRY_LIMIT = 10;
@@ -69,13 +69,13 @@ export const AuthInstance = () => {
       mediaUrl: selectedInstance.mediaUrl,
     },
     {
-      skip: !isMax && !isPageInIframe(),
+      skip: !isMax,
     }
   );
 
   const [updateStateInstanceTrigger, { data: stateInstanceData }] = useLazyGetStateInstanceQuery();
 
-  const refetch = maxRefetch ?? waRefetch;
+  const refetch = isMax ? maxRefetch : waRefetch;
   const stateInstance = maxData?.stateInstance ?? settings?.stateInstance;
 
   const startLastMessagesRetry = () => {

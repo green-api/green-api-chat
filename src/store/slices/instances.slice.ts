@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { RootState } from 'store';
 import { InstancesState, TariffsEnum, TypeInstance } from 'types';
-import { getTypeInstanceFromQuery } from 'utils';
+import { getTypeInstanceFromQuery, withTrailingSlash } from 'utils';
 
 const getInitialStateFromStorage = (): Partial<InstancesState> | null => {
   try {
@@ -24,8 +24,8 @@ const getInitialStateFromStorage = (): Partial<InstancesState> | null => {
       ? {
           idInstance: Number(idInstance),
           apiTokenInstance,
-          apiUrl,
-          mediaUrl,
+          apiUrl: withTrailingSlash(apiUrl),
+          mediaUrl: withTrailingSlash(mediaUrl),
         }
       : parsed.selectedInstance ?? undefined;
 

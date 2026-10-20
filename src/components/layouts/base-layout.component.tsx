@@ -36,6 +36,7 @@ import {
   getPhoneNumberFromChatId,
   getTypeInstanceFromQuery,
   isValidTheme,
+  withTrailingSlash,
 } from 'utils';
 
 const BaseLayout: FC = () => {
@@ -174,8 +175,8 @@ const BaseLayout: FC = () => {
 
       if (!idInstance || !apiTokenInstance || !apiUrl || !mediaUrl) return;
 
-      const normalizedApiUrl = apiUrl + '/';
-      const normalizedMediaUrl = mediaUrl + '/';
+      const normalizedApiUrl = withTrailingSlash(apiUrl);
+      const normalizedMediaUrl = withTrailingSlash(mediaUrl);
       const language = searchParams.get('lng');
       const brandDescription = searchParams.get('dsc');
       const brandImageUrl = searchParams.get('logo');

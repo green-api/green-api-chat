@@ -1,6 +1,4 @@
-import { FC, useEffect } from 'react';
-
-import { useTranslation } from 'react-i18next';
+import { FC } from 'react';
 
 import ContactChat from 'components/full-chat/content-side/contact-chat/contact-chat.component';
 import HomeView from 'components/full-chat/content-side/home-view.component';
@@ -20,7 +18,6 @@ import {
   selectIsAuthorizingInstance,
   selectIsSendingStatus,
 } from 'store/slices/instances.slice';
-import { MessageEventTypeEnum } from 'types';
 
 const Main: FC = () => {
   const activeChat = useAppSelector(selectActiveChat);
@@ -43,24 +40,6 @@ const Main: FC = () => {
       refetchOnMountOrArgChange: true,
     }
   );
-
-  const {
-    i18n: { resolvedLanguage },
-  } = useTranslation();
-
-  useEffect(() => {
-    if (resolvedLanguage) {
-      window.parent.postMessage(
-        {
-          type: MessageEventTypeEnum.LOCALE_CHANGE,
-          payload: {
-            locale: resolvedLanguage,
-          },
-        },
-        '*'
-      );
-    }
-  }, [resolvedLanguage]);
 
   if (isSendingStatus === 'text') return <SendTextStatus />;
   if (isSendingStatus === 'media') return <SendMediaStatus />;

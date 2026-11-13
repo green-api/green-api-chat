@@ -177,7 +177,6 @@ const BaseLayout: FC = () => {
 
       const normalizedApiUrl = withTrailingSlash(apiUrl);
       const normalizedMediaUrl = withTrailingSlash(mediaUrl);
-      const language = searchParams.get('lng');
       const brandDescription = searchParams.get('dsc');
       const brandImageUrl = searchParams.get('logo');
       const theme = searchParams.get('theme');
@@ -189,10 +188,6 @@ const BaseLayout: FC = () => {
       theme && isValidTheme(theme) && setTheme(theme);
 
       (async () => {
-        if (language) {
-          await i18n.changeLanguage(language);
-        }
-
         const { data: instanceSettings } = await getSettings({
           idInstance: +idInstance,
           apiTokenInstance,

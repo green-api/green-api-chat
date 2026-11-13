@@ -24,6 +24,7 @@ import { GetChatsResponseInterface, MessageInterface } from 'types';
 import {
   chatToMessage,
   fetchChatLastMessage,
+  normalizeChatLastMessage,
   filterMessagesByText,
   getCachedGetChatHistoryMessages,
   getErrorMessage,
@@ -221,8 +222,10 @@ const ChatList: FC = () => {
     (candidates: GetChatsResponseInterface[]) => {
       if (type === 'mobile-mode' && activeChat?.chatId) return;
 
+      // chats that came with `lastMessage` are handled by the seeding effect below —
+      // only the rest need a separate history request
       const chatsToLoad = candidates.filter(
-        (chat) => !pendingHistoryChatIdsRef.current.has(chat.chatId)
+        (chat) => !chat.lastMessage && !pendingHistoryChatIdsRef.current.has(chat.chatId)
       );
 
       if (!chatsToLoad.length) return;
@@ -244,15 +247,7 @@ const ChatList: FC = () => {
             dispatch(
               chatActions.setLastMessageByChatId({
                 chatId: chat.chatId,
-                message: message
-                  ? {
-                      ...message,
-                      chatId: chat.chatId,
-                      chatType: chat.type,
-                      senderName: chat.name,
-                      senderContactName: chat.name,
-                    }
-                  : null,
+                message: message ? normalizeChatLastMessage(chat, message) : null,
               })
             );
           } finally {
@@ -273,6 +268,34 @@ const ChatList: FC = () => {
     },
     [instanceCredentials, getChatLastMessage, dispatch, type, activeChat?.chatId]
   );
+
+  // Uses `lastMessage` straight from getChats (MAX) on every poll, no extra requests.
+  useEffect(() => {
+    chats.forEach((chat) => {
+      if (!chat.lastMessage) return;
+
+      const cached = lastMessagesByChatId[chat.chatId];
+      const next = chat.lastMessage;
+
+      if (
+        cached &&
+        cached.idMessage === next.idMessage &&
+        cached.statusMessage === next.statusMessage &&
+        cached.typeMessage === next.typeMessage &&
+        cached.timestamp === next.timestamp
+      ) {
+        return;
+      }
+
+      dispatch(
+        chatActions.setLastMessageByChatId({
+          chatId: chat.chatId,
+          message: normalizeChatLastMessage(chat, next),
+        })
+      );
+    });
+    // lastMessagesByChatId is read fresh but left out of deps: this only reacts to new getChats data
+  }, [chats, dispatch]);
 
   useEffect(() => {
     if (!instanceCredentials?.idInstance || !instanceCredentials.apiTokenInstance) return;

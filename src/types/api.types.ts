@@ -758,4 +758,6 @@ export interface GetChatsResponseInterface {
   // only for WhatsApp for now
   unreadCount?: number;
   newChatId?: string;
+  // only for MAX for now — lets us skip a separate getChatHistory request per chat
+  lastMessage?: MessageInterface;
 }

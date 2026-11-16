@@ -34,6 +34,20 @@ const getReactionEmoji = (message: MessageInterface): string | undefined =>
   message.textMessage?.trim() ||
   undefined;
 
+// Single place that shapes a last message for the chat list cache, whether it came from
+// getChats' `lastMessage` (MAX) or from a separate history request.
+export const normalizeChatLastMessage = (
+  chat: GetChatsResponseInterface,
+  message: MessageInterface
+): MessageInterface => ({
+  ...message,
+  ...(message.typeMessage === 'reactionMessage' && { textMessage: getReactionEmoji(message) }),
+  chatId: chat.chatId,
+  chatType: chat.type,
+  senderName: chat.name,
+  senderContactName: chat.name,
+});
+
 export const fetchChatLastMessage = async (
   chat: GetChatsResponseInterface,
   instanceCredentials: InstanceInterface,
@@ -49,11 +63,7 @@ export const fetchChatLastMessage = async (
     if (!error) {
       const message = history?.[0];
 
-      if (message?.typeMessage === 'reactionMessage') {
-        return { chat, message: { ...message, textMessage: getReactionEmoji(message) } };
-      }
-
-      return { chat, message };
+      return { chat, message: message && normalizeChatLastMessage(chat, message) };
     }
 
     const isRateLimited = 'status' in error && error.status === 429;
